@@ -1,0 +1,112 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  background:rgba(0,0,0,0.03);
+}
+@media (max-width:600px) {
+  body {
+    overflow: auto; /* Prevent scrolling on both X and Y axes */
+  }
+  .swal2-toast-shown .swal2-container {
+    margin-right: 0% !important;
+  }
+
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/**
+* Using CSS files to overwrite Swal classes
+*/
+
+.swal2-popup {
+  max-height: 100px !important;
+  width: 690px !important;
+  background: none;
+}
+
+.swal2-toast-shown .swal2-container {
+    width: 690px !important;
+    margin-right: 5%;
+}
+
+.swal2-popup.swal2-toast {
+    background: none;
+    box-shadow: none;
+}
+
+.swal2-popup.swal2-toast .swal2-html-container {
+  font-size: 1.3em;
+  font-family: 'Biotif';
+}
+
+.toast {
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: white;
+}
+@media (max-width:600px) {
+  .toast{
+    min-width: 50%;
+    max-width: 50%;
+  }
+}
+
+.toastLeftBorder {
+  flex: 1;
+  max-width: 15px;
+  min-width: 15px;
+  border-radius: 4px 0px 0px 4px;
+}
+
+.toastLeftIcon {
+  display: flex;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.Icon {
+  align-self: center;
+  width: 25px;
+  height: 25px;
+}
+
+.toastMainText {
+  flex-grow: 1;
+  text-align: left;
+  margin-left: 4%;
+}
+
+.toastRightBorder {
+  flex: 1;
+  align-self: center;
+  margin: 10px;
+  max-width: 15px;
+  min-width: 15px;
+}
+
+.success {
+  background-color: #0B9500;
+}
+
+.error {
+  background-color: #FF0000;
+}
+
+.info {
+  background-color: #2DCAFC;
+}
+
+.warning {
+  background-color: #FCC42D;
+}
