@@ -1,13 +1,18 @@
 import styled from "styled-components";
 
+interface DropdownProps {
+    isOpen: boolean;
+  }
+
 export const SidebarContainer = styled.div`
     display: flex;
     flex-direction: column;
     background-color: #252525;
     color: white;
-    min-width: 22%;
-    max-width: 22%;
-    height: 780px;
+    min-width: 20%;
+    max-width: 20%;
+    height: 100%;
+    overflow-y: auto;
     @media (max-width:600px) {
         min-width: 100%;
         min-height: 1000px;
@@ -49,7 +54,7 @@ export const SidebarContainerHeaderProfileName = styled.p`
 export const SidebarContainerBody = styled.div`
     display: flex;
     flex-direction: column;
-    margin-left: 15%;
+    margin-left: 10%;
     margin-top: -2%;
     margin-bottom: 6%;
 `
@@ -93,5 +98,4 @@ export const SidebarContainerBodyElementIcon = styled.div`
 
 `
 
-export const SidebarContainerBodyElement = styled.p`
-`
+export const SidebarContainerBodyElement = styled.p``

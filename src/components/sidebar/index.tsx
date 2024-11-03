@@ -1,15 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { SidebarContainer, SidebarContainerBody, SidebarContainerBodyElement, SidebarContainerBodyElementContainer, SidebarContainerBodyElementIcon, SidebarContainerFooter, SidebarContainerHeader, SidebarContainerHeaderProfile, SidebarContainerHeaderProfileName } from './styles.ts';
 import UserNoImage from '../../images/user.png'
 import { IoIosHome } from "react-icons/io";
 import { FaMoneyBill } from "react-icons/fa";
-import { GiGymBag } from "react-icons/gi";
 import { RiAdminLine } from "react-icons/ri";
-import { FaNewspaper } from "react-icons/fa";
-import { GiTeacher } from "react-icons/gi";
 import { IoMdChatboxes } from "react-icons/io";
-import { FaBeerMugEmpty } from "react-icons/fa6";
-import useActiveModule from '../../hooks/moduleHook.ts';
+import { TiBusinessCard } from "react-icons/ti";
+import { MdSell } from "react-icons/md";
+import { FaCalendar } from "react-icons/fa";
+import HomeService from '../../services/home.service.ts';
+import Select from 'react-select';
 
 export const dashboardModules = [
   {
@@ -19,13 +19,13 @@ export const dashboardModules = [
   },
   {
     module:'',
-    name:'Cervejas',
-    icon:<FaBeerMugEmpty size={26} />,
+    name:'Pagamentos',
+    icon:<FaMoneyBill size={26} />,
   },
   {
-      module:'',
-      name:'Pagamentos',
-      icon:<FaMoneyBill size={26} />,
+    module:'',
+    name:'Produtos',
+    icon:<MdSell size={26} />,
   },
   {
     module:'',
@@ -34,19 +34,68 @@ export const dashboardModules = [
   },
   {
     module:'',
-    name:'Chat',
-    icon:<IoMdChatboxes size={26} />,
+    name:'Funcionários',
+    icon:<TiBusinessCard size={26} />,
   },
-
+  {
+    module:'',
+    name:'Calendário',
+    icon:<FaCalendar size={26} />,
+  },
+  //{
+  //   module:'',
+  //   name:'Chat',
+  //   icon:<IoMdChatboxes size={26} />,
+  // },
+  // {
+  //   module:'',
+  //   name:'Automacao',
+  //   icon:<IoMdChatboxes size={26} />,
+  // },
+  // {
+  //   module:'',
+  //   name:'Marketing',
+  //   icon:<IoMdChatboxes size={26} />,
+  // },
+  // {
+  //   module:'',
+  //   name:'Equipments',
+  //   icon:<IoMdChatboxes size={26} />,
+  // },
 ]
 
-const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateModule }> = ({...props}) => {
+const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateModule, userData, setActiveCompany, companies, setCompanies }> = ({...props}) => {
+
+  const options = props.companies.map((company) => ({
+    value: company.id,
+    label: (
+      <div style={{color:'black'}}>
+        <img src={company.logo} alt={company.name} style={{ width: '20px', marginRight: '10px' }} />
+        {company.name}
+      </div>
+    ),
+  }));
+
+  useEffect(() => {
+    if (props.userData._id) {
+      HomeService.get(props.userData._id)
+        .then((res) => props.setCompanies(res.data))
+    }
+  }, [props.userData]);
+
+
   return (
     <SidebarContainer>
       <SidebarContainerHeader>
         <SidebarContainerHeaderProfile src={UserNoImage}/>
-        <SidebarContainerHeaderProfileName>Nome do usuário</SidebarContainerHeaderProfileName>
-      </SidebarContainerHeader>
+        <SidebarContainerHeaderProfileName>{props.userData.name}</SidebarContainerHeaderProfileName>
+        <Select
+          value={options.find(option => option.value === props.activeCompany)}
+          onChange={(selectedOption) => props.setActiveCompany(selectedOption.value)}
+          options={options}
+          isSearchable={false}
+        />
+    </SidebarContainerHeader>
       <SidebarContainerBody>
         {dashboardModules.map((list)=>{
           return (

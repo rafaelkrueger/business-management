@@ -23,8 +23,10 @@ export const AuthContainerLeft = styled.div`
 `;
 
 export const AuthContainerLeftLogo = styled.img`
-    width:55%;
-    margin-left:20%;
+    width:35%;
+    margin-left:35%;
+    margin-top: 13%;
+    margin-bottom: 10%;
     @media (max-width:600px) {
         margin-top: 20%;
         margin-bottom: 20%;

@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { AuthContainer, AuthContainerElements, AuthContainerLeft, AuthContainerLeftButton, AuthContainerLeftForgotPassword, AuthContainerLeftForgotSignup, AuthContainerLeftInput, AuthContainerLeftLabelInput, AuthContainerLeftLabelPassword, AuthContainerLeftPassword, AuthContainerRight, AuthContainerRightImage, AuthContainerLeftForgotSignupLink, AuthContainerLeftLogo } from './styles.ts'
 import AuthCoverImage from '../../images/auth-cover.jpg';
-import LogoImage from '../../images/logo-auth-no-bg.png';
+import LogoImage from '../../images/logo.png';
 import LogoImageResponsive from '../../images/logo-auth.jpeg';
 import { useMutation } from '@tanstack/react-query';
 import AllInOneService from '../../services/all-in-one.service.ts';
@@ -43,7 +43,6 @@ const Auth: React.FC = () => {
       if(res.data){
         setLoading(false);
         setToken(res.data);
-        navigate('/dashboard');
       }
     }).catch((err)=>{
       AlertAdapter('Usuário não encontrado', 'error');
@@ -65,6 +64,12 @@ const Auth: React.FC = () => {
       console.log(err)
     })
   }
+
+  useEffect(()=>{
+    if(token){
+      navigate('/dashboard');
+    }
+  },[token])
 
 
   return (
@@ -159,7 +164,7 @@ const Auth: React.FC = () => {
       </AuthContainerElements>
       </AuthContainerLeft>
       <AuthContainerRight>
-        <AuthContainerRightImage src='https://images.pexels.com/photos/3465604/pexels-photo-3465604.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'/>
+        <AuthContainerRightImage src='https://plus.unsplash.com/premium_photo-1670315264879-59cc6b15db5f?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'/>
       </AuthContainerRight>
     </AuthContainer>
   );

@@ -1,4 +1,4 @@
-import http from './http.ts';
+import http from './http-all-in-one.ts';
 
 class AllInOneService {
     static get(data: any) {

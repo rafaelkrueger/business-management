@@ -85,9 +85,8 @@ export const StreakContainerWorkoutContainer = styled.div`
     background-color: white;
     max-height: 100%; /* Take the maximum height available */
     overflow-y: auto; /* Enable vertical scrolling when needed */
-    height: 100%; /* Fill parent height */
-    /* Style the scrollbar */
-    scrollbar-width: thin; /* Set the width of the scrollbar */
+    height: 100%;
+    scrollbar-width: thin;
     scrollbar-color: black transparent; /* Set the color of the scrollbar */
 
     /* Adjust the track color */

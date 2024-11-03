@@ -2,9 +2,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { getStorageValue } from '../hooks/useLocalStorage.ts';
 
-//http://localhost:3005/
-//https://mastering-backend-648a4cdef801.herokuapp.com/
-
 const axiosInstance = axios.create({
 	baseURL: "https://all-in-one-system-cfe0c681a225.herokuapp.com/",
 	headers: {

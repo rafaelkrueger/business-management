@@ -49,6 +49,7 @@ export const TrainContainerRecommendTrainerCard = styled.div`
 `
 
 export const TrainContainerRecommendTrainerCardImage = styled.img`
+    margin-top: 30px;
     width: 40%;
     margin-left: 30%;
     margin-bottom: -5%;
@@ -88,7 +89,8 @@ export const TrainContainerRecommendTrainerCardButton = styled.button`
 
 export const TrainContainerRecommendTrainerWideCard = styled.div`
     width: 250px;
-    height: 100px;
+    height: 115px;
+    padding-top: 10px;
     background-color: rgba(255,255,255,0.7);
     margin-left: 18%;
     margin-bottom: 15%;
