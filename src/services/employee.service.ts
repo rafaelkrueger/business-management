@@ -2,19 +2,19 @@ import http from './http-business.ts';
 
 class EmployeeService {
     static get(data: string) {
-		return http.get(`http://localhost:3005/employee/${data}`);
+		return http.get(`/employee/${data}`);
 	}
 	static create(data: any) {
-		return http.post(`http://localhost:3005/employee`, data);
+		return http.post(`/employee`, data);
 	}
 	static edit(data: any) {
-		return http.patch(`http://localhost:3005/employee`, data);
+		return http.patch(`/employee`, data);
 	}
 	static department(data: string) {
-		return http.get(`http://localhost:3005/employee/departments/${data}`);
+		return http.get(`/employee/departments/${data}`);
 	}
 	static glance(data: string) {
-		return http.get(`http://localhost:3005/employee/glance/${data}`);
+		return http.get(`/employee/glance/${data}`);
 	}
 }
 export default EmployeeService;
