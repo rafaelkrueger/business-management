@@ -140,7 +140,7 @@ export const StreakContainerWorkoutElementParagraph = styled.p`
 `;
 
 export const StreakContainerWorkoutElementParagraph2 = styled.p`
-    margin-top: -11%;
+    margin-top: -5.5%;
     font-size: 8pt;
     color: rgba(0,0,0,0.5);
 `;

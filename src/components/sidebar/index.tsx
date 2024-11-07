@@ -10,6 +10,7 @@ import { MdSell } from "react-icons/md";
 import { FaCalendar } from "react-icons/fa";
 import HomeService from '../../services/home.service.ts';
 import Select from 'react-select';
+import ModulesService from '../../services/modules.service.ts';
 
 export const dashboardModules = [
   {
@@ -64,7 +65,17 @@ export const dashboardModules = [
   // },
 ]
 
+const icons = {
+  IoIosHome: IoIosHome,
+  FaMoneyBill: FaMoneyBill,
+  MdSell: MdSell,
+  RiAdminLine: RiAdminLine,
+  TiBusinessCard: TiBusinessCard,
+  FaCalendar: FaCalendar,
+};
+
 const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateModule, userData, setActiveCompany, companies, setCompanies }> = ({...props}) => {
+  const [modules, setModules] = useState([]);
 
   const options = props.companies.map((company) => ({
     value: company.id,
@@ -83,6 +94,24 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateMo
     }
   }, [props.userData]);
 
+  useEffect(()=>{
+    if(props.activeCompany){
+      ModulesService.get(props.activeCompany)
+      .then((res) => setModules(res.data))
+    }
+  }, [props.activeCompany])
+
+  function SidebarContainerBodyElementIcon({ icon }) {
+    console.log(icon);
+    const iconName = icon.match(/<(\w+)/)?.[1];
+    const IconComponent = icons[iconName];
+
+    if (!IconComponent) return null;
+
+    return <IconComponent style={{marginTop:'4%', marginRight:'5%', marginLeft:window.outerWidth > 600? '3%' : '13%'}} size={26} />;
+  }
+
+
 
   return (
     <SidebarContainer>
@@ -97,7 +126,7 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateMo
         />
     </SidebarContainerHeader>
       <SidebarContainerBody>
-        {dashboardModules.map((list)=>{
+        {modules.map((list)=>{
           return (
           // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           <SidebarContainerBodyElementContainer onClick={()=>{
@@ -105,7 +134,7 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateMo
             window.outerWidth < 600?props.setIsMenuActive(!props.isMenuActive):'';
             props.activateModule(list.name)
             }}>
-            <SidebarContainerBodyElementIcon>{list.icon}</SidebarContainerBodyElementIcon>
+            <SidebarContainerBodyElementIcon icon={`<${list.icon} size={26} />`} />
             <SidebarContainerBodyElement>{list.name}</SidebarContainerBodyElement>
           </SidebarContainerBodyElementContainer>
           )

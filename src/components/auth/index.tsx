@@ -78,7 +78,7 @@ const Auth: React.FC = () => {
         <AuthContainerElements>
         {!isNewUser?
         <>
-        <AuthContainerLeftLogo src={window.outerWidth <=600?LogoImageResponsive:LogoImage} />
+        <AuthContainerLeftLogo src={window.outerWidth <=600?LogoImage:LogoImage} />
         <AuthContainerLeftLabelInput>
               Email
             </AuthContainerLeftLabelInput><AuthContainerLeftInput

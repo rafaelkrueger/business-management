@@ -38,16 +38,16 @@ const Dashboard: React.FC = () => {
         <DashboardContainerIcon onClick={() => setIsMenuActive(!isMenuActive)} />
       )}
       {isMenuActive && (
-        <Sidebar
-        isMenuActive={isMenuActive}
-        setIsMenuActive={setIsMenuActive}
-        activateModule={activateModule}
-        userData={userData}
-        activeCompany={activeCompany}
-        setActiveCompany={changeActiveCompany}
-        companies={companies}
-        setCompanies={setCompanies}
-        />
+          <Sidebar
+          isMenuActive={isMenuActive}
+          setIsMenuActive={setIsMenuActive}
+          activateModule={activateModule}
+          userData={userData}
+          activeCompany={activeCompany}
+          setActiveCompany={changeActiveCompany}
+          companies={companies}
+          setCompanies={setCompanies}
+          />
       )}
       {isMenuActive && window.outerWidth < 600 ? '' : (
         <DashboardContainerShowed>

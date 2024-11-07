@@ -4,7 +4,7 @@ import { IoStar } from "react-icons/io5";
 import { FaCalendar } from "react-icons/fa6";
 import { StreakContainerWorkoutElement, StreakContainerWorkoutElementIcon, StreakContainerWorkoutElementParagraphContainer, StreakContainerWorkoutElementParagraph, StreakContainerWorkoutElementParagraph2, StreakContainerWorkoutContainer } from '../payments/styles.ts';
 import IconBeer from '../../icons/workout-icons/beer.png'
-import IconNoBeer from '../../icons/workout-icons/no-beer.png'
+import { MdProductionQuantityLimits } from "react-icons/md";
 import { PieChart, Pie, Cell, Tooltip } from 'recharts';
 import ProductService from '../../services/product.service.ts';
 import CustomerService from '../../services/customer.service.ts';
@@ -165,7 +165,7 @@ const Home: React.FC<{ activeCompany, userData, activateModule }> = ({ ...props 
           </TrainContainerRecommendTrainerWideCard>
                 <TrainContainerRecommendTrainerWideCard>
                 <TrainContainerRecommendTrainerWideCardLeft style={{width:'100%',marginRight:'-10%'}}>
-                        <img style={{width:'40%', marginTop:'-2%'}} src={IconNoBeer}/>
+                        <MdProductionQuantityLimits size={40} style={{width:'40%', marginTop:'0%'}}/>
                 </TrainContainerRecommendTrainerWideCardLeft>
                     <TrainContainerRecommendTrainerWideCardRight style={{ marginLeft:'-7%', marginTop:window.outerWidth > 600?'-5%':'2%', marginRight:window.outerWidth > 600?'7%':'15%'}}>
                         <h5>{checkLowestProductInStock()? checkLowestProductInStock().name : ''}</h5>

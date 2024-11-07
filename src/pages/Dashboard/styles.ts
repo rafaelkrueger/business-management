@@ -5,6 +5,8 @@ import { IoMdMenu } from "react-icons/io";
 export const DashboardContainer = styled.div`
     display: flex;
     flex-direction: row;
+    min-width: 100%;
+    min-height: 1000px;
 `
 
 export const DashboardContainerShowed = styled.div`

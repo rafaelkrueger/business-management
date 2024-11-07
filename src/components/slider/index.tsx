@@ -52,14 +52,14 @@ const Slider = <T,>({
       <TrainContainerRecommendTrainerCard
         style={{
           display: 'flex',
-          flexDirection:'row',
+          flexDirection: window.outerWidth > 600? 'row' : 'column',
           transition: 'transform 0.5s ease',
           transform: `translateX(-${currentSlide * 100}%)`,
           marginLeft:'10px',
         }}
       >
         {items.map((item, index) => (
-          <div key={index} style={{ minWidth: '100%', marginRight:'30px' }}>
+          <div key={index} style={{ minWidth: window.outerWidth > 600? '100%' : '350px', marginBottom:window.outerWidth > 600? '0px' : '30px', marginRight:'30px' }}>
             {renderItem(item)}
           </div>
         ))}

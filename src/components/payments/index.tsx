@@ -40,7 +40,7 @@ const Payments: React.FC<{ activeCompany }> = ({ ...props }) => {
   }));
 
   const SimpleLineChart = () => (
-    <div style={{ background: 'white', padding: '50px', borderRadius: 10, minHeight: '290px', maxHeight: '290px' }}>
+    <div style={{ background: 'white', padding: '50px', borderRadius: 10, minHeight: '240px', maxHeight: '240px' }}>
       <LineChart style={{ marginLeft: '-2%', fontSize: '12pt' }} width={650} height={260} data={chartData}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="paymentDate" />
@@ -115,7 +115,7 @@ const Payments: React.FC<{ activeCompany }> = ({ ...props }) => {
         <StreakContainer style={{ width: '280px', height: '185px', marginLeft: '0%' }}>
           <div style={{ textAlign: 'center' }}>
             <img style={{ width: '30%', borderRadius: 10, marginTop: '10%' }} src={IconTax} />
-            <h1 style={{ marginTop: '-3%' }}>R${glanceData ? glanceData.taxes : ''}</h1>
+            <h1 style={{ marginTop: '-3%' }}>R${glanceData ? glanceData.taxes.toFixed(2) : ''}</h1>
             <p style={{ marginTop: '-8%' }}>Taxas</p>
           </div>
         </StreakContainer>
