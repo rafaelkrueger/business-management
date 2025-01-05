@@ -14,6 +14,8 @@ import useActiveCompanies from '../../hooks/useActiveCompanies.ts';
 import Products from '../../components/products/index.tsx';
 import Employees from '../../components/employees/index.tsx';
 import Calendar from '../../components/calendar/index.tsx';
+import Command from '../../components/command/index.tsx';
+import CreateEnterpriseModal from '../../components/register-enterprise/index.tsx';
 
 const Dashboard: React.FC = () => {
   const [companies, setCompanies] = useState([]);
@@ -21,6 +23,7 @@ const Dashboard: React.FC = () => {
   const [token, setToken] = useLocalStorage('accessToken', null);
   const { activeModuleName, activateModule } = useActiveModule(modules);
   const { activeCompany, changeActiveCompany } = useActiveCompanies(companies);
+  const [hasNoCompanies, setHasNoCompanies] = useState(false);
 
   const { userData, setUserData } = useUser();
 
@@ -31,9 +34,11 @@ const Dashboard: React.FC = () => {
     }
   }, [token]);
 
-
   return (
     <DashboardContainer>
+      {userData._id && hasNoCompanies && (
+       <CreateEnterpriseModal userData={userData} isOpen={hasNoCompanies} onClose={()=>{setHasNoCompanies(false)}}/>
+      )}
       {window.outerWidth > 600 ? '' : (
         <DashboardContainerIcon onClick={() => setIsMenuActive(!isMenuActive)} />
       )}
@@ -47,6 +52,8 @@ const Dashboard: React.FC = () => {
           setActiveCompany={changeActiveCompany}
           companies={companies}
           setCompanies={setCompanies}
+          setHasNoCompanies={setHasNoCompanies}
+          hasNoCompanies={hasNoCompanies}
           />
       )}
       {isMenuActive && window.outerWidth < 600 ? '' : (
@@ -57,6 +64,7 @@ const Dashboard: React.FC = () => {
           {activeModuleName === 'Clientes' && <Customers activeCompany={activeCompany} />}
           {activeModuleName === 'Funcionários' && <Employees activeCompany={activeCompany} />}
           {activeModuleName === 'Calendário' && <Calendar activeCompany={activeCompany} userData={userData}/>}
+          {activeModuleName === 'Comandas' && <Command />}
         </DashboardContainerShowed>
       )}
     </DashboardContainer>

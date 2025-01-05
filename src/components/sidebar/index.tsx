@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { SidebarContainer, SidebarContainerBody, SidebarContainerBodyElement, SidebarContainerBodyElementContainer, SidebarContainerBodyElementIcon, SidebarContainerFooter, SidebarContainerHeader, SidebarContainerHeaderProfile, SidebarContainerHeaderProfileName } from './styles.ts';
 import UserNoImage from '../../images/user.png'
+import { CiCreditCard1 } from "react-icons/ci";
 import { IoIosHome } from "react-icons/io";
 import { FaMoneyBill } from "react-icons/fa";
 import { RiAdminLine } from "react-icons/ri";
@@ -43,6 +44,11 @@ export const dashboardModules = [
     name:'Calendário',
     icon:<FaCalendar size={26} />,
   },
+  {
+    module:'',
+    name:'Comandas',
+    icon:<CiCreditCard1 size={26} />,
+  },
   //{
   //   module:'',
   //   name:'Chat',
@@ -72,9 +78,10 @@ const icons = {
   RiAdminLine: RiAdminLine,
   TiBusinessCard: TiBusinessCard,
   FaCalendar: FaCalendar,
+  CiCreditCard1: CiCreditCard1,
 };
 
-const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateModule, userData, setActiveCompany, companies, setCompanies }> = ({...props}) => {
+const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateModule, userData, setActiveCompany, companies, setCompanies, setHasNoCompanies, hasNoCompanies }> = ({...props}) => {
   const [modules, setModules] = useState([]);
 
   const options = props.companies.map((company) => ({
@@ -90,16 +97,23 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateMo
   useEffect(() => {
     if (props.userData._id) {
       HomeService.get(props.userData._id)
-        .then((res) => props.setCompanies(res.data))
+        .then((res) => {
+          props.setCompanies(res.data)
+          if(res.data.length === 0){
+            props.setHasNoCompanies(true);
+          }else{
+            props.activateModule('Home')
+          }
+        })
     }
-  }, [props.userData]);
+  }, [props.userData, props.hasNoCompanies]);
 
   useEffect(()=>{
-    if(props.activeCompany){
+    if(props.activeCompany && props.companies.length > 0){
       ModulesService.get(props.activeCompany)
       .then((res) => setModules(res.data))
     }
-  }, [props.activeCompany])
+  }, [props.activeCompany, props.companies])
 
   function SidebarContainerBodyElementIcon({ icon }) {
     console.log(icon);
@@ -143,7 +157,11 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateMo
       <SidebarContainerFooter>
         <SidebarContainerBodyElement style={{marginLeft:'3%'}}>Notificações</SidebarContainerBodyElement>
         <SidebarContainerBodyElement style={{marginLeft:'3%'}}>Configurações</SidebarContainerBodyElement>
-        <SidebarContainerBodyElement style={{marginLeft:'3%'}}>Logout</SidebarContainerBodyElement>
+        <SidebarContainerBodyElement style={{cursor:'pointer'}} onClick={()=>{
+          localStorage.removeItem('accessToken');
+          window.location.replace('/');
+         }}
+        style={{marginLeft:'3%'}}>Logout</SidebarContainerBodyElement>
       </SidebarContainerFooter>
     </SidebarContainer>
   );

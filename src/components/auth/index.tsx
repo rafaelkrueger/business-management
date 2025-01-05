@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { AuthContainer, AuthContainerElements, AuthContainerLeft, AuthContainerLeftButton, AuthContainerLeftForgotPassword, AuthContainerLeftForgotSignup, AuthContainerLeftInput, AuthContainerLeftLabelInput, AuthContainerLeftLabelPassword, AuthContainerLeftPassword, AuthContainerRight, AuthContainerRightImage, AuthContainerLeftForgotSignupLink, AuthContainerLeftLogo } from './styles.ts'
-import AuthCoverImage from '../../images/auth-cover.jpg';
+import AuthCoverImage from '../../images/improved_image.png';
 import LogoImage from '../../images/logo.png';
 import LogoImageResponsive from '../../images/logo-auth.jpeg';
 import { useMutation } from '@tanstack/react-query';
@@ -54,13 +54,13 @@ const Auth: React.FC = () => {
   const insertUser = () =>{
     setLoading(true)
     AllInOneService.create(user).then((res)=>{
-      if(res.data){
+      if(res.data && res.status === 201){
         setLoading(false);
         setToken(res.data);
-        navigate('/dashboard');
       }
     }).catch((err)=>{
       setLoading(false);
+      AlertAdapter(err, 'error')
       console.log(err)
     })
   }
@@ -89,7 +89,7 @@ const Auth: React.FC = () => {
           </AuthContainerLeftLabelPassword><AuthContainerLeftPassword  type="password" onChange={(e: { target: { value: any; }; }) => {
             setUser({ ...user, password: e.target.value });
           } } /><AuthContainerLeftButton onClick={getUser}>{loading?<LoadingIcon size={26}/>:'Entrar'}</AuthContainerLeftButton><div style={{ textAlign: 'center' }}>
-            {/* <AuthContainerLeftForgotSignup>Não tem uma conta ainda? <AuthContainerLeftForgotSignupLink onClick={()=>{setIsNewUser(!isNewUser)}}>Registre-se</AuthContainerLeftForgotSignupLink></AuthContainerLeftForgotSignup> */}
+            <AuthContainerLeftForgotSignup>Não tem uma conta ainda? <AuthContainerLeftForgotSignupLink onClick={()=>{setIsNewUser(!isNewUser)}}>Registre-se</AuthContainerLeftForgotSignupLink></AuthContainerLeftForgotSignup>
             <AuthContainerLeftForgotPassword>Esqueci minha senha</AuthContainerLeftForgotPassword>
           </div>
         </>
@@ -123,7 +123,7 @@ const Auth: React.FC = () => {
           <AuthContainerLeftPassword type="password" onChange={(e: { target: { value: any; }; }) => {
             setUser({ ...user, password: e.target.value });
           } } />
-          <div style={{display:'flex', marginTop:'1%'}}>
+          <div style={{display:'flex', marginTop:'1%',  justifyContent:'space-between', width:'100%'}}>
             <div style={{display:'flex', flexDirection:'column'}}>
               <AuthContainerLeftLabelPassword style={{marginTop:window.outerWidth > 600? '-15%': '-5%', marginBottom:window.outerWidth > 600? '0%': '2%'}}>
                     Dt. Nasc
@@ -140,7 +140,7 @@ const Auth: React.FC = () => {
                 Gênero
           </AuthContainerLeftLabelPassword>
           <select
-          style={{width:window.outerWidth > 600? '160%': '110%', height:window.outerWidth > 600? '70%': '60%', marginTop:window.outerWidth > 600? '0%': '4%'}}
+          style={{width:'100%', height:window.outerWidth > 600? '70%': '60%', marginTop:window.outerWidth > 600? '0%': '4%'}}
             value={user.gender}
             onChange={(e) => setUser({...user, gender:e.target.value})}
           >
@@ -164,7 +164,7 @@ const Auth: React.FC = () => {
       </AuthContainerElements>
       </AuthContainerLeft>
       <AuthContainerRight>
-        <AuthContainerRightImage src='https://plus.unsplash.com/premium_photo-1670315264879-59cc6b15db5f?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'/>
+        <AuthContainerRightImage src={AuthCoverImage}/>
       </AuthContainerRight>
     </AuthContainer>
   );

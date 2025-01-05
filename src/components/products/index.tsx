@@ -77,6 +77,7 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
                     </TrainContainerRecommendTrainerWideCard>
                 </div>
 
+                {/* First StreakContainer showing a BarChart */}
                 <StreakContainer style={{ boxShadow: '1px 1px 10px rgba(0,0,0,0.1)', background: 'white', width: '400px', marginRight: '-10px' }}>
                     <ResponsiveContainer style={{marginTop:'25px', marginLeft:'-20px'}} width="100%" height={320}>
                         <BarChart data={glanceData?.glanceStock}>
@@ -89,6 +90,7 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
                     </ResponsiveContainer>
                 </StreakContainer>
 
+                {/* Second StreakContainer showing a PieChart */}
                 <StreakContainer style={{ boxShadow: '1px 1px 10px rgba(0,0,0,0.1)', background: 'white', width: '400px', marginRight: '-10px' }}>
                     <ResponsiveContainer width="100%" height={230}>
                     <PieChart>

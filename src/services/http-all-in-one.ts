@@ -42,7 +42,7 @@ axiosInstance.interceptors.response.use(
 
 		if (error.response.status === 401) {
 			localStorage.removeItem('accessToken');
-			window.location.replace('/');
+			// window.location.replace('/');
 		}
 		// Any status codes that falls outside the range of 2xx cause this function to trigger
 		// Do something with response error

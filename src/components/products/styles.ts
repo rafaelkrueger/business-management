@@ -98,7 +98,7 @@ export const FormButton = styled.button`
   cursor: pointer; // Pointer cursor on hover
   font-size: 16px; // Font size
   transition: background-color 0.3s; // Transition effect
-  width: 100%;
+  width: 92%;
   margin-top:30px;
   margin-bottom:30px;
   &:hover {
