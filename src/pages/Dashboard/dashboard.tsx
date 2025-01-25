@@ -16,6 +16,8 @@ import Employees from '../../components/employees/index.tsx';
 import Calendar from '../../components/calendar/index.tsx';
 import Command from '../../components/command/index.tsx';
 import CreateEnterpriseModal from '../../components/register-enterprise/index.tsx';
+import Maintenance from '../../components/maintenence/index.tsx';
+import Config from '../../components/config/index.tsx';
 
 const Dashboard: React.FC = () => {
   const [companies, setCompanies] = useState([]);
@@ -58,6 +60,7 @@ const Dashboard: React.FC = () => {
       )}
       {isMenuActive && window.outerWidth < 600 ? '' : (
         <DashboardContainerShowed>
+          {/* <Maintenance/> */}
           {activeModuleName === 'Home' && <Home activeCompany={activeCompany} userData={userData} activateModule={activateModule} />}
           {activeModuleName === 'Pagamentos' && <Payments activeCompany={activeCompany} />}
           {activeModuleName === 'Produtos' && <Products activeCompany={activeCompany} />}
@@ -65,6 +68,7 @@ const Dashboard: React.FC = () => {
           {activeModuleName === 'Funcionários' && <Employees activeCompany={activeCompany} />}
           {activeModuleName === 'Calendário' && <Calendar activeCompany={activeCompany} userData={userData}/>}
           {activeModuleName === 'Comandas' && <Command />}
+          {activeModuleName === 'Config' && <Config userData={userData} activeCompany={activeCompany} />}
         </DashboardContainerShowed>
       )}
     </DashboardContainer>

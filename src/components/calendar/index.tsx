@@ -68,6 +68,7 @@ const Calendar: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
     return days;
   };
 
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (sidePanel && sidePanelRef.current && !sidePanelRef.current.contains(event.target as Node)) {

@@ -116,7 +116,6 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateMo
   }, [props.activeCompany, props.companies])
 
   function SidebarContainerBodyElementIcon({ icon }) {
-    console.log(icon);
     const iconName = icon.match(/<(\w+)/)?.[1];
     const IconComponent = icons[iconName];
 
@@ -156,12 +155,18 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateMo
       </SidebarContainerBody>
       <SidebarContainerFooter>
         <SidebarContainerBodyElement style={{marginLeft:'3%'}}>Notificações</SidebarContainerBodyElement>
-        <SidebarContainerBodyElement style={{marginLeft:'3%'}}>Configurações</SidebarContainerBodyElement>
-        <SidebarContainerBodyElement style={{cursor:'pointer'}} onClick={()=>{
+        <SidebarContainerBodyElement
+        onClick={()=>{
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          window.outerWidth < 600?props.setIsMenuActive(!props.isMenuActive):'';
+          props.activateModule('Config')
+          }}
+         style={{marginLeft:'3%'}}>Configurações</SidebarContainerBodyElement>
+        <SidebarContainerBodyElement onClick={()=>{
           localStorage.removeItem('accessToken');
           window.location.replace('/');
          }}
-        style={{marginLeft:'3%'}}>Logout</SidebarContainerBodyElement>
+        style={{marginLeft:'3%', cursor:'pointer'}}>Logout</SidebarContainerBodyElement>
       </SidebarContainerFooter>
     </SidebarContainer>
   );

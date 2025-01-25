@@ -51,6 +51,12 @@ const Auth: React.FC = () => {
     })
   }
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      getUser();
+    }
+  };
+
   const insertUser = () =>{
     setLoading(true)
     AllInOneService.create(user).then((res)=>{
@@ -74,7 +80,7 @@ const Auth: React.FC = () => {
 
   return (
     <AuthContainer>
-      <AuthContainerLeft>
+      <AuthContainerLeft onKeyDown={handleKeyPress}>
         <AuthContainerElements>
         {!isNewUser?
         <>

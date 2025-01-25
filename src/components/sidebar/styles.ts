@@ -110,4 +110,9 @@ export const SidebarContainerBodyElementIcon = styled.div`
     }
 `;
 
-export const SidebarContainerBodyElement = styled.p``;
+export const SidebarContainerBodyElement = styled.p`
+        &:hover {
+        cursor: pointer;
+    }
+
+`;

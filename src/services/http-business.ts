@@ -2,8 +2,11 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { getStorageValue } from '../hooks/useLocalStorage.ts';
 
+// http://roktune.duckdns.org:3005/
+// http://localhost:3005/
+
 const axiosInstance = axios.create({
-	baseURL: "http://localhost:3005",
+	baseURL: "http://localhost:3005/",
 	headers: {
 		'Content-type': 'application/json',
 		'Access-Control-Allow-Origin': '*',

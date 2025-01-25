@@ -5,9 +5,6 @@ import EnterpriseService from '../../services/enterprise.service.ts'
 ReactModal.setAppElement('#root');
 
 const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
-    useEffect(()=>{
-        console.log(userData);
-    },[])
 
   const [enterprise, setEnterprise] = useState({
     userId: userData._id,
@@ -50,9 +47,10 @@ const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
     <ReactModal
       isOpen={isOpen}
       onRequestClose={onClose}
-      contentLabel="Criar Nova Companhia"
+      contentLabel="Criar Nova Compania"
       style={{
         overlay: {
+          zIndex:'100',
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
         },
         content: {

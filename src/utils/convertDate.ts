@@ -10,4 +10,3 @@ const convertDate = (dateString: string) => {
 
   // Example usage
   const date = "2024-10-20T13:45:30Z";
-  console.log(convertDate(date)); // Output: "20/10/2024"
