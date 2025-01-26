@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ReactModal from 'react-modal';
 import EnterpriseService from '../../services/enterprise.service.ts'
+import { AlertAdapter } from '../../global.components.tsx';
 
 ReactModal.setAppElement('#root');
 
-const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
+export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
 
   const [enterprise, setEnterprise] = useState({
     userId: userData._id,
@@ -38,10 +39,25 @@ const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
   };
 
   const handleSubmit = () => {
-    EnterpriseService.post(enterprise)
-        .then((res) => onClose())
-        .catch((err) => console.log(err))
-    }
+    const formData = new FormData();
+
+    Object.entries(enterprise).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    });
+
+    EnterpriseService.post(formData)
+      .then((res) => {
+        AlertAdapter('Empresa criada com sucesso!', 'success');
+        onClose();
+      })
+      .catch((err) => {
+        console.error('Erro ao criar empresa:', err);
+        AlertAdapter('Erro ao criar empresa.', 'error');
+      });
+  };
+
 
   return (
     <ReactModal

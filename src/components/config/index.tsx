@@ -19,6 +19,7 @@ import EnterpriseService from "../../services/enterprise.service.ts";
 import { AlertAdapter } from "../../global.components.tsx";
 import ConfigService from "../../services/config.service.ts";
 import ModulesService from "../../services/modules.service.ts";
+import CreateEnterpriseModal from '../../components/register-enterprise/index.tsx'
 
 const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpdating }> = ({ ...props }) => {
   const user = props.userData;
@@ -26,6 +27,7 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
   const [availableModules, setAvailableModules] = useState();
   const [activeModules, setActiveModules] = useState();
   const [originalCompanyData, setOriginalCompanyData] = useState(null);
+  const [createCompany, setCreateCompany] = useState(false);
 
 
   const [formData, setFormData] = useState({
@@ -63,7 +65,7 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
 
   const [companyData, setCompanyData] = useState({
     companyName: "",
-    companyImage: null,
+    logo: null,
     document: "",
     modules: {
       finance: false,
@@ -117,27 +119,40 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
   const handleCompanyImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setCompanyData({ ...companyData, companyImage: URL.createObjectURL(file) });
+      setCompanyData((prev) => ({
+        ...prev,
+        logo: file,
+      }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedData = {
-      id: companyInformation?.id,
-      name: companyData.name || companyInformation?.name,
-      email: companyData.email || companyInformation?.email,
-      phone: companyData.phone || companyInformation?.phone,
-      document: companyData.document || companyInformation?.document,
-    };
 
     try {
-      await EnterpriseService.update(updatedData);
-      AlertAdapter('Informações da empresa foram atualizadas com sucesso!', 'success')
+      console.log(companyData);
+      const formData = new FormData();
+
+      formData.append("id", companyInformation?.id);
+      formData.append("name", companyData.name || companyInformation?.name);
+      formData.append("email", companyData.email || companyInformation?.email);
+      formData.append("phone", companyData.phone || companyInformation?.phone);
+      formData.append("document", companyData.document || companyInformation?.document);
+
+      if (companyData.logo instanceof File) {
+        formData.append("logo", companyData.logo);
+      }
+
+      await EnterpriseService.update(formData);
+
+      AlertAdapter("Informações da empresa foram atualizadas com sucesso!", "success");
     } catch (error) {
-      AlertAdapter('Erro ao atualizar!', 'error')
+      console.error("Erro ao atualizar:", error);
+      AlertAdapter("Erro ao atualizar!", "error");
     }
   };
+
+
 
   useEffect(() => {
     ConfigService.getActiveModules().then((res)=>{
@@ -155,6 +170,7 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
           email: res.data.email || "",
           phone: res.data.phone || "",
           document: res.data.document || "",
+          logo: res.data.logo || "",
           modules: res.data.modules || { finance: false, sales: false, inventory: false },
         };
 
@@ -244,12 +260,28 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
                 {/* Foto e Nome da Empresa */}
                 <Stack spacing={3} flex={1}>
                 <Stack direction="row" spacing={2} alignItems="center" sx={{ marginBottom: "25px" }}>
-                <Avatar src={companyData.companyImage} sx={{ width: 80, height: 80 }} />
-                <Button variant="outlined" component="label">
-                  Alterar Foto
-                  <input hidden accept="image/*" type="file" onChange={handleCompanyImageChange} />
-                </Button>
-              </Stack>
+                  {/* Mostra a pré-visualização ou a logo existente */}
+                  <Avatar src={companyData.previewLogo || companyData.logo || ""} sx={{ width: 80, height: 80 }} />
+                  <Button variant="outlined" component="label">
+                    Alterar Foto
+                    <input
+                      hidden
+                      accept="image/*"
+                      type="file"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          const previewUrl = URL.createObjectURL(file); // Gera uma URL temporária para o arquivo
+                          setCompanyData((prev) => ({
+                            ...prev,
+                            logo: file, // Salva o arquivo real
+                            previewLogo: previewUrl, // Salva a URL para exibição no `Avatar`
+                          }));
+                        }
+                      }}
+                    />
+                  </Button>
+                </Stack>
               <Stack spacing={3}>
                 <TextField
                   label="Nome da Empresa"
@@ -295,6 +327,25 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
               <Box mt={3}>
                 <Button type="submit" variant="contained" color="primary" fullWidth>
                   Salvar
+                </Button>
+              <Button
+                  onClick={() => {
+                    setCreateCompany(true)
+                  }}
+                  variant="contained"
+                  fullWidth
+                  sx={{
+                    backgroundColor: 'white',
+                    marginTop:'15px',
+                    color:'rgb(25, 118, 210)',
+                    border:'1px rgb(25, 118, 210) solid',
+                    '&:hover': {
+                      backgroundColor: 'rgb(25, 118, 210)',
+                      color:'white',
+                    },
+                  }}
+                >
+                  Resetar Senha
                 </Button>
               </Box>
 
@@ -355,7 +406,14 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
 
                 <Box mt={3} sx={{display:'flex', justifyContent:'space-between'}}>
                 <Button
-                  sx={{marginRight:'4px'}}
+                  sx={{
+                    marginLeft: '4px',
+                    '&:hover': {
+                      backgroundColor: 'white',
+                      color:'blue',
+                      border:'1px blue solid'
+                    },
+                  }}
                     onClick={() => {
                       // Prepara os dados para o PATCH
                       const modulesPayload = availableModules?.map((module) => ({
@@ -365,8 +423,6 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
                         isActive: companyData.modules[module.key] ?? false,
                         companyId: props.activeCompany
                       }));
-
-                      // Envia os dados para o endpoint
                       ModulesService.patch(modulesPayload)
                         .then(() => {
                           AlertAdapter("Módulos atualizados com sucesso!", "success");
@@ -384,12 +440,13 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
                     Salvar
                   </Button>
                   <Button
+                  color="primary"
                   sx={{
                     marginLeft: '4px',
-                    backgroundColor: 'gray',
-                    color: 'white',
                     '&:hover': {
-                      backgroundColor: 'darkgray',
+                      backgroundColor: 'white',
+                      color:'rgb(25, 118, 210)',
+                      border:'1px rgb(25, 118, 210) solid'
                     },
                   }}
                   onClick={() => {
@@ -405,11 +462,30 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
                   Cancelar
                 </Button>
                 </Box>
+                <Button
+                  onClick={() => {
+                    setCreateCompany(true)
+                  }}
+                  variant="contained"
+                  fullWidth
+                  sx={{
+                    backgroundColor: 'white',
+                    color:'rgb(25, 118, 210)',
+                    border:'1px rgb(25, 118, 210) solid',
+                    '&:hover': {
+                      backgroundColor: 'rgb(25, 118, 210)',
+                      color:'white',
+                    },
+                  }}
+                >
+                  Nova Empresa +
+                </Button>
               </Stack>
 
               </Stack>
             </form>
           </CardContent>
+          <CreateEnterpriseModal userData={props.userData} isOpen={createCompany} onClose={()=>{setCreateCompany(false); props.setModulesUpdating(!props.modulesUpdating);}}/>
         </Card>
       </Box>
     </>

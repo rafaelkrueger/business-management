@@ -106,7 +106,7 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateMo
           }
         })
     }
-  }, [props.userData, props.hasNoCompanies]);
+  }, [props.userData, props.hasNoCompanies, props.modulesUpdating]);
 
   useEffect(()=>{
     if(props.activeCompany && props.companies.length > 0){
