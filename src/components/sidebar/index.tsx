@@ -81,7 +81,7 @@ const icons = {
   CiCreditCard1: CiCreditCard1,
 };
 
-const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateModule, userData, setActiveCompany, companies, setCompanies, setHasNoCompanies, hasNoCompanies }> = ({...props}) => {
+const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateModule, userData, setActiveCompany, companies, setCompanies, setHasNoCompanies, hasNoCompanies, modulesUpdating }> = ({...props}) => {
   const [modules, setModules] = useState([]);
 
   const options = props.companies.map((company) => ({
@@ -102,7 +102,7 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateMo
           if(res.data.length === 0){
             props.setHasNoCompanies(true);
           }else{
-            props.activateModule('Home')
+            props.activateModule('Config')
           }
         })
     }
@@ -113,7 +113,7 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive:any, activateMo
       ModulesService.get(props.activeCompany)
       .then((res) => setModules(res.data))
     }
-  }, [props.activeCompany, props.companies])
+  }, [props.activeCompany, props.companies, props.modulesUpdating])
 
   function SidebarContainerBodyElementIcon({ icon }) {
     const iconName = icon.match(/<(\w+)/)?.[1];

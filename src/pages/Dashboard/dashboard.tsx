@@ -26,6 +26,7 @@ const Dashboard: React.FC = () => {
   const { activeModuleName, activateModule } = useActiveModule(modules);
   const { activeCompany, changeActiveCompany } = useActiveCompanies(companies);
   const [hasNoCompanies, setHasNoCompanies] = useState(false);
+  const [modulesUpdating, setModulesUpdating] = useState(false);
 
   const { userData, setUserData } = useUser();
 
@@ -56,6 +57,7 @@ const Dashboard: React.FC = () => {
           setCompanies={setCompanies}
           setHasNoCompanies={setHasNoCompanies}
           hasNoCompanies={hasNoCompanies}
+          modulesUpdating={modulesUpdating}
           />
       )}
       {isMenuActive && window.outerWidth < 600 ? '' : (
@@ -68,7 +70,7 @@ const Dashboard: React.FC = () => {
           {activeModuleName === 'Funcionários' && <Employees activeCompany={activeCompany} />}
           {activeModuleName === 'Calendário' && <Calendar activeCompany={activeCompany} userData={userData}/>}
           {activeModuleName === 'Comandas' && <Command />}
-          {activeModuleName === 'Config' && <Config userData={userData} activeCompany={activeCompany} />}
+          {activeModuleName === 'Config' && <Config userData={userData} activeCompany={activeCompany} modulesUpdating={modulesUpdating} setModulesUpdating={setModulesUpdating} />}
         </DashboardContainerShowed>
       )}
     </DashboardContainer>

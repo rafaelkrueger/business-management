@@ -20,11 +20,13 @@ import { AlertAdapter } from "../../global.components.tsx";
 import ConfigService from "../../services/config.service.ts";
 import ModulesService from "../../services/modules.service.ts";
 
-const Config: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
+const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpdating }> = ({ ...props }) => {
   const user = props.userData;
   const [companyInformation, setCompanyInformation] = useState();
   const [availableModules, setAvailableModules] = useState();
   const [activeModules, setActiveModules] = useState();
+  const [originalCompanyData, setOriginalCompanyData] = useState(null);
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -45,6 +47,19 @@ const Config: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
     "Loja de Roupas",
     "Academia",
   ];
+
+  const establishmentModules = {
+    Restaurante: ["Home", "Pagamentos", "Produtos", "Funcionários", "Comandas", "Clientes"],
+    Supermercado: ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes"],
+    Salão: ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes", "Calendário"],
+    Hospital: ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes"],
+    Farmácia: ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes"],
+    Escola: ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes"],
+    Clínica: ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes", "Calendário"],
+    "Loja de Roupas": ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes"],
+    Academia: ["Home", "Pagamentos", "Funcionários", "Clientes", "Calendário"],
+  };
+
 
   const [companyData, setCompanyData] = useState({
     companyName: "",
@@ -73,6 +88,31 @@ const Config: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
       setCompanyData({ ...companyData, [name]: value });
     }
   };
+
+  const handleEstablishmentChange = (event, newValue) => {
+    setSelectedEstablishment(newValue);
+
+    if (newValue) {
+      const selectedModules = establishmentModules[newValue] || [];
+
+      // Garante que `prev.modules` exista e contenha os módulos disponíveis
+      setCompanyData((prev) => ({
+        ...prev,
+        modules: {
+          ...availableModules?.reduce(
+            (acc, module) => ({
+              ...acc,
+              [module.key]: false, // Reseta todos os módulos como `false`
+            }),
+            {}
+          ),
+          ...Object.fromEntries(selectedModules.map((key) => [key, true])), // Ativa os módulos do estabelecimento selecionado
+        },
+      }));
+    }
+  };
+
+
 
   const handleCompanyImageChange = (e) => {
     const file = e.target.files[0];
@@ -105,22 +145,39 @@ const Config: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
     })
     ModulesService.get(props.activeCompany).then((res)=>{
       setActiveModules(res.data)
-      console.log(res.data)
     })
     if (props.activeCompany) {
       EnterpriseService.get(props.activeCompany).then((res) => {
         setCompanyInformation(res.data);
 
-        setCompanyData({
+        const initialData = {
           name: res.data.name || "",
           email: res.data.email || "",
           phone: res.data.phone || "",
           document: res.data.document || "",
           modules: res.data.modules || { finance: false, sales: false, inventory: false },
-        });
+        };
+
+        setCompanyData(initialData);
+        setOriginalCompanyData(initialData); // Salva os dados originais
       });
     }
   }, [props.activeCompany]);
+
+  useEffect(() => {
+    if (activeModules?.length > 0 && availableModules?.length > 0) {
+      const initialModulesState = {};
+      availableModules?.forEach((module) => {
+        const isActive = activeModules?.some((activeModule) => activeModule.name === module.name);
+        initialModulesState[module.key] = isActive;
+      });
+
+      setCompanyData((prev) => ({
+        ...prev,
+        modules: initialModulesState,
+      }));
+    }
+  }, [activeModules, availableModules]);
 
   return (
     <>
@@ -155,6 +212,9 @@ const Config: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
                   value={user.name}
                   onChange={handleChange}
                   fullWidth
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
 
                 {/* E-mail */}
@@ -165,6 +225,9 @@ const Config: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
                   value={user.email}
                   onChange={handleChange}
                   fullWidth
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
 
                 <Divider />
@@ -244,19 +307,20 @@ const Config: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
                 <Typography variant="h6">Módulos Ativos</Typography>
 
                 <Autocomplete
-                  options={establishmentOptions}
-                  value={selectedEstablishment}
-                  onChange={(event, newValue) => setSelectedEstablishment(newValue)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Estabelecimento"
-                      placeholder="Digite para pesquisar..."
-                      variant="outlined"
-                    />
-                  )}
-                  sx={{ mt: 2 }}
-                />
+                options={establishmentOptions}
+                value={selectedEstablishment}
+                onChange={handleEstablishmentChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Estabelecimento"
+                    placeholder="Digite para pesquisar..."
+                    variant="outlined"
+                  />
+                )}
+                sx={{ mt: 2 }}
+              />
+
 
                 <Box
                   sx={{
@@ -264,16 +328,14 @@ const Config: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
                     height: "290px",
                     overflowY: "auto",
                     paddingRight: 2,
-                    display:'flex',
-                    flexDirection:'column'
+                    display: "flex",
+                    flexDirection: "column",
                   }}
                 >
                   {availableModules?.map((module) => {
-                    // Se o módulo estiver em activeModules, ele será marcado
+                    // Define o estado inicial da checkbox com base nos módulos ativos
                     const isActive = activeModules?.some((activeModule) => activeModule.name === module.name);
-                    const isChecked = companyData.modules[module.key] !== undefined
-                      ? companyData.modules[module.key]
-                      : isActive;
+                    const isChecked = companyData.modules[module.key] ?? isActive ?? false;
 
                     return (
                       <FormControlLabel
@@ -290,12 +352,59 @@ const Config: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
                     );
                   })}
                 </Box>
-                <Box mt={3}>
-                <Button type="submit" variant="contained" color="primary" fullWidth>
-                  Salvar Módulos
-                </Button>
-              </Box>
 
+                <Box mt={3} sx={{display:'flex', justifyContent:'space-between'}}>
+                <Button
+                  sx={{marginRight:'4px'}}
+                    onClick={() => {
+                      // Prepara os dados para o PATCH
+                      const modulesPayload = availableModules?.map((module) => ({
+                        id: module.id,
+                        key: module.key,
+                        name: module.name,
+                        isActive: companyData.modules[module.key] ?? false,
+                        companyId: props.activeCompany
+                      }));
+
+                      // Envia os dados para o endpoint
+                      ModulesService.patch(modulesPayload)
+                        .then(() => {
+                          AlertAdapter("Módulos atualizados com sucesso!", "success");
+                          props.setModulesUpdating(!props.modulesUpdating);
+                        })
+                        .catch((error) => {
+                          console.error("Erro ao atualizar os módulos:", error);
+                          AlertAdapter("Erro ao atualizar os módulos!", "error");
+                        });
+                    }}
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                  >
+                    Salvar
+                  </Button>
+                  <Button
+                  sx={{
+                    marginLeft: '4px',
+                    backgroundColor: 'gray',
+                    color: 'white',
+                    '&:hover': {
+                      backgroundColor: 'darkgray',
+                    },
+                  }}
+                  onClick={() => {
+                    if (originalCompanyData) {
+                      setCompanyData(originalCompanyData); // Restaura os dados salvos
+                      setSelectedEstablishment(null); // Limpa a seleção de estabelecimento
+                      AlertAdapter("Alterações canceladas.", "info");
+                    }
+                  }}
+                  variant="contained"
+                  fullWidth
+                >
+                  Cancelar
+                </Button>
+                </Box>
               </Stack>
 
               </Stack>
