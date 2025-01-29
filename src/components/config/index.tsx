@@ -325,13 +325,42 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
                 />
               </Stack>
               <Box mt={3}>
-                <Button type="submit" variant="contained" color="primary" fullWidth>
+                <Box sx={{display:'flex', justifyContent:'space-between'}}>
+                <Button
+                sx={{
+                  '&:hover': {
+                    backgroundColor: 'white',
+                    color:'rgb(25, 118, 210)',
+                    border:'1px rgb(25, 118, 210) solid'
+                  },
+                }}
+                type="submit" variant="contained" color="primary" fullWidth>
                   Salvar
                 </Button>
-              <Button
-                  onClick={() => {
-                    setCreateCompany(true)
+                  <Button
+                  color="primary"
+                  sx={{
+                    marginLeft: '4px',
+                    '&:hover': {
+                      backgroundColor: 'white',
+                      color:'rgb(25, 118, 210)',
+                      border:'1px rgb(25, 118, 210) solid'
+                    },
                   }}
+                  onClick={() => {
+                    if (originalCompanyData) {
+                      setCompanyData(originalCompanyData); // Restaura os dados salvos
+                      setSelectedEstablishment(null);
+                      AlertAdapter("Alterações canceladas.", "info");
+                    }
+                  }}
+                  variant="contained"
+                  fullWidth
+                >
+                  Cancelar
+                </Button>
+                </Box>
+              <Button
                   variant="contained"
                   fullWidth
                   sx={{
@@ -345,7 +374,7 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
                     },
                   }}
                 >
-                  Resetar Senha
+                  Desativar Empresa
                 </Button>
               </Box>
 

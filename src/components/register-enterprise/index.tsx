@@ -193,7 +193,7 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
             type="checkbox"
             id="active"
             name="active"
-            checked={enterprise.active}
+            checked={true}
             onChange={handleCheckboxChange}
           />
         </div>

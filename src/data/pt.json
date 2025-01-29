@@ -1,0 +1,28 @@
+{
+    "auth": {
+      "email": "Email",
+      "emailPlaceholder": "Digite seu email",
+      "password": "Senha",
+      "passwordPlaceholder": "Digite sua senha",
+      "signIn": "Entrar",
+      "signUp": "Cadastrar",
+      "name": "Nome",
+      "namePlaceholder": "Digite seu nome",
+      "cellphone": "Celular",
+      "cellphonePlaceholder": "Digite seu celular",
+      "birthDate": "Data de Nascimento",
+      "gender": "Gênero",
+      "select": "Selecione",
+      "noAccount": "Não tem uma conta?",
+      "alreadyAccount": "Já tem uma conta?",
+      "forgotPassword": "Esqueceu sua senha?"
+    },
+    "gender": {
+      "male": "Masculino",
+      "female": "Feminino",
+      "noOpinion": "Prefiro não opinar"
+    },
+    "error": {
+      "authError": "Erro ao autenticar"
+    }
+  }
