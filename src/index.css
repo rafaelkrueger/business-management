@@ -7,14 +7,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
 }
-@media (max-width:600px) {
+
+@media (max-width: 600px) {
   body {
-    overflow: auto; /* Prevent scrolling on both X and Y axes */
+    overflow: auto;
   }
   .swal2-toast-shown .swal2-container {
     margin-right: 0% !important;
   }
-
 }
 
 code {
@@ -22,90 +22,96 @@ code {
     monospace;
 }
 
-/**
-* Using CSS files to overwrite Swal classes
-*/
-
 .swal2-popup {
   max-height: 100px !important;
-  width: 690px !important;
+  width: 400px !important;
   background: none;
+  box-shadow: none !important;
 }
 
 .swal2-toast-shown .swal2-container {
-    width: 690px !important;
+    width: 400px !important;
     margin-right: 5%;
 }
 
 .swal2-popup.swal2-toast {
-    background: none;
-    box-shadow: none;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
 .swal2-popup.swal2-toast .swal2-html-container {
-  font-size: 1.3em;
+  font-size: 1.1em;
   font-family: 'Biotif';
+  color: #333;
 }
 
 .toast {
   display: flex;
   justify-content: space-between;
-  border-radius: 5px;
+  align-items: center;
+  border-radius: 8px;
   cursor: pointer;
   background-color: white;
+  padding: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
-@media (max-width:600px) {
-  .toast{
-    min-width: 50%;
-    max-width: 50%;
+
+@media (max-width: 600px) {
+  .toast {
+    min-width: 80%;
+    max-width: 80%;
   }
 }
 
 .toastLeftBorder {
   flex: 1;
-  max-width: 15px;
-  min-width: 15px;
-  border-radius: 4px 0px 0px 4px;
-}
-
-.toastLeftIcon {
-  display: flex;
-  margin-left: 15px;
-  margin-right: 15px;
-}
-
-.Icon {
-  align-self: center;
-  width: 25px;
-  height: 25px;
+  max-width: 10px;
+  min-width: 10px;
+  border-radius: 8px 0 0 8px;
 }
 
 .toastMainText {
   flex-grow: 1;
   text-align: left;
-  margin-left: 4%;
+  margin-left: 10px;
+  color: #333;
 }
 
 .toastRightBorder {
   flex: 1;
   align-self: center;
-  margin: 10px;
+  margin: 0 10px;
   max-width: 15px;
   min-width: 15px;
+  color: #666;
+  cursor: pointer;
 }
 
-.success {
-  background-color: #0B9500;
+/* Bordas coloridas à direita */
+.toast::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  border-radius: 0 8px 8px 0;
 }
 
-.error {
-  background-color: #FF0000;
+.success{
+  border-left: 5px #0B9500 solid;
 }
 
-.info {
-  background-color: #2DCAFC;
+.error{
+  border-left: 5px #FF0000 solid;
 }
 
-.warning {
-  background-color: #FCC42D;
+.warning{
+  border-left: 5px #0B9500 solid;
+}
+
+.info{
+  border-left: 5px #2DCAFC solid;
 }

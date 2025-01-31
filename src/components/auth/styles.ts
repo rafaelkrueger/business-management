@@ -78,6 +78,10 @@ export const AuthContainerLeftLabelInput = styled.label`
   color: #333333;
   font-weight: bold;
   font-size: 14px;
+  margin-top: -10px;
+  @media (max-width: 768px) {
+    margin-top: 0px;
+  }
 `;
 
 export const AuthContainerLeftInput = styled.input`
@@ -106,6 +110,10 @@ export const AuthContainerLeftLabelPassword = styled.label`
   color: #333333;
   font-weight: bold;
   font-size: 14px;
+  margin-top: -10px;
+  @media (max-width: 768px) {
+    margin-top: 0px;
+  }
 `;
 
 export const AuthContainerLeftPassword = styled.input`
@@ -219,3 +227,4 @@ export const LoadingIcon = styled(AiOutlineLoading3Quarters)`
   font-size: 1.5rem; /* Ajuste o tamanho do ícone se necessário */
   color: inherit; /* Usa a cor atual */
 `;
+

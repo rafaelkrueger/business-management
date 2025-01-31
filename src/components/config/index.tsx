@@ -13,6 +13,10 @@ import {
   Checkbox,
   FormControlLabel,
   Autocomplete,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import useActiveCompanies from "../../hooks/useActiveCompanies.ts";
 import EnterpriseService from "../../services/enterprise.service.ts";
@@ -20,6 +24,9 @@ import { AlertAdapter } from "../../global.components.tsx";
 import ConfigService from "../../services/config.service.ts";
 import ModulesService from "../../services/modules.service.ts";
 import CreateEnterpriseModal from '../../components/register-enterprise/index.tsx'
+import { useTranslation } from 'react-i18next';
+import { useSnackbar } from 'notistack';
+import { AllInOneApi } from "../../Api.ts";
 
 const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpdating }> = ({ ...props }) => {
   const user = props.userData;
@@ -28,6 +35,9 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
   const [activeModules, setActiveModules] = useState();
   const [originalCompanyData, setOriginalCompanyData] = useState(null);
   const [createCompany, setCreateCompany] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
+
 
 
   const [formData, setFormData] = useState({
@@ -39,27 +49,85 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
   const [selectedEstablishment, setSelectedEstablishment] = useState(null);
 
   const establishmentOptions = [
-    "Restaurante",
-    "Supermercado",
-    "Salão",
-    "Hospital",
-    "Farmácia",
-    "Escola",
-    "Clínica",
-    "Loja de Roupas",
-    "Academia",
+    t("config.establishmentOptions.restaurant"),
+    t("config.establishmentOptions.supermarket"),
+    t("config.establishmentOptions.salon"),
+    t("config.establishmentOptions.hospital"),
+    t("config.establishmentOptions.pharmacy"),
+    t("config.establishmentOptions.school"),
+    t("config.establishmentOptions.clinic"),
+    t("config.establishmentOptions.clothingStore"),
+    t("config.establishmentOptions.gym"),
   ];
 
+  // Traduzindo módulos por estabelecimento
   const establishmentModules = {
-    Restaurante: ["Home", "Pagamentos", "Produtos", "Funcionários", "Comandas", "Clientes"],
-    Supermercado: ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes"],
-    Salão: ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes", "Calendário"],
-    Hospital: ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes"],
-    Farmácia: ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes"],
-    Escola: ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes"],
-    Clínica: ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes", "Calendário"],
-    "Loja de Roupas": ["Home", "Pagamentos", "Produtos", "Funcionários", "Clientes"],
-    Academia: ["Home", "Pagamentos", "Funcionários", "Clientes", "Calendário"],
+    [t("config.establishmentOptions.restaurant")]: [
+      t("config.establishmentModules.home"),
+      t("config.establishmentModules.payments"),
+      t("config.establishmentModules.products"),
+      t("config.establishmentModules.employees"),
+      t("config.establishmentModules.orders"),
+      t("config.establishmentModules.customers"),
+    ],
+    [t("config.establishmentOptions.supermarket")]: [
+      t("config.establishmentModules.home"),
+      t("config.establishmentModules.payments"),
+      t("config.establishmentModules.products"),
+      t("config.establishmentModules.employees"),
+      t("config.establishmentModules.customers"),
+    ],
+    [t("config.establishmentOptions.salon")]: [
+      t("config.establishmentModules.home"),
+      t("config.establishmentModules.payments"),
+      t("config.establishmentModules.products"),
+      t("config.establishmentModules.employees"),
+      t("config.establishmentModules.customers"),
+      t("config.establishmentModules.calendar"),
+    ],
+    [t("config.establishmentOptions.hospital")]: [
+      t("config.establishmentModules.home"),
+      t("config.establishmentModules.payments"),
+      t("config.establishmentModules.products"),
+      t("config.establishmentModules.employees"),
+      t("config.establishmentModules.customers"),
+    ],
+    [t("config.establishmentOptions.pharmacy")]: [
+      t("config.establishmentModules.home"),
+      t("config.establishmentModules.payments"),
+      t("config.establishmentModules.products"),
+      t("config.establishmentModules.employees"),
+      t("config.establishmentModules.customers"),
+    ],
+    [t("config.establishmentOptions.school")]: [
+      t("config.establishmentModules.home"),
+      t("config.establishmentModules.payments"),
+      t("config.establishmentModules.products"),
+      t("config.establishmentModules.employees"),
+      t("config.establishmentModules.customers"),
+    ],
+    [t("config.establishmentOptions.clinic")]: [
+      t("config.establishmentModules.home"),
+      t("config.establishmentModules.payments"),
+      t("config.establishmentModules.products"),
+      t("config.establishmentModules.employees"),
+      t("config.establishmentModules.customers"),
+      t("config.establishmentModules.calendar"),
+    ],
+    [t("config.establishmentOptions.clothingStore")]: [
+      t("config.establishmentModules.home"),
+      t("config.establishmentModules.payments"),
+      t("config.establishmentModules.products"),
+      t("config.establishmentModules.employees"),
+      t("config.establishmentModules.customers"),
+    ],
+    [t("config.establishmentOptions.gym")]: [
+      t("config.establishmentModules.home"),
+      t("config.establishmentModules.payments"),
+      t("config.establishmentModules.employees"),
+      t("config.establishmentModules.customers"),
+      t("config.establishmentModules.calendar"),
+    ],
   };
 
 
@@ -92,28 +160,28 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
   };
 
   const handleEstablishmentChange = (event, newValue) => {
-    setSelectedEstablishment(newValue);
+    if (!newValue) {
+      setSelectedEstablishment(null);
+      setActiveModules([]);
+      return;
+    }
 
-    if (newValue) {
-      const selectedModules = establishmentModules[newValue] || [];
+    const translatedValue = establishmentOptions.find(
+      (option) => option === newValue
+    );
+    setSelectedEstablishment(translatedValue);
 
-      // Garante que `prev.modules` exista e contenha os módulos disponíveis
-      setCompanyData((prev) => ({
-        ...prev,
-        modules: {
-          ...availableModules?.reduce(
-            (acc, module) => ({
-              ...acc,
-              [module.key]: false, // Reseta todos os módulos como `false`
-            }),
-            {}
-          ),
-          ...Object.fromEntries(selectedModules.map((key) => [key, true])), // Ativa os módulos do estabelecimento selecionado
-        },
-      }));
+    if (translatedValue) {
+      const selectedModules = establishmentModules[translatedValue] || [];
+      const filteredModules = availableModules
+        .filter((module) => selectedModules.includes(t(`config.establishmentModules.${module.key}`)))
+        .map((module) => ({
+          ...module,
+          isActive: true,
+        }));
+      setActiveModules(filteredModules);
     }
   };
-
 
 
   const handleCompanyImageChange = (e) => {
@@ -130,9 +198,8 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
     e.preventDefault();
 
     try {
-      console.log(companyData);
       const formData = new FormData();
-
+      let imageUrl = '';
       formData.append("id", companyInformation?.id);
       formData.append("name", companyData.name || companyInformation?.name);
       formData.append("email", companyData.email || companyInformation?.email);
@@ -140,15 +207,23 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
       formData.append("document", companyData.document || companyInformation?.document);
 
       if (companyData.logo instanceof File) {
-        formData.append("logo", companyData.logo);
+        const formDataFile = new FormData();
+        formDataFile.append('path', 'logos');
+        formDataFile.append('file', companyData.logo);
+        const response = await AllInOneApi.post('shared/image', formDataFile, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'accept': '*/*',
+          },
+        });
+        imageUrl = response.data.url;
       }
-
+      formData.append("logo", imageUrl || companyData?.logo);
       await EnterpriseService.update(formData);
-
-      AlertAdapter("Informações da empresa foram atualizadas com sucesso!", "success");
+      props.setModulesUpdating(!props.modulesUpdating);
+      enqueueSnackbar(t("config.form.companyUpdatedSuccess"), { variant: "success" });
     } catch (error) {
-      console.error("Erro ao atualizar:", error);
-      AlertAdapter("Erro ao atualizar!", "error");
+      enqueueSnackbar(t("config.form.companyUpdateError"), { variant: "error" });
     }
   };
 
@@ -175,7 +250,7 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
         };
 
         setCompanyData(initialData);
-        setOriginalCompanyData(initialData); // Salva os dados originais
+        setOriginalCompanyData(initialData);
       });
     }
   }, [props.activeCompany]);
@@ -183,8 +258,13 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
   useEffect(() => {
     if (activeModules?.length > 0 && availableModules?.length > 0) {
       const initialModulesState = {};
+
       availableModules?.forEach((module) => {
-        const isActive = activeModules?.some((activeModule) => activeModule.name === module.name);
+        const isActive = activeModules?.some((activeModule) => {
+          if(module && activeModule){
+            return activeModule?.name === module.name;
+          }
+        });
         initialModulesState[module.key] = isActive;
       });
 
@@ -195,327 +275,326 @@ const Config: React.FC<{ activeCompany, userData, modulesUpdating, setModulesUpd
     }
   }, [activeModules, availableModules]);
 
+
   return (
     <>
-    <Typography sx={{fontSize:'24pt', marginLeft:'30px', marginTop:'50px'}}>Configurações Gerais</Typography>
-      <Box sx={{ padding: 4, display:'flex', width:'120%' }}>
-        <Card sx={{ maxWidth: 600, margin: "0 auto", padding: 2, marginBottom: 4, width:'400px', marginLeft:'0%', height:'550px' }}>
+        <Typography
+          sx={{
+            fontSize: '24pt',
+            marginLeft: '30px',
+            marginTop: { xs: '55px', md: '35px', lg: '25px' },
+          }}
+        >
+        {t(`config.title`)}
+      </Typography>
+      <Box sx={{ padding: 4, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+        <Card
+            sx={{
+              width: { xs: 300, md: 620, lg: 602 },
+              minWidth:300,
+              flex: 1,
+              padding: 2,
+              height: 'auto',
+            }}
+          >
           <CardContent>
             <form onSubmit={handleSubmit}>
-            <Stack direction="row" spacing={2} alignItems="center" sx={{marginBottom:'25px'}}>
-                    <Avatar
-                      src={companyData.companyImage}
-                      sx={{ width: 80, height: 80 }}
-                    />
-                    <Button
-                      variant="outlined"
-                      component="label"
-                    >
-                      Alterar Foto
+              <Stack direction="row" spacing={2} alignItems="center" sx={{ marginBottom: '25px' }}>
+                <Avatar src={companyData.companyImage} sx={{ width: 80, height: 80 }} />
+                <Button variant="outlined" component="label">
+                  {t("config.form.changePhoto")}
+                  <input hidden accept="image/*" type="file" onChange={handleCompanyImageChange} />
+                </Button>
+              </Stack>
+              <Stack spacing={3}>
+              <TextField
+                label={t("config.form.name")}
+                name="userName"
+                value={props.userData.name}
+                onChange={handleChange}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+
+              <TextField
+                label={t("config.form.email")}
+                name="userEmail"
+                type="email"
+                value={props.userData.email}
+                onChange={handleChange}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+
+              <Divider />
+
+              <TextField
+                label={t("config.form.phone")}
+                name="phone"
+                type="text"
+                value={props.userData.cellphone}
+                onChange={handleChange}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+
+              <TextField
+                label={t("config.form.document")}
+                name="document"
+                type="text"
+                value={props.userData.document}
+                onChange={handleChange}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+              <p style={{textAlign:'center', color:'rgba(0,0,0,0.45)'}}>{t('support')}</p>
+              </Stack>
+            </form>
+          </CardContent>
+        </Card>
+
+        {/* Card da Empresa */}
+        <Card sx={{ maxWidth: 600, flex: 2, minWidth: 300, padding: 2, height: 'auto' }}>
+          <CardContent>
+            <form onSubmit={handleSubmit}>
+              <Stack direction={{ xs: 'column-reverse', md: 'row' }} spacing={4} alignItems="flex-start">
+                {/* Informações da Empresa */}
+                <Stack spacing={3} flex={1} sx={{width:'100%'}}>
+                  <Stack direction="row" spacing={2} alignItems="center" sx={{ marginBottom: '25px' }}>
+                    <Avatar src={companyData.previewLogo || companyData.logo || ''} sx={{ width: 80, height: 80 }} />
+                    <Button variant="outlined" component="label">
+                      {t("config.form.changePhoto")}
                       <input
                         hidden
                         accept="image/*"
                         type="file"
-                        onChange={handleCompanyImageChange}
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const previewUrl = URL.createObjectURL(file);
+                            setCompanyData((prev) => ({
+                              ...prev,
+                              logo: file,
+                              previewLogo: previewUrl,
+                            }));
+                          }
+                        }}
                       />
                     </Button>
                   </Stack>
-              <Stack spacing={3}>
-                {/* Nome */}
-                <TextField
-                  label="Nome"
-                  name="userName"
-                  value={user.name}
-                  onChange={handleChange}
-                  fullWidth
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
+                  <TextField
+                    label={t("config.form.companyName")}
+                    name="name"
+                    value={companyData?.name}
+                    onChange={handleCompanyChange}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                  />
+                  <TextField
+                    label="Email"
+                    name="email"
+                    value={companyData.email}
+                    onChange={handleCompanyChange}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                  />
+                  <TextField
+                    label="Celular"
+                    name="phone"
+                    value={companyData.phone}
+                    onChange={handleCompanyChange}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                  />
+                  <TextField
+                    label={t("config.form.document")}
+                    name="document"
+                    value={companyData.document}
+                    onChange={handleCompanyChange}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                  />
+                  <Box mt={3}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: 'white',
+                            color: 'rgb(25, 118, 210)',
+                            border: '1px rgb(25, 118, 210) solid',
+                          },
+                        }}
+                      >
+                        {t("config.form.save")}
+                      </Button>
+                      <Button
+                        variant="contained"
+                        fullWidth
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: 'white',
+                            color: 'rgb(25, 118, 210)',
+                            border: '1px rgb(25, 118, 210) solid',
+                          },
+                        }}
+                        onClick={() => {
+                          if (originalCompanyData) {
+                            setCompanyData(originalCompanyData);
+                            setSelectedEstablishment(null);
+                            enqueueSnackbar(t('notification.canceled-modules'), { variant: 'info' });
+                          }
+                        }}
+                      >
+                        {t("config.form.cancel")}
+                      </Button>
+                    </Box>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      sx={{
+                        backgroundColor: 'white',
+                        marginTop: '15px',
+                        color: 'rgb(25, 118, 210)',
+                        border: '1px rgb(25, 118, 210) solid',
+                        '&:hover': {
+                          backgroundColor: 'rgb(25, 118, 210)',
+                          color: 'white',
+                        },
+                      }}
+                    >
+                      {t("config.form.disableCompany")}
+                    </Button>
+                  </Box>
+                </Stack>
 
-                {/* E-mail */}
-                <TextField
-                  label="E-mail"
-                  name="userEmail"
-                  type="email"
-                  value={user.email}
-                  onChange={handleChange}
-                  fullWidth
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
+                <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'block' } }} />
 
-                <Divider />
-              </Stack>
-            </form>
-          </CardContent>
-        </Card>
-
-
-        <Card sx={{ maxWidth: 600, margin: "0 auto", padding: 2, width:'700px', marginLeft:'-120px', height:'552px' }}>
-          <CardContent>
-            <form onSubmit={handleSubmit}>
-              <Stack direction="row" spacing={4} alignItems="flex-start">
-                {/* Foto e Nome da Empresa */}
-                <Stack spacing={3} flex={1}>
-                <Stack direction="row" spacing={2} alignItems="center" sx={{ marginBottom: "25px" }}>
-                  {/* Mostra a pré-visualização ou a logo existente */}
-                  <Avatar src={companyData.previewLogo || companyData.logo || ""} sx={{ width: 80, height: 80 }} />
-                  <Button variant="outlined" component="label">
-                    Alterar Foto
-                    <input
-                      hidden
-                      accept="image/*"
-                      type="file"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                          const previewUrl = URL.createObjectURL(file); // Gera uma URL temporária para o arquivo
-                          setCompanyData((prev) => ({
-                            ...prev,
-                            logo: file, // Salva o arquivo real
-                            previewLogo: previewUrl, // Salva a URL para exibição no `Avatar`
-                          }));
+                {/* Módulos Ativos */}
+                <Stack spacing={2} flex={1}  sx={{width:'100%'}}>
+                  <Typography variant="h6">{t("config.form.activeModules")}</Typography>
+                  <Autocomplete
+                    options={establishmentOptions}
+                    value={selectedEstablishment}
+                    onChange={handleEstablishmentChange}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label={t("config.form.establishment.label")}
+                        placeholder={t("config.form.establishment.placeholder")}
+                        variant="outlined"
+                      />
+                    )}
+                    sx={{ mt: 2 }}
+                  />
+                  <Box
+                    sx={{
+                      maxHeight: 1000,
+                      height: '290px',
+                      overflowY: 'auto',
+                      paddingRight: 2,
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    {availableModules?.map((module) => {
+                      const isActive = activeModules?.some((activeModule) => activeModule?.name === module ? module?.name : '');
+                      const isChecked =  companyData.modules[module.key] ?? isActive ?? false;
+                      const translatedModuleName = t(`config.establishmentModules.${module.key}`, module.name);
+                      return (
+                        <FormControlLabel
+                          key={module.id}
+                          control={
+                            <Checkbox
+                              checked={isChecked}
+                              onChange={(e) => handleCompanyChange(e, module.key)}
+                              name={module.key}
+                            />
+                          }
+                          label={translatedModuleName}
+                        />
+                      );
+                    })}
+                  </Box>
+                  <Box mt={3} sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      sx={{
+                        '&:hover': {
+                          backgroundColor: 'white',
+                          color: 'rgb(25, 118, 210)',
+                          border: '1px rgb(25, 118, 210) solid',
+                        },
+                      }}
+                      onClick={() => {
+                        const modulesPayload = availableModules?.map((module) => ({
+                          id: module.id,
+                          key: module.key,
+                          name: module.name,
+                          isActive: companyData.modules[module.key] ?? false,
+                          companyId: props.activeCompany,
+                        }));
+                        ModulesService.patch(modulesPayload)
+                          .then(() => {
+                            enqueueSnackbar(t('notification.updated-modules'), { variant: 'success' });
+                            props.setModulesUpdating(!props.modulesUpdating);
+                          })
+                          .catch((error) => {
+                            console.error("Erro ao atualizar os módulos:", error);
+                            enqueueSnackbar(t('notification.error-modules'), { variant: 'error' });
+                          });
+                      }}
+                    >
+                      {t("config.form.save")}
+                    </Button>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      sx={{
+                        '&:hover': {
+                          backgroundColor: 'white',
+                          color: 'rgb(25, 118, 210)',
+                          border: '1px rgb(25, 118, 210) solid',
+                        },
+                      }}
+                      onClick={() => {
+                        if (originalCompanyData) {
+                          setCompanyData(originalCompanyData);
+                          setSelectedEstablishment(null);
+                          enqueueSnackbar(t('notification.canceled-modules'), { variant: 'info' });
                         }
                       }}
-                    />
-                  </Button>
-                </Stack>
-              <Stack spacing={3}>
-                <TextField
-                  label="Nome da Empresa"
-                  name="name"
-                  value={companyData.name}
-                  onChange={handleCompanyChange}
-                  fullWidth
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-                <TextField
-                  label="Email"
-                  name="email"
-                  value={companyData.email}
-                  onChange={handleCompanyChange}
-                  fullWidth
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-                <TextField
-                  label="Celular"
-                  name="phone"
-                  value={companyData.phone}
-                  onChange={handleCompanyChange}
-                  fullWidth
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-                <TextField
-                  label="Documento"
-                  name="document"
-                  value={companyData.document}
-                  onChange={handleCompanyChange}
-                  fullWidth
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Stack>
-              <Box mt={3}>
-                <Box sx={{display:'flex', justifyContent:'space-between'}}>
-                <Button
-                sx={{
-                  '&:hover': {
-                    backgroundColor: 'white',
-                    color:'rgb(25, 118, 210)',
-                    border:'1px rgb(25, 118, 210) solid'
-                  },
-                }}
-                type="submit" variant="contained" color="primary" fullWidth>
-                  Salvar
-                </Button>
+                    >
+                      {t("config.form.cancel")}
+                    </Button>
+                  </Box>
                   <Button
-                  color="primary"
-                  sx={{
-                    marginLeft: '4px',
-                    '&:hover': {
-                      backgroundColor: 'white',
-                      color:'rgb(25, 118, 210)',
-                      border:'1px rgb(25, 118, 210) solid'
-                    },
-                  }}
-                  onClick={() => {
-                    if (originalCompanyData) {
-                      setCompanyData(originalCompanyData); // Restaura os dados salvos
-                      setSelectedEstablishment(null);
-                      AlertAdapter("Alterações canceladas.", "info");
-                    }
-                  }}
-                  variant="contained"
-                  fullWidth
-                >
-                  Cancelar
-                </Button>
-                </Box>
-              <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{
-                    backgroundColor: 'white',
-                    marginTop:'15px',
-                    color:'rgb(25, 118, 210)',
-                    border:'1px rgb(25, 118, 210) solid',
-                    '&:hover': {
-                      backgroundColor: 'rgb(25, 118, 210)',
-                      color:'white',
-                    },
-                  }}
-                >
-                  Desativar Empresa
-                </Button>
-              </Box>
-
-                </Stack>
-
-                <Divider orientation="vertical" flexItem />
-
-                {/* Gerenciamento de Módulos */}
-                <Stack spacing={2} flex={1}>
-                <Typography variant="h6">Módulos Ativos</Typography>
-
-                <Autocomplete
-                options={establishmentOptions}
-                value={selectedEstablishment}
-                onChange={handleEstablishmentChange}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Estabelecimento"
-                    placeholder="Digite para pesquisar..."
-                    variant="outlined"
-                  />
-                )}
-                sx={{ mt: 2 }}
-              />
-
-
-                <Box
-                  sx={{
-                    maxHeight: 1000,
-                    height: "290px",
-                    overflowY: "auto",
-                    paddingRight: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  {availableModules?.map((module) => {
-                    // Define o estado inicial da checkbox com base nos módulos ativos
-                    const isActive = activeModules?.some((activeModule) => activeModule.name === module.name);
-                    const isChecked = companyData.modules[module.key] ?? isActive ?? false;
-
-                    return (
-                      <FormControlLabel
-                        key={module.id}
-                        control={
-                          <Checkbox
-                            checked={isChecked}
-                            onChange={(e) => handleCompanyChange(e, module.key)}
-                            name={module.key}
-                          />
-                        }
-                        label={module.name}
-                      />
-                    );
-                  })}
-                </Box>
-
-                <Box mt={3} sx={{display:'flex', justifyContent:'space-between'}}>
-                <Button
-                  sx={{
-                    marginLeft: '4px',
-                    '&:hover': {
-                      backgroundColor: 'white',
-                      color:'blue',
-                      border:'1px blue solid'
-                    },
-                  }}
-                    onClick={() => {
-                      // Prepara os dados para o PATCH
-                      const modulesPayload = availableModules?.map((module) => ({
-                        id: module.id,
-                        key: module.key,
-                        name: module.name,
-                        isActive: companyData.modules[module.key] ?? false,
-                        companyId: props.activeCompany
-                      }));
-                      ModulesService.patch(modulesPayload)
-                        .then(() => {
-                          AlertAdapter("Módulos atualizados com sucesso!", "success");
-                          props.setModulesUpdating(!props.modulesUpdating);
-                        })
-                        .catch((error) => {
-                          console.error("Erro ao atualizar os módulos:", error);
-                          AlertAdapter("Erro ao atualizar os módulos!", "error");
-                        });
-                    }}
                     variant="contained"
-                    color="primary"
                     fullWidth
-                  >
-                    Salvar
-                  </Button>
-                  <Button
-                  color="primary"
-                  sx={{
-                    marginLeft: '4px',
-                    '&:hover': {
+                    sx={{
                       backgroundColor: 'white',
-                      color:'rgb(25, 118, 210)',
-                      border:'1px rgb(25, 118, 210) solid'
-                    },
-                  }}
-                  onClick={() => {
-                    if (originalCompanyData) {
-                      setCompanyData(originalCompanyData); // Restaura os dados salvos
-                      setSelectedEstablishment(null); // Limpa a seleção de estabelecimento
-                      AlertAdapter("Alterações canceladas.", "info");
-                    }
-                  }}
-                  variant="contained"
-                  fullWidth
-                >
-                  Cancelar
-                </Button>
-                </Box>
-                <Button
-                  onClick={() => {
-                    setCreateCompany(true)
-                  }}
-                  variant="contained"
-                  fullWidth
-                  sx={{
-                    backgroundColor: 'white',
-                    color:'rgb(25, 118, 210)',
-                    border:'1px rgb(25, 118, 210) solid',
-                    '&:hover': {
-                      backgroundColor: 'rgb(25, 118, 210)',
-                      color:'white',
-                    },
-                  }}
-                >
-                  Nova Empresa +
-                </Button>
-              </Stack>
-
+                      color: 'rgb(25, 118, 210)',
+                      border: '1px rgb(25, 118, 210) solid',
+                      '&:hover': {
+                        backgroundColor: 'rgb(25, 118, 210)',
+                        color: 'white',
+                      },
+                    }}
+                    onClick={() => enqueueSnackbar('New companies are eligible for the Plus plan.', { variant: 'info' })}
+                  >
+                    {t("config.form.newCompany")}
+                  </Button>
+                </Stack>
               </Stack>
             </form>
           </CardContent>
-          <CreateEnterpriseModal userData={props.userData} isOpen={createCompany} onClose={()=>{setCreateCompany(false); props.setModulesUpdating(!props.modulesUpdating);}}/>
         </Card>
+        <CreateEnterpriseModal userData={user} isOpen={createCompany} onClose={()=>{setCreateCompany(false)}}/>
       </Box>
     </>
   );

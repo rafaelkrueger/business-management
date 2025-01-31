@@ -24,5 +24,105 @@
     },
     "error": {
       "authError": "Erro ao autenticar"
+    },
+    "createEnterpriseModal": {
+      "title": "Criar Nova Companhia",
+      "logo": "Logo",
+      "logoPreviewAlt": "Preview da Logo",
+      "name": "Nome",
+      "namePlaceholder": "Nome da empresa",
+      "email": "Email",
+      "emailPlaceholder": "Email da empresa",
+      "phone": "Telefone",
+      "phonePlaceholder": "Telefone de contato",
+      "document": "Documento",
+      "documentPlaceholder": "Documento (opcional)",
+      "active": "Ativo",
+      "createButton": "Criar",
+      "infoMessage": "Para começar sua jornada, por favor crie sua primeira empresa para gerenciar",
+      "successMessage": "Empresa criada com sucesso!",
+      "errorMessage": "Erro ao criar empresa."
+    },
+    "messages": {
+      "companyUpdated": "Informações da empresa foram atualizadas com sucesso!",
+      "updateError": "Erro ao atualizar!",
+      "modulesUpdated": "Módulos atualizados com sucesso!",
+      "modulesUpdateError": "Erro ao atualizar os módulos!",
+      "changesCanceled": "Alterações canceladas."
+    },
+    "establishmentOptions": {
+      "restaurant": "Restaurante",
+      "supermarket": "Supermercado",
+      "salon": "Salão",
+      "hospital": "Hospital",
+      "pharmacy": "Farmácia",
+      "school": "Escola",
+      "clinic": "Clínica",
+      "clothingStore": "Loja de Roupas",
+      "gym": "Academia"
+    },
+    "establishmentModules": {
+      "home": "Home",
+      "payments": "Pagamentos",
+      "products": "Produtos",
+      "employees": "Funcionários",
+      "orders": "Comandas",
+      "customers": "Clientes",
+      "calendar": "Calendário"
+    },
+    "config": {
+      "title": "Configurações Gerais",
+      "form": {
+        "name": "Nome",
+        "email": "E-mail",
+        "phone": "Celular",
+        "document": "Documento",
+        "changePhoto": "Alterar Foto",
+        "save": "Salvar",
+        "cancel": "Cancelar",
+        "disableCompany": "Desativar Empresa",
+        "newCompany": "Nova Empresa +",
+        "companyName": "Nome da Empresa",
+        "activeModules": "Módulos Ativos",
+        "establishment": {
+          "label": "Estabelecimento",
+          "placeholder": "Digite para pesquisar..."
+        }
+      },
+      "messages": {
+        "companyUpdated": "Informações da empresa foram atualizadas com sucesso!",
+        "updateError": "Erro ao atualizar!",
+        "modulesUpdated": "Módulos atualizados com sucesso!",
+        "modulesUpdateError": "Erro ao atualizar os módulos!",
+        "changesCanceled": "Alterações canceladas."
+      },
+      "establishmentOptions": {
+        "restaurant": "Restaurante",
+        "supermarket": "Supermercado",
+        "salon": "Salão",
+        "hospital": "Hospital",
+        "pharmacy": "Farmácia",
+        "school": "Escola",
+        "clinic": "Clínica",
+        "clothingStore": "Loja de Roupas",
+        "gym": "Academia"
+      },
+      "establishmentModules": {
+        "home": "Home",
+        "payments": "Pagamentos",
+        "products": "Produtos",
+        "employees": "Funcionários",
+        "orders": "Comandas",
+        "customers": "Clientes",
+        "calendar": "Calendário"
+      }
+    },
+    "notifications":"Notificações",
+    "configurations":"Configurações",
+    "support": "Caso queira mudar suas informações ou resetar sua senha entre em contato com o suporte.",
+    "notification": {
+      "updated-modules": "Módulos atualizados com sucesso!",
+      "canceled-modules": "Atualização dos módulos cancelada.",
+      "error-modules": "Módulos não atualizados!"
     }
   }

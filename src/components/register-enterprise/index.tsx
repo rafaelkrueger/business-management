@@ -1,22 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import ReactModal from 'react-modal';
-import EnterpriseService from '../../services/enterprise.service.ts'
-import { AlertAdapter } from '../../global.components.tsx';
-
-ReactModal.setAppElement('#root');
+import React, { useState } from "react";
+import {
+  Modal,
+  Box,
+  TextField,
+  Button,
+  Checkbox,
+  Typography,
+  CircularProgress,
+  IconButton,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import EnterpriseService from "../../services/enterprise.service.ts";
+import { useSnackbar } from "notistack";
+import { useTranslation } from "react-i18next";
+import { AllInOneApi } from "../../Api.ts";
 
 export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
-
+  const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
   const [enterprise, setEnterprise] = useState({
     userId: userData._id,
-    logo: '',
-    name: '',
-    email: '',
-    phone: '',
-    document: '',
-    active: false,
+    logo: "",
+    name: "",
+    email: "",
+    phone: "",
+    document: "",
+    active: true,
   });
   const [logoPreview, setLogoPreview] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,186 +50,207 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
     setEnterprise({ ...enterprise, [name]: checked });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    let imageUrl = '';
     const formData = new FormData();
 
-    Object.entries(enterprise).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(enterprise)) {
       if (value !== undefined && value !== null) {
-        formData.append(key, value);
+        if (key === 'logo' && value) {
+          const formDataFile = new FormData();
+          formDataFile.append('path', 'logos');
+          formDataFile.append('file', value);
+
+          try {
+            const response = await AllInOneApi.post('shared/image', formDataFile, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                'accept': '*/*',
+              },
+            });
+            imageUrl = response.data.url;
+          } catch (error) {
+            console.error("Erro ao fazer upload da imagem:", error);
+            enqueueSnackbar(t("createEnterpriseModal.errorImageUpload"), {
+              variant: "error",
+            });
+            setIsLoading(false);
+            return;
+          }
+        } else {
+          formData.append(key, value);
+        }
       }
-    });
+    }
+
+    formData.append('logo', imageUrl);
+
+    console.log(formData);
 
     EnterpriseService.post(formData)
-      .then((res) => {
-        AlertAdapter('Empresa criada com sucesso!', 'success');
+      .then(() => {
+        enqueueSnackbar(t("createEnterpriseModal.successMessage"), {
+          variant: "success",
+        });
         onClose();
       })
       .catch((err) => {
-        console.error('Erro ao criar empresa:', err);
-        AlertAdapter('Erro ao criar empresa.', 'error');
-      });
+        console.error("Erro ao criar empresa:", err);
+        enqueueSnackbar(t("createEnterpriseModal.errorMessage"), {
+          variant: "error",
+        });
+      })
+      .finally(() => setIsLoading(false));
   };
 
 
   return (
-    <ReactModal
-      isOpen={isOpen}
-      onRequestClose={onClose}
-      contentLabel="Criar Nova Compania"
-      style={{
-        overlay: {
-          zIndex:'100',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        },
-        content: {
-          maxWidth: '500px',
-          margin: 'auto',
-          borderRadius: '10px',
-          padding: '20px',
-        },
-      }}
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+      aria-labelledby="create-enterprise-modal"
+      aria-describedby="modal-to-create-enterprise"
     >
-      <h2 style={{ marginBottom: '20px', textAlign: 'center' }}>Criar Nova Companhia</h2>
-    {logoPreview && (
-    <div style={{ marginTop: '10px', textAlign: 'center', }}>
-        <img
-        src={logoPreview}
-        alt="Preview da Logo"
-        style={{
-            maxWidth: '100%',
-            maxHeight: '150px',
-            border: '1px solid #ccc',
-            width:'40%'
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: { xs: "100%", sm: "90%", md: "500px" },
+          maxWidth: { xs: "300px", sm: "300px", md: "400px", lg: "400px" },
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          borderRadius: { xs: 0, sm: 2 },
+          p: 3,
+          maxHeight: "90vh",
+          overflowY: "auto",
         }}
-        />
-    </div>
-    )}
-      <form style={{ display: 'grid', gap: '15px' }}>
-        {/* Logo */}
-        <div>
-          <label htmlFor="logo" style={{ fontWeight: 'bold' }}>Logo</label>
-          <input
-            type="file"
-            id="logo"
-            name="logo"
-            accept="image/*"
-            onChange={handleFileChange}
-            style={{
-              width: '100%',
-              marginTop: '5px',
-            }}
-          />
-        </div>
+      >
+        {/* Cabeçalho */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
+          <Typography variant="h6" component="h2">
+            {t("createEnterpriseModal.title")}
+          </Typography>
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
 
-        {/* Nome */}
-        <div>
-          <label htmlFor="name" style={{ fontWeight: 'bold' }}>Nome</label>
-          <input
-            type="text"
-            id="name"
+        {/* Preview da Logo */}
+        {logoPreview && (
+          <Box sx={{ textAlign: "center", mb: 2 }}>
+            <img
+              src={logoPreview}
+              alt={t("createEnterpriseModal.logoPreviewAlt")}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "150px",
+                borderRadius: "8px",
+                border: "1px solid #ddd",
+              }}
+            />
+          </Box>
+        )}
+
+        {/* Formulário */}
+        <Box component="form" sx={{ display: "grid", gap: 2 }}>
+          {/* Input de Logo */}
+          <Button variant="outlined" component="label" fullWidth>
+            {t("createEnterpriseModal.logo")}
+            <input
+              type="file"
+              hidden
+              id="logo"
+              name="logo"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+          </Button>
+
+          {/* Nome */}
+          <TextField
+            label={t("createEnterpriseModal.name")}
             name="name"
             value={enterprise.name}
             onChange={handleChange}
-            placeholder="Nome da empresa"
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '5px',
-              marginTop: '5px',
-            }}
+            placeholder={t("createEnterpriseModal.namePlaceholder")}
+            fullWidth
           />
-        </div>
 
-        <div>
-          <label htmlFor="email" style={{ fontWeight: 'bold' }}>Email</label>
-          <input
-            type="email"
-            id="email"
+          {/* Email */}
+          <TextField
+            label={t("createEnterpriseModal.email")}
             name="email"
             value={enterprise.email}
             onChange={handleChange}
-            placeholder="Email da empresa"
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '5px',
-              marginTop: '5px',
-            }}
+            placeholder={t("createEnterpriseModal.emailPlaceholder")}
+            fullWidth
           />
-        </div>
 
-        <div>
-          <label htmlFor="phone" style={{ fontWeight: 'bold' }}>Telefone</label>
-          <input
-            type="text"
-            id="phone"
+          {/* Telefone */}
+          <TextField
+            label={t("createEnterpriseModal.phone")}
             name="phone"
             value={enterprise.phone}
             onChange={handleChange}
-            placeholder="Telefone de contato"
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '5px',
-              marginTop: '5px',
-            }}
+            placeholder={t("createEnterpriseModal.phonePlaceholder")}
+            fullWidth
           />
-        </div>
 
-        <div>
-          <label htmlFor="document" style={{ fontWeight: 'bold' }}>Documento</label>
-          <input
-            type="text"
-            id="document"
+          {/* Documento */}
+          <TextField
+            label={t("createEnterpriseModal.document")}
             name="document"
             value={enterprise.document}
             onChange={handleChange}
-            placeholder="Documento (opcional)"
-            style={{
-              width: '100%',
-              padding: '8px',
-              border: '1px solid #ccc',
-              borderRadius: '5px',
-              marginTop: '5px',
-            }}
+            placeholder={t("createEnterpriseModal.documentPlaceholder")}
+            fullWidth
           />
-        </div>
 
-        {/* Ativo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <label htmlFor="active" style={{ fontWeight: 'bold', marginBottom: '0' }}>Ativo</label>
-          <input
-            type="checkbox"
-            id="active"
-            name="active"
-            checked={true}
-            onChange={handleCheckboxChange}
-          />
-        </div>
+          {/* Ativo */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Checkbox
+              id="active"
+              name="active"
+              checked={enterprise.active}
+              onChange={handleCheckboxChange}
+            />
+            <Typography variant="body1">
+              {t("createEnterpriseModal.active")}
+            </Typography>
+          </Box>
 
-        {/* Botões */}
-        <div style={{ display: 'flex', flexDirection:'column', textAlign:'center', marginTop: '10px' }}>
-          <button
-            type="button"
+          {/* Botão de Enviar */}
+          <Button
+            variant="contained"
             onClick={handleSubmit}
-            style={{
-              backgroundColor: '#4caf50',
-              color: '#fff',
-              border: 'none',
-              padding: '10px 20px',
-              borderRadius: '5px',
-              cursor: 'pointer',
-            }}
+            disabled={isLoading}
+            fullWidth
+            sx={{ mt: 2 }}
           >
-            Criar
-          </button>
-          <p style={{fontSize:'9pt', color:'grey'}}>Para começar sua jornada, por favor crie sua primeira empresa para gerenciar</p>
-        </div>
-      </form>
-    </ReactModal>
+            {isLoading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              t("createEnterpriseModal.createButton")
+            )}
+          </Button>
+
+          {/* Mensagem Informativa */}
+          <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+            {t("createEnterpriseModal.infoMessage")}
+          </Typography>
+        </Box>
+      </Box>
+    </Modal>
   );
 };
 

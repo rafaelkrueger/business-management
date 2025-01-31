@@ -3,116 +3,114 @@ import styled from "styled-components";
 export const SidebarContainer = styled.div`
     display: flex;
     flex-direction: column;
-    background-color: #252525;
+    background: linear-gradient(180deg, #001f3f, #003366); /* Degradê azul marinho */
     color: white;
-    width: 20%;
-    min-height: 100%;
+    width: 220px;
+    min-width: 300px;
+    height: 100vh; /* Ocupa toda a altura da tela */
+    overflow: hidden;
     @media (max-width: 600px) {
         width: 100%;
-        height: auto;
-        min-height: 1000px;
+        height: 100%;
+        min-height: 892px;
+        max-height: 100%;
         position: static;
     }
-`;
-
-export const SidebarContainerHeader = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin: 10%;
-    margin-top: -10%;
-    border-bottom: 1px white solid;
-    @media (max-width: 600px) {
-        margin: 10%;
-    }
-`;
-
-export const SidebarContainerHeaderProfile = styled.img`
-    min-width: 30%;
-    max-width: 30%;
-    margin-top: 20%;
-    margin-left: 33%;
-    @media (max-width: 600px) {
-        margin-left: 28%;
-        margin-top: 0%;
-        min-width: 45%;
-    }
-`;
-
-export const SidebarContainerHeaderProfileName = styled.p`
-    text-align: center;
 `;
 
 export const SidebarContainerBody = styled.div`
     display: flex;
     flex-direction: column;
-    margin-left: 10%;
-    margin-top: -2%;
-    margin-bottom: 6%;
-    max-height: 350px;
+    flex-grow: 1;
+    padding-inline: 20px;
+    padding-block: 4px;
+    max-height: 100%;
     overflow-y: auto;
 
-    height: auto;
-
     ::-webkit-scrollbar {
-        width: 3px !important;
+        width: 8px;
     }
 
     ::-webkit-scrollbar-thumb {
-        background-color: grey !important;
-        border-radius: 5px !important;
+        background-color: white;
+        border-radius: 5px;
     }
 
     ::-webkit-scrollbar-track {
-        background: transparent !important;
+        background: transparent;
     }
 
-    scrollbar-width: thin !important;
-    scrollbar-color: grey transparent !important;
+    /* Para Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: white transparent;
+    @media (max-width: 600px) {
+        margin-left: -50px;
+    }
 `;
-
-
-
 
 
 export const SidebarContainerFooter = styled.div`
     display: flex;
     flex-direction: column;
-    margin-left: 10%;
-    border-top: 1px white solid;
-    margin-right: 15%;
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2); /* Fundo semi-transparente */
+    margin-top: auto; /* Garante que o footer fique sempre no final */
 `;
+
+
+
+export const SidebarContainerHeader = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2); /* Fundo semi-transparente */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+`;
+
+export const SidebarContainerHeaderProfile = styled.img`
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid #00a8ff; /* Borda azul clara */
+`;
+
+export const SidebarContainerHeaderProfileName = styled.p`
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: white; /* Azul claro */
+`;
+
 
 export const SidebarContainerBodyElementContainer = styled.div`
     display: flex;
-    margin-bottom: 5%;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+
     &:hover {
-        transition: 1s;
-        background-color: white;
-        color: black;
+        background: rgba(255, 255, 255, 0.1); /* Efeito hover suave */
+        transform: translateX(5px); /* Movimento sutil */
         cursor: pointer;
-    }
-    @media (max-width: 600px) {
-        border-top-right-radius: 10px;
-        border-bottom-right-radius: 10px;
-        width: 82%;
-        margin-left: -6%;
     }
 `;
 
 export const SidebarContainerBodyElementIcon = styled.div`
-    padding-left: 10px;
-    margin-top: 5%;
-    margin-right: 7%;
-    @media (max-width: 600px) {
-        margin-top: 5%;
-    }
+    margin-right: 10px;
+    color: #00a8ff; /* Azul claro */
 `;
 
 export const SidebarContainerBodyElement = styled.p`
-        &:hover {
+    margin: 0;
+    font-size: 1em;
+    color: white;
+    transition: color 0.3s ease;
+    &:hover {
         cursor: pointer;
+        color: #00a8ff; /* Azul claro no hover */
     }
-
 `;

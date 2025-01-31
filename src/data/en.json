@@ -24,5 +24,78 @@
     },
     "error": {
       "authError": "Authentication error"
+    },
+    "createEnterpriseModal": {
+      "title": "Create New Company",
+      "logo": "Logo",
+      "logoPreviewAlt": "Logo Preview",
+      "name": "Name",
+      "namePlaceholder": "Company name",
+      "email": "Email",
+      "emailPlaceholder": "Company email",
+      "phone": "Phone",
+      "phonePlaceholder": "Contact phone",
+      "document": "Document",
+      "documentPlaceholder": "Document (optional)",
+      "active": "Active",
+      "createButton": "Create",
+      "infoMessage": "To start your journey, please create your first company to manage",
+      "successMessage": "Company created successfully!",
+      "errorMessage": "Error creating company."
+    },
+    "config": {
+      "title": "General Settings",
+      "form": {
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "document": "Document",
+        "changePhoto": "Change Photo",
+        "save": "Save",
+        "cancel": "Cancel",
+        "disableCompany": "Disable Company",
+        "newCompany": "New Company +",
+        "companyName": "Company Name",
+        "activeModules": "Active Modules",
+        "establishment": {
+          "label": "Establishment",
+          "placeholder": "Type to search..."
+        }
+      },
+      "messages": {
+        "companyUpdated": "Company information updated successfully!",
+        "updateError": "Error updating!",
+        "modulesUpdated": "Modules updated successfully!",
+        "modulesUpdateError": "Error updating modules!",
+        "changesCanceled": "Changes canceled."
+      },
+      "establishmentOptions": {
+        "restaurant": "Restaurant",
+        "supermarket": "Supermarket",
+        "salon": "Salon",
+        "hospital": "Hospital",
+        "pharmacy": "Pharmacy",
+        "school": "School",
+        "clinic": "Clinic",
+        "clothingStore": "Clothing Store",
+        "gym": "Gym"
+      },
+      "establishmentModules": {
+        "home": "Home",
+        "payments": "Payments",
+        "products": "Products",
+        "employees": "Employees",
+        "orders": "Orders",
+        "customers": "Customers",
+        "calendar": "Calendar"
+      }
+    },
+    "notifications":"Notifications",
+    "configurations":"Configurations",
+    "support": "If you want to update your information or reset your password, please contact support.",
+    "notification":{
+      "updated-modules":"Modules updated successfully!",
+      "canceled-modules":"Updated modules canceled.",
+      "error-modules":"Modules not updated!"
     }
   }
