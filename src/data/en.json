@@ -245,7 +245,8 @@
       "noProducts":"There are no products added yet...",
       "searchProduct": "Search for a product...",
       "noAvailableProducts": "No products available to add",
-      "noImage": "No Image"
+      "noImage": "No Image",
+      "tooltipText": "Your current plan allows only one device to manage the orders at a time."
     },
     "maintenanceTitle": "System Under Maintenance",
     "maintenanceDescription": "Due to high user demand, we are performing maintenance to improve our services. Please try again later.",

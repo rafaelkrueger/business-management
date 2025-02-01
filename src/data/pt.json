@@ -272,7 +272,8 @@
       "consumedProducts":"Produtos Consumidos",
       "noProducts":"Não há produtos ainda...",
       "noAvailableProducts":"Não há produtos criados ainda. Crie na sessão de produtos",
-      "add":"+"
+      "add":"+",
+      "tooltipText":"Seu plano atual permite apenas um dispositivo gerenciar as comandas por vez."
     },
   "maintenanceTitle": "Sistema em Manutenção",
     "maintenanceDescription": "Devido à alta demanda de usuários, estamos realizando uma manutenção para melhorar nossos serviços. Por favor, tente novamente mais tarde.",

@@ -17,11 +17,12 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { Visibility, Add, Close, Delete, Edit, AddCircleOutline } from "@mui/icons-material";
+import { Visibility, Add, Close, Delete, Edit, AddCircleOutline, Info } from "@mui/icons-material";
 import { useTranslation } from 'react-i18next';
 import OrdersService from "../../services/orders.service.ts";
 import { useSnackbar } from "notistack";
 import ProductService from '../../services/product.service.ts';
+import Tippy from "@tippyjs/react";
 const initialComandas = [];
 
 const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCompany, userData }) => {
@@ -317,7 +318,7 @@ const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCom
               }}
             >
               {/* Imagem do Produto */}
-              {product.images && product.images[0] ? (
+              {product.images && product?.images[0] ? (
                 <img
                   src={product.images[0]}
                   alt={product.name}
@@ -523,9 +524,14 @@ const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCom
         },
       }}
     >
+      <div style={{display:'flex'}}>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: "bold", textAlign: { xs: "center", sm: "left" } }}>
         {t("orders.title")}
       </Typography>
+      <Tippy content={t('orders.tooltipText')} placement="right">
+          <Info size={20} style={{ marginLeft: '10px', cursor: 'pointer', marginTop:'1%' }} />
+      </Tippy>
+      </div>
       <Typography variant="subtitle1" gutterBottom sx={{ color: "#6c757d", textAlign: { xs: "center", sm: "left" } }}>
         {t("orders.description")}
       </Typography>
@@ -623,7 +629,7 @@ const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCom
       onClose={() => setOpenDrawer(false)}
       sx={{
         '& .MuiDrawer-paper': {
-          width: { xs: "90%", sm: '90%' },
+          width: { xs: "90%", sm: '90%', md:'25%' },
           p: 3,
           backgroundColor: "#f8f9fa",
         },
