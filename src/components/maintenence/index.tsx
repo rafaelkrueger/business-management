@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FaTools } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 // Styled-components for styling
 const MaintenanceContainer = styled.div`
@@ -41,19 +42,38 @@ const Footer = styled.footer`
   color: #666;
 `;
 
+const LanguageSwitcher = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+  button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: none;
+    background: #007bff;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 0.875rem;
+
+    &:hover {
+      background: #0056b3;
+    }
+  }
+`;
+
 const Maintenance: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <MaintenanceContainer>
       <IconWrapper>
         <FaTools />
       </IconWrapper>
-      <Title>Sistema em Manutenção</Title>
-      <Description>
-        Devido à alta demanda de usuários, estamos realizando uma manutenção para melhorar nossos serviços. Por favor, tente novamente mais tarde.
-      </Description>
-      <Footer>
-        Agradecemos a sua paciência e compreensão. &copy; {new Date().getFullYear()} Roktune.
-      </Footer>
+      <Title>{t('maintenanceTitle')}</Title>
+      <Description>{t('maintenanceDescription')}</Description>
+      <Footer>{t('footerText', { year: new Date().getFullYear() })}</Footer>
     </MaintenanceContainer>
   );
 };

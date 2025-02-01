@@ -1,4 +1,5 @@
 import React, { useState, forwardRef } from "react";
+import { useTranslation } from 'react-i18next';
 import { AlertAdapter } from '../../global.components.tsx';
 import {
   EventContainer,
@@ -14,6 +15,7 @@ import {
   SidePanelContainer
 } from "./styles.ts";
 import CalendarService from "../../services/calendar.service.ts";
+import { useSnackbar } from "notistack";
 
 interface SidePanelProps {
   isOpen: boolean;
@@ -22,7 +24,7 @@ interface SidePanelProps {
   events: {
     participantsId: any;
     id: string; date: Date; title: string; description?: string; user?: string; startTime?: string; endTime?: string;
-}[];
+  }[];
   activeCompany: string;
   userData: any;
   onCreateEvent: (event: { date: Date | null; title: string; description?: string; user?: string; startTime: Date; endTime: Date }) => void;
@@ -31,14 +33,17 @@ interface SidePanelProps {
 
 const SidePanel = forwardRef<HTMLDivElement, SidePanelProps>(
   ({ isOpen, handleSidePanel, selectedDate, events, onCreateEvent, activeCompany, userData, employees }, ref) => {
+    const { t } = useTranslation();  // Hook para tradução
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [eventTitle, setEventTitle] = useState('');
     const [eventDescription, setEventDescription] = useState('');
     const [eventStartTime, setEventStartTime] = useState('');
+    const { enqueueSnackbar } = useSnackbar();
     const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
     const [eventEndTime, setEventEndTime] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedEmployees, setSelectedEmployees] = useState<any[]>([]);
+
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = selectedDate ? selectedDate.toLocaleDateString('pt-BR', options) : '';
 
@@ -66,16 +71,16 @@ const SidePanel = forwardRef<HTMLDivElement, SidePanelProps>(
       };
 
       onCreateEvent(newEvent);
-      // Reset form fields
+
       setEventTitle('');
       setEventDescription('');
       setEventStartTime('');
       setEventEndTime('');
       setIsFormVisible(false);
       setSelectedEmployees([]);
-      setSearchTerm(''); // Reset search term
+      setSearchTerm('');
       handleSidePanel();
-      AlertAdapter('Evento Criado!', 'success');
+      enqueueSnackbar(t('sidepanel.eventCreated'), { variant: 'success' })
     };
 
     const handleAddEmployee = (employeeId: string) => {
@@ -93,40 +98,66 @@ const SidePanel = forwardRef<HTMLDivElement, SidePanelProps>(
     };
 
     const filteredEmployees = Array.isArray(employees)
-    ? employees.filter((employee: any) =>
-        employee.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
-
+      ? employees.filter((employee: any) =>
+          employee.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : [];
 
     return (
       <SidePanelContainer ref={ref} isOpen={isOpen}>
-        <div style={{ marginLeft: '300px' }}>
-          <button
-            style={{
-              backgroundColor: '#5a86b5',
-              color: 'white',
-              border: 'none',
-              padding: '10px 20px',
-              textAlign: 'center',
-              textDecoration: 'none',
-              display: 'inline-block',
-              fontSize: '16px',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              width: '130px',
-              marginLeft: '-30%',
-            }}
-            onClick={handleCreateEventClick}
-          >
-            {!isFormVisible ? 'Criar Evento' : 'Voltar'}
-          </button>
-        </div>
+<div
+  style={{
+    marginLeft: window.innerWidth > 600 ? '300px' : '0',
+    width: window.innerWidth > 600 ? 'unset' : '100%',
+    display: 'flex',
+    flexDirection:'row-reverse',
+    justifyContent: window.innerWidth > 600 ? 'flex-start' : 'space-between',
+    padding: window.innerWidth < 600 ? '0 10px' : '0',
+  }}
+>
+  <button
+    style={{
+      backgroundColor: '#5a86b5',
+      color: 'white',
+      border: 'none',
+      padding: '10px 20px',
+      textAlign: 'center',
+      textDecoration: 'none',
+      fontSize: '16px',
+      borderRadius: '5px',
+      cursor: 'pointer',
+      width: '130px',
+      marginLeft: window.innerWidth > 600 ? '-30%' : '-4%',
+    }}
+    onClick={handleCreateEventClick}
+  >
+    {!isFormVisible ? t('sidepanel.createEvent') : t('sidepanel.back')}
+  </button>
+
+    {window.innerWidth < 600 && (
+    <button
+      style={{
+        background: 'none',
+        color: 'black',
+        border: 'none',
+        padding: '0',
+        fontSize: '24px',
+        cursor: 'pointer',
+        lineHeight: '1',
+        marginRight:'30px',
+      }}
+      onClick={handleSidePanel}
+    >
+      X
+    </button>
+  )}
+  </div>
+
 
         {isFormVisible ? (
           <FormContainer onSubmit={handleFormSubmit}>
             <FormLabel>
-              Título:
+              {t('sidepanel.title')}:
               <FormInput
                 maxLength={15}
                 type="text"
@@ -136,7 +167,7 @@ const SidePanel = forwardRef<HTMLDivElement, SidePanelProps>(
               />
             </FormLabel>
             <FormLabel>
-              Descrição:
+              {t('sidepanel.description')}:
               <FormInput
                 as="textarea"
                 maxLength={40}
@@ -147,7 +178,7 @@ const SidePanel = forwardRef<HTMLDivElement, SidePanelProps>(
               />
             </FormLabel>
             <FormLabel>
-              Funcionários:
+              {t('sidepanel.employees')}:
               <FormInput
                 type="text"
                 style={{ width: '94%' }}
@@ -155,7 +186,7 @@ const SidePanel = forwardRef<HTMLDivElement, SidePanelProps>(
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
                 }}
-                placeholder="Digite o nome do funcionário"
+                placeholder={t('sidepanel.searchEmployee')}
               />
               {searchTerm && (
                 <div style={{ border: '1px solid #ccc', borderRadius: '5px', maxHeight: '150px', overflowY: 'auto' }}>
@@ -173,37 +204,13 @@ const SidePanel = forwardRef<HTMLDivElement, SidePanelProps>(
                       </div>
                     ))
                   ) : (
-                    <div style={{ padding: '10px' }}>Nenhum funcionário encontrado</div>
+                    <div style={{ padding: '10px' }}>{t('sidepanel.noEmployeeFound')}</div>
                   )}
                 </div>
               )}
             </FormLabel>
-            {selectedEmployees.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {selectedEmployees.map((employee) => (
-                  <div
-                    key={employee.id}
-                    style={{
-                      marginBlock: '5px',
-                      background: '#dddddd94',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      padding: '10px',
-                    }}
-                  >
-                    <div>{employee.name}</div>
-                    <div
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleRemoveEmployee(employee.id)} // Remove the employee on click
-                    >
-                      X
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
             <FormLabel>
-              Horário:
+              {t('sidepanel.time')}:
               <div style={{ display: 'flex' }}>
                 <FormInput
                   type="time"
@@ -211,17 +218,9 @@ const SidePanel = forwardRef<HTMLDivElement, SidePanelProps>(
                   onChange={(e) => setEventStartTime(e.target.value)}
                   required
                 />
-                {/* Uncomment if end time is needed */}
-                {/* <p style={{ marginLeft: '10px', marginRight: '10px' }}>Até</p>
-                <FormInput
-                  type="time"
-                  value={eventEndTime}
-                  onChange={(e) => setEventEndTime(e.target.value)}
-                  required
-                /> */}
               </div>
             </FormLabel>
-            <FormButton type="submit">Adicionar Evento</FormButton>
+            <FormButton type="submit">{t('sidepanel.addEvent')}</FormButton>
           </FormContainer>
         ) : (
           <h2>{formattedDate}</h2>
@@ -242,28 +241,30 @@ const SidePanel = forwardRef<HTMLDivElement, SidePanelProps>(
                       <EventDescription>{event.description}</EventDescription>
                       <br/>
                       <EventDescription>
-                      {event.participantsId && event.participantsId.length > 0
-                        ? event.participantsId.map((participant) => (
-                            <span key={participant.id}>{participant.name}, </span>
-                          ))
-                        : ''}
-                    </EventDescription>
+                        {event.participantsId && event.participantsId.length > 0
+                          ? event.participantsId.map((participant) => (
+                              <span key={participant.id}>{participant.name}, </span>
+                            ))
+                          : ''}
+                      </EventDescription>
                     </EventDetails>
                   </div>
                   <p style={{ cursor: 'pointer' }} onClick={async (e) => {
                     try {
                       await CalendarService.delete(event.id);
                       handleSidePanel();
-                      AlertAdapter('Evento Deletado!', 'success');
+                      enqueueSnackbar(t('sidepanel.eventDeleted'), { variant: 'success' })
                     } catch (error) {
                       console.error('Failed to delete event:', error);
                     }
-                  }}>X</p>
+                  }}>
+                    X
+                  </p>
                 </EventContainer>
               );
             })
         )}
-        {!isFormVisible && selectedEvents.length === 0 && <p>No events for this date</p>}
+        {!isFormVisible && selectedEvents.length === 0 && <p>{t('sidepanel.noEventsForDate')}</p>}
       </SidePanelContainer>
     );
   }

@@ -4,14 +4,18 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import SidePanel from "../sidepanel/sidepanel.tsx";
 import CalendarService from "../../services/calendar.service.ts";
 import EmployeeService from "../../services/employee.service.ts";
+import { useTranslation } from 'react-i18next';
+import { useSnackbar } from "notistack";
 
-const Calendar: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
-  const [calendar, setCalendar] = useState();
-  const[employees, setEmployees] = useState()
+const Calendar: React.FC<{ activeCompany: string, userData: any }> = ({ activeCompany, userData }) => {
+  const { t } = useTranslation(); // Hook para traduções
+
+  const [calendar, setCalendar] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<any[]>([]);
   const [sidePanel, setSidePanel] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [events, setEvents] = useState<{ id:string; date: Date; title: string; description?: string; user?: string; participantsId: any;}[]>([]);
+  const [events, setEvents] = useState<{ id: string; date: Date; title: string; description?: string; user?: string; participantsId: any; }[]>([]);
   const sidePanelRef = useRef<HTMLDivElement | null>(null);
 
   const isToday = (date: Date) => {
@@ -68,7 +72,6 @@ const Calendar: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
     return days;
   };
 
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (sidePanel && sidePanelRef.current && !sidePanelRef.current.contains(event.target as Node)) {
@@ -84,10 +87,10 @@ const Calendar: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
   }, [sidePanel]);
 
   useEffect(() => {
-    if (props.activeCompany) {
-      CalendarService.get({ companyId: props.activeCompany, userId: props.userData._id })
+    if (activeCompany) {
+      CalendarService.get({ companyId: activeCompany, userId: userData._id })
         .then((res) => {
-          const calendarEvents = res.data.map((event) => ({
+          const calendarEvents = res.data.map((event: any) => ({
             id: event.id,
             date: new Date(event.date),
             title: event.name,
@@ -99,13 +102,14 @@ const Calendar: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
           setEvents(calendarEvents);
         })
         .catch((err) => console.log(err));
-        EmployeeService.get(props.activeCompany)
+
+      EmployeeService.get(activeCompany)
         .then((res) => setEmployees(res.data))
         .catch((err) => console.log(err));
     }
-  }, [props.activeCompany, props.userData._id, sidePanel]);
+  }, [activeCompany, userData._id, sidePanel]);
 
-  const createEvent = (newEvent) => {
+  const createEvent = (newEvent: any) => {
     CalendarService.post(newEvent)
       .then((res) => {
         setEvents((prevEvents) => [...prevEvents, {
@@ -123,40 +127,53 @@ const Calendar: React.FC<{ activeCompany, userData }> = ({ ...props }) => {
 
   return (
     <>
-      <div>
-        <h1>Calendário da Empresa</h1>
-        <h4 style={{ color: 'rgba(0,0,0,0.5)', marginTop: '-2%' }}>Verifique agendamento da empresa</h4>
+      <div style={{marginTop:window.innerWidth < 600 ? '15%' : '0%', marginLeft:window.innerWidth < 600 ? '3%' : '0%'}}>
+        <h1>{t('calendar.title')}</h1>
+        <h4 style={{ color: 'rgba(0,0,0,0.5)', marginTop: '-2%' }}>{t('calendar.subtitle')}</h4>
       </div>
+
       <CalendarContainer>
         <Header>
-          <IoIosArrowBack size={40} onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)))}/>
+          <IoIosArrowBack
+            style={{ cursor: 'pointer' }}
+            size={40}
+            onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)))}
+          />
           <h2>
             {currentDate.toLocaleString('default', { month: 'long' }).toUpperCase()} {currentDate.getFullYear()}
           </h2>
-          <IoIosArrowForward size={40} onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)))}/>
+          <IoIosArrowForward
+            style={{ cursor: 'pointer' }}
+            size={40}
+            onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)))}
+          />
         </Header>
-        <div style={{display:'flex', justifyContent:'space-around', marginLeft:'-2%', color:'#505050'}}>
-          <h3>Domingo</h3>
-          <h3>Segunda</h3>
-          <h3>Terça</h3>
-          <h3>Quarta</h3>
-          <h3>Quinta</h3>
-          <h3>Sexta</h3>
-          <h3>Sábado</h3>
+
+        <div style={{ display: 'flex', justifyContent: 'space-around', marginLeft: '-2%', color: '#505050' }}>
+          <h3>{window.innerWidth > 600 ? t('calendar.days.sunday') : t('calendar.days.sunday').slice(0, 1)}</h3>
+          <h3>{window.innerWidth > 600 ? t('calendar.days.monday') : t('calendar.days.monday').slice(0, 1)}</h3>
+          <h3>{window.innerWidth > 600 ? t('calendar.days.tuesday') : t('calendar.days.tuesday').slice(0, 1)}</h3>
+          <h3>{window.innerWidth > 600 ? t('calendar.days.wednesday') : t('calendar.days.wednesday').slice(0, 1)}</h3>
+          <h3>{window.innerWidth > 600 ? t('calendar.days.thursday') : t('calendar.days.thursday').slice(0, 1)}</h3>
+          <h3>{window.innerWidth > 600 ? t('calendar.days.friday') : t('calendar.days.friday').slice(0, 1)}</h3>
+          <h3>{window.innerWidth > 600 ? t('calendar.days.saturday') : t('calendar.days.saturday').slice(0, 1)}</h3>
         </div>
+
+
         <DaysContainer>{renderDays()}</DaysContainer>
       </CalendarContainer>
+
       <SidePanel
         ref={sidePanelRef}
         isOpen={sidePanel}
         handleSidePanel={handleSidePanel}
         selectedDate={selectedDate}
         events={events}
-        activeCompany={props.activeCompany}
-        userData={props.userData}
+        activeCompany={activeCompany}
+        userData={userData}
         onCreateEvent={createEvent}
         employees={employees}
-        />
+      />
     </>
   );
 };

@@ -8,6 +8,14 @@ export const CalendarContainer = styled.div`
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    width: 90%;
+    height: auto;
+    padding: 10px;
+    border-radius: 0;
+    box-shadow: none;
+  }
 `;
 
 export const Header = styled.div`
@@ -35,12 +43,27 @@ export const Header = styled.div`
       background-color: #45a049;
     }
   }
+
+  @media (max-width: 768px) {
+    h2 {
+      font-size: 1.2em;
+    }
+
+    button {
+      padding: 8px 16px;
+      font-size: 0.9em;
+    }
+  }
 `;
 
 export const DaysContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 10px;
+
+  @media (max-width: 768px) {
+    gap: 5px;
+  }
 `;
 
 export const DayHeader = styled.div`
@@ -49,8 +72,12 @@ export const DayHeader = styled.div`
   padding: 10px;
   background-color: #dddddd6e;
   border-radius: 5px;
-`;
 
+  @media (max-width: 768px) {
+    padding: 5px;
+    font-size: 0.9em;
+  }
+`;
 
 export const Day = styled.div<{ selected: boolean; isToday: boolean }>`
   padding: 10px;
@@ -67,8 +94,13 @@ export const Day = styled.div<{ selected: boolean; isToday: boolean }>`
   &:hover {
     background-color: #f0f0f0;
   }
-`;
 
+  @media (max-width: 768px) {
+    padding: 5px;
+    margin: 2px;
+    font-size: 0.9em;
+  }
+`;
 
 export const ViewSwitcher = styled.div`
   display: flex;
@@ -88,6 +120,16 @@ export const ViewSwitcher = styled.div`
       background-color: #1976d2;
     }
   }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+
+    button {
+      width: 100%;
+      margin-right: 0;
+    }
+  }
 `;
 
 export const Event = styled.div`
@@ -98,4 +140,9 @@ export const Event = styled.div`
   font-size: 0.75em;
   color: white;
   font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 0.65em;
+    padding: 1px 3px;
+  }
 `;

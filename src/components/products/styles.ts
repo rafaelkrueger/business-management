@@ -156,3 +156,134 @@ export const UploadButton = styled.label`
 export const HiddenInput = styled.input`
   display: none;
 `;
+
+export const TrainContainer = styled.div`
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    @media (max-width: 768px) {
+        padding: 10px;
+    }
+`;
+
+export const TrainContainerHeader = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+
+    .cards-container {
+        display: flex;
+        gap: 20px;
+        flex: 1;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+            width: 100%;
+        }
+    }
+
+    .charts-container {
+        display: flex;
+        gap: 20px;
+        flex: 2;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+            width: 100%;
+        }
+    }
+`;
+
+export const TrainContainerRecommendTrainerWideCard = styled.div`
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    text-align: center;
+    flex: 1;
+
+    h4 {
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+`;
+
+export const StreakContainer = styled.div`
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.1);
+    flex: 1;
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+`;
+
+export const EmptyStateContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin: 20px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow-y: hidden;
+
+    @media (max-width: 768px) {
+        padding: 20px;
+        width: 260px;
+    }
+`;
+
+export const EmptyStateTitle = styled.h2`
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+
+    @media (max-width: 768px) {
+        font-size: 20px;
+    }
+`;
+
+export const EmptyStateDescription = styled.p`
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+
+    @media (max-width: 768px) {
+        font-size: 14px;
+    }
+`;
+
+export const EmptyStateButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    margin: 10px 0;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+
+    @media (max-width: 768px) {
+        width: 100%;
+    }
+`;

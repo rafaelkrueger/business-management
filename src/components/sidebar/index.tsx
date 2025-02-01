@@ -139,7 +139,7 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive: any, activateM
                   if (window.outerWidth < 600) {
                     props.setIsMenuActive(!props.isMenuActive);
                   }
-                  props.activateModule(list?.name);
+                  props.activateModule(list?.key);
                 }}
               >
                 <SidebarContainerBodyElementIcon icon={`<${list?.icon} size={26} />`} />

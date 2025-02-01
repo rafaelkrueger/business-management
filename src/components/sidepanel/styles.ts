@@ -13,6 +13,10 @@ export const SidePanelContainer = styled.div<{ isOpen: boolean }>`
   transition: transform 0.3s ease-in-out;
   padding: 20px;
   overflow-y: auto;
+  @media (max-width: 768px) {
+    width: 90%;
+    background-color: rgba(255, 255, 255, 1)
+  }
 `;
 
 

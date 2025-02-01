@@ -63,13 +63,13 @@ const Dashboard: React.FC = () => {
       {isMenuActive && window.outerWidth < 600 ? '' : (
         <DashboardContainerShowed>
           {/* <Maintenance/> */}
-          {activeModuleName === 'Home' && <Home activeCompany={activeCompany} userData={userData} activateModule={activateModule} />}
-          {activeModuleName === 'Pagamentos' && <Payments activeCompany={activeCompany} />}
-          {activeModuleName === 'Produtos' && <Products activeCompany={activeCompany} />}
-          {activeModuleName === 'Clientes' && <Customers activeCompany={activeCompany} />}
-          {activeModuleName === 'Funcionários' && <Employees activeCompany={activeCompany} />}
-          {activeModuleName === 'Calendário' && <Calendar activeCompany={activeCompany} userData={userData}/>}
-          {activeModuleName === 'Comandas' && <Command />}
+          {activeModuleName === 'home' && <Home activeCompany={activeCompany} userData={userData} activateModule={activateModule} />}
+          {activeModuleName === 'payments' && <Payments activeCompany={activeCompany} />}
+          {activeModuleName === 'products' && <Products activeCompany={activeCompany} />}
+          {activeModuleName === 'customers' && <Customers activeCompany={activeCompany} />}
+          {activeModuleName === 'employees' && <Employees activeCompany={activeCompany} />}
+          {activeModuleName === 'calendar' && <Calendar activeCompany={activeCompany} userData={userData}/>}
+          {activeModuleName === 'orders' && <Command />}
           {activeModuleName === 'Config' && <Config userData={userData} activeCompany={activeCompany} modulesUpdating={modulesUpdating} setModulesUpdating={setModulesUpdating} />}
         </DashboardContainerShowed>
       )}

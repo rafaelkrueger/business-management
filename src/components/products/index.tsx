@@ -1,19 +1,57 @@
 import React, { useEffect, useState } from 'react'
 import DefaultTable from '../table/index.tsx'
 import {TrainContainer, TrainContainerHeader, TrainContainerRecommendTrainerWideCard} from '../customers/styles.ts'
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    Button,
+    Grid,
+    Typography,
+    IconButton,
+    Chip,
+    Box,
+  } from '@mui/material';
+  import { Close, Delete } from '@mui/icons-material';
 import ProductService from '../../services/product.service.ts'
-import ReactModal from 'react-modal';
 import { StreakContainer } from '../payments/styles.ts';
-import { FaFileExcel } from "react-icons/fa";
+import { FaFileExcel, FaRobot } from "react-icons/fa";
 import { MdSell } from "react-icons/md";
-import { Form, FormGroup, Button } from 'react-bootstrap';
-import Select from 'react-select/base';
 import { Bar, BarChart, CartesianGrid, Cell, Label, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from 'recharts';
-import { AlertAdapter } from '../../global.components.tsx';
-import { Header,Image, Title, ImagePreviewContainer ,Input, TextArea, CancelButton, FormButton, UploadButton, HiddenInput, ImageContainer, RemoveButton } from './styles.ts';
+import { EmptyStateContainer, EmptyStateTitle, EmptyStateDescription, EmptyStateButton } from './styles.ts';
+import { useTranslation } from 'react-i18next';
+import { useSnackbar } from "notistack";
+import { AllInOneApi } from '../../Api.ts';
+
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
+const NoDataMessage = () =>{
+    const { t } = useTranslation();
+ return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%',
+      color: '#555',
+      fontFamily: 'Arial, sans-serif',
+      textAlign: 'center',
+      padding: '20px'
+    }}>
+      <div style={{ fontSize: '48px', animation: 'spin 2s linear infinite' }}>📊</div>
+      <h2 style={{ margin: '10px 0', fontSize: '24px' }}>{t('products.noData')}</h2>
+      <p style={{ fontSize: '16px', marginTop: '0px' }}>{t('products.again')}</p>
+    </div>
+  );
+}
+
+
 const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
+    const { t } = useTranslation();
+    const { enqueueSnackbar } = useSnackbar();
     const [isEditing, setIsEditing] = useState(false);
     const [tableData, setTableData] = useState([]);
     const [glanceData, setGlanceData] = useState<any>();
@@ -21,386 +59,483 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
     const [product, setProduct] = useState(null);
 
     const columns = [
-        { header: 'Nome', accessor: 'name' },
-        { header: 'Descrição', accessor: 'description' },
-        { header: 'Categoria', accessor: 'category' },
-        { header: 'Preço', accessor: 'price' },
-        { header: 'Custo', accessor: 'cost' },
-        { header: 'Estoque', accessor: 'quantityInStock' },
-        { header: 'Classificação', accessor: 'rating' },
-        { header: 'Status', accessor: 'status' },
+        { header: t('products.name'), accessor: 'name' },
+        { header: t('products.description'), accessor: 'description' },
+        { header: t('products.category'), accessor: 'category' },
+        { header: t('products.price'), accessor: 'price' },
+        { header: t('products.cost'), accessor: 'cost' },
+        { header: t('products.stock'), accessor: 'quantityInStock' },
+        { header: t('products.status'), accessor: 'status' },
     ];
 
     const handleRow = (row) => {
         setIsEditing(true);
         setProduct(row);
-    }
+    };
 
     useEffect(() => {
         if (isEditing) {
-            setIsOpen(true)
+            setIsOpen(true);
         }
-    }, [isEditing])
+    }, [isEditing]);
 
     useEffect(() => {
         if (props.activeCompany) {
             ProductService.get(props.activeCompany)
                 .then((res) => setTableData(res.data))
-                .catch((err) => console.log(err))
+                .catch((err) => console.log(err));
 
             ProductService.glance(props.activeCompany)
                 .then((res) => setGlanceData(res.data))
-                .catch((err) => console.log(err))
+                .catch((err) => console.log(err));
         }
     }, [props.activeCompany, isOpen]);
 
     const formattedData = glanceData ? glanceData.glanceSold.map(item => ({
         category: item.category,
         sold: Number(item.sold),
-      })): [];
+    })) : [];
 
-    return (
-        <TrainContainer>
-            <div>
-                <h1>Sessão de Produtos</h1>
-                <h4 style={{ color: 'rgba(0,0,0,0.5)', marginTop: '-2%' }}>Aqui está as informações de seus produtos</h4>
-            </div>
-            <TrainContainerHeader style={{ marginLeft: '-5%' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', marginRight: '3%', marginLeft: '2%', height: '100%' }}>
-                    <TrainContainerRecommendTrainerWideCard onClick={() => { setIsOpen(true) }} style={{ height: '150px', boxShadow: '1px 1px 10px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column' }}>
-                        <h4 style={{ marginLeft: '20%' }}>Criar novo produto</h4>
-                        <MdSell size={50} style={{ marginLeft: '41%', marginTop: '1%' }} />
+    const renderEmptyState = () => (
+        <EmptyStateContainer>
+            <EmptyStateTitle>{t('products.emptyStateTitle')}</EmptyStateTitle>
+            <EmptyStateDescription>{t('products.emptyStateDescription')}</EmptyStateDescription>
+            <EmptyStateButton onClick={() => setIsOpen(true)}>
+                <MdSell size={20} style={{ marginRight: '10px' }} />
+                {t('products.createProduct')}
+            </EmptyStateButton>
+            <EmptyStateButton onClick={() => console.log('Importar Planilha')}>
+                <FaFileExcel size={20} style={{ marginRight: '10px' }} />
+                {t('products.importSpreadsheet')}
+            </EmptyStateButton>
+        </EmptyStateContainer>
+    );
+
+            return (
+                <TrainContainer>
+                    <div>
+                        <h1>{t('products.productSession')}</h1>
+                        <h4 style={{ color: 'rgba(0,0,0,0.5)', marginTop: '-2%' }}>{t('products.productInfo')}</h4>
+                    </div>
+                    <TrainContainerHeader style={{ marginLeft: '-5%' }}>
+                <div style={{ display: 'flex', flexDirection: 'column-reverse', marginRight: '3%', marginLeft: '2%', height: '100%', marginBottom: window.innerWidth > 600 ? '0%' : '15%' }}>
+                    {/* Card 1: Criar Produto */}
+                    <TrainContainerRecommendTrainerWideCard
+                        onClick={() => setIsOpen(true)}
+                        style={{
+                            height: '120px',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                            backgroundColor: 'white',
+                            borderRadius: '12px',
+                            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                            cursor: 'pointer',
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'scale(1.05)';
+                            e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'scale(1)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                        }}
+                    >
+                        <h4 style={{ marginTop: '-10px', fontSize: '18px', fontWeight: '600', color: '#333' }}>{t('products.createProduct')}</h4>
+                        <MdSell size={50} style={{ marginTop: '-10px', color: '#007bff' }} />
                     </TrainContainerRecommendTrainerWideCard>
-                    <TrainContainerRecommendTrainerWideCard style={{ height: '150px', boxShadow: '1px 1px 10px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column' }}>
-                        <h4 style={{ marginLeft: '23%' }}>Importar Planilha</h4>
-                        <FaFileExcel size={50} style={{ marginLeft: '41%', marginTop: '1%' }} />
+
+                    {/* Card 2: Importar Planilha */}
+                    <TrainContainerRecommendTrainerWideCard
+                        style={{
+                            height: '120px',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                            backgroundColor: 'white',
+                            borderRadius: '12px',
+                            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                            cursor: 'pointer',
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'scale(1.05)';
+                            e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'scale(1)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                        }}
+                    >
+                        <h4 style={{  marginTop: '-10px', fontSize: '18px', fontWeight: '600', color: '#333' }}>{t('products.importSpreadsheet')}</h4>
+                        <FaFileExcel size={50} style={{ marginTop: '-10px', color: '#28a745' }} />
+                    </TrainContainerRecommendTrainerWideCard>
+
+                    {/* Card 3: IA */}
+                    <TrainContainerRecommendTrainerWideCard
+                        style={{
+                            height: '120px',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                            backgroundColor: 'white',
+                            borderRadius: '12px',
+                            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                            cursor: 'pointer',
+                        }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'scale(1.05)';
+                            e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'scale(1)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+                        }}
+                    >
+                        <h4 style={{ marginTop: '-10px', fontSize: '18px', fontWeight: '600', color: '#333' }}>{t('products.ai')}</h4>
+                        <FaRobot size={50} style={{ marginTop: '-15px', color: '#ffc107' }} />
                     </TrainContainerRecommendTrainerWideCard>
                 </div>
+                <StreakContainer style={{ background: 'white', width: window.innerWidth > 600 ? '400px' : '300px', height: '440px' }}>
+                {glanceData?.glanceStock?.length > 0 ? (
+                <ResponsiveContainer width="100%" height={440} style={{ marginLeft: '-8%', marginTop: '3%' }}>
+                    <BarChart data={glanceData.glanceStock}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="quantityInStock" fill="#8884d8" />
+                    </BarChart>
+                </ResponsiveContainer>
+                ) : (
+                <NoDataMessage />
+                )}
+            </StreakContainer>
 
-                {/* First StreakContainer showing a BarChart */}
-                <StreakContainer style={{ boxShadow: '1px 1px 10px rgba(0,0,0,0.1)', background: 'white', width: '400px', marginRight: '-10px' }}>
-                    <ResponsiveContainer style={{marginTop:'25px', marginLeft:'-20px'}} width="100%" height={320}>
-                        <BarChart data={glanceData?.glanceStock}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Bar dataKey="quantityInStock" fill="#8884d8" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </StreakContainer>
-
-                {/* Second StreakContainer showing a PieChart */}
-                <StreakContainer style={{ boxShadow: '1px 1px 10px rgba(0,0,0,0.1)', background: 'white', width: '400px', marginRight: '-10px' }}>
-                    <ResponsiveContainer width="100%" height={230}>
+            <StreakContainer style={{ background: 'white', width: window.innerWidth > 600 ? '400px' : '300px', marginLeft: window.innerWidth > 600 ? '60px' : '15px', height: '440px' }}>
+                {formattedData?.length < 0 ? (
+                <ResponsiveContainer width="100%" height={230}>
                     <PieChart>
-                        <Pie
-                        data={formattedData}
-                        dataKey="sold"
-                        nameKey="category"
-                        outerRadius={100}
-                        fill="#8884d8"
-                        >
+                    <Pie data={formattedData} dataKey="sold" nameKey="category" outerRadius={100} fill="#8884d8">
                         {formattedData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
-                        </Pie>
-                        <Tooltip />
-                        <Legend
-                        layout="horizontal"
-                        verticalAlign="middle"
-                        wrapperStyle={{ top: 240, right: 0 }}
-                        />
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
                     </PieChart>
-                    </ResponsiveContainer>
-                </StreakContainer>
+                </ResponsiveContainer>
+                ) : (
+                <NoDataMessage />
+                )}
+            </StreakContainer>
             </TrainContainerHeader>
 
-            <div style={{ maxHeight: '230px', overflowY: 'auto', overflowX: 'hidden', marginLeft: '-3%' }}>
-                <DefaultTable columns={columns} data={tableData} handleRow={handleRow} />
-                <ProductModal isEditing={isEditing} setTableData={setTableData} activeCompany={props.activeCompany} isOpen={isOpen} onClose={() => { setIsEditing(false); setIsOpen(false); }} product={product} />
-            </div>
+            {tableData.length === 0 ? (
+                renderEmptyState()
+            ) : (
+                <div style={{maxWidth: window.innerWidth < 600 ? '90%' : 'unset', overflowX: window.innerWidth < 600 ? 'scroll' : 'unset'}}>
+                    <DefaultTable columns={columns} data={tableData} handleRow={handleRow} />
+                </div>
+            )}
+
+            <ProductModal
+                isEditing={isEditing}
+                setTableData={setTableData}
+                activeCompany={props.activeCompany}
+                isOpen={isOpen}
+                onClose={() => { setIsEditing(false); setIsOpen(false); }}
+                product={product}
+            />
         </TrainContainer>
     );
-}
+};
 
 export default Products;
 
 
-const ProductModal: React.FC<{ isEditing:boolean; setTableData:any; activeCompany:string; isOpen: boolean; onClose: () => void; product?: any }> = ({
-    isEditing,
-    setTableData,
-    activeCompany,
-    isOpen,
-    onClose,
-    product,
-}) => {
-    const [formData, setFormData] = useState({
-        id:'',
-        name: '',
-        description: '',
-        category: '',
-        price: '',
-        cost: '',
-        quantityInStock: 0,
-        height: '',
-        weight: '',
-        width: '',
-        length: '',
-        milliliters: '',
-        images: [],
-        rating: '',
+const ProductModal: React.FC<{
+  isEditing: boolean;
+  setTableData: any;
+  activeCompany: string;
+  isOpen: boolean;
+  onClose: () => void;
+  product?: any;
+}> = ({ isEditing, setTableData, activeCompany, isOpen, onClose, product }) => {
+  const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [formData, setFormData] = useState({
+    id: '',
+    name: '',
+    description: '',
+    category: '',
+    price: '',
+    cost: '',
+    quantityInStock: 0,
+    height: '',
+    weight: '',
+    width: '',
+    length: '',
+    milliliters: '',
+    images: [],
+    rating: '',
+    company: activeCompany,
+    status: 'active',
+  });
+
+  const [images, setImages] = useState<string[]>([]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  useEffect(() => {
+    if (isEditing && product) {
+      setFormData({
+        id: product.id || '',
+        name: product.name || '',
+        description: product.description || '',
+        category: product.category || '',
+        price: product.price || '',
+        cost: product.cost || '',
+        quantityInStock: product.quantityInStock || 0,
+        height: product.height || '',
+        weight: product.weight || '',
+        width: product.width || '',
+        length: product.length || '',
+        milliliters: product.milliliters || '',
+        images: product.images || [],
+        rating: product.rating || '',
         company: activeCompany,
-        status: 'active',
+        status: product.status || 'active',
+      });
+      setImages(product.images || []);
+    }
+  }, [isEditing, product, activeCompany]);
+
+  const handleModalClose = () => {
+    setFormData({
+      name: '',
+      description: '',
+      category: '',
+      price: '',
+      cost: '',
+      quantityInStock: 0,
+      height: '',
+      weight: '',
+      width: '',
+      length: '',
+      milliliters: '',
+      images: [],
+      rating: '',
+      company: activeCompany,
+      status: 'active',
     });
+    setImages([]);
+    onClose();
+  };
 
-    const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: type === 'checkbox' ? checked : value,
-        }));
-    };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    useEffect(() => {
-        if (isEditing && product) {
-            setFormData({
-                id: product.id || '',
-                name: product.name || '',
-                description: product.description || '',
-                category: product.category || '',
-                price: product.price || '',
-                cost: product.cost || '',
-                quantityInStock: product.quantityInStock || 0,
-                height: product.height || '',
-                weight: product.weight || '',
-                width: product.width || '',
-                length: product.length || '',
-                milliliters: product.milliliters || '',
-                images: product.images || [],
-                rating: product.rating || '',
-                company: activeCompany,
-                status: product.status || 'active',
-            });
-        }
-    }, [isEditing, product]);
+    try {
+      const uploadedImageUrls = await uploadImagesToApi(images);
+        const dataToSubmit = { ...formData, images: uploadedImageUrls };
 
-    const handleModalClose = () => {
-        setFormData({
-            name: '',
-            description: '',
-            category: '',
-            price: '',
-            cost: '',
-            quantityInStock: 0,
-            height: '',
-            weight: '',
-            width: '',
-            length: '',
-            milliliters: '',
-            images: [],
-            rating: '',
-            company: activeCompany,
-            status: 'active',
+      if (isEditing && product) {
+        await ProductService.edit(dataToSubmit, activeCompany);
+        enqueueSnackbar(t("Product updated!"), { variant: "success" });
+      } else {
+        await ProductService.create(dataToSubmit, activeCompany);
+        enqueueSnackbar(t("Product created!"), { variant: "success" });
+      }
+
+      const res = await ProductService.get(activeCompany);
+      setTableData(res.data);
+      handleModalClose();
+    } catch (error) {
+      enqueueSnackbar(t("Erro ao salvar o produto."), { variant: "error" });
+    }
+  };
+
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setImages((prevImages) => [...prevImages, ...files]);
+  };
+
+  const uploadImagesToApi = async (imageFiles: File[]) => {
+    const uploadedImageUrls: string[] = [];
+
+    for (const file of imageFiles) {
+      const formDataFile = new FormData();
+      formDataFile.append('path', 'products');
+      formDataFile.append('file', file);
+
+      try {
+        const response = await AllInOneApi.post('shared/image', formDataFile, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'accept': '*/*',
+          },
         });
-        onClose();
-    };
+        uploadedImageUrls.push(response.data.url);
+      } catch (error) {
+        console.error("Erro ao fazer upload da imagem:", error);
+        enqueueSnackbar(t("Erro ao enviar uma das imagens."), { variant: "error" });
+      }
+    }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if(isEditing && product){
-            ProductService.edit(formData, activeCompany)
-            .then(() => {
-                ProductService.get(activeCompany)
-                .then((res) => setTableData(res.data))
-                .catch((err) => console.log(err))
-                AlertAdapter('Produto alterado com sucesso!', 'success');
-                handleModalClose();
-            })
-            .catch((err) => console.log(err));
-        }else{
-            ProductService.create(formData, activeCompany)
-            .then(() => {
-                ProductService.get(activeCompany)
-                .then((res) => setTableData(res.data))
-                .catch((err) => console.log(err))
-                AlertAdapter('Produto criado com sucesso!', 'success');
-                handleModalClose();
-            })
-            .catch((err) => console.log(err));
-        }
-    };
-    const [images, setImages] = useState([]);
+    return uploadedImageUrls;
+  };
 
-    const handleImageUpload = (e) => {
-      const files = Array.from(e.target.files);
-      const newImages = files.map((file) => URL.createObjectURL(file));
-      setImages([...images, ...newImages]);
-    };
 
-    const handleRemoveImage = (indexToRemove) => {
-      setImages(images.filter((_, index) => index !== indexToRemove));
-    };
+  const handleRemoveImage = (indexToRemove: number) => {
+    setImages(images.filter((_, index) => index !== indexToRemove));
+  };
 
-    return (
-<ReactModal
-    isOpen={isOpen}
-    ariaHideApp={false}
-    onRequestClose={handleModalClose}
-    style={{
-        overlay: {
-            margin: 'auto',
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-        },
-        content: {
-            borderRadius: '10px',
-            padding: '0px',
-            margin: 'auto',
-            width: '600px',
-            height: '600px',
-            display: 'flex',
-            flexDirection: 'column',
-            background: '#ffffff',
-        },
-    }}
->
-    <Header>
-    </Header>
-    <Title>{isEditing ? 'Editar Produto' : 'Adicionar Produto'}</Title>
-    <Form style={{ marginLeft: '6%' }} onSubmit={handleSubmit}>
-    <ImagePreviewContainer>
-        {images.map((image, index) => (
-          <ImageContainer key={index}>
-            <Image src={image} alt={`uploaded-${index}`} />
-            <RemoveButton onClick={() => handleRemoveImage(index)}>X</RemoveButton>
-          </ImageContainer>
-        ))}
-      </ImagePreviewContainer>
-
-      <UploadButton>
-        Upload Images
-        <HiddenInput
-          type="file"
-          multiple
-          onChange={handleImageUpload}
-          accept="image/*"
-        />
-      </UploadButton>
-
-        <FormGroup>
-            <p style={{ marginBottom: '3px' }}>Nome:</p>
-            <Input
-                type="text"
+  return (
+    <Dialog open={isOpen} onClose={handleModalClose} maxWidth="sm" fullWidth>
+      <DialogTitle>
+        <Typography variant="h6" fontWeight="bold">
+          {isEditing ? t('products.forms.editProduct') : t('products.forms.addProduct')}
+        </Typography>
+        <IconButton
+          aria-label="close"
+          onClick={handleModalClose}
+          sx={{ position: 'absolute', right: 8, top: 8 }}
+        >
+          <Close />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent dividers>
+        <Box component="form" onSubmit={handleSubmit} noValidate>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label={t('products.forms.name')}
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-            />
-        </FormGroup>
-        <FormGroup>
-            <p style={{ marginBottom: '3px' }}>Descrição:</p>
-            <TextArea
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label={t('products.forms.description')}
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
-                rows="3"
-                cols={52}
-            />
-        </FormGroup>
-        <FormGroup>
-            <p style={{ marginBottom: '3px' }}>Categoria:</p>
-            <Input
-                type="text"
+                multiline
+                rows={3}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label={t('products.forms.category')}
                 name="category"
                 value={formData.category}
                 onChange={handleInputChange}
                 required
-            />
-        </FormGroup>
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '91%' }}>
-                    <FormGroup style={{ marginRight: '10px' }}>
-                        <p style={{ marginBottom: '3px' }}>Preço:</p>
-                        <Input
-                            type="number"
-                            name="price"
-                            value={formData.price}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </FormGroup>
-                    <FormGroup>
-                        <p style={{ marginBottom: '3px' }}>Custo:</p>
-                        <Input
-                            type="number"
-                            name="cost"
-                            value={formData.cost}
-                            onChange={handleInputChange}
-                        />
-                    </FormGroup>
-                </div>
-                <FormGroup>
-                    <p style={{ marginBottom: '3px' }}>Quantidade em estoque:</p>
-                    <Input
-                        type="number"
-                        name="quantityInStock"
-                        value={formData.quantityInStock}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </FormGroup>
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '91%' }}>
-                    {/* <FormGroup style={{ marginRight: '10px' }}>
-                        <p style={{ marginBottom: '3px' }}>Height: <span style={{color:'#b0b0b0dd'}}>(Opcional)</span></p>
-                        <Input
-                        style={{width:'94px'}}
-                            type="number"
-                            name="height"
-                            value={formData.height}
-                            onChange={handleInputChange}
-                        />
-                    </FormGroup>
-                    <FormGroup style={{ marginRight: '10px' }}>
-                        <p style={{ marginBottom: '3px' }}>Width: <span style={{color:'#b0b0b0dd'}}>(Opcional)</span></p>
-                        <Input
-                        style={{width:'94px'}}
-                            type="number"
-                            name="width"
-                            value={formData.width}
-                            onChange={handleInputChange}
-                        />
-                    </FormGroup>
-                    <FormGroup>
-                        <p style={{ marginBottom: '3px' }}>Length: <span style={{color:'#b0b0b0dd'}}>(Opcional)</span></p>
-                        <Input
-                        style={{width:'94px'}}
-                            type="number"
-                            name="length"
-                            value={formData.length}
-                            onChange={handleInputChange}
-                        />
-                    </FormGroup>
-                    <FormGroup>
-                        <p style={{ marginBottom: '3px' }}>Milliliters: <span style={{color:'#b0b0b0dd'}}>(Opcional)</span></p>
-                        <Input
-                        style={{width:'94px', marginLeft:'10px'}}
-                            type="number"
-                            name="milliliters"
-                            value={formData.milliliters}
-                            onChange={handleInputChange}
-                        />
-                    </FormGroup> */}
-                </div>
-                {/* <FormGroup>
-                    <p style={{ marginBottom: '3px' }}>Status:</p>
-                    <Select name="status" value={formData.status} onChange={handleInputChange}>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </Select>
-                </FormGroup> */}
-                <FormButton type="submit">Submit</FormButton>
-        </Form>
-    </ReactModal>
-
-    );
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                label={t('products.forms.price')}
+                name="price"
+                type="number"
+                value={formData.price}
+                onChange={handleInputChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                label={t('products.forms.cost')}
+                name="cost"
+                type="number"
+                value={formData.cost}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label={t('products.forms.quantityInStock')}
+                name="quantityInStock"
+                type="number"
+                value={formData.quantityInStock}
+                onChange={handleInputChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subtitle1" gutterBottom>
+                {t('products.forms.productImages')}
+              </Typography>
+              <Box display="flex" flexWrap="wrap" gap={1}>
+            {images.map((image, index) => (
+                <Box key={index} position="relative">
+                <img
+                    src={typeof image === 'string' ? image : URL.createObjectURL(image)}
+                    alt={`uploaded-${index}`}
+                    style={{ width: 80, height: 80, borderRadius: 4 }}
+                />
+                <IconButton
+                    size="small"
+                    onClick={() => handleRemoveImage(index)}
+                    sx={{ position: 'absolute', top: 0, right: 0, color: 'error.main' }}
+                >
+                    <Delete fontSize="small" />
+                </IconButton>
+                </Box>
+            ))}
+            </Box>
+              <Button
+                variant="outlined"
+                component="label"
+                sx={{ mt: 1 }}
+              >
+                {t('products.forms.uploadImages')}
+                <input
+                  type="file"
+                  hidden
+                  multiple
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                />
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleModalClose} sx={{ border: '1px blue solid', color: 'blue' }}>
+          {t('products.forms.cancel')}
+        </Button>
+        <Button type="submit" variant="contained" color="primary" onClick={handleSubmit}>
+          {isEditing ? t('products.forms.saveChanges') : t('products.forms.addProductButton')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 };
+
