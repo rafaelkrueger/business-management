@@ -1,80 +1,93 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar, BarChart } from 'recharts';
-import {
-  HomeContainerBody,
-  HomeContainerHeader,
-  StreakContainer,
-  StreakContainerWorkoutContainer,
-  StreakContainerWorkoutElement,
-  StreakContainerWorkoutElementIcon,
-  StreakContainerWorkoutElementParagraph,
-  StreakContainerWorkoutElementParagraph2,
-  StreakContainerWorkoutElementParagraphContainer,
-} from './styles.ts';
-import IconBeer from '../../icons/workout-icons/beer.png';
-import IconCard from '../../icons/workout-icons/card.png';
-import IconTax from '../../icons/workout-icons/tax.png';
-import IconAvg from '../../icons/workout-icons/avg-price.png';
-import IconReceita from '../../icons/workout-icons/receita.png';
-import PaymentService from '../../services/payment.service.ts';
+import { HomeContainerBody, HomeContainerHeader, StreakContainerWorkoutElement, StreakContainerWorkoutElementIcon, StreakContainerWorkoutElementParagraph, StreakContainerWorkoutElementParagraph2, StreakContainerWorkoutElementParagraphContainer } from './styles.ts';
+import { DollarSign, CreditCard, BarChart3, Percent, Brain, Info } from 'lucide-react';
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
 
-const Payments: React.FC<{ activeCompany }> = ({ ...props }) => {
+const NoDataMessage = () => {
+  const { t } = useTranslation();
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', color: '#555', textAlign: 'center', padding: '20px', marginLeft:'5%' }}>
+      <div style={{ fontSize: '48px', animation: 'spin 2s linear infinite' }}>📊</div>
+      <h2 style={{ margin: '10px 0', fontSize: '24px' }}>{t('products.noData')}</h2>
+      <p style={{ fontSize: '16px', marginTop: '0px' }}>{t('products.again')}</p>
+    </div>
+  );
+};
+
+const Card = ({ children, style }) => (
+  <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', ...style }}>
+    {children}
+  </div>
+);
+
+const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
+  const { t } = useTranslation();
   const [tableData, setTableData] = useState([]);
-  const [glanceData, setGlanceData] = useState();
-
-  useEffect(() => {
-    if (props.activeCompany) {
-      PaymentService.get(props.activeCompany)
-        .then((res) => setTableData(res.data))
-        .catch((err) => console.log(err));
-
-      PaymentService.glance(props.activeCompany)
-        .then((res) => setGlanceData(res.data))
-        .catch((err) => console.log(err));
-    }
-  }, [props.activeCompany]);
+  const [glanceData, setGlanceData] = useState({});
 
   const chartData = tableData.map((payment) => ({
     paymentDate: new Date(payment.paymentDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    total: parseFloat(payment.amount),
+    total: parseFloat(payment.amount.replace('R$', '').replace(',', '.')),
   }));
 
   const SimpleLineChart = () => (
-    <div style={{ background: 'white', padding: '50px', borderRadius: 10, minHeight: '240px', maxHeight: '240px' }}>
-      <LineChart style={{ marginLeft: '-2%', fontSize: '12pt' }} width={650} height={260} data={chartData}>
+    <Card style={{ minHeight: '240px', maxHeight: '240px', marginLeft: '-60px' }}>
+      <LineChart width={650} height={260} data={chartData}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="paymentDate" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
+        <XAxis dataKey="paymentDate" tick={{ fontSize: 10 }} />
+        <YAxis tick={{ fontSize: 10 }} />
+        <Tooltip contentStyle={{ fontSize: 12 }} />
+        <Legend wrapperStyle={{ fontSize: 12 }} />
         <Line type="monotone" dataKey="total" stroke="#82ca9d" />
       </LineChart>
-    </div>
+    </Card>
   );
 
   const MobileLineChart = () => (
     <div style={{ width: '100%', height: '100%' }}>
       <BarChart data={chartData}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="paymentDate" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
+        <XAxis dataKey="paymentDate" tick={{ fontSize: 10 }} />
+        <YAxis tick={{ fontSize: 10 }} />
+        <Tooltip contentStyle={{ fontSize: 12 }} />
+        <Legend wrapperStyle={{ fontSize: 12 }} />
         <Bar dataKey="total" fill="#82ca9d" />
       </BarChart>
     </div>
   );
 
+  const cards = [
+    { icon: <DollarSign size={40} color="#22c55e" />, value: glanceData.totalAmount ? `R$${glanceData.totalAmount}` : '-', label: t('payments.totalAnnualRevenue') },
+    { icon: <CreditCard size={40} color="#3b82f6" />, value: glanceData.count || '-', label: t('payments.processedTransactions') },
+    { icon: <BarChart3 size={40} color="#facc15" />, value: glanceData.averageTicket ? `R$${glanceData.averageTicket}` : '-', label: t('payments.averageTicket') },
+    { icon: <Percent size={40} color="#ef4444" />, value: glanceData.taxes ? `R$${glanceData.taxes.toFixed(2)}` : '-', label: t('payments.taxes') },
+    { icon: <Brain size={40} color="#a855f7" />, value: t('AI Powered'), label: t('payments.aiInsights') },
+  ];
+
   return (
-    <div>
-      <HomeContainerHeader>Área de pagamentos</HomeContainerHeader>
+    <div style={{ padding: '20px' }}>
+      <HomeContainerHeader>
+        <div style={{display:'flex'}}>
+        {t('payments.title')}
+        {
+          window.innerWidth > 600 && (
+          <Tippy content={t('payments.tooltipText')} placement="right">
+            <Info size={20} style={{ marginLeft: '10px', cursor: 'pointer', marginTop:'1.5%' }} />
+          </Tippy>
+          )
+        }
+        </div>
+      </HomeContainerHeader>
       <HomeContainerHeader style={{ marginTop: '-7%', fontSize: '15pt', marginBottom: '1%', color: 'rgba(0,0,0,0.5)' }}>
-        Informações financeiras
+        {t('payments.financialInfo')}
       </HomeContainerHeader>
       <HomeContainerBody>
         {window.outerWidth > 600 ? <SimpleLineChart /> : <MobileLineChart />}
-        <StreakContainer>
-          <StreakContainerWorkoutContainer>
+        {tableData.length > 0 ? (
+          <div style={{ border: '0.1px rgba(0, 0, 0, 0.224) solid', width: '335px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '10px', marginLeft: '5%', maxHeight: '270px', overflowY: 'auto', overflowX: 'hidden' }}>
             {tableData.map((payment) => (
               <StreakContainerWorkoutElement key={payment.id}>
                 <StreakContainerWorkoutElementIcon>
@@ -86,39 +99,20 @@ const Payments: React.FC<{ activeCompany }> = ({ ...props }) => {
                 </StreakContainerWorkoutElementParagraphContainer>
               </StreakContainerWorkoutElement>
             ))}
-          </StreakContainerWorkoutContainer>
-        </StreakContainer>
+          </div>
+        ) : (
+          <NoDataMessage />
+        )}
       </HomeContainerBody>
 
-      <div style={{ display: 'flex', marginTop: '-3%' }}>
-        <StreakContainer style={{ width: '280px', height: '185px', marginLeft: '0%', marginRight: '6%' }}>
-          <div style={{ textAlign: 'center' }}>
-            <img style={{ width: '40%', borderRadius: 10, marginTop: '3%' }} src={IconReceita} />
-            <h1 style={{ marginTop: '-5%' }}>R${glanceData ? glanceData.totalAmount : ''}</h1>
-            <p style={{ marginTop: '-8%' }}>Total de Receitas Anual</p>
-          </div>
-        </StreakContainer>
-        <StreakContainer style={{ width: '280px', height: '185px', marginLeft: '0%', marginRight: '6%' }}>
-          <div style={{ textAlign: 'center' }}>
-            <img style={{ width: '40%', borderRadius: 10 }} src={IconCard} />
-            <h1 style={{ marginTop: '-5%' }}>{glanceData ? glanceData.count : ''}</h1>
-            <p style={{ marginTop: '-8%' }}>Transações processadas</p>
-          </div>
-        </StreakContainer>
-        <StreakContainer style={{ width: '280px', height: '185px', marginLeft: '0%', marginRight: '6%' }}>
-          <div style={{ textAlign: 'center' }}>
-            <img style={{ width: '37%', borderRadius: 10, marginTop: '5%' }} src={IconAvg} />
-            <h1 style={{ marginTop: '-0%' }}>R${glanceData ? glanceData.averageTicket : ''}</h1>
-            <p style={{ marginTop: '-8%' }}>Ticket Médio</p>
-          </div>
-        </StreakContainer>
-        <StreakContainer style={{ width: '280px', height: '185px', marginLeft: '0%' }}>
-          <div style={{ textAlign: 'center' }}>
-            <img style={{ width: '30%', borderRadius: 10, marginTop: '10%' }} src={IconTax} />
-            <h1 style={{ marginTop: '-3%' }}>R${glanceData ? glanceData.taxes.toFixed(2) : ''}</h1>
-            <p style={{ marginTop: '-8%' }}>Taxas</p>
-          </div>
-        </StreakContainer>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1px', marginTop: '40px' }}>
+        {cards.map((card, index) => (
+          <Card key={index} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: window.innerWidth > 600 ? '145px' : '88%', marginBottom:'30px' }}>
+            {card.icon}
+            <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginTop: '10px' }}>{card.value}</h1>
+            <p style={{ color: '#6b7280', marginTop: '5px' }}>{card.label}</p>
+          </Card>
+        ))}
       </div>
     </div>
   );

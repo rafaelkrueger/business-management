@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
           {activeModuleName === 'customers' && <Customers activeCompany={activeCompany} />}
           {activeModuleName === 'employees' && <Employees activeCompany={activeCompany} />}
           {activeModuleName === 'calendar' && <Calendar activeCompany={activeCompany} userData={userData}/>}
-          {activeModuleName === 'orders' && <Command />}
+          {activeModuleName === 'orders' && <Command activeCompany={activeCompany} userData={userData} />}
           {activeModuleName === 'Config' && <Config userData={userData} activeCompany={activeCompany} modulesUpdating={modulesUpdating} setModulesUpdating={setModulesUpdating} />}
         </DashboardContainerShowed>
       )}

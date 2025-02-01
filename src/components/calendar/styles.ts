@@ -62,6 +62,7 @@ export const DaysContainer = styled.div`
   gap: 10px;
 
   @media (max-width: 768px) {
+    height: 300px;
     gap: 5px;
   }
 `;

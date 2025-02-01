@@ -4,6 +4,10 @@ class ProductService {
     static get(data: string) {
 		return http.get(`/product/${data}`);
 	}
+	static getProductsByIds(ids: string[]) {
+		const query = ids.join(',');
+		return http.get(`/product?ids=${query}`);
+	  }
 	static create(formData: any, activeCompany:string) {
 		return http.post(`/product`, {formData:formData, activeCompany});
 	}

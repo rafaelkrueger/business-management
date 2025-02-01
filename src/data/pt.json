@@ -159,7 +159,8 @@
         "cancel": "Cancelar",
         "saveChanges": "Salvar Alterações",
         "addProductButton": "Adicionar"
-      }
+      },
+      "tooltipText":"Os produtos cadastrados podem ser utilizados em outras partes do sistema e ajudarão você a gerenciar sua empresa."
     },
     "employees":{
       "emptyTitle": "Sem funcionários cadastrados",
@@ -172,7 +173,8 @@
       "activityChart": "Atividade dos Funcionários",
       "iaAnalysis": "Análise de IA",
       "iaDescription": "Análise avançada de dados com IA para insights estratégicos.",
-      "viewAnalysis": "Ver Análise"
+      "viewAnalysis": "Ver Análise",
+      "tooltipText":"Os funcionários cadastrados podem ser utilizados em outras partes do sistema."
     },
     "modal": {
       "newEmployee": "Novo Funcionário",
@@ -203,7 +205,8 @@
         "thursday": "Quinta",
         "friday": "Sexta",
         "saturday": "Sábado"
-      }
+      },
+      "tooltipText":"Esse calendário é visível apenas para você."
     },
     "sidepanel": {
       "createEvent": "Criar Evento",
@@ -220,7 +223,58 @@
       "eventDeleted": "Evento Deletado!",
       "noEventsForDate": "Nenhum evento para esta data"
     },
-    "maintenanceTitle": "Sistema em Manutenção",
+    "payments": {
+      "title": "Área de pagamentos",
+      "financialInfo": "Informações financeiras",
+      "totalAnnualRevenue": "Total de Receitas Anual",
+      "processedTransactions": "Transações processadas",
+      "averageTicket": "Ticket Médio",
+      "taxes": "Taxas",
+      "aiInsights":"Análise IA",
+      "tooltipText":"Os pagamentos são registrados automaticamente por meio da integração com outros módulos do sistema, que detectam novas transações. Para adicionar ou ajustar informações manualmente, entre em contato com o nosso suporte."
+    },
+    "customers": {
+    "title": "Sessão de Clientes",
+    "description": "Aqui estão as informações de seus clientes",
+    "detailsTitle": "Detalhes dos clientes",
+    "total": "Total de Clientes",
+    "active": "Clientes Ativos",
+    "inactive": "Clientes Inativos",
+    "retentionRate": "Taxa de retenção de clientes",
+    "name": "Nome",
+    "email": "Email",
+    "phone": "Celular",
+    "gender": "Gênero",
+    "emptyStateTitle": "Nenhum cliente encontrado",
+    "emptyStateDescription": "Os clientes serão automaticamente registrados conforme você utiliza os outros módulos do sistema.",
+    "tooltipText":"Os clientes são registrados automaticamente por meio da integração com outros módulos do sistema, que detectam novos registros. Para adicionar ou ajustar informações manualmente, entre em contato com o nosso suporte."
+    },
+    "orders": {
+      "title": "Gerenciamento de Comandas",
+      "description": "Organize as comandas do seu estabelecimento com agilidade e praticidade.",
+      "open": "Aberta",
+      "closed": "Fechada",
+      "openTime": "Tempo Aberta",
+      "observation": "Observação",
+      "none": "Nenhuma",
+      "total": "Total",
+      "addOrder": "Adicionar Comanda",
+      "details":"Detalhes",
+      "tableName":"Nome da Comanda",
+      "status":"Status",
+      "closeOrder":"Fechar",
+      "reopenOrder":"Abrir",
+      "cancel":"Cancelar",
+      "save":"Salvar",
+      "edit":"Editar",
+      "consumed":"Consumido",
+      "addProducts":"Adicionar",
+      "consumedProducts":"Produtos Consumidos",
+      "noProducts":"Não há produtos ainda...",
+      "noAvailableProducts":"Não há produtos criados ainda. Crie na sessão de produtos",
+      "add":"+"
+    },
+  "maintenanceTitle": "Sistema em Manutenção",
     "maintenanceDescription": "Devido à alta demanda de usuários, estamos realizando uma manutenção para melhorar nossos serviços. Por favor, tente novamente mais tarde.",
     "footerText": "Agradecemos a sua paciência e compreensão. © {{year}} Roktune."
   }

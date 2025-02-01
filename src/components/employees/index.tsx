@@ -4,13 +4,15 @@ import EmployeeService from '../../services/employee.service.ts';
 import DefaultTable from '../table/index.tsx';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { HiUserPlus } from "react-icons/hi2";
-import { FaFileExcel, FaRobot } from "react-icons/fa";
+import { FaFileExcel } from "react-icons/fa";
+import { Brain, FileSpreadsheet, Info } from 'lucide-react';
 import ReactModal from 'react-modal';
 import { EmptyStateButton, EmptyStateContainer, EmptyStateDescription, EmptyStateTitle } from '../products/styles.ts';
 import { MdSell } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
 import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Paper, Select, TextField, Typography, useTheme } from '@mui/material';
 import { Close } from '@mui/icons-material';
+import Tippy from '@tippyjs/react';
 
 const NoDataMessage = () => {
   const { t } = useTranslation();
@@ -221,10 +223,17 @@ const Employees: React.FC<{ activeCompany }> = ({ ...props }) => {
 
   return (
     <TrainContainer style={{marginRight:window.innerWidth > 600 ? '0%' : '7%'}}>
-      <div>
+      <div style={{display:'flex'}}>
         <h1>{t('employees.title')}</h1>
-        <h4 style={{ color: 'rgba(0,0,0,0.5)', marginTop: '-2%' }}>{t('employees.subtitle')}</h4>
+        {
+          window.innerWidth > 600 && (
+          <Tippy content={t('employees.tooltipText')} placement="right">
+            <Info size={20} style={{ marginLeft: '10px', cursor: 'pointer', marginTop:'3.3%' }} />
+          </Tippy>
+          )
+        }
       </div>
+        <h4 style={{ color: 'rgba(0,0,0,0.5)', marginTop: '-2%' }}>{t('employees.subtitle')}</h4>
       <div style={{ maxHeight: '300px', overflowY: 'auto', overflowX: 'hidden', marginLeft: '-3%' }}>
         {tableData.length === 0 ? (
           renderEmptyState(setIsOpen)
@@ -297,8 +306,8 @@ const Employees: React.FC<{ activeCompany }> = ({ ...props }) => {
                   },
                 }}
               >
-                <FaRobot size={60} color={'#ffc107'} />
-                <Typography variant="h5" sx={{ mt: 2, fontWeight: 'bold' }}>
+                <Brain size={40} color={'purple'} />
+                <Typography variant="h6" sx={{ mt: 2, fontWeight: 'bold' }}>
                   {t('employees.iaAnalysis')}
                 </Typography>
               </Paper>
@@ -320,7 +329,7 @@ const Employees: React.FC<{ activeCompany }> = ({ ...props }) => {
                   },
                 }}
               >
-                <FaFileExcel size={40} color={'green'} />
+                <FileSpreadsheet size={40} color={'green'} />
                 <Typography variant="h6" sx={{ mt: 1 }}>
                   {t('employees.import')}
                 </Typography>

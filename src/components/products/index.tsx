@@ -24,6 +24,8 @@ import { EmptyStateContainer, EmptyStateTitle, EmptyStateDescription, EmptyState
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from "notistack";
 import { AllInOneApi } from '../../Api.ts';
+import { Brain, FileSpreadsheet, Info } from 'lucide-react';
+import Tippy from '@tippyjs/react';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
@@ -57,6 +59,7 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
     const [glanceData, setGlanceData] = useState<any>();
     const [isOpen, setIsOpen] = useState(false);
     const [product, setProduct] = useState(null);
+    const [availableProducts, setAvailableProducts] = useState([]);
 
     const columns = [
         { header: t('products.name'), accessor: 'name' },
@@ -114,7 +117,16 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
             return (
                 <TrainContainer>
                     <div>
+                      <div style={{display:'flex'}}>
                         <h1>{t('products.productSession')}</h1>
+                        {
+                          window.innerWidth > 600 && (
+                          <Tippy content={t('products.tooltipText')} placement="right">
+                            <Info size={20} style={{ marginLeft: '10px', cursor: 'pointer', marginTop:'3.5%' }} />
+                          </Tippy>
+                          )
+                        }
+                      </div>
                         <h4 style={{ color: 'rgba(0,0,0,0.5)', marginTop: '-2%' }}>{t('products.productInfo')}</h4>
                     </div>
                     <TrainContainerHeader style={{ marginLeft: '-5%' }}>
@@ -173,7 +185,7 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
                         }}
                     >
                         <h4 style={{  marginTop: '-10px', fontSize: '18px', fontWeight: '600', color: '#333' }}>{t('products.importSpreadsheet')}</h4>
-                        <FaFileExcel size={50} style={{ marginTop: '-10px', color: '#28a745' }} />
+                        <FileSpreadsheet size={50} style={{ marginTop: '-10px', color: '#28a745' }} />
                     </TrainContainerRecommendTrainerWideCard>
 
                     {/* Card 3: IA */}
@@ -201,7 +213,7 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
                         }}
                     >
                         <h4 style={{ marginTop: '-10px', fontSize: '18px', fontWeight: '600', color: '#333' }}>{t('products.ai')}</h4>
-                        <FaRobot size={50} style={{ marginTop: '-15px', color: '#ffc107' }} />
+                        <Brain size={50} style={{ marginTop: '-15px', color: 'purple' }} />
                     </TrainContainerRecommendTrainerWideCard>
                 </div>
                 <StreakContainer style={{ background: 'white', width: window.innerWidth > 600 ? '400px' : '300px', height: '440px' }}>

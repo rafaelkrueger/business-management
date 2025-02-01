@@ -1,225 +1,168 @@
-import React, {useEffect, useState} from 'react'
-import { TableWrapperCustomer, TrainContainer, TrainContainerHeader, TrainContainerRecommendTrainerCard, TrainContainerRecommendTrainerCardButton, TrainContainerRecommendTrainerCardH3, TrainContainerRecommendTrainerCardImage, TrainContainerRecommendTrainerCardP, TrainContainerRecommendTrainerCardRate, TrainContainerRecommendTrainerCardRateStar, TrainContainerRecommendTrainerContainer, TrainContainerRecommendTrainerWideCard, TrainContainerRecommendTrainerWideCardLeft, TrainContainerRecommendTrainerWideCardRight, TrainContainerRecommendTrainerWideCardRightButton, TrainContainerRecommendTrainerWideCardRightCancel, TrainContainerRecommendTrainerWideCardRightConfirm } from './styles.ts';
-import { IoStar } from "react-icons/io5";
-import { FaCalendar } from "react-icons/fa6";
-import UserNoImage from '../../images/user.png'
-import { workout } from '../payments/index.tsx';
-import { StreakContainerWorkoutElement, StreakContainerWorkoutElementIcon, StreakContainerWorkoutElementParagraphContainer, StreakContainerWorkoutElementParagraph, StreakContainerWorkoutElementParagraph2, StreakContainerWorkoutContainer, StreakContainer } from '../payments/styles.ts';
-import IconBeer from '../../icons/workout-icons/beer.png'
-import IconNoBeer from '../../icons/workout-icons/no-beer.png'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar, BarChart, PieChart, Pie, Cell } from 'recharts';
-import DefaultTable from '../table/index.tsx'
-import CustomerService from '../../services/customer.service.ts'
+import React, { useEffect, useState } from 'react';
+import { TableWrapperCustomer, TrainContainer, TrainContainerHeader, TrainContainerRecommendTrainerWideCard } from './styles.ts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from 'recharts';
+import DefaultTable from '../table/index.tsx';
+import CustomerService from '../../services/customer.service.ts';
+import { useTranslation } from 'react-i18next';
+import { Brain, Info } from 'lucide-react';
+import { EmptyStateContainer, EmptyStateTitle, EmptyStateDescription } from '../products/styles.ts';
+import { StreakContainer } from '../payments/styles.ts';
+import Tippy from '@tippyjs/react';
 
-const data = [
-  { name: 'Dom', uv: 4000, pv: 2400, amt: 2400 },
-  { name: 'Seg', uv: 3000, pv: 1398, amt: 2210 },
-  { name: 'Ter', uv: 2000, pv: 3800, amt: 2290 },
-  { name: 'Qua', uv: 2780, pv: 3908, amt: 2000 },
-  { name: 'Qui', uv: 1890, pv: 4800, amt: 2181 },
-  { name: 'Sex', uv: 2390, pv: 3800, amt: 2500 },
-  { name: 'Sáb', uv: 3490, pv: 4300, amt: 2100 },
-];
+const generateColors = (numColors: number) => Array.from({ length: numColors }, (_, i) => `hsl(${(i * 360) / numColors}, 70%, 50%)`);
 
-const generateColors = (numColors: number) => {
-  const colors = [];
-  for (let i = 0; i < numColors; i++) {
-    colors.push(`hsl(${(i * 360) / numColors}, 70%, 50%)`);
-  }
-  return colors;
-};
-
-const AgePieChart: React.FC<{ ageData: Record<number, number> }> = ({ ageData }) => {
-  if (!ageData || Object.keys(ageData).length === 0) {
-    ageData = { 0: 0 };
-  }
-
-  const ageChartData = Object.entries(ageData).map(([age, count]) => ({
-    name: `${age} years old`,
-    value: count,
-  }));
-
-  const COLORS = generateColors(ageChartData.length); // Generate colors based on the number of ages
-
+const AgePieChart: React.FC<{ ageData: Record<number, number> }> = ({ ageData = { 0: 0 } }) => {
+  const ageChartData = Object.entries(ageData).map(([age, count]) => ({ name: `${age} years old`, value: count }));
+  const COLORS = generateColors(ageChartData.length);
   return (
     <PieChart width={250} height={150}>
       <Pie data={ageChartData} cx="50%" cy="50%" outerRadius={60} fill="#8884d8">
-        {ageChartData.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={COLORS[index]} />
-        ))}
+        {ageChartData.map((_, index) => <Cell key={`cell-${index}`} fill={COLORS[index]} />)}
       </Pie>
       <Tooltip />
     </PieChart>
   );
 };
 
-const GenderPieChart = ({ genderData }) => {
-  if (!genderData) {
-    genderData = { masculine: 0, feminine: 0 };
-  }
-
+const GenderPieChart = ({ genderData = { masculine: 0, feminine: 0 } }) => {
   const data = [
     { name: 'Masculine', value: genderData.masculine },
     { name: 'Feminine', value: genderData.feminine },
   ];
-
   const COLORS = ['#0088FE', '#db1bb5'];
-
   return (
     <PieChart width={250} height={150}>
-      <Pie
-        data={data}
-        cx="50%"
-        cy="50%"
-        outerRadius={60}
-        fill="#8884d8"
-        dataKey="value"
-      >
-        {data.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-        ))}
+      <Pie data={data} cx="50%" cy="50%" outerRadius={60} fill="#8884d8" dataKey="value">
+        {data.map((_, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
       </Pie>
       <Tooltip />
     </PieChart>
   );
 };
 
-const SimpleLineChart: React.FC<{ weekData?: Array<{ lastWeekSunday?: number; thisWeekSunday?: number; lastWeekMonday?: number; thisWeekMonday?: number; lastWeekTuesday?: number; thisWeekTuesday?: number; lastWeekWednesday?: number; thisWeekWednesday?: number; lastWeekThursday?: number; thisWeekThursday?: number; lastWeekFriday?: number; thisWeekFriday?: number; lastWeekSaturday?: number; thisWeekSaturday?: number; }> }> = ({ weekData }) => {
-  // Validate weekData before proceeding
-  if (!weekData || weekData.length === 0) {
-    return (
-      <div style={{ textAlign: 'center', color: 'rgba(0, 0, 0, 0.5)', padding: '20px' }}>
-        <p>Nenhum dado disponível para exibir no gráfico.</p>
-      </div>
-    );
+const SimpleLineChart: React.FC<{ weekData?: Array<Record<string, number>> }> = ({ weekData = [] }) => {
+  if (weekData.length === 0) {
+    return <div style={{ textAlign: 'center', color: 'rgba(0, 0, 0, 0.5)', padding: '20px' }}></div>;
   }
-
-  // Prepare data for the chart
   const chartData = weekData.map((data, index) => {
     const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][index];
-    const lastWeekValue = data[`lastWeek${dayName}`];
-    const thisWeekValue = data[`thisWeek${dayName}`];
-
     return {
       name: dayName,
-      lastWeek: lastWeekValue !== undefined ? lastWeekValue : 0, // Set to 0 if undefined
-      thisWeek: thisWeekValue !== undefined ? thisWeekValue : 0, // Set to 0 if undefined
+      lastWeek: data[`lastWeek${dayName}`] || 0,
+      thisWeek: data[`thisWeek${dayName}`] || 0,
     };
   });
-
-  // Validation: Check if chartData has valid entries
-  const isDataValid = chartData.some(data => data.lastWeek > 0 || data.thisWeek > 0);
-
-  if (!isDataValid) {
-    return (
-      <div style={{ textAlign: 'center', color: 'rgba(0, 0, 0, 0.5)', padding: '20px' }}>
-        <p>Nenhum dado disponível para exibir no gráfico.</p>
-      </div>
-    );
-  }
-
   return (
-    <LineChart
-      style={{ marginLeft: '-3%', fontSize: '10pt', marginBottom: '-7%', height: '350px' }}
-      width={380}
-      height={300}
-      data={chartData}
-    >
+    <LineChart width={window.innerWidth > 600 ? 380 : 310} height={300} data={chartData} style={{marginLeft: window.innerWidth > 600 ? '-3%' : '-35px', fontSize: '10pt', marginTop: window.innerWidth > 600 ? '5%' : '7%' }}>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" />
       <YAxis />
       <Tooltip />
-        <Line type="monotone" dataKey="lastWeek" stroke="#c42929"/>
-        <Line type="monotone" dataKey="thisWeek" stroke="#000000" />
+      <Line type="monotone" dataKey="lastWeek" stroke="#c42929" />
+      <Line type="monotone" dataKey="thisWeek" stroke="#000000" />
     </LineChart>
   );
 };
 
-
-
-const Customers: React.FC<{ activeCompany }> = ({...props}) => {
-  const [tableData, setTableData] = useState()
-  const [genderData, setGenderData] = useState()
-  const [ageData, setAgeData] = useState()
-  const [totalData, setTotalData] = useState()
-  const [activityData, setActivityData] = useState()
-  const [weekData, setWeekData] = useState()
+const Customers: React.FC<{ activeCompany }> = ({ activeCompany }) => {
+  const { t } = useTranslation();
+  const [tableData, setTableData] = useState([]);
+  const [genderData, setGenderData] = useState();
+  const [ageData, setAgeData] = useState();
+  const [totalData, setTotalData] = useState();
+  const [activityData, setActivityData] = useState();
+  const [weekData, setWeekData] = useState();
 
   const columns = [
-    { header: 'Nome', accessor: 'name' },
-    { header: 'Email', accessor: 'email' },
-    { header: 'Celular', accessor: 'phone' },
-    { header: 'Gênero', accessor: 'gender' },
-  ]
+    { header: t('customers.name'), accessor: 'name' },
+    { header: t('customers.email'), accessor: 'email' },
+    { header: t('customers.phone'), accessor: 'phone' },
+    { header: t('customers.gender'), accessor: 'gender' },
+  ];
 
   useEffect(() => {
-    if (props.activeCompany) {
-      CustomerService.get(props.activeCompany)
-        .then((res) => setTableData(res.data))
-        .catch((err) => console.log(err))
-
-      CustomerService.glance(props.activeCompany)
-      .then((res) => {
+    if (activeCompany) {
+      CustomerService.get(activeCompany).then((res) => setTableData(res.data)).catch(console.error);
+      CustomerService.glance(activeCompany).then((res) => {
         setGenderData(res.data.genders);
-        setAgeData(res.data.ages)
-        setTotalData(res.data.total)
-        setActivityData(res.data.activity)
-        setWeekData(res.data.weekCount)
-      })
-      .catch((err) => console.log(err))
+        setAgeData(res.data.ages);
+        setTotalData(res.data.total);
+        setActivityData(res.data.activity);
+        setWeekData(res.data.weekCount);
+      }).catch(console.error);
     }
-  }, [props.activeCompany]);
+  }, [activeCompany]);
 
-   return (
-        <TrainContainer>
+  const renderEmptyState = () => (
+    <EmptyStateContainer>
+      <EmptyStateTitle>{t('customers.emptyStateTitle')}</EmptyStateTitle>
+      <EmptyStateDescription>{t('customers.emptyStateDescription')}</EmptyStateDescription>
+    </EmptyStateContainer>
+  );
+
+  return (
+    <TrainContainer>
+      <div>
+        <div style={{display:'flex'}}>
+        <h1>{t('customers.title')}</h1>
+        {
+          window.innerWidth > 600 && (
+          <Tippy content={t('customers.tooltipText')} placement="right">
+            <Info size={20} style={{ marginLeft: '10px', cursor: 'pointer', marginTop:'3.5%' }} />
+          </Tippy>
+          )
+        }
+        </div>
+        <h4 style={{ color: 'rgba(0,0,0,0.5)', marginTop: '-2%' }}>{t('customers.description')}</h4>
+      </div>
+      <TrainContainerHeader style={{ marginLeft: '-3%' }}>
+        <StreakContainer style={{ boxShadow: '1px 1px 10px rgba(0,0,0,0.1)', background: 'white', width: window.innerWidth < 600 ? '300px' : '400px' }}>
+          <div style={{ padding: '2px 0px 0px 20px' }}>
+            <h2>{t('customers.detailsTitle')}</h2>
             <div>
-                <h1>Sessão de Clientes</h1>
-                <h4 style={{color:'rgba(0,0,0,0.5)', marginTop:'-2%'}}>Aqui está as informações de seus clientes</h4>
+              <p>{t('customers.total')}</p>
+              <input disabled value={totalData?.total || 0} style={{ background: 'rgba(0,0,0,0.09)', border: '0px', width: '90%', height: '20px', padding: '5px 0px 5px 15px' }} />
             </div>
-            <TrainContainerHeader style={{marginLeft:'-3%'}}>
-            <StreakContainer style={{boxShadow:'1px 1px 10px rgba(0,0,0,0.1)', background:'white', width:'400px'}}>
-                <div style={{padding:'2px 0px 0px 20px'}}>
-                  <h2>Detalhes dos clientes</h2>
-                  <div>
-                    <p>Total de Clientes</p>
-                    <input disabled value={totalData?.total as unknown as 0} style={{background:'rgba(0,0,0,0.09)', border:'0px', width:'90%', height:'20px', padding:'5px 0px 5px 15px'}}/>
-                  </div>
-                  <div style={{display:'flex'}}>
-                    <div>
-                      <p>Clientes Ativos</p>
-                      <input disabled value={activityData?.active as unknown as 0} style={{background:'rgba(0,0,0,0.09)', border:'0px', width:'80%', height:'20px', padding:'5px 0px 5px 15px'}}/>
-                    </div>
-                    <div>
-                      <p>Clientes Inativos</p>
-                      <input disabled value={activityData?.inactive as unknown as 0} style={{background:'rgba(0,0,0,0.09)', border:'0px', width:'80%', height:'20px', padding:'5px 0px 5px 15px'}}/>
-                    </div>
-                  </div>
-                  <div>
-                    <p>Taxa de retenção de clientes</p>
-                    <input disabled style={{background:'rgba(0,0,0,0.09)', border:'0px', width:'90%', height:'20px', padding:'5px 0px 5px 15px'}}/>
-                  </div>
-                </div>
-            </StreakContainer>
-            <div style={{display:'flex', flexDirection:'column', marginRight:'3%', marginLeft:'2%', height:'100%'}}>
-                <TrainContainerRecommendTrainerWideCard style={{height:'150px', boxShadow:'1px 1px 10px rgba(0,0,0,0.1)'}}>
-                  <AgePieChart ageData={ageData} />
-                </TrainContainerRecommendTrainerWideCard>
-                <TrainContainerRecommendTrainerWideCard style={{height:'150px', boxShadow:'1px 1px 10px rgba(0,0,0,0.1)'}}>
-                  <GenderPieChart genderData={genderData as unknown as {masculine:0, feminine:0}} />
-                </TrainContainerRecommendTrainerWideCard>
+            <div style={{ display: 'flex' }}>
+              <div>
+                <p>{t('customers.active')}</p>
+                <input disabled value={activityData?.active || 0} style={{ background: 'rgba(0,0,0,0.09)', border: '0px', width: '80%', height: '20px', padding: '5px 0px 5px 15px' }} />
+              </div>
+              <div>
+                <p>{t('customers.inactive')}</p>
+                <input disabled value={activityData?.inactive || 0} style={{ background: 'rgba(0,0,0,0.09)', border: '0px', width: '80%', height: '20px', padding: '5px 0px 5px 15px' }} />
+              </div>
             </div>
-            <StreakContainer style={{boxShadow:'1px 1px 10px rgba(0,0,0,0.1)', background:'white', width:'400px'}}>
-                <div><SimpleLineChart weekData={weekData} /></div>
-            </StreakContainer>
-            </TrainContainerHeader>
-            <br/>
-            <TableWrapperCustomer style={{marginLeft:'-6%'}}>
-            <div style={{ maxHeight: '250px', overflowY: 'auto', overflowX: 'hidden' }}>
-              <DefaultTable data={tableData as unknown as []} columns={columns}/>
+            <div>
+              <p>{t('customers.retentionRate')}</p>
+              <input disabled style={{ background: 'rgba(0,0,0,0.09)', border: '0px', width: '90%', height: '20px', padding: '5px 0px 5px 15px' }} />
             </div>
-          </TableWrapperCustomer>
-        </TrainContainer>
-    );
-}
+          </div>
+        </StreakContainer>
+
+        <div style={{ display: 'flex', flexDirection: 'column', marginRight: '3%', marginLeft: '2%', height: '100%', marginTop:window.innerWidth <  600 ? '-18%' : 'unset', marginBottom:window.innerWidth <  600 ? '13%'  : 'unset'}}>
+          <TrainContainerRecommendTrainerWideCard style={{ height: '87px', boxShadow: '1px 1px 10px rgba(0,0,0,0.1)' }}>
+            <AgePieChart ageData={ageData} />
+          </TrainContainerRecommendTrainerWideCard>
+          <TrainContainerRecommendTrainerWideCard style={{ height: '87px', boxShadow: '1px 1px 10px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', textAlign: 'center' }}>
+            <h4 style={{ margin: '0', fontSize: '16px', color: '#4a4a4a' }}>{t('products.ai')}</h4>
+            <Brain size={40} style={{ color: 'purple', marginTop: '5px' }} />
+          </TrainContainerRecommendTrainerWideCard>
+          <TrainContainerRecommendTrainerWideCard style={{ height: '87px', boxShadow: '1px 1px 10px rgba(0,0,0,0.1)' }}>
+            <GenderPieChart genderData={genderData} />
+          </TrainContainerRecommendTrainerWideCard>
+        </div>
+
+        <StreakContainer style={{ boxShadow: '1px 1px 10px rgba(0,0,0,0.1)', background: 'white', width: window.innerWidth > 600 ? '400px' : '300px' }}>
+          <SimpleLineChart weekData={weekData} />
+        </StreakContainer>
+      </TrainContainerHeader>
+
+      <div style={{ maxWidth: window.innerWidth > 600 ? 'unset' : '300px', maxHeight: '250px', overflowY: 'auto', overflowX: 'hidden', marginTop: '-50px' }}>
+        {tableData && tableData.length > 0 ? <DefaultTable data={tableData} columns={columns} /> : renderEmptyState()}
+      </div>
+    </TrainContainer>
+  );
+};
 
 export default Customers;

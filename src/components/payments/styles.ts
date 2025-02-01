@@ -5,7 +5,7 @@ import { shimmer } from "../../global.styles.ts";
 export const HomeContainerHeader = styled.h1`
     margin-bottom:8%;
     @media (max-width:600px) {
-        margin-top:95px ;
+        margin-top:45px ;
     }
 `
 

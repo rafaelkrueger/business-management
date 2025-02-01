@@ -132,7 +132,8 @@
         "cancel": "Cancel",
         "saveChanges": "Save Changes",
         "addProductButton": "Add"
-      }
+      },
+      "tooltipText":"Registered products can be used in other parts of the system, they will help you manage your company."
     },
     "employees": {
     "emptyTitle": "No employees registered",
@@ -145,7 +146,8 @@
     "activityChart": "Employee Activity",
     "iaAnalysis": "AI Analysis",
     "iaDescription": "Advanced data analysis with AI for strategic insights.",
-    "viewAnalysis": "View Analysis"
+    "viewAnalysis": "View Analysis",
+    "tooltipText":"Registered employees can be used in other parts of the system."
     },
     "modal": {
       "newEmployee": "New Employee",
@@ -176,7 +178,8 @@
         "thursday": "Thursday",
         "friday": "Friday",
         "saturday": "Saturday"
-      }
+      },
+      "tooltipText":"This calendar is only visible for you."
     },
     "sidepanel":{
       "createEvent": "Create Event",
@@ -192,6 +195,57 @@
       "eventCreated": "Event Created!",
       "eventDeleted": "Event Deleted!",
       "noEventsForDate": "No events for this date"
+    },
+    "payments": {
+      "title": "Payments Area",
+      "financialInfo": "Financial Information",
+      "totalAnnualRevenue": "Total Annual Revenue",
+      "processedTransactions": "Processed Transactions",
+      "averageTicket": "Average Ticket",
+      "taxes": "Taxes",
+      "aiInsights":"AI Analysis",
+      "tooltipText":"Payments are recorded automatically through integration with other system modules that detect new transactions. To add or adjust information manually, please contact our support team."
+    },
+    "customers": {
+      "title": "Customer Session",
+      "description": "Here is the information about your customers",
+      "detailsTitle": "Customer Details",
+      "total": "Total Customers",
+      "active": "Active Customers",
+      "inactive": "Inactive Customers",
+      "retentionRate": "Customer Retention Rate",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "gender": "Gender",
+      "emptyStateTitle": "No customers registered yet",
+      "emptyStateDescription": "Customers will be automatically added as you use other system modules.",
+      "tooltipText":"Customers are recorded automatically through integration with other system modules that detect new data. To add or adjust information manually, please contact our support team."
+    },
+    "orders": {
+      "title": "Order Management",
+      "description": "Organize your establishment's orders quickly and efficiently.",
+      "open": "Open",
+      "closed": "Closed",
+      "openTime": "Open Time",
+      "observation": "Observation",
+      "none": "None",
+      "total": "Total",
+      "addOrder": "Add Order",
+      "tableName": "Order Name",
+      "status": "Status",
+      "closeOrder": "Close",
+      "reopenOrder": "Open",
+      "cancel": "Cancel",
+      "save":"Save",
+      "edit":"Edit",
+      "consumed":"Consumed",
+      "addProducts":"Add",
+      "consumedProducts":"Consumed Products",
+      "noProducts":"There are no products added yet...",
+      "searchProduct": "Search for a product...",
+      "noAvailableProducts": "No products available to add",
+      "noImage": "No Image"
     },
     "maintenanceTitle": "System Under Maintenance",
     "maintenanceDescription": "Due to high user demand, we are performing maintenance to improve our services. Please try again later.",
