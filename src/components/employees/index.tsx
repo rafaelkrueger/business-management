@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Paper, Select, TextField, Typography, useTheme } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import Tippy from '@tippyjs/react';
+import AiAssistantModal from '../ai-assistant-modal/index.tsx';
 
 const NoDataMessage = () => {
   const { t } = useTranslation();
@@ -42,6 +43,7 @@ const Employees: React.FC<{ activeCompany }> = ({ ...props }) => {
   const [glanceData, setGlanceData] = useState([]);
   const theme = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const [aiAssistant, setAiAssistant] = useState(false);
   const [formData, setFormData] = useState({
     id: '',
     name: '',
@@ -223,6 +225,8 @@ const Employees: React.FC<{ activeCompany }> = ({ ...props }) => {
 
   return (
     <TrainContainer style={{marginRight:window.innerWidth > 600 ? '0%' : '7%'}}>
+      <AiAssistantModal isOpen={aiAssistant} onClose={()=>{setAiAssistant(false)}} companyId={props.activeCompany} type={t('aiAssistant.types.employees')}/>
+
       <div style={{display:'flex'}}>
         <h1>{t('employees.title')}</h1>
         {
@@ -289,7 +293,7 @@ const Employees: React.FC<{ activeCompany }> = ({ ...props }) => {
                 </Typography>
               </Paper>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} onClick={()=>{setAiAssistant(true)}}>
               <Paper
                 elevation={3}
                 sx={{

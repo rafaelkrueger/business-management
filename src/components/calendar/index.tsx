@@ -5,6 +5,7 @@ import SidePanel from "../sidepanel/sidepanel.tsx";
 import CalendarService from "../../services/calendar.service.ts";
 import EmployeeService from "../../services/employee.service.ts";
 import { useTranslation } from 'react-i18next';
+import CustomerService from '../../services/customer.service.ts';
 import { useSnackbar } from "notistack";
 import Tippy from "@tippyjs/react";
 import { Info } from "lucide-react";
@@ -14,6 +15,7 @@ const Calendar: React.FC<{ activeCompany: string, userData: any }> = ({ activeCo
 
   const [calendar, setCalendar] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
+  const [customers, setCustomers] = useState<any[]>([]);
   const [sidePanel, setSidePanel] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -99,6 +101,7 @@ const Calendar: React.FC<{ activeCompany: string, userData: any }> = ({ activeCo
             description: event.description,
             user: event.ownerId,
             participantsId: event.participantsId,
+            customersIds: event.customersIds,
           }));
           setCalendar(res.data);
           setEvents(calendarEvents);
@@ -108,6 +111,10 @@ const Calendar: React.FC<{ activeCompany: string, userData: any }> = ({ activeCo
       EmployeeService.get(activeCompany)
         .then((res) => setEmployees(res.data))
         .catch((err) => console.log(err));
+
+      CustomerService.get(activeCompany)
+      .then((res) => setCustomers(res.data))
+      .catch((err) => console.log(err));
     }
   }, [activeCompany, userData._id, sidePanel]);
 
@@ -121,6 +128,7 @@ const Calendar: React.FC<{ activeCompany: string, userData: any }> = ({ activeCo
           description: res.data.description,
           user: res.data.ownerId,
           participantsId: res.data.participantsId,
+          customersIds: res.data.customersIds,
         }]);
         setCalendar((prev) => [...prev, res.data]);
       })
@@ -175,6 +183,7 @@ const Calendar: React.FC<{ activeCompany: string, userData: any }> = ({ activeCo
         userData={userData}
         onCreateEvent={createEvent}
         employees={employees}
+        customers={customers}
       />
     </>
   );

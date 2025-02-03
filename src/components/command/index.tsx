@@ -457,7 +457,7 @@ const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCom
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography sx={{ marginRight: 2 }}>R$ {product.price}</Typography>
+                <Typography sx={{ marginRight: 2 }}>$ {product.price}</Typography>
                 <IconButton
                   color="secondary"
                   onClick={() => handleRemoveProductFromComanda(product.id)}
@@ -583,7 +583,7 @@ const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCom
                   <strong>{t("orders.observation")}:</strong> {comanda.obs ?.length > 20 ? comanda.obs.slice(0,20) + '...' : comanda.obs || t("orders.none")}
                 </Typography>
                 <Typography variant="body2" sx={{ mt: 1 }}>
-                  <strong>{t("orders.total")}:</strong> R$ {comanda.total}
+                  <strong>{t("orders.total")}:</strong>$ {comanda.totalAmount}
                 </Typography>
               </CardContent>
               <Stack direction="row" justifyContent="space-between" mt={2}>

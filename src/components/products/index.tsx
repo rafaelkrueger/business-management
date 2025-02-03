@@ -26,6 +26,7 @@ import { useSnackbar } from "notistack";
 import { AllInOneApi } from '../../Api.ts';
 import { Brain, FileSpreadsheet, Info } from 'lucide-react';
 import Tippy from '@tippyjs/react';
+import AiAssistantModal from '../ai-assistant-modal/index.tsx';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
@@ -58,6 +59,7 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
     const [tableData, setTableData] = useState([]);
     const [glanceData, setGlanceData] = useState<any>();
     const [isOpen, setIsOpen] = useState(false);
+    const [aiAssistant, setAiAssistant] = useState(false);
     const [product, setProduct] = useState(null);
     const [availableProducts, setAvailableProducts] = useState([]);
 
@@ -116,6 +118,7 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
 
             return (
                 <TrainContainer>
+                    <AiAssistantModal isOpen={aiAssistant} onClose={()=>{setAiAssistant(false)}} companyId={props.activeCompany} type={t('aiAssistant.types.product')}/>
                     <div>
                       <div style={{display:'flex'}}>
                         <h1>{t('products.productSession')}</h1>
@@ -190,6 +193,7 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
 
                     {/* Card 3: IA */}
                     <TrainContainerRecommendTrainerWideCard
+                        onClick={()=>{setAiAssistant(true)}}
                         style={{
                             height: '120px',
                             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',

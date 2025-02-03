@@ -188,13 +188,21 @@
       "title": "Title",
       "description": "Description",
       "employees": "Employees",
+      "customers": "Customers",
       "searchEmployee": "Enter employee's name",
+      "searchCustomers": "Enter customer's name",
       "noEmployeeFound": "No employee found",
+      "noCustomerFound": "No customer found",
       "time": "Time",
       "addEvent": "Add Event",
       "eventCreated": "Event Created!",
       "eventDeleted": "Event Deleted!",
-      "noEventsForDate": "No events for this date"
+      "noEventsForDate": "No events for this date",
+      "form":{
+        "title":"Title",
+        "description":"Description",
+        "time":"Time"
+      }
     },
     "payments": {
       "title": "Payments Area",
@@ -220,7 +228,32 @@
       "gender": "Gender",
       "emptyStateTitle": "No customers registered yet",
       "emptyStateDescription": "Customers will be automatically added as you use other system modules.",
-      "tooltipText":"Customers are recorded automatically through integration with other system modules that detect new data. To add or adjust information manually, please contact our support team."
+      "tooltipText":"Customers are auto added when you use other modules, to add or adjust information manually, please contact our support team.",
+      "create":"Create Customer",
+      "importSpreadsheet": "Import from spreadsheet",
+      "form": {
+      "createTitle": "Create Customer",
+      "updateTitle": "Update Customer",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "birthDate": "Birth Date",
+      "gender": "Gender",
+      "active": "Active",
+      "cancel": "Cancel",
+      "save": "Save",
+      "genderOptions": {
+        "masculine": "Masculine",
+        "feminine": "Feminine"
+      },
+      "activeOptions": {
+        "true": "Yes",
+        "false": "No"
+      }
+    },
+    "updatedSuccess": "Customer updated successfully!",
+    "createdSuccess": "Customer created successfully!",
+    "error": "Error during the operation!"
     },
     "orders": {
       "title": "Order Management",
@@ -247,6 +280,22 @@
       "noAvailableProducts": "No products available to add",
       "noImage": "No Image",
       "tooltipText": "Your current plan allows only one device to manage the orders at a time."
+    },
+    "aiAssistant": {
+      "modalTitle": "AI Assistant",
+      "enableLabel": "Enable AI Assistant",
+      "enabledSuccess": "AI Assistant enabled successfully!",
+      "error": "Error enabling AI Assistant.",
+      "noData": "No data available for the AI Assistant.",
+      "close": "Close",
+      "info":"Activate the AI to conduct deep analyses of your customers, products, employees, and payments, delivering strategic insights that will boost your company's efficiency and drive its growth.",
+      "instructions":"Analyze all aspects of the company, including finances, products, customers, employees, and schedules. Monitor revenue, expenses, product performance, and customer behavior. Evaluate team productivity, operational efficiency, and deadline compliance. Provide strategic insights to optimize processes, increase profitability, and enhance customer satisfaction. Suggest innovations, market opportunities, and technological automations. Generate detailed reports and interactive dashboards with practical recommendations for continuous business improvement.",
+      "types":{
+        "product":"Products",
+        "employees":"Employees",
+        "payments":"Payments",
+        "customers":"Customers"
+      }
     },
     "maintenanceTitle": "System Under Maintenance",
     "maintenanceDescription": "Due to high user demand, we are performing maintenance to improve our services. Please try again later.",

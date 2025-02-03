@@ -18,16 +18,17 @@ import {
 } from './styles.ts';
 import AuthCoverImage from '../../images/improved_image.png';
 import LogoImage from '../../images/logo.png';
-import { AlertAdapter } from '../../global.components.tsx';
 import AllInOneService from '../../services/all-in-one.service.ts';
 import { useLocalStorage } from '../../hooks/useLocalStorage.ts';
 import { useNavigate } from 'react-router-dom';
 import i18n from '../../i18next.js';
+import { useSnackbar } from 'notistack';
 
 const Auth = () => {
   const [isNewUser, setIsNewUser] = useState(true);
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useLocalStorage('accessToken', null);
+  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const [user, setUser] = useState({
     name: '',
@@ -56,9 +57,9 @@ const Auth = () => {
       })
       .catch((err) => {
         setLoading(false);
-        AlertAdapter(
-          err.response?.data?.message || i18n.t('error.authError'),
-          'error'
+        enqueueSnackbar(
+          i18n.t('error.authError'),
+          { variant: "error" }
         );
       });
   };

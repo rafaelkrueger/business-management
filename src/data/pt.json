@@ -215,13 +215,21 @@
       "title": "Título",
       "description": "Descrição",
       "employees": "Funcionários",
+      "customers": "Clientes",
       "searchEmployee": "Digite o nome do funcionário",
+      "searchCustomers": "Digite o nome do cliente",
       "noEmployeeFound": "Nenhum funcionário encontrado",
+      "noCustomerFound": "Nenhum cliente encontrado",
       "time": "Horário",
       "addEvent": "Adicionar Evento",
       "eventCreated": "Evento Criado!",
       "eventDeleted": "Evento Deletado!",
-      "noEventsForDate": "Nenhum evento para esta data"
+      "noEventsForDate": "Nenhum evento para esta data",
+      "form":{
+        "title":"Título",
+        "description":"Descrição",
+        "time":"Horário"
+      }
     },
     "payments": {
       "title": "Área de pagamentos",
@@ -247,7 +255,32 @@
     "gender": "Gênero",
     "emptyStateTitle": "Nenhum cliente encontrado",
     "emptyStateDescription": "Os clientes serão automaticamente registrados conforme você utiliza os outros módulos do sistema.",
-    "tooltipText":"Os clientes são registrados automaticamente por meio da integração com outros módulos do sistema, que detectam novos registros. Para adicionar ou ajustar informações manualmente, entre em contato com o nosso suporte."
+    "tooltipText":"Clientes também são adicionados automaticamente conforme você use outros modulos, para adicionar ou ajustar informações manualmente, entre em contato com o nosso suporte.",
+    "create":"Cadastrar Cliente",
+    "importSpreadsheet": "Importar Planilha",
+    "form": {
+      "createTitle": "Criar Cliente",
+      "updateTitle": "Atualizar Cliente",
+      "name": "Nome",
+      "email": "Email",
+      "phone": "Telefone",
+      "birthDate": "Data de Nascimento",
+      "gender": "Gênero",
+      "active": "Ativo",
+      "cancel": "Cancelar",
+      "save": "Salvar",
+      "genderOptions": {
+        "masculine": "Masculino",
+        "feminine": "Feminino"
+      },
+      "activeOptions": {
+        "true": "Sim",
+        "false": "Não"
+      }
+    },
+    "updatedSuccess": "Cliente atualizado com sucesso!",
+    "createdSuccess": "Cliente criado com sucesso!",
+    "error": "Erro durante a operação!"
     },
     "orders": {
       "title": "Gerenciamento de Comandas",
@@ -275,7 +308,23 @@
       "add":"+",
       "tooltipText":"Seu plano atual permite apenas um dispositivo gerenciar as comandas por vez."
     },
+    "aiAssistant": {
+      "modalTitle": "Assistente de IA",
+      "enableLabel": "Ativar Assistente de IA",
+      "enabledSuccess": "Assistente de IA ativado com sucesso!",
+      "error": "Erro ao ativar o assistente de IA.",
+      "noData": "Nenhum dado disponível para o assistente de IA.",
+      "close": "Fechar",
+      "info":"Ative a IA para realizar análises profundas de clientes, produtos, funcionários e pagamentos, proporcionando insights estratégicos que impulsionarão a eficiência e o crescimento da sua empresa.",
+      "instructions":"Ative a IA para realizar análises profundas de seus clientes, produtos, funcionários e pagamentos, oferecendo insights estratégicos que aumentarão a eficiência da sua empresa e impulsionarão seu crescimento.",
+      "types":{
+        "product":"Produtos",
+        "employees":"Funcionários",
+        "payments":"Pagamentos",
+        "customers":"Clientes"
+      }
+    },
   "maintenanceTitle": "Sistema em Manutenção",
-    "maintenanceDescription": "Devido à alta demanda de usuários, estamos realizando uma manutenção para melhorar nossos serviços. Por favor, tente novamente mais tarde.",
-    "footerText": "Agradecemos a sua paciência e compreensão. © {{year}} Roktune."
+  "maintenanceDescription": "Devido à alta demanda de usuários, estamos realizando uma manutenção para melhorar nossos serviços. Por favor, tente novamente mais tarde.",
+  "footerText": "Agradecemos a sua paciência e compreensão. © {{year}} Roktune."
   }

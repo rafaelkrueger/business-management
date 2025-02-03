@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar, BarChart } from 'recharts';
@@ -5,6 +6,7 @@ import { HomeContainerBody, HomeContainerHeader, StreakContainerWorkoutElement, 
 import { DollarSign, CreditCard, BarChart3, Percent, Brain, Info } from 'lucide-react';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
+import AiAssistantModal from '../ai-assistant-modal/index.tsx';
 
 const NoDataMessage = () => {
   const { t } = useTranslation();
@@ -17,8 +19,22 @@ const NoDataMessage = () => {
   );
 };
 
-const Card = ({ children, style }) => (
-  <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '15px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', ...style }}>
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+}
+
+const Card: React.FC<CardProps> = ({ children, style, ...rest }) => (
+  <div
+    style={{
+      backgroundColor: 'white',
+      padding: '20px',
+      borderRadius: '15px',
+      boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+      ...style,
+    }}
+    {...rest}
+  >
     {children}
   </div>
 );
@@ -27,10 +43,11 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
   const { t } = useTranslation();
   const [tableData, setTableData] = useState([]);
   const [glanceData, setGlanceData] = useState({});
+  const [aiAssistant, setAiAssistant] = useState(false);
 
   const chartData = tableData.map((payment) => ({
     paymentDate: new Date(payment.paymentDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    total: parseFloat(payment.amount.replace('R$', '').replace(',', '.')),
+    total: parseFloat(payment.amount.replace('$', '').replace(',', '.')),
   }));
 
   const SimpleLineChart = () => (
@@ -60,15 +77,16 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
   );
 
   const cards = [
-    { icon: <DollarSign size={40} color="#22c55e" />, value: glanceData.totalAmount ? `R$${glanceData.totalAmount}` : '-', label: t('payments.totalAnnualRevenue') },
+    { icon: <DollarSign size={40} color="#22c55e" />, value: glanceData.totalAmount ? `$${glanceData.totalAmount}` : '-', label: t('payments.totalAnnualRevenue') },
     { icon: <CreditCard size={40} color="#3b82f6" />, value: glanceData.count || '-', label: t('payments.processedTransactions') },
-    { icon: <BarChart3 size={40} color="#facc15" />, value: glanceData.averageTicket ? `R$${glanceData.averageTicket}` : '-', label: t('payments.averageTicket') },
-    { icon: <Percent size={40} color="#ef4444" />, value: glanceData.taxes ? `R$${glanceData.taxes.toFixed(2)}` : '-', label: t('payments.taxes') },
+    { icon: <BarChart3 size={40} color="#facc15" />, value: glanceData.averageTicket ? `$${glanceData.averageTicket}` : '-', label: t('payments.averageTicket') },
+    { icon: <Percent size={40} color="#ef4444" />, value: glanceData.taxes ? `$${glanceData.taxes.toFixed(2)}` : '-', label: t('payments.taxes') },
     { icon: <Brain size={40} color="#a855f7" />, value: t('AI Powered'), label: t('payments.aiInsights') },
   ];
 
   return (
     <div style={{ padding: '20px' }}>
+      <AiAssistantModal isOpen={aiAssistant} onClose={()=>{setAiAssistant(false)}} companyId={activeCompany} type={t('aiAssistant.types.payments')}/>
       <HomeContainerHeader>
         <div style={{display:'flex'}}>
         {t('payments.title')}
@@ -107,7 +125,7 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1px', marginTop: '40px' }}>
         {cards.map((card, index) => (
-          <Card key={index} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: window.innerWidth > 600 ? '145px' : '88%', marginBottom:'30px' }}>
+          <Card onClick={()=>{if(index === 4)setAiAssistant(true)}} key={index} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: window.innerWidth > 600 ? '145px' : '88%', marginBottom:'30px' }}>
             {card.icon}
             <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginTop: '10px' }}>{card.value}</h1>
             <p style={{ color: '#6b7280', marginTop: '5px' }}>{card.label}</p>
