@@ -39,7 +39,6 @@ const AiAssistantModal: React.FC<AiAssistantModalProps> = ({
   const [toggleEnabled, setToggleEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Busca os dados do assistente de IA
   useEffect(() => {
     if (isOpen && companyId) {
       AiService.getAiAssistant(companyId)

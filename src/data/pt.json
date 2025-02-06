@@ -114,7 +114,8 @@
         "employees": "Funcionários",
         "orders": "Comandas",
         "customers": "Clientes",
-        "calendar": "Calendário"
+        "calendar": "Calendário",
+        "online": "Gerenciamento Online"
       }
     },
     "notifications":"Notificações",
@@ -316,12 +317,105 @@
       "noData": "Nenhum dado disponível para o assistente de IA.",
       "close": "Fechar",
       "info":"Ative a IA para realizar análises profundas de clientes, produtos, funcionários e pagamentos, proporcionando insights estratégicos que impulsionarão a eficiência e o crescimento da sua empresa.",
-      "instructions":"Ative a IA para realizar análises profundas de seus clientes, produtos, funcionários e pagamentos, oferecendo insights estratégicos que aumentarão a eficiência da sua empresa e impulsionarão seu crescimento.",
+      "instructions":"Sempre responda em português! Se não houver dados apenas avise que não tem dados suficiente para a analise. Ative a IA para realizar análises profundas de seus clientes, produtos, funcionários e pagamentos, oferecendo insights estratégicos que aumentarão a eficiência da sua empresa e impulsionarão seu crescimento.",
       "types":{
         "product":"Produtos",
         "employees":"Funcionários",
         "payments":"Pagamentos",
-        "customers":"Clientes"
+        "customers":"Clientes",
+        "website":"Website"
+      }
+    },
+    "tracking": {
+      "welcome": "Bem-vindo à integração Roktune!",
+      "intro": "Impulsione seu comércio online! Monitore acessos ao seu site, busque produtos diretamente da nossa plataforma, receba feedbacks de IA e integre facilmente com outras ferramentas.",
+      "integrationTag": "Sua Tag de Integração:",
+      "companyId": "Company ID",
+      "apiKey": "API Key",
+      "secret": "Secret",
+      "integrationInstructions": "Instruções para Integração:",
+      "copyScriptInstruction": "Cole o código abaixo no",
+      "ofYourSite": "do seu site:",
+      "next": "Próximo",
+      "tagCreatedSuccess": "Tag criada com sucesso!",
+      "copySuccess": "Código copiado com sucesso!",
+      "errorCreatingTag": "Erro ao criar a tag. Tente novamente.",
+      "home": {
+        "websiteTitle": "Tracking Website",
+        "timeRange": {
+          "week": "Semana",
+          "month": "Mês",
+          "year": "Ano"
+        },
+        "groupedVisitsTitle": "Visitas Agrupadas",
+        "weeklyVisitsTitle": "Visitas na Semana",
+        "vsLastWeek": "vs. última semana",
+        "aiInsightsTitle": "Insights de IA",
+        "aiInsightsDescription": "Sugestões de melhorias personalizadas para seu site!",
+        "documentationTitle": "Documentação",
+        "documentationDescription": "Aprenda a utilizar todas as funcionalidades do tracking.",
+        "accessDocumentation": "Acessar Documentação",
+        "realtimeMonitoringTitle": "Monitoramento em Tempo Real",
+        "realtimeMonitoringDescription": "Veja o fluxo do seu site e ações dos usuários em tempo real.",
+        "viewNow": "Ver Agora",
+        "home": {
+          "siteVisits": "Visitas ao Site",
+          "newUsers": "Novos Usuários"
+        },
+        "seoMetrics": {
+          "seoScore": "SEO Score",
+          "performance": "Performance",
+          "accessibility": "Acessibilidade",
+          "bestPractices": "Melhores Práticas",
+          "scoreLabel": "Pontuação",
+          "title": "Métricas de SEO"
+        },
+        "devices": {
+          "desktop": "Desktop",
+          "mobile": "Mobile",
+          "tablet": "Tablet",
+          "label": "Dispositivos",
+          "chartTitle": "Distribuição de Dispositivos"
+        },
+        "errors": {
+          "fetchPageViewData": "Erro ao buscar os dados de page view",
+          "fetchPerformanceData": "Erro ao buscar os dados de performance"
+        }
+      },
+      "aiAssistant": {
+        "types": {
+          "website": "Website"
+        }
+      },
+      "tracking": {
+        "days": {
+          "mon": "Seg",
+          "tue": "Ter",
+          "wed": "Qua",
+          "thu": "Qui",
+          "fri": "Sex",
+          "sat": "Sáb",
+          "sun": "Dom"
+        }
+      },
+      "features": {
+        "siteIntegration": "Integração com Site",
+        "productIntegration": "Integração com Produtos",
+        "chatBotIntegration": "Integração com Chat Bot",
+        "calendarIntegration": "Integração com Calendário",
+        "paymentIntegration": "Integração de Pagamentos",
+        "aiIntegration": "Integração com IA"
+      },
+      "help":{
+        "connectingWebsite":"Econtrando dificuldades em conectar o sistema?"
+      },
+      "tooltip": {
+        "tagActive": "A tag está ativa e funcionando corretamente.",
+        "tagInactive": "A tag ainda não foi encontrada no sistema."
+      },
+      "modal": {
+        "featureUnderMaintenance": "Esta funcionalidade está em manutenção no momento. Por favor, volte mais tarde.",
+        "close": "Fechar"
       }
     },
   "maintenanceTitle": "Sistema em Manutenção",

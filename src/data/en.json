@@ -87,7 +87,8 @@
         "employees": "Employees",
         "orders": "Orders",
         "customers": "Customers",
-        "calendar": "Calendar"
+        "calendar": "Calendar",
+        "online": "Online Management"
       }
     },
     "notifications":"Notifications",
@@ -289,12 +290,103 @@
       "noData": "No data available for the AI Assistant.",
       "close": "Close",
       "info":"Activate the AI to conduct deep analyses of your customers, products, employees, and payments, delivering strategic insights that will boost your company's efficiency and drive its growth.",
-      "instructions":"Analyze all aspects of the company, including finances, products, customers, employees, and schedules. Monitor revenue, expenses, product performance, and customer behavior. Evaluate team productivity, operational efficiency, and deadline compliance. Provide strategic insights to optimize processes, increase profitability, and enhance customer satisfaction. Suggest innovations, market opportunities, and technological automations. Generate detailed reports and interactive dashboards with practical recommendations for continuous business improvement.",
+      "instructions":"Always reply in english! If there is not enough data says that there is not enough data to analyze. Analyze all aspects of the company, including finances, products, customers, employees, and schedules. Monitor revenue, expenses, product performance, and customer behavior. Evaluate team productivity, operational efficiency, and deadline compliance. Provide strategic insights to optimize processes, increase profitability, and enhance customer satisfaction. Suggest innovations, market opportunities, and technological automations. Generate detailed reports and interactive dashboards with practical recommendations for continuous business improvement.",
       "types":{
         "product":"Products",
         "employees":"Employees",
         "payments":"Payments",
-        "customers":"Customers"
+        "customers":"Customers",
+        "website":"Website"
+      }
+    },
+    "tracking": {
+      "welcome": "Welcome to Roktune Integration!",
+      "intro": "Boost your online business! Monitor site traffic, fetch products directly from our platform, receive AI insights, and easily integrate with other tools.",
+      "integrationTag": "Your Integration Tag:",
+      "companyId": "Company ID",
+      "apiKey": "API Key",
+      "secret": "Secret",
+      "integrationInstructions": "Integration Instructions:",
+      "copyScriptInstruction": "Paste the code below into the",
+      "ofYourSite": "of your website:",
+      "next": "Next",
+      "tagCreatedSuccess": "Tag created successfully!",
+      "copySuccess": "Code copied successfully!",
+      "errorCreatingTag": "Error creating tag. Please try again.",
+      "home": {
+        "websiteTitle": "Tracking Website",
+        "timeRange": {
+          "week": "Week",
+          "month": "Month",
+          "year": "Year"
+        },
+        "groupedVisitsTitle": "Grouped Visits",
+        "weeklyVisitsTitle": "Weekly Visits",
+        "vsLastWeek": "vs. last week",
+        "aiInsightsTitle": "AI Insights",
+        "aiInsightsDescription": "Personalized improvement suggestions for your website!",
+        "documentationTitle": "Documentation",
+        "documentationDescription": "Learn how to use all tracking features.",
+        "accessDocumentation": "Access Documentation",
+        "realtimeMonitoringTitle": "Real-Time Monitoring",
+        "realtimeMonitoringDescription": "See your website flow and user actions in real time.",
+        "viewNow": "View Now",
+        "home": {
+          "siteVisits": "Site Visits",
+          "newUsers": "New Users"
+        },
+        "seoMetrics": {
+          "seoScore": "SEO Score",
+          "performance": "Performance",
+          "accessibility": "Accessibility",
+          "bestPractices": "Best Practices",
+          "scoreLabel": "Score",
+          "title": "SEO Metrics"
+        },
+        "devices": {
+          "desktop": "Desktop",
+          "mobile": "Mobile",
+          "tablet": "Tablet",
+          "label": "Devices",
+          "chartTitle": "Device Distribution"
+        },
+        "errors": {
+          "fetchPageViewData": "Error fetching page view data",
+          "fetchPerformanceData": "Error fetching performance data"
+        },
+        "days": {
+          "mon": "Mon",
+          "tue": "Tue",
+          "wed": "Wed",
+          "thu": "Thu",
+          "fri": "Fri",
+          "sat": "Sat",
+          "sun": "Sun"
+        }
+      },
+      "aiAssistant": {
+        "types": {
+          "website": "Website"
+        }
+      },
+      "features": {
+        "siteIntegration": "Website Integration",
+        "productIntegration": "Product Integration",
+        "chatBotIntegration": "Chat Bot Integration",
+        "calendarIntegration": "Calendar Integration",
+        "paymentIntegration": "Payment Integration",
+        "aiIntegration": "AI Integration"
+      },
+      "help":{
+        "connectingWebsite":"Having difficulties connecting your system?"
+      },
+      "tooltip": {
+        "tagActive": "Tag is active and functioning properly.",
+        "tagInactive": "Tag not found in the system yet."
+      },
+      "modal": {
+        "featureUnderMaintenance": "This feature is currently under maintenance. Please check back later.",
+        "close": "Close"
       }
     },
     "maintenanceTitle": "System Under Maintenance",

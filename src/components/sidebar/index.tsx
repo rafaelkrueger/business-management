@@ -10,6 +10,7 @@ import { IoMdChatboxes } from "react-icons/io";
 import { TiBusinessCard } from "react-icons/ti";
 import { MdSell } from "react-icons/md";
 import { FaCalendar } from "react-icons/fa";
+import { CgWebsite } from "react-icons/cg";
 import HomeService from '../../services/home.service.ts';
 import Select from 'react-select';
 import ModulesService from '../../services/modules.service.ts';
@@ -51,6 +52,11 @@ export const dashboardModules = [
     name: 'Orders',
     icon: <CiCreditCard1 size={26} />,
   },
+  {
+    module: '',
+    name: 'Online Management',
+    icon: <CgWebsite size={26} />,
+  },
 ];
 
 const icons = {
@@ -61,6 +67,7 @@ const icons = {
   TiBusinessCard: TiBusinessCard,
   FaCalendar: FaCalendar,
   CiCreditCard1: CiCreditCard1,
+  CgWebsite: CgWebsite
 };
 
 const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive: any, activateModule, userData, setActiveCompany, companies, setCompanies, setHasNoCompanies, hasNoCompanies, modulesUpdating }> = ({ ...props }) => {
