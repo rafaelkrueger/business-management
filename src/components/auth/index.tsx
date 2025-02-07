@@ -45,6 +45,12 @@ const Auth = () => {
     i18n.t('gender.noOpinion'),
   ];
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleAuth();
+    }
+  };
+
   const handleAuth = () => {
     setLoading(true);
     const action = isNewUser ? AllInOneService.create : AllInOneService.get;
@@ -79,6 +85,7 @@ const Auth = () => {
                 {i18n.t('auth.email')}
               </AuthContainerLeftLabelInput>
               <AuthContainerLeftInput
+                onKeyDown={handleKeyDown}
                 onChange={(e) => setUser({ ...user, email: e.target.value })}
               />
 

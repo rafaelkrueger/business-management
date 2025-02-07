@@ -387,6 +387,12 @@
       "modal": {
         "featureUnderMaintenance": "This feature is currently under maintenance. Please check back later.",
         "close": "Close"
+      },
+      "productsModal":{
+        "title":"Products Integration",
+        "subtitle":"Get Products:",
+        "contentCopied":"Content Copied",
+        "close": "Close"
       }
     },
     "maintenanceTitle": "System Under Maintenance",

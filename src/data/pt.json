@@ -416,6 +416,12 @@
       "modal": {
         "featureUnderMaintenance": "Esta funcionalidade está em manutenção no momento. Por favor, volte mais tarde.",
         "close": "Fechar"
+      },
+      "productsModal":{
+        "title":"Integração de Produtos",
+        "subtitle":"Achar Produtos:",
+        "contentCopied":"Conteúdo Copiado",
+        "close": "Fechar"
       }
     },
   "maintenanceTitle": "Sistema em Manutenção",

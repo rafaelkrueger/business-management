@@ -38,6 +38,8 @@ import TrackingService from '../../../services/tracking.service.ts';
 import AiAssistantModal from '../../ai-assistant-modal/index.tsx';
 import { useTranslation } from 'react-i18next';
 import { ContentCopy } from '@mui/icons-material';
+import IntegrationModal from '../integrate-products-modal/index.tsx';
+import { useSnackbar } from 'notistack';
 
 ChartJS.register(
   CategoryScale,
@@ -60,14 +62,16 @@ const TrackingHome: React.FC<{ activeCompany: string; userData: any; apiKey: str
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-
   const [rawData, setRawData] = useState<any[]>([]);
   const [performanceData, setPerformanceData] = useState<any>(null);
-  const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('month');
+  const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('week');
   const [aiAssistant, setAiAssistant] = useState(false);
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
+
+  const [productModal, setProductModal] = useState(false);
+
 
   const handleOpenModal = (featureTitle: string) => {
     setSelectedFeature(featureTitle);
@@ -146,7 +150,6 @@ const TrackingHome: React.FC<{ activeCompany: string; userData: any; apiKey: str
     async function fetchPerformanceData() {
       try {
         const response = await TrackingService.glancePerformance(apiKey);
-        console.log('Performance data received:', response.data);
         setPerformanceData(response.data);
       } catch (error) {
         console.error(t('tracking.home.errors.fetchPerformanceData'), error);
@@ -188,7 +191,6 @@ const TrackingHome: React.FC<{ activeCompany: string; userData: any; apiKey: str
       weekData.forEach((item: any) => {
         const d = new Date(item.createdAt);
         const jsDay = d.getDay();
-        // Se jsDay for 0, usamos o label para domingo
         const label = jsDay === 0 ? t('tracking.home.days.sun') : labels[jsDay - 1];
         grouped[label] += 1;
         if (item.isNewUser) {
@@ -484,7 +486,13 @@ const TrackingHome: React.FC<{ activeCompany: string; userData: any; apiKey: str
           {features.map((feature, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <Card
-                onClick={() => handleOpenModal(feature.title)}
+                onClick={() => {
+                  if(index === 1){
+                    setProductModal(true);
+                    return;
+                  }
+                  handleOpenModal(feature.title)
+                }}
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -648,6 +656,7 @@ const TrackingHome: React.FC<{ activeCompany: string; userData: any; apiKey: str
         </Button>
       </DialogActions>
     </Dialog>
+    <IntegrationModal open={productModal} onClose={() => { setProductModal(false); } } apiKey={apiKey} />
     </Box>
   );
 };
