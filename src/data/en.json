@@ -395,6 +395,11 @@
         "close": "Close"
       }
     },
+    "feedback": {
+      "title": "Feedback",
+      "message": "Send your message",
+      "send": "Send"
+    },
     "maintenanceTitle": "System Under Maintenance",
     "maintenanceDescription": "Due to high user demand, we are performing maintenance to improve our services. Please try again later.",
     "footerText": "We appreciate your patience and understanding. © {{year}} Roktune."
