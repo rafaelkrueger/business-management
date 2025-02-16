@@ -162,7 +162,7 @@ export const AuthContainerLeftForgotPassword = styled.p`
   text-align: center;
   font-size: 14px;
   text-decoration: underline;
-
+  margin-top:-5px;
   &:hover {
     cursor: pointer;
     color: #505ecb;
@@ -183,7 +183,6 @@ export const AuthContainerLeftForgotSignup = styled.p`
 export const AuthContainerLeftForgotSignupLink = styled.strong`
   color: #6372ff;
   text-decoration: underline;
-
   &:hover {
     cursor: pointer;
     color: #505ecb;

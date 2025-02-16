@@ -19,6 +19,7 @@ import CreateEnterpriseModal from '../../components/register-enterprise/index.ts
 import Maintenance from '../../components/maintenence/index.tsx';
 import Config from '../../components/config/index.tsx';
 import Tracking from '../../components/smart-tag/index.tsx';
+import MarketingDashboard from '../../components/marketing/index.tsx';
 
 const Dashboard: React.FC = () => {
   const [companies, setCompanies] = useState([]);
@@ -72,6 +73,7 @@ const Dashboard: React.FC = () => {
           {activeModuleName === 'calendar' && <Calendar activeCompany={activeCompany} userData={userData}/>}
           {activeModuleName === 'orders' && <Command activeCompany={activeCompany} userData={userData} />}
           {activeModuleName === 'online' && <Tracking userData={userData} activeCompany={activeCompany} />}
+          {activeModuleName === 'marketing' && <MarketingDashboard activeCompany={activeCompany} />}
           {activeModuleName === 'Config' && <Config userData={userData} activeCompany={activeCompany} modulesUpdating={modulesUpdating} setModulesUpdating={setModulesUpdating} />}
         </DashboardContainerShowed>
       )}

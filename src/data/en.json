@@ -88,7 +88,8 @@
         "orders": "Orders",
         "customers": "Customers",
         "calendar": "Calendar",
-        "online": "Online Management"
+        "online": "Online Management",
+        "marketing": "Marketing"
       }
     },
     "notifications":"Notifications",
@@ -399,6 +400,124 @@
       "title": "Feedback",
       "message": "Send your message",
       "send": "Send"
+    },
+    "marketing": {
+      "title": "Marketing Dashboard",
+      "performance": "Marketing Performance",
+      "conversions": "Conversions",
+      "paid_traffic": "Paid Traffic",
+      "paid_traffic_desc": "Manage and optimize ad campaigns.",
+      "seo": "SEO & Organic Traffic",
+      "seo_desc": "Monitor and improve your Google ranking.",
+      "email": "Email Marketing",
+      "email_desc": "Automate and send emails for lead nurturing and conversion.",
+      "community": "Community & Relationship",
+      "community_desc": "Track return on investment from each campaign.",
+      "social": "Social Media Management",
+      "social_desc": "Plan and publish content for your networks.",
+      "crm": "CRM for Leads & Clients",
+      "crm_desc": "Manage leads and customers, track negotiations, and increase conversions.",
+      "ab_testing": "A/B Testing & Conversion Optimization",
+      "ab_testing_desc": "Test different versions of pages and campaigns to maximize conversions.",
+      "landing_pages": "Landing Pages & Lead Capture",
+      "landing_pages_desc": "Capture and qualify leads automatically.",
+      "automation": "Automation",
+      "automation_desc": "Automate your sales funnel for conversions.",
+      "capturePages": {
+        "title": "Landing Page and Lead Capture Form",
+        "createLandingPage": "Create New Landing Page",
+        "createForm": "Create New Capture Form",
+        "landingPagesTab": "Landing Pages",
+        "formsTab": "Capture Forms",
+        "noLandingPageFound": "No landing pages found.",
+        "noFormFound": "No forms available.",
+        "viewDetails": "View Details",
+        "viewLandingPage": "View Landing Page",
+        "viewForm": "View Form",
+        "noDescription": "No description",
+        "createdAt": "Created on",
+        "views": "Views: {{count}}"
+      },
+      "templateDialog": {
+        "title": "Choose a Template",
+        "titleLabel": "Title",
+        "descriptionLabel": "Description",
+        "availableTemplates": "Available Templates",
+        "viewAndEdit": "Preview and Edit"
+      },
+      "previewDialog": {
+        "title": "Preview and Edit",
+        "saving": "Saving...",
+        "componentsTitle": "Forms",
+        "noComponents": "No components found.",
+        "noImage": "No image",
+        "instructionsTitle": "Editing Instructions",
+        "instructionText1": "Click the element to change text color",
+        "instructionText2": "Right-click on an empty area to insert a new image",
+        "instructionText3": "Right-click on the image to delete it",
+        "instructionText4": "Click and hold to drag images",
+        "instructionText5": "Alt + right-click to create links",
+        "createLandingPage": "Create landing page!"
+      },
+      "detailsDialog": {
+        "title": "Landing Page Details",
+        "noPageviews": "No pageview data to display."
+      },
+      "formDetailsModal": {
+        "title": "Form Details",
+        "noData": "No data found."
+      }
+    },
+    "charts": {
+      "pageViews": "Page Views",
+      "newUsers": "New Users",
+      "views": "Views",
+      "newUsersForForms": "New Potential Users"
+    },
+    "common": {
+      "cancel": "Cancel",
+      "close": "Close",
+      "loading": "Loading...",
+      "back":"Back"
+    },
+    "leads": {
+      "leadGenerationTitle": "Lead Generation",
+      "leadGenerationDescription": "Create custom forms to capture leads and increase your conversions.",
+      "createFormTitle": "Create New Capture Form",
+      "formTitle": "Form Title",
+      "description": "Description",
+      "fieldName": "Field Name",
+      "addExtraField": "Add Extra Field",
+      "persuasiveMessage": "Persuasive Message",
+      "persuasiveMessagePlaceholder": "Enter a message to persuade leads to fill out the form",
+      "incentivesQuestion": "What will you offer to attract leads?",
+      "salesOptionsTitle": "Sales Options",
+      "formPreviewTitle": "Form Preview",
+      "selectTemplate": "Select a Template",
+      "confirmAndCreate": "Confirm and Create",
+      "formIntegrationTitle": "Form Integration",
+      "integrationDescription": "You can integrate the form into your landing page in two ways:",
+      "embedCode": "Embed Code",
+      "directLink": "Or use the direct link:",
+      "fieldType": {
+        "text": "Text",
+        "email": "E-mail",
+        "phone": "Phone"
+      },
+      "incentive": {
+        "ebook": "Ebook",
+        "webinar": "Webinar",
+        "desconto": "Discount",
+        "consultoria": "Consultation",
+        "others": "Others"
+      },
+      "incentiveLink": "Link for {{incentive}}",
+      "salesOptions": {
+        "sellBefore": "Show incentive after submission",
+        "sellAfter": "Show incentive before submission",
+        "noOffer": "Do not show incentive"
+      },
+      "previewForm": "Preview Form"
     },
     "maintenanceTitle": "System Under Maintenance",
     "maintenanceDescription": "Due to high user demand, we are performing maintenance to improve our services. Please try again later.",

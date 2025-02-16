@@ -100,7 +100,6 @@ const Config: React.FC<{
         "message": feedbackMessage,
         "createdAt": Date.now(),
       }).then(()=>{
-        console.log("Feedback enviado:", feedbackMessage);
         enqueueSnackbar(
           t("feedback.feedbackSentSuccess") || "Feedback successfully sent!",
           { variant: "success" }

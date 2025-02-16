@@ -115,7 +115,8 @@
         "orders": "Comandas",
         "customers": "Clientes",
         "calendar": "Calendário",
-        "online": "Gerenciamento Online"
+        "online": "Gerenciamento Online",
+        "marketing": "Marketing"
       }
     },
     "notifications":"Notificações",
@@ -428,6 +429,124 @@
       "title": "Feedback",
       "message": "Digite sua mensagem",
       "send": "Enviar"
+    },
+    "marketing": {
+      "title": "Painel de Marketing",
+      "performance": "Desempenho de Marketing",
+      "conversions": "Conversões",
+      "paid_traffic": "Tráfego Pago",
+      "paid_traffic_desc": "Gerencie e otimize campanhas de anúncios.",
+      "seo": "SEO e Tráfego Orgânico",
+      "seo_desc": "Monitore e melhore sua classificação no Google.",
+      "email": "Email Marketing",
+      "email_desc": "Automatize e envie e-mails para nutrir leads e converter.",
+      "community": "Comunidade e Relacionamento",
+      "community_desc": "Acompanhe o retorno sobre investimento de cada campanha.",
+      "social": "Gestão de Mídias Sociais",
+      "social_desc": "Planeje e publique conteúdo para suas redes.",
+      "crm": "CRM para Leads e Clientes",
+      "crm_desc": "Gerencie leads e clientes, acompanhe negociações e aumente as conversões.",
+      "ab_testing": "Testes A/B e Otimização de Conversão",
+      "ab_testing_desc": "Teste diferentes versões de páginas e campanhas para maximizar as conversões.",
+      "landing_pages": "Landing Pages e Captura de Leads",
+      "landing_pages_desc": "Capture e qualifique leads automaticamente.",
+      "automation": "Automação",
+      "automation_desc": "Automatize seu funil de vendas para conversões.",
+      "capturePages": {
+        "title": "Landing Page e Formulário de Captura",
+        "createLandingPage": "Criar Nova Landing Page",
+        "createForm": "Criar Novo Formulário de Captura",
+        "landingPagesTab": "Landing Pages",
+        "formsTab": "Formulários de Captura",
+        "noLandingPageFound": "Nenhuma landing page encontrada.",
+        "noFormFound": "Nenhum formulário disponível.",
+        "viewDetails": "Ver Detalhes",
+        "viewLandingPage": "Ver Landing Page",
+        "viewForm": "Ver Formulário",
+        "noDescription": "Sem descrição",
+        "createdAt": "Criado em",
+        "views": "Visualizações: {{count}}"
+      },
+      "templateDialog": {
+        "title": "Escolha um Template",
+        "titleLabel": "Título",
+        "descriptionLabel": "Descrição",
+        "availableTemplates": "Templates Disponíveis",
+        "viewAndEdit": "Visualizar e Editar"
+      },
+      "previewDialog": {
+        "title": "Pré-visualização e Edição",
+        "saving": "Salvando...",
+        "componentsTitle": "Formulários",
+        "noComponents": "Nenhum componente encontrado.",
+        "noImage": "Sem imagem",
+        "instructionsTitle": "Instruções de Edição",
+        "instructionText1": "Clique no elemento para alterar a cor do texto",
+        "instructionText2": "Clique direito em uma área vazia para inserir nova imagem",
+        "instructionText3": "Clique direito na imagem para deletar",
+        "instructionText4": "Clique e segure para arrastar imagens",
+        "instructionText5": "Alt + botão direito para criar links",
+        "createLandingPage": "Criar landing page!"
+      },
+      "detailsDialog": {
+        "title": "Detalhes da Landing Page",
+        "noPageviews": "Sem dados de pageviews para exibir."
+      },
+      "formDetailsModal": {
+        "title": "Detalhes do Formulário",
+        "noData": "Nenhum dado encontrado."
+      }
+    },
+    "charts": {
+      "pageViews": "Page Views",
+      "newUsers": "New Users",
+      "views": "Visualizações",
+      "newUsersForForms": "Novos Possíveis Usuários"
+    },
+    "common": {
+      "cancel": "Cancelar",
+      "close": "Fechar",
+      "loading": "Carregando...",
+      "back":"Voltar"
+    },
+    "leads": {
+      "leadGenerationTitle": "Geração de Leads",
+      "leadGenerationDescription": "Crie formulários customizados para capturar leads e aumentar suas conversões.",
+      "createFormTitle": "Criar Novo Formulário de Captura",
+      "formTitle": "Título do Formulário",
+      "description": "Descrição",
+      "fieldName": "Nome do Campo",
+      "addExtraField": "Adicionar Campo Extra",
+      "persuasiveMessage": "Mensagem Persuasiva",
+      "persuasiveMessagePlaceholder": "Digite uma mensagem para persuadir os leads a preencher o formulário",
+      "incentivesQuestion": "O que você vai oferecer para atrair leads?",
+      "salesOptionsTitle": "Opções de Vendas",
+      "formPreviewTitle": "Visualização do Formulário",
+      "selectTemplate": "Selecione um Template",
+      "confirmAndCreate": "Confirmar e Criar",
+      "formIntegrationTitle": "Integração do Formulário",
+      "integrationDescription": "Você pode integrar o formulário em sua landing page de duas maneiras:",
+      "embedCode": "Código para Incorporação",
+      "directLink": "Ou utilize o link direto:",
+      "fieldType": {
+        "text": "Texto",
+        "email": "E-mail",
+        "phone": "Telefone"
+      },
+      "incentive": {
+        "ebook": "Ebook",
+        "webinar": "Webinar",
+        "desconto": "Desconto",
+        "consultoria": "Consultoria",
+        "others": "Outros"
+      },
+      "incentiveLink": "Link para {{incentive}}",
+      "salesOptions": {
+        "sellBefore": "Exibir incentivo após envio",
+        "sellAfter": "Exibir incentivo antes do envio",
+        "noOffer": "Não exibir incentivo"
+      },
+      "previewForm": "Visualizar Formulário"
     },
   "maintenanceTitle": "Sistema em Manutenção",
   "maintenanceDescription": "Devido à alta demanda de usuários, estamos realizando uma manutenção para melhorar nossos serviços. Por favor, tente novamente mais tarde.",
