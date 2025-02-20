@@ -451,6 +451,11 @@
       "landing_pages": "Landing Pages e Captura de Leads",
       "landing_pages_desc": "Capture e qualifique leads automaticamente.",
       "automation": "Automação",
+      "automationTable": {
+        "emptyStateTitle":"Não Há automações criadas",
+        "emptyStateDescription":"Crie sua primeira automação para melhorar o marketing da sua empresa",
+        "createCustomer":"+ NOVA AUTOMAÇÃO"
+      },
       "automation_desc": "Automatize seu funil de vendas para conversões.",
       "capturePages": {
         "title": "Landing Page e Formulário de Captura",

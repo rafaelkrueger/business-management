@@ -4,6 +4,7 @@ import './index.css';
 import { SnackbarProvider } from "notistack";
 import App from './App.tsx';
 import reportWebVitals from './reportWebVitals.ts';
+import 'react-quill/dist/quill.snow.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

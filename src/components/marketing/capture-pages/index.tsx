@@ -745,6 +745,13 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
     fetchLandingPages();
   }, [activeCompany]);
 
+  // Novo useEffect para buscar os templates sempre que o modal de criação for aberto
+  useEffect(() => {
+    if (openForm) {
+      fetchTemplates();
+    }
+  }, [openForm]);
+
   useEffect(() => {
     if (currentTab === 1) {
       fetchForms();
@@ -850,7 +857,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
                 />
               ))
             ) : (
-              <Typography variant="body2">
+              <Typography sx={{marginLeft:'20px', marginTop:'20px'}} variant="body2">
                 {t("marketing.capturePages.noLandingPageFound")}
               </Typography>
             )}

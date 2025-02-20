@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import LeadGeneration from "./create-leads/index.tsx";
 import React from "react";
 import CapturePages from "./capture-pages/index.tsx";
+import AutomationDashboard from "./automation/index.tsx";
 
 const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
   const { t } = useTranslation();
@@ -26,8 +27,7 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
 
   const cards = [
     { icon: <FileText size={24} />, title: t("marketing.landing_pages"), description: t("marketing.landing_pages_desc"), module: "createLeads" },
-    { icon: <Mail size={24} />, title: t("marketing.email"), description: t("marketing.email_desc") },
-    { icon: <Zap size={24} />, title: t("marketing.automation"), description: t("marketing.automation_desc") },
+    { icon: <Zap size={24} />, title: t("marketing.automation"), description: t("marketing.automation_desc"), module: "automation" },
     { icon: <Users size={24} />, title: t("marketing.crm"), description: t("marketing.crm_desc") },
     { icon: <Target size={24} />, title: t("marketing.paid_traffic"), description: t("marketing.paid_traffic_desc") },
     { icon: <Globe size={24} />, title: t("marketing.seo"), description: t("marketing.seo_desc") },
@@ -75,7 +75,11 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
             ))}
           </Grid>
         </div>
-      ) : module === 'createLeads' ? <CapturePages activeCompany={props.activeCompany} setModule={setModule} /> : null}
+      ) : module === 'createLeads' ? (
+        <CapturePages activeCompany={props.activeCompany} setModule={setModule} />
+      ) : module === 'automation' ? (
+        <AutomationDashboard activeCompany={props.activeCompany} />
+      ) : null}
     </>
   );
 };

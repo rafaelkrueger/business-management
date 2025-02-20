@@ -5,6 +5,10 @@ class AiService {
 		return http.get(`/ai/ai-assistant/${companyId}`);
 	}
 
+	static askQuickQuestion(companyId, question) {
+		return http.get(`/ai/ask-question?companyId=${companyId}&question=${question}`);
+	}
+
     static craeteAiAssistant(body) {
 		return http.post(`/ai/create-assistant`, body);
 	}
