@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber"; // Ícone de alerta
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useTranslation } from "react-i18next";
 
 const EmailTemplateSelector = ({ templates = [], open, onClose, onSelect, isConnectedToChatGpt }) => {
@@ -94,7 +94,7 @@ const EmailTemplateSelector = ({ templates = [], open, onClose, onSelect, isConn
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
-      <DialogTitle>Selecione um Template de E-mail</DialogTitle>
+      <DialogTitle>{t("emailTemplateSelector.title")}</DialogTitle>
       <DialogContent>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
           {Array.isArray(templates) && templates.length > 0 ? (
@@ -123,16 +123,15 @@ const EmailTemplateSelector = ({ templates = [], open, onClose, onSelect, isConn
             ))
           ) : (
             <Typography variant="body2" color="textSecondary">
-              Nenhum template disponível.
+              {t("emailTemplateSelector.noTemplate")}
             </Typography>
           )}
         </Box>
 
         {selectedTemplate && (
           <Box sx={{ mt: 2 }}>
-            <Typography variant="h6">Pré-visualização:</Typography>
+            <Typography variant="h6">{t("emailTemplateSelector.previewTitle")}</Typography>
 
-            {/* Mensagem de aviso caso esteja bloqueado */}
             {isConnectedToChatGpt && (
               <Typography
                 sx={{
@@ -146,7 +145,7 @@ const EmailTemplateSelector = ({ templates = [], open, onClose, onSelect, isConn
                 variant="body2"
               >
                 <WarningAmberIcon sx={{ fontSize: 18 }} />
-                A edição está bloqueada porque o conteúdo deste email está será gerado automaticamente pelo ChatGPT, apenas a estilização será mantida.
+                {t("emailTemplateSelector.editBlockedMessage")}
               </Typography>
             )}
 
@@ -202,7 +201,7 @@ const EmailTemplateSelector = ({ templates = [], open, onClose, onSelect, isConn
             {!isConnectedToChatGpt && editInIframe && (
               <Box sx={{ mt: 2 }}>
                 <Button variant="contained" onClick={handleSaveIframeChanges} color="primary">
-                  Salvar Alterações
+                  {t("emailTemplateSelector.saveChanges")}
                 </Button>
               </Box>
             )}
@@ -210,9 +209,9 @@ const EmailTemplateSelector = ({ templates = [], open, onClose, onSelect, isConn
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancelar</Button>
+        <Button onClick={onClose}>{t("form.cancel")}</Button>
         <Button onClick={handleConfirmSelection} disabled={!selectedTemplate}>
-          Selecionar
+          {t("emailTemplateSelector.select")}
         </Button>
       </DialogActions>
     </Dialog>

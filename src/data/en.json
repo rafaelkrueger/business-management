@@ -1,143 +1,152 @@
 {
-    "auth": {
-      "email": "Email",
-      "emailPlaceholder": "Enter your email",
-      "password": "Password",
-      "passwordPlaceholder": "Enter your password",
-      "signIn": "Sign In",
-      "signUp": "Sign Up",
+  "auth": {
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "cellphone": "Cellphone",
+    "cellphonePlaceholder": "Enter your cellphone",
+    "birthDate": "Birth Date",
+    "gender": "Gender",
+    "select": "Select",
+    "noAccount": "Don't have an account?",
+    "alreadyAccount": "Already have an account?",
+    "forgotPassword": "Forgot your password?"
+  },
+  "gender": {
+    "male": "Male",
+    "female": "Female",
+    "noOpinion": "Prefer not to say"
+  },
+  "error": {
+    "authError": "Authentication error",
+    "emailRequired": "Email is required",
+    "invalidEmail": "Invalid email format",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 8 characters",
+    "nameRequired": "Name is required",
+    "cellphoneRequired": "Cellphone is required",
+    "invalidCellphone": "Invalid cellphone format",
+    "fixErrors": "Please fix the errors in the form",
+    "noName": "No name"
+  },
+  "createEnterpriseModal": {
+    "title": "Create New Company",
+    "logo": "Logo",
+    "logoPreviewAlt": "Logo Preview",
+    "name": "Name",
+    "namePlaceholder": "Company name",
+    "email": "Email",
+    "emailPlaceholder": "Company email",
+    "phone": "Phone",
+    "phonePlaceholder": "Contact phone",
+    "document": "Document",
+    "documentPlaceholder": "Document (optional)",
+    "active": "Active",
+    "createButton": "Create",
+    "infoMessage": "To start your journey, please create your first company to manage",
+    "successMessage": "Company created successfully!",
+    "errorMessage": "Error creating company."
+  },
+  "config": {
+    "title": "General Settings",
+    "form": {
       "name": "Name",
-      "namePlaceholder": "Enter your name",
-      "cellphone": "Cellphone",
-      "cellphonePlaceholder": "Enter your cellphone",
-      "birthDate": "Birth Date",
-      "gender": "Gender",
-      "select": "Select",
-      "noAccount": "Don't have an account?",
-      "alreadyAccount": "Already have an account?",
-      "forgotPassword": "Forgot your password?"
-    },
-    "gender": {
-      "male": "Male",
-      "female": "Female",
-      "noOpinion": "Prefer not to say"
-    },
-    "error": {
-      "authError": "Authentication error"
-    },
-    "createEnterpriseModal": {
-      "title": "Create New Company",
-      "logo": "Logo",
-      "logoPreviewAlt": "Logo Preview",
-      "name": "Name",
-      "namePlaceholder": "Company name",
       "email": "Email",
-      "emailPlaceholder": "Company email",
       "phone": "Phone",
-      "phonePlaceholder": "Contact phone",
       "document": "Document",
-      "documentPlaceholder": "Document (optional)",
-      "active": "Active",
-      "createButton": "Create",
-      "infoMessage": "To start your journey, please create your first company to manage",
-      "successMessage": "Company created successfully!",
-      "errorMessage": "Error creating company."
-    },
-    "config": {
-      "title": "General Settings",
-      "form": {
-        "name": "Name",
-        "email": "Email",
-        "phone": "Phone",
-        "document": "Document",
-        "changePhoto": "Change Photo",
-        "save": "Save",
-        "cancel": "Cancel",
-        "disableCompany": "Disable Company",
-        "newCompany": "New Company +",
-        "companyName": "Company Name",
-        "activeModules": "Active Modules",
-        "establishment": {
-          "label": "Establishment",
-          "placeholder": "Type to search..."
-        }
-      },
-      "messages": {
-        "companyUpdated": "Company information updated successfully!",
-        "updateError": "Error updating!",
-        "modulesUpdated": "Modules updated successfully!",
-        "modulesUpdateError": "Error updating modules!",
-        "changesCanceled": "Changes canceled."
-      },
-      "establishmentOptions": {
-        "restaurant": "Restaurant",
-        "supermarket": "Supermarket",
-        "salon": "Salon",
-        "hospital": "Hospital",
-        "pharmacy": "Pharmacy",
-        "school": "School",
-        "clinic": "Clinic",
-        "clothingStore": "Clothing Store",
-        "gym": "Gym"
-      },
-      "establishmentModules": {
-        "home": "Home",
-        "payments": "Payments",
-        "products": "Products",
-        "employees": "Employees",
-        "orders": "Orders",
-        "customers": "Customers",
-        "calendar": "Calendar",
-        "online": "Online Management",
-        "marketing": "Marketing"
+      "changePhoto": "Change Photo",
+      "save": "Save",
+      "cancel": "Cancel",
+      "disableCompany": "Disable Company",
+      "newCompany": "New Company +",
+      "companyName": "Company Name",
+      "activeModules": "Active Modules",
+      "establishment": {
+        "label": "Establishment",
+        "placeholder": "Type to search..."
       }
     },
-    "notifications":"Notifications",
-    "configurations":"Configurations",
-    "support": "If you want to update your information or reset your password, please contact support.",
-    "notification":{
-      "updated-modules":"Modules updated successfully!",
-      "canceled-modules":"Updated modules canceled.",
-      "error-modules":"Modules not updated!"
+    "messages": {
+      "companyUpdated": "Company information updated successfully!",
+      "updateError": "Error updating!",
+      "modulesUpdated": "Modules updated successfully!",
+      "modulesUpdateError": "Error updating modules!",
+      "changesCanceled": "Changes canceled."
     },
-    "products":{
-      "productSession": "Product Session",
-      "productInfo": "Here is your product information",
-      "createProduct": "Create new product",
-      "importSpreadsheet": "Import Spreadsheet",
-      "stockChart": "Stock Overview",
-      "salesChart": "Sales by Category",
+    "establishmentOptions": {
+      "restaurant": "Restaurant",
+      "supermarket": "Supermarket",
+      "salon": "Salon",
+      "hospital": "Hospital",
+      "pharmacy": "Pharmacy",
+      "school": "School",
+      "clinic": "Clinic",
+      "clothingStore": "Clothing Store",
+      "gym": "Gym"
+    },
+    "establishmentModules": {
+      "home": "Home",
+      "payments": "Payments",
+      "products": "Products",
+      "employees": "Employees",
+      "orders": "Orders",
+      "customers": "Customers",
+      "calendar": "Calendar",
+      "online": "Online Management",
+      "marketing": "Marketing"
+    }
+  },
+  "notifications": "Notifications",
+  "configurations": "Configurations",
+  "support": "If you want to update your information or reset your password, please contact support.",
+  "notification": {
+    "updated-modules": "Modules updated successfully!",
+    "canceled-modules": "Updated modules canceled.",
+    "error-modules": "Modules not updated!"
+  },
+  "products": {
+    "productSession": "Product Session",
+    "productInfo": "Here is your product information",
+    "createProduct": "Create new product",
+    "importSpreadsheet": "Import Spreadsheet",
+    "stockChart": "Stock Overview",
+    "salesChart": "Sales by Category",
+    "name": "Name",
+    "description": "Description",
+    "category": "Category",
+    "price": "Price",
+    "cost": "Cost",
+    "stock": "Stock",
+    "rating": "Rating",
+    "status": "Status",
+    "emptyStateTitle": "No products found",
+    "emptyStateDescription": "Start by creating a new product or importing a spreadsheet.",
+    "ai": "AI Analysis",
+    "noData": "No data yet",
+    "again": "Try again later...",
+    "forms": {
+      "editProduct": "Edit Product",
+      "addProduct": "Add Product",
       "name": "Name",
       "description": "Description",
       "category": "Category",
       "price": "Price",
       "cost": "Cost",
-      "stock": "Stock",
-      "rating": "Rating",
-      "status": "Status",
-      "emptyStateTitle": "No products found",
-      "emptyStateDescription": "Start by creating a new product or importing a spreadsheet.",
-      "ai": "AI Analysis",
-      "noData":"No data yet",
-      "again":"Try again later...",
-      "forms":{
-        "editProduct": "Edit Product",
-        "addProduct": "Add Product",
-        "name": "Name",
-        "description": "Description",
-        "category": "Category",
-        "price": "Price",
-        "cost": "Cost",
-        "quantityInStock": "Quantity in Stock",
-        "productImages": "Product Images",
-        "uploadImages": "Upload Images",
-        "cancel": "Cancel",
-        "saveChanges": "Save Changes",
-        "addProductButton": "Add"
-      },
-      "tooltipText":"Registered products can be used in other parts of the system, they will help you manage your company."
+      "quantityInStock": "Quantity in Stock",
+      "productImages": "Product Images",
+      "uploadImages": "Upload Images",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "addProductButton": "Add"
     },
-    "employees": {
+    "tooltipText": "Registered products can be used in other parts of the system, they will help you manage your company."
+  },
+  "employees": {
     "emptyTitle": "No employees registered",
     "emptySubTitle": "Start by registering a new employee or importing a spreadsheet.",
     "create": "Register Employee",
@@ -149,91 +158,91 @@
     "iaAnalysis": "AI Analysis",
     "iaDescription": "Advanced data analysis with AI for strategic insights.",
     "viewAnalysis": "View Analysis",
-    "tooltipText":"Registered employees can be used in other parts of the system."
+    "tooltipText": "Registered employees can be used in other parts of the system."
+  },
+  "modal": {
+    "newEmployee": "New Employee",
+    "editEmployee": "Edit Employee",
+    "fullName": "Full Name",
+    "email": "Email",
+    "phone": "Phone",
+    "gender": "Gender",
+    "job": "Job",
+    "department": "Department",
+    "birthDate": "Birth Date",
+    "hireDate": "Hire Date",
+    "salary": "Salary",
+    "manager": "Manager",
+    "active": "Active",
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create"
+  },
+  "calendar": {
+    "title": "Company Calendar",
+    "subtitle": "Check the company's schedule",
+    "days": {
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
     },
-    "modal": {
-      "newEmployee": "New Employee",
-      "editEmployee": "Edit Employee",
-      "fullName": "Full Name",
-      "email": "Email",
-      "phone": "Phone",
-      "gender": "Gender",
-      "job": "Job",
-      "department": "Department",
-      "birthDate": "Birth Date",
-      "hireDate": "Hire Date",
-      "salary": "Salary",
-      "manager": "Manager",
-      "active": "Active",
-      "cancel": "Cancel",
-      "save": "Save",
-      "create": "Create"
-    },
-    "calendar": {
-      "title": "Company Calendar",
-      "subtitle": "Check the company's schedule",
-      "days": {
-        "sunday": "Sunday",
-        "monday": "Monday",
-        "tuesday": "Tuesday",
-        "wednesday": "Wednesday",
-        "thursday": "Thursday",
-        "friday": "Friday",
-        "saturday": "Saturday"
-      },
-      "tooltipText":"This calendar is only visible for you."
-    },
-    "sidepanel":{
-      "createEvent": "Create Event",
-      "back": "Back",
-      "close": "Close",
+    "tooltipText": "This calendar is only visible for you."
+  },
+  "sidepanel": {
+    "createEvent": "Create Event",
+    "back": "Back",
+    "close": "Close",
+    "title": "Title",
+    "description": "Description",
+    "employees": "Employees",
+    "customers": "Customers",
+    "searchEmployee": "Enter employee's name",
+    "searchCustomers": "Enter customer's name",
+    "noEmployeeFound": "No employee found",
+    "noCustomerFound": "No customer found",
+    "time": "Time",
+    "addEvent": "Add Event",
+    "eventCreated": "Event Created!",
+    "eventDeleted": "Event Deleted!",
+    "noEventsForDate": "No events for this date",
+    "form": {
       "title": "Title",
       "description": "Description",
-      "employees": "Employees",
-      "customers": "Customers",
-      "searchEmployee": "Enter employee's name",
-      "searchCustomers": "Enter customer's name",
-      "noEmployeeFound": "No employee found",
-      "noCustomerFound": "No customer found",
-      "time": "Time",
-      "addEvent": "Add Event",
-      "eventCreated": "Event Created!",
-      "eventDeleted": "Event Deleted!",
-      "noEventsForDate": "No events for this date",
-      "form":{
-        "title":"Title",
-        "description":"Description",
-        "time":"Time"
-      }
-    },
-    "payments": {
-      "title": "Payments Area",
-      "financialInfo": "Financial Information",
-      "totalAnnualRevenue": "Total Annual Revenue",
-      "processedTransactions": "Processed Transactions",
-      "averageTicket": "Average Ticket",
-      "taxes": "Taxes",
-      "aiInsights":"AI Analysis",
-      "tooltipText":"Payments are recorded automatically through integration with other system modules that detect new transactions. To add or adjust information manually, please contact our support team."
-    },
-    "customers": {
-      "title": "Customer Session",
-      "description": "Here is the information about your customers",
-      "detailsTitle": "Customer Details",
-      "total": "Total Customers",
-      "active": "Active Customers",
-      "inactive": "Inactive Customers",
-      "retentionRate": "Customer Retention Rate",
-      "name": "Name",
-      "email": "Email",
-      "phone": "Phone",
-      "gender": "Gender",
-      "emptyStateTitle": "No customers registered yet",
-      "emptyStateDescription": "Customers will be automatically added as you use other system modules.",
-      "tooltipText":"Customers are auto added when you use other modules, to add or adjust information manually, please contact our support team.",
-      "create":"Create Customer",
-      "importSpreadsheet": "Import from spreadsheet",
-      "form": {
+      "time": "Time"
+    }
+  },
+  "payments": {
+    "title": "Payments Area",
+    "financialInfo": "Financial Information",
+    "totalAnnualRevenue": "Total Annual Revenue",
+    "processedTransactions": "Processed Transactions",
+    "averageTicket": "Average Ticket",
+    "taxes": "Taxes",
+    "aiInsights": "AI Analysis",
+    "tooltipText": "Payments are recorded automatically through integration with other system modules that detect new transactions. To add or adjust information manually, please contact our support team."
+  },
+  "customers": {
+    "title": "Customer Session",
+    "description": "Here is the information about your customers",
+    "detailsTitle": "Customer Details",
+    "total": "Total Customers",
+    "active": "Active Customers",
+    "inactive": "Inactive Customers",
+    "retentionRate": "Customer Retention Rate",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "gender": "Gender",
+    "emptyStateTitle": "No customers registered yet",
+    "emptyStateDescription": "Customers will be automatically added as you use other system modules.",
+    "tooltipText": "Customers are auto added when you use other modules, to add or adjust information manually, please contact our support team.",
+    "create": "Create Customer",
+    "importSpreadsheet": "Import from spreadsheet",
+    "form": {
       "createTitle": "Create Customer",
       "updateTitle": "Update Customer",
       "name": "Name",
@@ -256,275 +265,366 @@
     "updatedSuccess": "Customer updated successfully!",
     "createdSuccess": "Customer created successfully!",
     "error": "Error during the operation!"
-    },
-    "orders": {
-      "title": "Order Management",
-      "description": "Organize your establishment's orders quickly and efficiently.",
-      "open": "Open",
-      "closed": "Closed",
-      "openTime": "Open Time",
-      "observation": "Observation",
-      "none": "None",
-      "total": "Total",
-      "addOrder": "Add Order",
-      "tableName": "Order Name",
-      "status": "Status",
-      "closeOrder": "Close",
-      "reopenOrder": "Open",
-      "cancel": "Cancel",
-      "save":"Save",
-      "edit":"Edit",
-      "consumed":"Consumed",
-      "addProducts":"Add",
-      "consumedProducts":"Consumed Products",
-      "noProducts":"There are no products added yet...",
-      "searchProduct": "Search for a product...",
-      "noAvailableProducts": "No products available to add",
-      "noImage": "No Image",
-      "tooltipText": "Your current plan allows only one device to manage the orders at a time."
+  },
+  "orders": {
+    "title": "Order Management",
+    "description": "Organize your establishment's orders quickly and efficiently.",
+    "open": "Open",
+    "closed": "Closed",
+    "openTime": "Open Time",
+    "observation": "Observation",
+    "none": "None",
+    "total": "Total",
+    "addOrder": "Add Order",
+    "tableName": "Order Name",
+    "status": "Status",
+    "closeOrder": "Close",
+    "reopenOrder": "Open",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "consumed": "Consumed",
+    "addProducts": "Add",
+    "consumedProducts": "Consumed Products",
+    "noProducts": "There are no products added yet...",
+    "searchProduct": "Search for a product...",
+    "noAvailableProducts": "No products available to add",
+    "noImage": "No Image",
+    "tooltipText": "Your current plan allows only one device to manage the orders at a time."
+  },
+  "aiAssistant": {
+    "modalTitle": "AI Assistant",
+    "enableLabel": "Enable AI Assistant",
+    "enabledSuccess": "AI Assistant enabled successfully!",
+    "error": "Error enabling AI Assistant.",
+    "noData": "No data available for the AI Assistant.",
+    "close": "Close",
+    "info": "Activate the AI to conduct deep analyses of your customers, products, employees, and payments, delivering strategic insights that will boost your company's efficiency and drive its growth.",
+    "instructions": "Always reply in english! If there is not enough data, say that there is not enough data to analyze. Analyze all aspects of the company, including finances, products, customers, employees, and schedules. Monitor revenue, expenses, product performance, and customer behavior. Evaluate team productivity, operational efficiency, and deadline compliance. Provide strategic insights to optimize processes, increase profitability, and enhance customer satisfaction. Suggest innovations, market opportunities, and technological automations. Generate detailed reports and interactive dashboards with practical recommendations for continuous business improvement.",
+    "types": {
+      "product": "Products",
+      "employees": "Employees",
+      "payments": "Payments",
+      "customers": "Customers",
+      "website": "Website"
+    }
+  },
+  "tracking": {
+    "welcome": "Welcome to Roktune Integration!",
+    "intro": "Boost your online business! Monitor site traffic, fetch products directly from our platform, receive AI insights, and easily integrate with other tools.",
+    "integrationTag": "Your Integration Tag:",
+    "companyId": "Company ID",
+    "apiKey": "API Key",
+    "secret": "Secret",
+    "integrationInstructions": "Integration Instructions:",
+    "copyScriptInstruction": "Paste the code below into the",
+    "ofYourSite": "of your website:",
+    "next": "Next",
+    "tagCreatedSuccess": "Tag created successfully!",
+    "copySuccess": "Code copied successfully!",
+    "errorCreatingTag": "Error creating tag. Please try again.",
+    "home": {
+      "websiteTitle": "Tracking Website",
+      "timeRange": {
+        "week": "Week",
+        "month": "Month",
+        "year": "Year"
+      },
+      "groupedVisitsTitle": "Grouped Visits",
+      "weeklyVisitsTitle": "Weekly Visits",
+      "vsLastWeek": "vs. last week",
+      "aiInsightsTitle": "AI Insights",
+      "aiInsightsDescription": "Personalized improvement suggestions for your website!",
+      "documentationTitle": "Documentation",
+      "documentationDescription": "Learn how to use all tracking features.",
+      "accessDocumentation": "Access Documentation",
+      "realtimeMonitoringTitle": "Real-Time Monitoring",
+      "realtimeMonitoringDescription": "See your website flow and user actions in real time.",
+      "viewNow": "View Now",
+      "home": {
+        "siteVisits": "Site Visits",
+        "newUsers": "New Users"
+      },
+      "seoMetrics": {
+        "seoScore": "SEO Score",
+        "performance": "Performance",
+        "accessibility": "Accessibility",
+        "bestPractices": "Best Practices",
+        "scoreLabel": "Score",
+        "title": "SEO Metrics"
+      },
+      "devices": {
+        "desktop": "Desktop",
+        "mobile": "Mobile",
+        "tablet": "Tablet",
+        "label": "Devices",
+        "chartTitle": "Device Distribution"
+      },
+      "errors": {
+        "fetchPageViewData": "Error fetching page view data",
+        "fetchPerformanceData": "Error fetching performance data"
+      },
+      "days": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun"
+      }
     },
     "aiAssistant": {
-      "modalTitle": "AI Assistant",
-      "enableLabel": "Enable AI Assistant",
-      "enabledSuccess": "AI Assistant enabled successfully!",
-      "error": "Error enabling AI Assistant.",
-      "noData": "No data available for the AI Assistant.",
-      "close": "Close",
-      "info":"Activate the AI to conduct deep analyses of your customers, products, employees, and payments, delivering strategic insights that will boost your company's efficiency and drive its growth.",
-      "instructions":"Always reply in english! If there is not enough data says that there is not enough data to analyze. Analyze all aspects of the company, including finances, products, customers, employees, and schedules. Monitor revenue, expenses, product performance, and customer behavior. Evaluate team productivity, operational efficiency, and deadline compliance. Provide strategic insights to optimize processes, increase profitability, and enhance customer satisfaction. Suggest innovations, market opportunities, and technological automations. Generate detailed reports and interactive dashboards with practical recommendations for continuous business improvement.",
-      "types":{
-        "product":"Products",
-        "employees":"Employees",
-        "payments":"Payments",
-        "customers":"Customers",
-        "website":"Website"
+      "types": {
+        "website": "Website"
       }
     },
-    "tracking": {
-      "welcome": "Welcome to Roktune Integration!",
-      "intro": "Boost your online business! Monitor site traffic, fetch products directly from our platform, receive AI insights, and easily integrate with other tools.",
-      "integrationTag": "Your Integration Tag:",
-      "companyId": "Company ID",
-      "apiKey": "API Key",
-      "secret": "Secret",
-      "integrationInstructions": "Integration Instructions:",
-      "copyScriptInstruction": "Paste the code below into the",
-      "ofYourSite": "of your website:",
-      "next": "Next",
-      "tagCreatedSuccess": "Tag created successfully!",
-      "copySuccess": "Code copied successfully!",
-      "errorCreatingTag": "Error creating tag. Please try again.",
-      "home": {
-        "websiteTitle": "Tracking Website",
-        "timeRange": {
-          "week": "Week",
-          "month": "Month",
-          "year": "Year"
-        },
-        "groupedVisitsTitle": "Grouped Visits",
-        "weeklyVisitsTitle": "Weekly Visits",
-        "vsLastWeek": "vs. last week",
-        "aiInsightsTitle": "AI Insights",
-        "aiInsightsDescription": "Personalized improvement suggestions for your website!",
-        "documentationTitle": "Documentation",
-        "documentationDescription": "Learn how to use all tracking features.",
-        "accessDocumentation": "Access Documentation",
-        "realtimeMonitoringTitle": "Real-Time Monitoring",
-        "realtimeMonitoringDescription": "See your website flow and user actions in real time.",
-        "viewNow": "View Now",
-        "home": {
-          "siteVisits": "Site Visits",
-          "newUsers": "New Users"
-        },
-        "seoMetrics": {
-          "seoScore": "SEO Score",
-          "performance": "Performance",
-          "accessibility": "Accessibility",
-          "bestPractices": "Best Practices",
-          "scoreLabel": "Score",
-          "title": "SEO Metrics"
-        },
-        "devices": {
-          "desktop": "Desktop",
-          "mobile": "Mobile",
-          "tablet": "Tablet",
-          "label": "Devices",
-          "chartTitle": "Device Distribution"
-        },
-        "errors": {
-          "fetchPageViewData": "Error fetching page view data",
-          "fetchPerformanceData": "Error fetching performance data"
-        },
-        "days": {
-          "mon": "Mon",
-          "tue": "Tue",
-          "wed": "Wed",
-          "thu": "Thu",
-          "fri": "Fri",
-          "sat": "Sat",
-          "sun": "Sun"
-        }
-      },
-      "aiAssistant": {
-        "types": {
-          "website": "Website"
-        }
-      },
-      "features": {
-        "siteIntegration": "Website Integration",
-        "productIntegration": "Product Integration",
-        "chatBotIntegration": "Chat Bot Integration",
-        "calendarIntegration": "Calendar Integration",
-        "paymentIntegration": "Payment Integration",
-        "aiIntegration": "AI Integration"
-      },
-      "help":{
-        "connectingWebsite":"Having difficulties connecting your system?"
-      },
-      "tooltip": {
-        "tagActive": "Tag is active and functioning properly.",
-        "tagInactive": "Tag not found in the system yet."
-      },
-      "modal": {
-        "featureUnderMaintenance": "This feature is currently under maintenance. Please check back later.",
-        "close": "Close"
-      },
-      "productsModal":{
-        "title":"Products Integration",
-        "subtitle":"Get Products:",
-        "contentCopied":"Content Copied",
-        "close": "Close"
-      }
+    "features": {
+      "siteIntegration": "Website Integration",
+      "productIntegration": "Product Integration",
+      "chatBotIntegration": "Chat Bot Integration",
+      "calendarIntegration": "Calendar Integration",
+      "paymentIntegration": "Payment Integration",
+      "aiIntegration": "AI Integration"
     },
-    "feedback": {
-      "title": "Feedback",
-      "message": "Send your message",
-      "send": "Send"
+    "help": {
+      "connectingWebsite": "Having difficulties connecting your system?"
     },
-    "marketing": {
-      "title": "Marketing Dashboard",
-      "performance": "Marketing Performance",
-      "conversions": "Conversions",
-      "paid_traffic": "Paid Traffic",
-      "paid_traffic_desc": "Manage and optimize ad campaigns.",
-      "seo": "SEO & Organic Traffic",
-      "seo_desc": "Monitor and improve your Google ranking.",
-      "email": "Email Marketing",
-      "email_desc": "Automate and send emails for lead nurturing and conversion.",
-      "community": "Community & Relationship",
-      "community_desc": "Track return on investment from each campaign.",
-      "social": "Social Media Management",
-      "social_desc": "Plan and publish content for your networks.",
-      "crm": "CRM for Leads & Clients",
-      "crm_desc": "Manage leads and customers, track negotiations, and increase conversions.",
-      "ab_testing": "A/B Testing & Conversion Optimization",
-      "ab_testing_desc": "Test different versions of pages and campaigns to maximize conversions.",
-      "landing_pages": "Landing Pages & Lead Capture",
-      "landing_pages_desc": "Capture and qualify leads automatically.",
-      "automation": "Automation",
-      "automationTable": {
-        "emptyStateTitle": "No Automations Created",
-        "emptyStateDescription": "Create your first automation to improve your company's marketing",
-        "createCustomer": "+ NEW AUTOMATION"
-      },
-      "automation_desc": "Automate your sales funnel for conversions.",
-      "capturePages": {
-        "title": "Landing Page and Lead Capture Form",
-        "createLandingPage": "Create New Landing Page",
-        "createForm": "Create New Capture Form",
-        "landingPagesTab": "Landing Pages",
-        "formsTab": "Capture Forms",
-        "noLandingPageFound": "No landing pages found.",
-        "noFormFound": "No forms available.",
-        "viewDetails": "View Details",
-        "viewLandingPage": "View Landing Page",
-        "viewForm": "View Form",
-        "noDescription": "No description",
-        "createdAt": "Created on",
-        "views": "Views: {{count}}"
-      },
-      "templateDialog": {
-        "title": "Choose a Template",
-        "titleLabel": "Title",
-        "descriptionLabel": "Description",
-        "availableTemplates": "Available Templates",
-        "viewAndEdit": "Preview and Edit"
-      },
-      "previewDialog": {
-        "title": "Preview and Edit",
-        "saving": "Saving...",
-        "componentsTitle": "Forms",
-        "noComponents": "No components found.",
-        "noImage": "No image",
-        "instructionsTitle": "Editing Instructions",
-        "instructionText1": "Click the element to change text color",
-        "instructionText2": "Right-click on an empty area to insert a new image",
-        "instructionText3": "Right-click on the image to delete it",
-        "instructionText4": "Click and hold to drag images",
-        "instructionText5": "Alt + right-click to create links",
-        "createLandingPage": "Create landing page!"
-      },
-      "detailsDialog": {
-        "title": "Landing Page Details",
-        "noPageviews": "No pageview data to display."
-      },
-      "formDetailsModal": {
-        "title": "Form Details",
-        "noData": "No data found."
-      }
+    "tooltip": {
+      "tagActive": "Tag is active and functioning properly.",
+      "tagInactive": "Tag not found in the system yet."
     },
-    "charts": {
-      "pageViews": "Page Views",
-      "newUsers": "New Users",
-      "views": "Views",
-      "newUsersForForms": "New Potential Users"
+    "modal": {
+      "featureUnderMaintenance": "This feature is currently under maintenance. Please check back later.",
+      "close": "Close"
     },
-    "common": {
-      "cancel": "Cancel",
-      "close": "Close",
-      "loading": "Loading...",
-      "back":"Back"
+    "productsModal": {
+      "title": "Products Integration",
+      "subtitle": "Get Products:",
+      "contentCopied": "Content Copied",
+      "close": "Close"
+    }
+  },
+  "feedback": {
+    "title": "Feedback",
+    "message": "Send your message",
+    "send": "Send"
+  },
+  "marketing": {
+    "title": "Marketing Dashboard",
+    "performance": "Marketing Performance",
+    "conversions": "Conversions",
+    "paid_traffic": "Paid Traffic",
+    "paid_traffic_desc": "Manage and optimize ad campaigns.",
+    "seo": "SEO & Organic Traffic",
+    "seo_desc": "Monitor and improve your Google ranking.",
+    "email": "Email Marketing",
+    "email_desc": "Automate and send emails for lead nurturing and conversion.",
+    "community": "Community & Relationship",
+    "community_desc": "Track return on investment from each campaign.",
+    "social": "Social Media Management",
+    "social_desc": "Plan and publish content for your networks.",
+    "crm": "CRM for Leads & Clients",
+    "crm_desc": "Manage leads and customers, track negotiations, and increase conversions.",
+    "ab_testing": "A/B Testing & Conversion Optimization",
+    "ab_testing_desc": "Test different versions of pages and campaigns to maximize conversions.",
+    "landing_pages": "Landing Pages & Lead Capture",
+    "landing_pages_desc": "Capture and qualify leads automatically.",
+    "automation": "Automation",
+    "automationTable": {
+      "emptyStateTitle": "No automation found",
+      "emptyStateDescription": "Create your first automation to optimize your processes.",
+      "createAutomation": "Create Automation",
+      "name": "Name",
+      "status": "Status",
+      "nextExecution": "Next Execution",
+      "createdAt": "Created At",
+      "actions": "Actions",
+      "newAutomation": "New Automation",
+      "deleted": "Automation deleted successfully",
+      "viewTable": "Table",
+      "viewCalendar": "Calendar"
     },
-    "leads": {
-      "leadGenerationTitle": "Lead Generation",
-      "leadGenerationDescription": "Create custom forms to capture leads and increase your conversions.",
-      "createFormTitle": "Create New Capture Form",
-      "formTitle": "Form Title",
-      "description": "Description",
-      "fieldName": "Field Name",
-      "addExtraField": "Add Extra Field",
-      "persuasiveMessage": "Persuasive Message",
-      "persuasiveMessagePlaceholder": "Enter a message to persuade leads to fill out the form",
-      "incentivesQuestion": "What will you offer to attract leads?",
-      "salesOptionsTitle": "Sales Options",
-      "formPreviewTitle": "Form Preview",
-      "selectTemplate": "Select a Template",
-      "confirmAndCreate": "Confirm and Create",
-      "formIntegrationTitle": "Form Integration",
-      "integrationDescription": "You can integrate the form into your landing page in two ways:",
-      "embedCode": "Embed Code",
-      "directLink": "Or use the direct link:",
-      "fieldType": {
-        "text": "Text",
-        "email": "E-mail",
-        "phone": "Phone"
-      },
-      "incentive": {
-        "ebook": "Ebook",
-        "webinar": "Webinar",
-        "desconto": "Discount",
-        "consultoria": "Consultation",
-        "others": "Others"
-      },
-      "incentiveLink": "Link for {{incentive}}",
-      "salesOptions": {
-        "sellBefore": "Show incentive after submission",
-        "sellAfter": "Show incentive before submission",
-        "noOffer": "Do not show incentive"
-      },
-      "previewForm": "Preview Form"
+    "automation_desc": "Automate your sales funnel for conversions.",
+    "capturePages": {
+      "title": "Landing Page and Lead Capture Form",
+      "createLandingPage": "Create New Landing Page",
+      "createForm": "Create New Capture Form",
+      "landingPagesTab": "Landing Pages",
+      "formsTab": "Capture Forms",
+      "noLandingPageFound": "No landing pages found.",
+      "noFormFound": "No forms available.",
+      "viewDetails": "View Details",
+      "viewLandingPage": "View Landing Page",
+      "viewForm": "View Form",
+      "noDescription": "No description",
+      "createdAt": "Created on",
+      "views": "Views: {{count}}"
     },
-    "maintenanceTitle": "System Under Maintenance",
-    "maintenanceDescription": "Due to high user demand, we are performing maintenance to improve our services. Please try again later.",
-    "footerText": "We appreciate your patience and understanding. © {{year}} Roktune."
+    "templateDialog": {
+      "title": "Choose a Template",
+      "titleLabel": "Title",
+      "descriptionLabel": "Description",
+      "availableTemplates": "Available Templates",
+      "viewAndEdit": "Preview and Edit"
+    },
+    "previewDialog": {
+      "title": "Preview and Edit",
+      "saving": "Saving...",
+      "componentsTitle": "Forms",
+      "noComponents": "No components found.",
+      "noImage": "No image",
+      "instructionsTitle": "Editing Instructions",
+      "instructionText1": "Click the element to change text color",
+      "instructionText2": "Right-click on an empty area to insert a new image",
+      "instructionText3": "Right-click on the image to delete it",
+      "instructionText4": "Click and hold to drag images",
+      "instructionText5": "Alt + right-click to create links",
+      "createLandingPage": "Create landing page!"
+    },
+    "detailsDialog": {
+      "title": "Landing Page Details",
+      "noPageviews": "No pageview data to display."
+    },
+    "formDetailsModal": {
+      "title": "Form Details",
+      "noData": "No data found."
+    }
+  },
+  "charts": {
+    "pageViews": "Page Views",
+    "newUsers": "New Users",
+    "views": "Views",
+    "newUsersForForms": "New Potential Users"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "loading": "Loading...",
+    "back": "Back"
+  },
+  "leads": {
+    "leadGenerationTitle": "Lead Generation",
+    "leadGenerationDescription": "Create custom forms to capture leads and increase your conversions.",
+    "createFormTitle": "Create New Capture Form",
+    "formTitle": "Form Title",
+    "description": "Description",
+    "fieldName": "Field Name",
+    "addExtraField": "Add Extra Field",
+    "persuasiveMessage": "Persuasive Message",
+    "persuasiveMessagePlaceholder": "Enter a message to persuade leads to fill out the form",
+    "incentivesQuestion": "What will you offer to attract leads?",
+    "salesOptionsTitle": "Sales Options",
+    "formPreviewTitle": "Form Preview",
+    "selectTemplate": "Select a Template",
+    "confirmAndCreate": "Confirm and Create",
+    "formIntegrationTitle": "Form Integration",
+    "integrationDescription": "You can integrate the form into your landing page in two ways:",
+    "embedCode": "Embed Code",
+    "directLink": "Or use the direct link:",
+    "fieldType": {
+      "text": "Text",
+      "email": "E-mail",
+      "phone": "Phone"
+    },
+    "incentive": {
+      "ebook": "Ebook",
+      "webinar": "Webinar",
+      "desconto": "Discount",
+      "consultoria": "Consultation",
+      "others": "Others"
+    },
+    "incentiveLink": "Link for {{incentive}}",
+    "salesOptions": {
+      "sellBefore": "Show incentive after submission",
+      "sellAfter": "Show incentive before submission",
+      "noOffer": "Do not show incentive"
+    },
+    "previewForm": "Preview Form"
+  },
+  "maintenanceTitle": "System Under Maintenance",
+  "maintenanceDescription": "Due to high user demand, we are performing maintenance to improve our services. Please try again later.",
+  "footerText": "We appreciate your patience and understanding. © {{year}} Roktune.",
+  "maintenanceTitle": "System Under Maintenance",
+  "maintenanceDescription": "Due to high user demand, we are performing maintenance to improve our services. Please try again later.",
+  "footerText": "We appreciate your patience and understanding. © {{year}} Roktune.",
+  "automationFlow": {
+    "title": "⚡ Automation Builder",
+    "flowName": "Flow Name",
+    "executionTime": "Execution Date/Time",
+    "repeatInterval": "Repeat Interval (hours)",
+    "testAutomation": "Test Automation",
+    "saveAutomation": "Save Automation",
+    "noTweetDefined": "Tweet not defined",
+    "configureAI": "Configure Intelligent AI",
+    "aiActionLabel": "What should the AI do?",
+    "aiActionGenerateContent": "Generate Content",
+    "platform": "Platform",
+    "tone": "Tone",
+    "instructions": "Instructions",
+    "testAI": "Test AI",
+    "generating": "Generating...",
+    "aiResponse": "AI Response:",
+    "emailName": "📧 Email Name",
+    "recipients": "Recipients (comma separated)",
+    "subject": "Subject",
+    "subjectBlockedByAI": "This field is locked because the subject will be generated by AI.",
+    "selectedTemplate": "Selected Template:",
+    "noTemplateSelected": "No template selected.",
+    "chooseTemplate": "Choose Template",
+    "twitterConnectNeeded": "You need to connect your Twitter account before using this block.",
+    "twitterConnectionError": "Error checking Twitter connection. Please try again."
+  },
+  "block": {
+    "email": "Email",
+    "wait": "Wait...",
+    "twitter": "Twitter",
+    "chatgpt": "CHAT GPT"
+  },
+  "platform": {
+    "whatsapp": "WhatsApp",
+    "twitter": "Twitter",
+    "instagram": "Instagram",
+    "email": "Email"
+  },
+  "tone": {
+    "formal": "Formal",
+    "casual": "Casual",
+    "fun": "Fun"
+  },
+  "form": {
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "emailTemplateSelector": {
+    "title": "Select an Email Template",
+    "noTemplate": "No template available.",
+    "previewTitle": "Preview:",
+    "editBlockedMessage": "Editing is locked because the content of this email will be generated automatically by ChatGPT; only the styling will be maintained.",
+    "saveChanges": "Save Changes",
+    "select": "Select"
+  },
+  "emailConfiguration": {
+    "success": "Email account configured successfully!",
+    "error": "Error configuring email account.",
+    "title": "Configure Email Account",
+    "tooltip": "You can find this information in your email provider's documentation or in your account control panel.",
+    "emailLabel": "Email Address",
+    "smtpServerLabel": "SMTP Server",
+    "portLabel": "Port",
+    "passwordLabel": "Password",
+    "useSSLLabel": "Use SSL/TLS"
+  },
+  "twitterAuthModal": {
+    "titleConnected": "Account Connected",
+    "titleConnect": "Connect Twitter Account",
+    "connectedMessage": "Your Twitter account is already connected! 🎉",
+    "connectedDescription": "Now you can post tweets directly from the platform.",
+    "notConnectedMessage": "To integrate your Twitter account, click the button below and authorize access.",
+    "notConnectedDescription": "You will be redirected to Twitter's authentication page.",
+    "connectButton": "Connect with Twitter",
+    "errorAuthLink": "Error obtaining authentication link!",
+    "errorConnecting": "Failed to connect to Twitter.",
+    "close": "Close"
   }
+}

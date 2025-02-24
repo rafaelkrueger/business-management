@@ -29,10 +29,20 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
   });
   const [logoPreview, setLogoPreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  // Estado para erros dos campos obrigatórios
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEnterprise({ ...enterprise, [name]: value });
+    // Limpa o erro se o campo obrigatório estiver preenchido
+    if (["name", "email", "phone"].includes(name) && value.trim() !== "") {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   const handleFileChange = (e) => {
@@ -50,31 +60,55 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
     setEnterprise({ ...enterprise, [name]: checked });
   };
 
+  // Função de validação: apenas nome, email e telefone são obrigatórios
+  const validateForm = () => {
+    const newErrors = {};
+    if (!enterprise.name.trim()) {
+      newErrors.name = t("error.nameRequired");
+    }
+    if (!enterprise.email.trim()) {
+      newErrors.email = t("error.emailRequired");
+    }
+    if (!enterprise.phone.trim()) {
+      newErrors.phone = t("error.cellphoneRequired");
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
     setIsLoading(true);
-    let imageUrl = '';
+    let imageUrl = "";
     const formData = new FormData();
 
     for (const [key, value] of Object.entries(enterprise)) {
       if (value !== undefined && value !== null) {
-        if (key === 'logo' && value) {
+        if (key === "logo" && value) {
           const formDataFile = new FormData();
-          formDataFile.append('path', 'logos');
-          formDataFile.append('file', value);
+          formDataFile.append("path", "logos");
+          formDataFile.append("file", value);
 
           try {
-            const response = await AllInOneApi.post('shared/image', formDataFile, {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-                'accept': '*/*',
-              },
-            });
+            const response = await AllInOneApi.post(
+              "shared/image",
+              formDataFile,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                  accept: "*/*",
+                },
+              }
+            );
             imageUrl = response.data.url;
           } catch (error) {
             console.error("Erro ao fazer upload da imagem:", error);
-            enqueueSnackbar(t("createEnterpriseModal.errorImageUpload"), {
-              variant: "error",
-            });
+            enqueueSnackbar(
+              t("createEnterpriseModal.errorImageUpload"),
+              { variant: "error" }
+            );
             setIsLoading(false);
             return;
           }
@@ -84,9 +118,7 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
       }
     }
 
-    formData.append('logo', imageUrl);
-
-    console.log(formData);
+    formData.append("logo", imageUrl);
 
     EnterpriseService.post(formData)
       .then(() => {
@@ -104,6 +136,8 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
       .finally(() => setIsLoading(false));
   };
 
+  // Estilo para as mensagens de erro (cor menos agressiva)
+  const errorStyle = { color: "#E57373", fontSize: "12px", mt: "-15px", mb: "12px" };
 
   return (
     <Modal
@@ -184,6 +218,9 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
             onChange={handleChange}
             placeholder={t("createEnterpriseModal.namePlaceholder")}
             fullWidth
+            error={Boolean(errors.name)}
+            helperText={errors.name}
+            FormHelperTextProps={{ sx: errorStyle }}
           />
 
           {/* Email */}
@@ -194,6 +231,9 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
             onChange={handleChange}
             placeholder={t("createEnterpriseModal.emailPlaceholder")}
             fullWidth
+            error={Boolean(errors.email)}
+            helperText={errors.email}
+            FormHelperTextProps={{ sx: errorStyle }}
           />
 
           {/* Telefone */}
@@ -204,6 +244,9 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
             onChange={handleChange}
             placeholder={t("createEnterpriseModal.phonePlaceholder")}
             fullWidth
+            error={Boolean(errors.phone)}
+            helperText={errors.phone}
+            FormHelperTextProps={{ sx: errorStyle }}
           />
 
           {/* Documento */}

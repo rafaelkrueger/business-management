@@ -28,7 +28,6 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
   const cards = [
     { icon: <FileText size={24} />, title: t("marketing.landing_pages"), description: t("marketing.landing_pages_desc"), module: "createLeads" },
     { icon: <Zap size={24} />, title: t("marketing.automation"), description: t("marketing.automation_desc"), module: "automation" },
-    { icon: <Users size={24} />, title: t("marketing.crm"), description: t("marketing.crm_desc") },
     { icon: <Target size={24} />, title: t("marketing.paid_traffic"), description: t("marketing.paid_traffic_desc") },
     { icon: <Globe size={24} />, title: t("marketing.seo"), description: t("marketing.seo_desc") },
     { icon: <MessageCircle size={24} />, title: t("marketing.social"), description: t("marketing.social_desc") },
@@ -62,7 +61,7 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
               </Card>
             </Grid>
           </Grid>
-          <Grid container spacing={2}>
+          <Grid sx={{marginBottom:'50px'}} container spacing={2}>
             {cards.map((card, index) => (
               <Grid item xs={3} key={index}>
                 <Card sx={{ cursor: 'pointer', minHeight:'180px', maxHeight:'180px' }} onClick={() => setModule(card.module || '')}>

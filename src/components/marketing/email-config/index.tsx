@@ -14,15 +14,18 @@ import {
 import InfoIcon from "@mui/icons-material/Info";
 import EmailService from "../../../services/email.service.ts";
 import { useSnackbar } from "notistack";
+import { useTranslation } from "react-i18next";
 
 const EmailConfigurationModal = ({ open, onClose, onSave, activeCompany }) => {
+  const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+
   // Estados para os campos de configuração
   const [email, setEmail] = useState("");
   const [smtpServer, setSmtpServer] = useState("");
   const [port, setPort] = useState("");
   const [password, setPassword] = useState("");
   const [useSSL, setUseSSL] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
 
   const handleSave = async () => {
     const config = {
@@ -36,12 +39,12 @@ const EmailConfigurationModal = ({ open, onClose, onSave, activeCompany }) => {
 
     try {
       await EmailService.createAccount(config);
-      enqueueSnackbar("Conta de e-mail configurada com sucesso!", { variant: "success" });
+      enqueueSnackbar(t("emailConfiguration.success"), { variant: "success" });
       if (onSave) onSave(config);
       onClose();
     } catch (error) {
       console.error("Erro ao criar conta de e-mail:", error);
-      enqueueSnackbar("Erro ao configurar a conta de e-mail.", { variant: "error" });
+      enqueueSnackbar(t("emailConfiguration.error"), { variant: "error" });
     }
   };
 
@@ -54,8 +57,8 @@ const EmailConfigurationModal = ({ open, onClose, onSave, activeCompany }) => {
           justifyContent: "space-between",
         }}
       >
-        Configurar Conta de E-mail
-        <Tooltip title="Você pode encontrar essas informações na documentação do seu provedor de e-mail ou no painel de controle da sua conta.">
+        {t("emailConfiguration.title")}
+        <Tooltip title={t("emailConfiguration.tooltip")}>
           <IconButton>
             <InfoIcon />
           </IconButton>
@@ -63,7 +66,7 @@ const EmailConfigurationModal = ({ open, onClose, onSave, activeCompany }) => {
       </DialogTitle>
       <DialogContent>
         <TextField
-          label="Endereço de E-mail"
+          label={t("emailConfiguration.emailLabel")}
           variant="outlined"
           fullWidth
           margin="normal"
@@ -71,7 +74,7 @@ const EmailConfigurationModal = ({ open, onClose, onSave, activeCompany }) => {
           onChange={(e) => setEmail(e.target.value)}
         />
         <TextField
-          label="Servidor SMTP"
+          label={t("emailConfiguration.smtpServerLabel")}
           variant="outlined"
           fullWidth
           margin="normal"
@@ -79,7 +82,7 @@ const EmailConfigurationModal = ({ open, onClose, onSave, activeCompany }) => {
           onChange={(e) => setSmtpServer(e.target.value)}
         />
         <TextField
-          label="Porta"
+          label={t("emailConfiguration.portLabel")}
           variant="outlined"
           fullWidth
           margin="normal"
@@ -88,7 +91,7 @@ const EmailConfigurationModal = ({ open, onClose, onSave, activeCompany }) => {
           onChange={(e) => setPort(e.target.value)}
         />
         <TextField
-          label="Senha"
+          label={t("emailConfiguration.passwordLabel")}
           variant="outlined"
           fullWidth
           margin="normal"
@@ -103,13 +106,13 @@ const EmailConfigurationModal = ({ open, onClose, onSave, activeCompany }) => {
               onChange={(e) => setUseSSL(e.target.checked)}
             />
           }
-          label="Usar SSL/TLS"
+          label={t("emailConfiguration.useSSLLabel")}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancelar</Button>
+        <Button onClick={onClose}>{t("form.cancel")}</Button>
         <Button variant="contained" onClick={handleSave}>
-          Salvar
+          {t("form.save")}
         </Button>
       </DialogActions>
     </Dialog>

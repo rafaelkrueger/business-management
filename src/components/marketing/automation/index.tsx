@@ -48,7 +48,6 @@ const AutomationDashboard = ({ activeCompany }) => {
     }
   }, [activeCompany, isCreating]);
 
-  // Alterna o status da automação
   const handleToggle = async (automation) => {
     const newStatus = automation.status === "PENDING" ? "DISABLED" : "PENDING";
     try {
@@ -73,7 +72,6 @@ const AutomationDashboard = ({ activeCompany }) => {
     }
   };
 
-  // Função para deletar automação
   const handleDeleteAutomation = async (automationId) => {
     try {
       await AutomationService.deleteAutomation(automationId);
@@ -88,21 +86,21 @@ const AutomationDashboard = ({ activeCompany }) => {
     }
   };
 
-    const renderEmptyState = () => (
-      <EmptyStateContainer>
-        <EmptyStateTitle>{t('marketing.automationTable.emptyStateTitle')}</EmptyStateTitle>
-        <EmptyStateDescription>{t('marketing.automationTable.emptyStateDescription')}</EmptyStateDescription>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            setIsCreating(true);
-          }}
-        >
-          {t('marketing.automationTable.createCustomer') || 'Criar Cliente'}
-        </Button>
-      </EmptyStateContainer>
-    );
+  const renderEmptyState = () => (
+    <EmptyStateContainer>
+      <EmptyStateTitle>{t('marketing.automationTable.emptyStateTitle')}</EmptyStateTitle>
+      <EmptyStateDescription>{t('marketing.automationTable.emptyStateDescription')}</EmptyStateDescription>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => {
+          setIsCreating(true);
+        }}
+      >
+        {t('marketing.automationTable.createAutomation')}
+      </Button>
+    </EmptyStateContainer>
+  );
 
   const renderTable = () => (
     <Card sx={{ mt: 3 }}>
@@ -111,11 +109,11 @@ const AutomationDashboard = ({ activeCompany }) => {
           <Table sx={{ border: "unset" }}>
             <TableHead>
               <TableRow>
-                <TableCell><b>Nome</b></TableCell>
-                <TableCell><b>Status</b></TableCell>
-                <TableCell><b>Próxima Execução</b></TableCell>
-                <TableCell><b>Criado em</b></TableCell>
-                <TableCell align="right"><b>Ações</b></TableCell>
+                <TableCell><b>{t("marketing.automationTable.name")}</b></TableCell>
+                <TableCell><b>{t("marketing.automationTable.status")}</b></TableCell>
+                <TableCell><b>{t("marketing.automationTable.nextExecution")}</b></TableCell>
+                <TableCell><b>{t("marketing.automationTable.createdAt")}</b></TableCell>
+                <TableCell align="right"><b>{t("marketing.automationTable.actions")}</b></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -188,7 +186,7 @@ const AutomationDashboard = ({ activeCompany }) => {
               color="primary"
               onClick={() => setIsCreating(true)}
             >
-              Nova Automação
+              {t("marketing.automationTable.newAutomation")}
             </Button>
             <ToggleButtonGroup
               color="primary"
@@ -202,10 +200,10 @@ const AutomationDashboard = ({ activeCompany }) => {
               size="small"
             >
               <ToggleButton value="table">
-                <ViewList /> Tabela
+                <ViewList /> {t("marketing.automationTable.viewTable")}
               </ToggleButton>
               <ToggleButton value="calendar">
-                <CalendarToday /> Calendário
+                <CalendarToday /> {t("marketing.automationTable.viewCalendar")}
               </ToggleButton>
             </ToggleButtonGroup>
           </Box>
