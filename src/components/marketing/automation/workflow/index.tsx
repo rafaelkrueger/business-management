@@ -41,10 +41,17 @@ import {
   AiOutlineRobot,
   AiOutlineWhatsApp,
   AiOutlineForm,
+  AiOutlineLinkedin,
+  AiOutlineFacebook,
 } from "react-icons/ai";
 import TwitterService from "../../../../services/twitter.service.ts";
 import AiService from "../../../../services/ai.service.ts";
 import { Brain } from "lucide-react";
+import LinkedinService from "../../../../services/linkedin.service.ts";
+import FacebookService from "../../../../services/facebook.service.ts";
+import LinkedInAuthModal from "../../linkedin-create/index.tsx";
+import FacebookAuthModal from "../../linkedin-create/index.tsx";
+import WhatsAppAuthModal from "../../whatsapp-create/index.tsx";
 
 const nodeStyles = {
   padding: "10px",
@@ -149,6 +156,9 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
   const [editingNode, setEditingNode] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState("");
   const [openTwitterAuthModal, setOpenTwitterAuthModal] = useState(false);
+  const [openLinkedinAuthModal, setOpenLinkedinAuthModal] = useState(false);
+  const [openWhatsappAuthModal, setOpenWhatsappAuthModal] = useState(false);
+  const [openFacebookAuthModal, setOpenFacebookAuthModal] = useState(false);
   const [isLoadingAi, setIsLoadingAi] = useState(false);
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [hasTwitterCredentials, setHasTwitterCredentials] = useState(false);
@@ -166,18 +176,30 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
       icon: <AiOutlineMail size={20} />,
       params: { recipients: "", subject: "", template: {} },
     },
-    WAIT: {
-      type: "wait",
-      name: t("block.wait"),
-      icon: <AiOutlineClockCircle size={20} />,
-      params: { waitTime: 1, waitHours: 0 },
-    },
     TWITTER: {
       type: "twitter",
       name: t("block.twitter"),
       icon: <AiOutlineTwitter size={20} color="#1DA1F2" />,
       params: { tweetContent: "" },
     },
+    // LINKEDIN: {
+    //   type: "linkedin",
+    //   name: t("block.linkedin"),
+    //   icon: <AiOutlineLinkedin size={20} color="#fff" />,
+    //   params: { linkedinContent: "" },
+    // },
+    // FACEBOOK: {
+    //   type: "facebook",
+    //   name: t("block.facebook"),
+    //   icon: <AiOutlineFacebook size={20} color="#fff" />,
+    //   params: { facebookContent: "" },
+    // },
+    // WHATSAPP: {
+    //   type: "whatsapp",
+    //   name: t("block.whatsapp"),
+    //   icon: <AiOutlineWhatsApp size={20} color="#fff" />,
+    //   params: { whatsappContent: "" },
+    // },
     CHATGPT: {
       type: "chatgpt",
       name: t("block.chatgpt"),
@@ -189,6 +211,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
         keywords: "",
       },
     },
+    WAIT: {
+      type: "wait",
+      name: t("block.wait"),
+      icon: <AiOutlineClockCircle size={20} />,
+      params: { waitTime: 1, waitHours: 0 },
+    },
+
   };
 
   useEffect(() => {
@@ -217,7 +246,6 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
   const handleAddTwitterBlock = async () => {
     try {
       const response = await TwitterService.checkTwitterStatus(activeCompany);
-      console.log(response);
       if (response) {
         addNode(BLOCK_TYPES.TWITTER);
       } else {
@@ -232,6 +260,66 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
         variant: "error",
       });
       setOpenTwitterAuthModal(true);
+    }
+  };
+
+  const handleAddLinkedinBlock = async () => {
+    try {
+      const response = await LinkedinService.checkLinkedinStatus(activeCompany);
+      if (response) {
+        addNode(BLOCK_TYPES.LINKEDIN);
+      } else {
+        enqueueSnackbar(t("automationFlow.linkedinConnectNeeded"), {
+          variant: "warning",
+        });
+        setOpenLinkedinAuthModal(true);
+      }
+    } catch (error) {
+      console.error("Erro ao verificar credenciais do Twitter:", error);
+      enqueueSnackbar(t("automationFlow.twitterConnectionError"), {
+        variant: "error",
+      });
+      setOpenLinkedinAuthModal(true);
+    }
+  };
+
+  const handleAddFacebookBlock = async () => {
+    try {
+      const response = await FacebookService.checkLinkedinStatus(activeCompany);
+      if (response) {
+        addNode(BLOCK_TYPES.FACEBOOK);
+      } else {
+        enqueueSnackbar(t("automationFlow.facebookConnectNeeded"), {
+          variant: "warning",
+        });
+        setOpenFacebookAuthModal(true);
+      }
+    } catch (error) {
+      console.error("Erro ao verificar credenciais do Twitter:", error);
+      enqueueSnackbar(t("automationFlow.twitterConnectionError"), {
+        variant: "error",
+      });
+      setOpenFacebookAuthModal(true);
+    }
+  };
+
+  const handleAddWhatsappBlock = async () => {
+    try {
+      const response = await WhatsappService.checkWhatsappStatus(activeCompany);
+      if (response) {
+        addNode(BLOCK_TYPES.WHATSAPP);
+      } else {
+        enqueueSnackbar(t("automationFlow.whatsappConnectNeeded"), {
+          variant: "warning",
+        });
+        setOpenWhatsappAuthModal(true);
+      }
+    } catch (error) {
+      console.error("Erro ao verificar credenciais do Twitter:", error);
+      enqueueSnackbar(t("automationFlow.twitterConnectionError"), {
+        variant: "error",
+      });
+      setOpenWhatsappAuthModal(true);
     }
   };
 
@@ -482,6 +570,12 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
                       handleAddEmailBlock();
                     } else if (block.type === "twitter") {
                       handleAddTwitterBlock();
+                    } else if (block.type === "linkedin") {
+                      handleAddLinkedinBlock();
+                    } else if (block.type === "facebook") {
+                      handleAddFacebookBlock();
+                    } else if (block.type === "whatsapp") {
+                      handleAddWhatsappBlock();
                     } else {
                       addNode(block);
                     }
@@ -574,6 +668,66 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
                 }
               }}
             />
+          )}
+          {editingNode.data.blockType === "linkedin" && (
+            <Box>
+              <TextField
+                sx={{
+                  padding: "10px",
+                  width: "550px",
+                  marginTop: "15px",
+                  marginRight: "15px",
+                  marginLeft: "15px",
+                  cursor: isConnectedToChatGPT(editingNode.id) ? "not-allowed" : "text",
+                }}
+                label={t("automationFlow.linkedinPostImageUrl")}
+                fullWidth
+                inputProps={{ maxLength: 2048 }}
+                value={editingNode.data.params.linkedinImageUrl || ""}
+                disabled={isConnectedToChatGPT()}
+                onChange={(e) => {
+                  setEditingNode({
+                    ...editingNode,
+                    data: {
+                      ...editingNode.data,
+                      params: {
+                        ...editingNode.data.params,
+                        linkedinImageUrl: e.target.value,
+                      },
+                    },
+                  });
+                }}
+              />
+              <TextField
+                sx={{
+                  padding: "10px",
+                  width: "550px",
+                  marginTop: "15px",
+                  marginRight: "15px",
+                  marginLeft: "15px",
+                  cursor: isConnectedToChatGPT(editingNode.id) ? "not-allowed" : "text",
+                }}
+                label={t("automationFlow.linkedinPostContent")}
+                fullWidth
+                multiline
+                rows={4}
+                inputProps={{ maxLength: 1300 }} // Limite de caracteres para post no LinkedIn
+                value={editingNode.data.params.linkedinContent || ""}
+                disabled={isConnectedToChatGPT()}
+                onChange={(e) => {
+                  setEditingNode({
+                    ...editingNode,
+                    data: {
+                      ...editingNode.data,
+                      params: {
+                        ...editingNode.data.params,
+                        linkedinContent: e.target.value,
+                      },
+                    },
+                  });
+                }}
+              />
+            </Box>
           )}
           {editingNode && editingNode.data.blockType === "chatgpt" && (
             <Dialog
@@ -941,6 +1095,27 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
       <TwitterAuthModal
         open={openTwitterAuthModal}
         onClose={() => setOpenTwitterAuthModal(false)}
+        onSave={handleSaveTwitterCredentials}
+        companyId={activeCompany}
+      />
+
+      <LinkedInAuthModal
+        open={openLinkedinAuthModal}
+        onClose={() => setOpenLinkedinAuthModal(false)}
+        onSave={handleSaveTwitterCredentials}
+        companyId={activeCompany}
+      />
+
+      <FacebookAuthModal
+        open={openFacebookAuthModal}
+        onClose={() => setOpenFacebookAuthModal(false)}
+        onSave={handleSaveTwitterCredentials}
+        companyId={activeCompany}
+      />
+
+      <WhatsAppAuthModal
+        open={openWhatsappAuthModal}
+        onClose={() => setOpenWhatsappAuthModal(false)}
         onSave={handleSaveTwitterCredentials}
         companyId={activeCompany}
       />

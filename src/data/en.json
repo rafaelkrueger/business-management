@@ -573,12 +573,17 @@
     "noTemplateSelected": "No template selected.",
     "chooseTemplate": "Choose Template",
     "twitterConnectNeeded": "You need to connect your Twitter account before using this block.",
-    "twitterConnectionError": "Error checking Twitter connection. Please try again."
+    "twitterConnectionError": "Error checking Twitter connection. Please try again.",
+    "linkedinPostContent": "LinkedIn post content",
+    "linkedinPostImageUrl": "Post image URL"
   },
   "block": {
     "email": "Email",
     "wait": "Wait...",
     "twitter": "Twitter",
+    "linkedin": "Linkedin",
+    "facebook": "Facebook",
+    "whatsapp": "Whatsapp",
     "chatgpt": "CHAT GPT"
   },
   "platform": {
@@ -625,6 +630,45 @@
     "connectButton": "Connect with Twitter",
     "errorAuthLink": "Error obtaining authentication link!",
     "errorConnecting": "Failed to connect to Twitter.",
+    "close": "Close"
+  },
+  "linkedinAuthModal": {
+    "titleConnected": "LinkedIn Connected",
+    "titleConnect": "Connect to LinkedIn",
+    "connectedMessage": "Your LinkedIn account is connected.",
+    "connectedDescription": "Your LinkedIn account is ready to use.",
+    "notConnectedMessage": "LinkedIn not connected",
+    "notConnectedDescription": "Please click the connect button to authenticate your account.",
+    "connectButton": "Connect",
+    "errorAuthLink": "Error generating authentication link.",
+    "errorConnecting": "Error connecting to LinkedIn. Please try again.",
+    "close": "Close"
+  },
+  "facebookAuthModal": {
+    "titleConnect": "Connect to Facebook",
+    "titleConnected": "Facebook Connected",
+    "connectedMessage": "Your Facebook account is connected!",
+    "connectedDescription": "You can now post automatically on Facebook.",
+    "notConnectedMessage": "Your Facebook account is not connected.",
+    "notConnectedDescription": "Click the button below to connect your account.",
+    "connectButton": "Connect to Facebook",
+    "errorAuthLink": "Error getting authentication link.",
+    "errorConnecting": "Error connecting to Facebook. Please try again.",
+    "close": "Close"
+  },
+  "whatsappAuthModal": {
+    "titleConnect": "Connect to WhatsApp",
+    "titleConnected": "WhatsApp Connected",
+    "connectedMessage": "Your WhatsApp account is connected!",
+    "connectedDescription": "You can now send messages automatically.",
+    "notConnectedMessage": "Your WhatsApp account is not connected.",
+    "enterDetails": "Enter your WhatsApp Business account details.",
+    "accessToken": "Access Token",
+    "phoneNumberId": "WhatsApp Phone Number ID",
+    "connectButton": "Connect to WhatsApp",
+    "errorAuth": "Error getting authentication link.",
+    "errorConnecting": "Error connecting to WhatsApp. Please try again.",
+    "successConnect": "WhatsApp successfully connected!",
     "close": "Close"
   }
 }
