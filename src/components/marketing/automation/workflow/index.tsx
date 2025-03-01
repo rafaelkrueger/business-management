@@ -33,25 +33,24 @@ import EmailConfigurationModal from "../../email-config/index.tsx";
 import EmailTemplateSelector from "../../email-template-selector/index.tsx"; // ajuste o path conforme sua estrutura
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-import TwitterAuthModal from "../../twitter-create/index.tsx";
-import {
-  AiOutlineMail,
-  AiOutlineClockCircle,
-  AiOutlineTwitter,
-  AiOutlineRobot,
-  AiOutlineWhatsApp,
-  AiOutlineForm,
-  AiOutlineLinkedin,
-  AiOutlineFacebook,
-} from "react-icons/ai";
-import TwitterService from "../../../../services/twitter.service.ts";
 import AiService from "../../../../services/ai.service.ts";
 import { Brain } from "lucide-react";
+import { FaEnvelope, FaTwitter, FaLinkedin, FaYoutube, FaFacebook, FaWhatsapp, FaBrain, FaClock } from 'react-icons/fa';
+
+import TwitterService from '../../../../services/twitter.service.ts';
 import LinkedinService from "../../../../services/linkedin.service.ts";
 import FacebookService from "../../../../services/facebook.service.ts";
+import YoutubeService from "../../../../services/youtube.service.ts";
+
 import LinkedInAuthModal from "../../linkedin-create/index.tsx";
-import FacebookAuthModal from "../../linkedin-create/index.tsx";
+import FacebookAuthModal from "../../facebook-create/index.tsx";
 import WhatsAppAuthModal from "../../whatsapp-create/index.tsx";
+import YouTubeAuthModal from "../../youtube/youtube-create/index.tsx";
+import TwitterAuthModal from "../../twitter/twitter-create/index.tsx";
+
+import TwitterNodeEditor from "../../twitter/twitter-post/index.tsx";
+import YouTubeNodeEditor from "../../youtube/youtube-post/index.tsx";
+import FacebookNodeEditor from "../../facebook/facebook-post/index.tsx";
 
 const nodeStyles = {
   padding: "10px",
@@ -75,16 +74,37 @@ const CustomNode = ({ data, id }) => {
 
       {data.blockType === "twitter" && (
         <Typography variant="body2" color="primary">
-          ✍️ {data.params.tweetContent || t("automationFlow.noTweetDefined")}
+          <FaTwitter style={{marginBottom:'-3px'}} size={20} color="#1DA1F2" /> {data.params.tweetTitle || t("automationFlow.tweetTitle")}
         </Typography>
       )}
 
-      <Box>
-        <IconButton size="small" onClick={() => data.onEdit(id)}>
-          <EditIcon />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 1,
+          mt: 1,
+        }}
+      >
+        <IconButton
+          size="small"
+          onClick={() => data.onEdit(id)}
+          sx={{
+            bgcolor: "#e3f2fd",
+            "&:hover": { bgcolor: "#bbdefb" },
+          }}
+        >
+          <EditIcon fontSize="small" />
         </IconButton>
-        <IconButton size="small" onClick={() => data.onDelete(id)}>
-          <DeleteIcon />
+        <IconButton
+          size="small"
+          onClick={() => data.onDelete(id)}
+          sx={{
+            bgcolor: "#ffebee",
+            "&:hover": { bgcolor: "#ffcdd2" },
+          }}
+        >
+          <DeleteIcon fontSize="small" />
         </IconButton>
       </Box>
       <Handle
@@ -157,53 +177,62 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
   const [openEditDialog, setOpenEditDialog] = useState("");
   const [openTwitterAuthModal, setOpenTwitterAuthModal] = useState(false);
   const [openLinkedinAuthModal, setOpenLinkedinAuthModal] = useState(false);
+  const [openYoutubeAuthModal, setOpenYoutubeAuthModal] = useState(false);
   const [openWhatsappAuthModal, setOpenWhatsappAuthModal] = useState(false);
   const [openFacebookAuthModal, setOpenFacebookAuthModal] = useState(false);
   const [isLoadingAi, setIsLoadingAi] = useState(false);
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [hasTwitterCredentials, setHasTwitterCredentials] = useState(false);
   const [loadingTwitterCheck, setLoadingTwitterCheck] = useState(true);
+  const [facebookPages, setFacebookPages] = useState([]);
+
 
   const [openEmailConfigModal, setOpenEmailConfigModal] = useState(false);
   const [openTemplateSelector, setOpenTemplateSelector] = useState(false);
   const [emailTemplates, setEmailTemplates] = useState([]);
 
-  // Definição dos blocos com traduções
   const BLOCK_TYPES = {
     EMAIL: {
       type: "email",
       name: t("block.email"),
-      icon: <AiOutlineMail size={20} />,
+      icon: <FaEnvelope style={{ color: "#b4a01b", fontSize: 26 }} />,
       params: { recipients: "", subject: "", template: {} },
     },
     TWITTER: {
       type: "twitter",
       name: t("block.twitter"),
-      icon: <AiOutlineTwitter size={20} color="#1DA1F2" />,
+      icon: <FaTwitter style={{ color: "#1DA1F2", fontSize: 26 }} />,
       params: { tweetContent: "" },
     },
-    // LINKEDIN: {
-    //   type: "linkedin",
-    //   name: t("block.linkedin"),
-    //   icon: <AiOutlineLinkedin size={20} color="#fff" />,
-    //   params: { linkedinContent: "" },
-    // },
-    // FACEBOOK: {
-    //   type: "facebook",
-    //   name: t("block.facebook"),
-    //   icon: <AiOutlineFacebook size={20} color="#fff" />,
-    //   params: { facebookContent: "" },
-    // },
+    LINKEDIN: {
+      type: "linkedin",
+      name: t("block.linkedin"),
+      icon: <FaLinkedin style={{ color: "#0A66C2", fontSize: 26 }} />,
+      params: { linkedinContent: "" },
+    },
+    YOUTUBE: {
+      type: "youtube",
+      name: t("block.youtube"),
+      icon: <FaYoutube style={{ color: "#FF0000", fontSize: 26 }} />,
+      params: { youtubeContent: "" },
+    },
+    FACEBOOK: {
+      type: "facebook",
+      name: t("block.facebook"),
+      icon: <FaFacebook style={{ color: "#1877F2", fontSize: 26 }} />,
+      params: { facebookContent: "" },
+    },
+    // Caso deseje habilitar o WhatsApp, descomente o bloco abaixo:
     // WHATSAPP: {
     //   type: "whatsapp",
     //   name: t("block.whatsapp"),
-    //   icon: <AiOutlineWhatsApp size={20} color="#fff" />,
+    //   icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 36 }} />,
     //   params: { whatsappContent: "" },
     // },
     CHATGPT: {
       type: "chatgpt",
       name: t("block.chatgpt"),
-      icon: <Brain size={20} color="#fff" />,
+      icon: <Brain style={{ color: "purple", fontSize: 26 }} />,
       params: {
         action: "generateContent",
         platform: "chat_gpt",
@@ -214,10 +243,9 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
     WAIT: {
       type: "wait",
       name: t("block.wait"),
-      icon: <AiOutlineClockCircle size={20} />,
+      icon: <FaClock style={{ color: "#000", fontSize: 26 }} />,
       params: { waitTime: 1, waitHours: 0 },
     },
-
   };
 
   useEffect(() => {
@@ -242,6 +270,18 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
       checkTwitterCredentials();
     }
   }, [activeCompany]);
+
+  useEffect(() => {
+    if (editingNode && editingNode.data.blockType === "facebook") {
+      FacebookService.checkFacebookPages(activeCompany)
+        .then((response) => {
+          setFacebookPages(response.data);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar páginas do Facebook:", error);
+        });
+    }
+  }, [editingNode, activeCompany]);
 
   const handleAddTwitterBlock = async () => {
     try {
@@ -285,7 +325,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
 
   const handleAddFacebookBlock = async () => {
     try {
-      const response = await FacebookService.checkLinkedinStatus(activeCompany);
+      const response = await FacebookService.checkFacebookStatus(activeCompany);
       if (response) {
         addNode(BLOCK_TYPES.FACEBOOK);
       } else {
@@ -300,6 +340,26 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
         variant: "error",
       });
       setOpenFacebookAuthModal(true);
+    }
+  };
+
+  const handleAddYoutubeBlock = async () => {
+    try {
+      const response = await YoutubeService.checkYoutubeStatus(activeCompany);
+      if (response) {
+        addNode(BLOCK_TYPES.YOUTUBE);
+      } else {
+        enqueueSnackbar(t("automationFlow.youtubeConnectNeeded"), {
+          variant: "warning",
+        });
+        setOpenYoutubeAuthModal(true);
+      }
+    } catch (error) {
+      console.error("Erro ao verificar credenciais do Twitter:", error);
+      enqueueSnackbar(t("automationFlow.twitterConnectionError"), {
+        variant: "error",
+      });
+      setOpenYoutubeAuthModal(true);
     }
   };
 
@@ -523,100 +583,115 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
 
   return (
     <Box sx={{ height: "100vh", width: "100%" }}>
-      <Box sx={{ padding: 2, borderBottom: "1px solid #ddd" }}>
-        <Typography variant="h5" fontWeight="bold" mb={2}>
-          {t("automationFlow.title")}
-        </Typography>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mb: 2 }}>
-          <TextField
-            label={t("automationFlow.flowName")}
-            variant="outlined"
-            value={flowName}
-            onChange={(e) => setFlowName(e.target.value)}
-            fullWidth
-          />
-          <TextField
-            label={t("automationFlow.executionTime")}
-            variant="outlined"
-            type="datetime-local"
-            value={nextExecutionTime}
-            onChange={(e) => setNextExecutionTime(e.target.value)}
-            fullWidth
-            InputLabelProps={{ shrink: true }}
-          />
-          <TextField
-            label={t("automationFlow.repeatInterval")}
-            variant="outlined"
-            type="number"
-            value={repeatInterval}
-            onChange={(e) => setRepeatInterval(e.target.value)}
-            fullWidth
-          />
-          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 2,
-                maxWidth: "100%",
-                overflowY: "auto",
+    <Box
+      sx={{
+        backgroundColor: "#fafafa",
+        padding: 3,
+        borderBottom: "2px solid #e0e0e0",
+      }}
+    >
+      <Typography variant="h4" fontWeight="bold" mb={3} color="primary">
+        {t("automationFlow.title")}
+      </Typography>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 3, mb: 3 }}>
+        <TextField
+          label={t("automationFlow.flowName")}
+          variant="outlined"
+          value={flowName}
+          onChange={(e) => setFlowName(e.target.value)}
+          fullWidth
+        />
+        <TextField
+          label={t("automationFlow.executionTime")}
+          variant="outlined"
+          type="datetime-local"
+          value={nextExecutionTime}
+          onChange={(e) => setNextExecutionTime(e.target.value)}
+          fullWidth
+          InputLabelProps={{ shrink: true }}
+        />
+        <TextField
+          label={t("automationFlow.repeatInterval")}
+          variant="outlined"
+          type="number"
+          value={repeatInterval}
+          onChange={(e) => setRepeatInterval(e.target.value)}
+          fullWidth
+        />
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 2,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            flexWrap: "wrap",
+            overflowX: "auto",
+          }}
+        >
+          {Object.values(BLOCK_TYPES).map((block) => (
+            <Button
+              sx={{ background:'white', color:'black', border:'0.1px #578acc solid' }}
+              key={block.type}
+              variant="contained"
+              startIcon={<span style={{marginBottom:'-10px'}}>{block.icon}</span>}
+              onClick={() => {
+                if (block.type === "email") {
+                  handleAddEmailBlock();
+                } else if (block.type === "twitter") {
+                  handleAddTwitterBlock();
+                } else if (block.type === "linkedin") {
+                  handleAddLinkedinBlock();
+                } else if (block.type === "facebook") {
+                  handleAddFacebookBlock();
+                } else if (block.type === "whatsapp") {
+                  handleAddWhatsappBlock();
+                } else if (block.type === "youtube") {
+                  handleAddYoutubeBlock();
+                } else {
+                  addNode(block);
+                }
               }}
             >
-              {Object.values(BLOCK_TYPES).map((block) => (
-                <Button
-                  key={block.type}
-                  variant="contained"
-                  onClick={() => {
-                    if (block.type === "email") {
-                      handleAddEmailBlock();
-                    } else if (block.type === "twitter") {
-                      handleAddTwitterBlock();
-                    } else if (block.type === "linkedin") {
-                      handleAddLinkedinBlock();
-                    } else if (block.type === "facebook") {
-                      handleAddFacebookBlock();
-                    } else if (block.type === "whatsapp") {
-                      handleAddWhatsappBlock();
-                    } else {
-                      addNode(block);
-                    }
-                  }}
-                >
-                  <span style={{ marginRight: "10px", marginBottom: "-5px" }}>
-                    {block.icon}
-                  </span>
-                  {block.name}
-                </Button>
-              ))}
-            </Box>
+              {block.name}
+            </Button>
+          ))}
+        </Box>
 
-            <Box sx={{ marginLeft: "auto" }}>
-              <Button
-                sx={{
-                  background: "white",
-                  color: "green",
-                  border: "green 1px solid",
-                }}
-                variant="contained"
-                onClick={handleTestAutomation}
-              >
-                {t("automationFlow.testAutomation")}
-              </Button>
-            </Box>
-            <Box>
-              <Button
-                sx={{
-                  color: "white",
-                  background: "green",
-                }}
-                variant="contained"
-                onClick={handleSaveAutomation}
-              >
-                {t("automationFlow.saveAutomation")}
-              </Button>
-            </Box>
-          </Box>
+        <Box sx={{ marginLeft: "auto", display: "flex", gap: 2, marginTop:'50px' }}>
+          <Button
+            sx={{
+              backgroundColor: "white",
+              color: "green",
+              border: "1px solid green",
+              textTransform: "none",
+            }}
+            variant="contained"
+            onClick={handleTestAutomation}
+          >
+            {t("automationFlow.testAutomation")}
+          </Button>
+          <Button
+            sx={{
+              backgroundColor: "green",
+              color: "white",
+              textTransform: "none",
+            }}
+            variant="contained"
+            onClick={handleSaveAutomation}
+          >
+            {t("automationFlow.saveAutomation")}
+          </Button>
         </Box>
       </Box>
+    </Box>
+
 
       <ReactFlow
         nodes={nodes}
@@ -633,71 +708,32 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
 
       {editingNode && (
         <Dialog open={!!openEditDialog} onClose={() => setOpenEditDialog("")}>
-          {editingNode.data.blockType === "twitter" && (
-            <TextField
-              sx={{
-                padding: "10px",
-                width: "400px",
-                marginTop: "15px",
-                marginRight: "15px",
-                marginLeft: "15px",
-                cursor: isConnectedToChatGPT(editingNode.id)
-                  ? "not-allowed"
-                  : "text",
-              }}
-              label={t("automationFlow.noTweetDefined")}
-              fullWidth
-              multiline
-              rows={3}
-              inputProps={{ maxLength: 280 }}
-              helperText={`${editingNode.data.params.tweetContent.length}/280`}
-              value={editingNode.data.params.tweetContent || ""}
-              disabled={isConnectedToChatGPT()}
-              onChange={(e) => {
-                if (e.target.value.length <= 280) {
-                  setEditingNode({
-                    ...editingNode,
-                    data: {
-                      ...editingNode.data,
-                      params: {
-                        ...editingNode.data.params,
-                        tweetContent: e.target.value,
-                      },
-                    },
-                  });
-                }
-              }}
-            />
-          )}
+      {editingNode.data.blockType === "twitter" && (
+        <TwitterNodeEditor
+          editingNode={editingNode}
+          setEditingNode={setEditingNode}
+          isConnectedToChatGPT={isConnectedToChatGPT}
+        />
+      )}
+      {editingNode.data.blockType === "youtube" && (
+        <YouTubeNodeEditor
+          editingNode={editingNode}
+          setEditingNode={setEditingNode}
+          isConnectedToChatGPT={isConnectedToChatGPT}
+        />
+      )}
+      {editingNode.data.blockType === "facebook" && (
+        <FacebookNodeEditor
+        editingNode={editingNode}
+        setEditingNode={setEditingNode}
+        facebookPages={facebookPages}
+        isConnectedToChatGPT={isConnectedToChatGPT}
+        />
+      )}
+
+
           {editingNode.data.blockType === "linkedin" && (
             <Box>
-              <TextField
-                sx={{
-                  padding: "10px",
-                  width: "550px",
-                  marginTop: "15px",
-                  marginRight: "15px",
-                  marginLeft: "15px",
-                  cursor: isConnectedToChatGPT(editingNode.id) ? "not-allowed" : "text",
-                }}
-                label={t("automationFlow.linkedinPostImageUrl")}
-                fullWidth
-                inputProps={{ maxLength: 2048 }}
-                value={editingNode.data.params.linkedinImageUrl || ""}
-                disabled={isConnectedToChatGPT()}
-                onChange={(e) => {
-                  setEditingNode({
-                    ...editingNode,
-                    data: {
-                      ...editingNode.data,
-                      params: {
-                        ...editingNode.data.params,
-                        linkedinImageUrl: e.target.value,
-                      },
-                    },
-                  });
-                }}
-              />
               <TextField
                 sx={{
                   padding: "10px",
@@ -1109,6 +1145,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
       <FacebookAuthModal
         open={openFacebookAuthModal}
         onClose={() => setOpenFacebookAuthModal(false)}
+        onSave={handleSaveTwitterCredentials}
+        companyId={activeCompany}
+      />
+
+      <YouTubeAuthModal
+        open={openYoutubeAuthModal}
+        onClose={() => setOpenYoutubeAuthModal(false)}
         onSave={handleSaveTwitterCredentials}
         companyId={activeCompany}
       />

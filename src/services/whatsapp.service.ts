@@ -2,39 +2,24 @@ import http from "./http-business.ts";
 
 class WhatsappService {
   /**
-   * Obtém as credenciais do Twitter para uma empresa.
+   * Obtém o QR Code para conectar um novo número de WhatsApp.
    */
-  static get(companyId) {
-    return http.get(`/facebook/${companyId}`);
+  static getQrCode(companyId) {
+    return http.get(`/whatsapp/get-qr?companyId=${companyId}`);
   }
 
   /**
-   * Inicia o fluxo OAuth e retorna o link de autenticação do Twitter.
+   * Verifica o status da conexão do WhatsApp.
    */
-  static getAuthLink(companyId) {
-    return http.get(`/whatsapp/auth-link?companyId=${companyId}`);
+  static checkWhatsAppStatus(companyId) {
+    return http.get(`/whatsapp/status?companyId=${companyId}`);
   }
 
   /**
-   * Verifica se a conta do Twitter está conectada.
+   * Envia uma mensagem via WhatsApp usando o número vinculado.
    */
-  static checkTwitterAccount(companyId) {
-    return http.get(`/whatsapp/check?companyId=${companyId}`);
-  }
-
-  /**
-   * Salva os tokens OAuth do Twitter após autenticação.
-   */
-  static saveAuthToken(params) {
-    return http.get(`/whatsapp/callback`, { params });
-  }
-
-  /**
-   * Verifica se o usuário já está autenticado no Twitter.
-   */
-  static async checkLinkedinStatus(companyId) {
-    const response = await http.get(`/whatsapp/status?companyId=${companyId}`);
-    return response.data;
+  static sendMessage(params) {
+    return http.post(`/whatsapp/send`, params);
   }
 }
 

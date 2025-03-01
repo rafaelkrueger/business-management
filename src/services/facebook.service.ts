@@ -15,12 +15,12 @@ class FacebookService {
     return http.get(`/facebook/auth-link?companyId=${companyId}`);
   }
 
-  /**
+    /**
    * Verifica se a conta do Twitter está conectada.
    */
-  static checkTwitterAccount(companyId) {
-    return http.get(`/facebook/check?companyId=${companyId}`);
-  }
+    static checkFacebookPages(companyId) {
+      return http.get(`/facebook/pages?companyId=${companyId}`);
+    }
 
   /**
    * Salva os tokens OAuth do Twitter após autenticação.
@@ -32,7 +32,7 @@ class FacebookService {
   /**
    * Verifica se o usuário já está autenticado no Twitter.
    */
-  static async checkLinkedinStatus(companyId) {
+  static async checkFacebookStatus(companyId) {
     const response = await http.get(`/facebook/status?companyId=${companyId}`);
     return response.data;
   }

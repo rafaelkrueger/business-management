@@ -559,7 +559,8 @@
     "repeatInterval": "Repeat Interval (hours)",
     "testAutomation": "Test Automation",
     "saveAutomation": "Save Automation",
-    "noTweetDefined": "Tweet not defined",
+    "tweetTitle": "Título do Tweet",
+    "noTweetDefined": "Tweet post",
     "configureAI": "Configure Intelligent AI",
     "aiActionLabel": "What should the AI do?",
     "aiActionGenerateContent": "Generate Content",
@@ -590,6 +591,7 @@
     "linkedin": "Linkedin",
     "facebook": "Facebook",
     "whatsapp": "Whatsapp",
+    "youtube": "Youtube",
     "chatgpt": "CHAT GPT"
   },
   "platform": {
@@ -638,6 +640,13 @@
     "errorConnecting": "Falha ao conectar ao Twitter.",
     "close": "Fechar"
   },
+    "twitterNodeEditor": {
+    "tweetTitle": "Título do Tweet",
+    "noTweetDefined": "Escreva seu tweet aqui...",
+    "chooseImage": "Escolher Imagem",
+    "preview": "Prévia",
+    "removeImage": "Remover Imagem"
+  },
   "linkedinAuthModal": {
     "titleConnected": "LinkedIn Conectado",
     "titleConnect": "Conectar ao LinkedIn",
@@ -675,6 +684,18 @@
     "errorAuth": "Erro ao obter o link de autenticação.",
     "errorConnecting": "Erro ao conectar ao WhatsApp. Tente novamente.",
     "successConnect": "WhatsApp conectado com sucesso!",
+    "close": "Fechar"
+  },
+  "youtubeAuthModal": {
+    "titleConnect": "Conectar ao YouTube",
+    "titleConnected": "YouTube Conectado",
+    "connectedMessage": "Sua conta do YouTube está conectada!",
+    "connectedDescription": "Sua conta do YouTube está pronta para uso.",
+    "notConnectedMessage": "Sua conta do YouTube não está conectada.",
+    "notConnectedDescription": "Clique no botão de conectar para autenticar sua conta.",
+    "connectButton": "Conectar ao YouTube",
+    "errorAuthLink": "Erro ao gerar o link de autenticação.",
+    "errorConnecting": "Erro ao conectar ao YouTube. Por favor, tente novamente.",
     "close": "Fechar"
   }
 }

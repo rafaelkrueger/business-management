@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import { useSnackbar } from "notistack";
-import TwitterService from "../../../services/twitter.service.ts";
+import TwitterService from "../../../../services/twitter.service.ts";
 import { useTranslation } from "react-i18next";
 
 const TwitterAuthModal = ({ open, onClose, companyId }) => {
