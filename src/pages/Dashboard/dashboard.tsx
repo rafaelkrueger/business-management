@@ -20,6 +20,7 @@ import Maintenance from '../../components/maintenence/index.tsx';
 import Config from '../../components/config/index.tsx';
 import Tracking from '../../components/smart-tag/index.tsx';
 import MarketingDashboard from '../../components/marketing/index.tsx';
+import Integrations from '../../components/integrations/index.tsx';
 
 const Dashboard: React.FC = () => {
   const [companies, setCompanies] = useState([]);
@@ -75,6 +76,7 @@ const Dashboard: React.FC = () => {
           {activeModuleName === 'online' && <Tracking userData={userData} activeCompany={activeCompany} />}
           {activeModuleName === 'marketing' && <MarketingDashboard activeCompany={activeCompany} />}
           {activeModuleName === 'Config' && <Config userData={userData} activeCompany={activeCompany} modulesUpdating={modulesUpdating} setModulesUpdating={setModulesUpdating} />}
+          {activeModuleName === 'Integration' && <Integrations />}
         </DashboardContainerShowed>
       )}
     </DashboardContainer>

@@ -15,17 +15,18 @@ import {
   Switch,
   IconButton,
   ToggleButtonGroup,
-  ToggleButton,
+  ToggleButton
 } from "@mui/material";
-import { Add, Edit, Delete, CalendarToday, ViewList } from "@mui/icons-material";
-import AutomationDragDrop from "./workflow/index.tsx"; // Componente de workflow para criação/edição
+import { Add, Edit, Delete, CalendarToday, ViewList, ArrowBackIos } from "@mui/icons-material";
+import AutomationDragDrop from "./workflow/index.tsx";
 import AutomationService from "../../../services/automation.service.ts";
 import AutomationCalendar from "./automation-calendar/index.tsx";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { EmptyStateContainer, EmptyStateTitle, EmptyStateDescription } from "../../products/styles.ts";
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
-const AutomationDashboard = ({ activeCompany }) => {
+const AutomationDashboard = ({ activeCompany, setModule }) => {
   const [automations, setAutomations] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
   const [editingAutomation, setEditingAutomation] = useState(null);
@@ -88,8 +89,16 @@ const AutomationDashboard = ({ activeCompany }) => {
 
   const renderEmptyState = () => (
     <EmptyStateContainer>
-      <EmptyStateTitle>{t('marketing.automationTable.emptyStateTitle')}</EmptyStateTitle>
-      <EmptyStateDescription>{t('marketing.automationTable.emptyStateDescription')}</EmptyStateDescription>
+      <AutoAwesomeIcon sx={{ fontSize: 48, color: 'primary.main', mb: 1 }} />
+
+      <EmptyStateTitle>
+        {t('marketing.automationTable.emptyStateTitle')}
+      </EmptyStateTitle>
+
+      <EmptyStateDescription>
+        {t('marketing.automationTable.emptyStateDescription')}
+      </EmptyStateDescription>
+
       <Button
         variant="contained"
         color="primary"
@@ -176,29 +185,35 @@ const AutomationDashboard = ({ activeCompany }) => {
             setEditingAutomation(null);
           }}
           isEditing={Boolean(editingAutomation)}
+          setIsCreating={setIsCreating}
+          setEditingAutomation={setEditingAutomation}
         />
       ) : (
         <>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-            <Button
-              variant="contained"
-              startIcon={<Add />}
-              color="primary"
-              onClick={() => setIsCreating(true)}
-            >
-              {t("marketing.automationTable.newAutomation")}
-            </Button>
-            <ToggleButtonGroup
-              color="primary"
-              value={viewMode}
-              exclusive
-              onChange={(e, newMode) => {
-                if (newMode !== null) {
-                  setViewMode(newMode);
-                }
-              }}
-              size="small"
-            >
+            <Box>
+                <ArrowBackIos style={{cursor:'pointer'}} onClick={()=>{setModule('')}}/>
+                <Button
+                  variant="contained"
+                  startIcon={<Add />}
+                  color="primary"
+                  onClick={() => setIsCreating(true)}
+                  sx={{marginLeft:'30px', marginTop:'-15px'}}
+                >
+                  {t("marketing.automationTable.newAutomation")}
+                </Button>
+            </Box>
+                <ToggleButtonGroup
+                  color="primary"
+                  value={viewMode}
+                  exclusive
+                  onChange={(e, newMode) => {
+                    if (newMode !== null) {
+                      setViewMode(newMode);
+                    }
+                  }}
+                  size="small"
+                >
               <ToggleButton value="table">
                 <ViewList /> {t("marketing.automationTable.viewTable")}
               </ToggleButton>

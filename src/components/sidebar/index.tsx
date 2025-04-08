@@ -168,6 +168,13 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive: any, activateM
       </SidebarContainerBody>
       <SidebarContainerFooter>
         <SidebarContainerBodyElement style={{ marginLeft: '6%', marginBottom:'17px', fontSize:'13pt' }}>{t(`notifications`)}</SidebarContainerBodyElement>
+        {/* <SidebarContainerBodyElement
+         onClick={() => {
+            if (window.outerWidth < 600) {
+              props.setIsMenuActive(!props.isMenuActive);
+            }
+            props.activateModule('Integration');
+          }} style={{ marginLeft: '6%', marginBottom:'17px', fontSize:'13pt' }}>{t(`integrations`)}</SidebarContainerBodyElement> */}
         <SidebarContainerBodyElement
           onClick={() => {
             if (window.outerWidth < 600) {

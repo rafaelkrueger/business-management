@@ -55,44 +55,45 @@ import LinkedinService from "../../../services/linkedin.service.ts";
 import WhatsappService from "../../../services/whatsapp.service.ts";
 import { Article, ThumbUp, TrendingUp, Visibility } from "@mui/icons-material";
 import { FaComment } from "react-icons/fa";
+import EngagementService from "../../../services/engagement.service.ts";
 
 // Dados mockados para as redes (caso estejam conectadas)
 const mockNetworkData = {
   Whatsapp: [
-    { name: "Engajamento", value: 300 },
-    { name: "Seguidores", value: 5000 },
+    { name: "Engajamento", value: 0 },
+    { name: "", value: 0 },
   ],
   Instagram: [
-    { name: "Engajamento", value: 450 },
-    { name: "Seguidores", value: 12000 },
+    { name: "Engajamento", value: 0 },
+    { name: "", value: 0 },
   ],
   Facebook: [
-    { name: "Engajamento", value: 600 },
-    { name: "Seguidores", value: 8000 },
+    { name: "Engajamento", value: 0 },
+    { name: "", value: 0 },
   ],
   Youtube: [
-    { name: "Engajamento", value: 900 },
-    { name: "Seguidores", value: 15000 },
+    { name: "Engajamento", value: 0 },
+    { name: "", value: 0 },
   ],
   TikTok: [
-    { name: "Engajamento", value: 700 },
-    { name: "Seguidores", value: 20000 },
+    { name: "Engajamento", value: 0 },
+    { name: "", value: 0 },
   ],
   Twitter: [
-    { name: "Engajamento", value: 350 },
-    { name: "Seguidores", value: 6000 },
+    { name: "Engajamento", value: 0 },
+    { name: "", value: 0 },
   ],
   LinkedIn: [
-    { name: "Engajamento", value: 250 },
-    { name: "Seguidores", value: 4000 },
+    { name: "Engajamento", value: 0 },
+    { name: "", value: 0 },
   ],
   Pinterest: [
-    { name: "Engajamento", value: 400 },
-    { name: "Seguidores", value: 5500 },
+    { name: "Engajamento", value: 0 },
+    { name: "", value: 0 },
   ],
   Reddit: [
-    { name: "Engajamento", value: 300 },
-    { name: "Seguidores", value: 5000 },
+    { name: "Engajamento", value: 0 },
+    { name: "", value: 0 },
   ],
 };
 
@@ -102,33 +103,33 @@ const mockNetworkData = {
  */
 const socialMediaDetails = {
   Twitter: {
-    engagement: 350,
-    impressions: 2200,
-    comments: 45,
-    likes: 180,
+    engagement: 0,
+    impressions: 0,
+    comments: 0,
+    likes: 0,
     lastPosts: [
-      { title: "Tweet A", date: "2023-07-10", engagement: 80 },
-      { title: "Tweet B", date: "2023-07-09", engagement: 100 },
+      { title: "Tweet A", date: "2023-07-10", engagement: 0 },
+      { title: "Tweet B", date: "2023-07-09", engagement: 0 },
     ],
   },
   LinkedIn: {
-    engagement: 250,
-    impressions: 1500,
-    comments: 30,
-    likes: 90,
+    engagement: 0,
+    impressions: 0,
+    comments: 0,
+    likes: 0,
     lastPosts: [
-      { title: "Artigo X", date: "2023-07-11", engagement: 120 },
-      { title: "Post Y", date: "2023-07-08", engagement: 60 },
+      { title: "Artigo X", date: "2023-07-11", engagement: 0 },
+      { title: "Post Y", date: "2023-07-08", engagement: 0 },
     ],
   },
   Facebook: {
-    engagement: 600,
-    impressions: 5000,
-    comments: 200,
-    likes: 450,
+    engagement: 0,
+    impressions: 0,
+    comments: 0,
+    likes: 0,
     lastPosts: [
-      { title: "Post FB #1", date: "2023-07-10", engagement: 200 },
-      { title: "Post FB #2", date: "2023-07-09", engagement: 150 },
+      { title: "Post FB #1", date: "2023-07-10", engagement: 0 },
+      { title: "Post FB #2", date: "2023-07-09", engagement: 0 },
     ],
   },
   // ... e assim por diante para cada rede
@@ -199,13 +200,13 @@ const totalSeguidores = 95000;
 const crescimentoMedio = 12; // %
 
 const engagementOverTime = [
-  { day: "Seg", engajamento: 1200 },
-  { day: "Ter", engajamento: 1800 },
-  { day: "Qua", engajamento: 1400 },
-  { day: "Qui", engajamento: 2200 },
-  { day: "Sex", engajamento: 2000 },
-  { day: "Sáb", engajamento: 2600 },
-  { day: "Dom", engajamento: 2400 },
+  { day: "Mon", engajamento: 0 },
+  { day: "Tue", engajamento: 0 },
+  { day: "Wed", engajamento: 0 },
+  { day: "Thu", engajamento: 0 },
+  { day: "Fri", engajamento: 0 },
+  { day: "Sat", engajamento: 0 },
+  { day: "Sun", engajamento: 0 },
 ];
 
 export const posts = [
@@ -258,6 +259,8 @@ interface SocialMediaDashboardProps {
 
 const SocialMediaDashboard: React.FC<SocialMediaDashboardProps> = ({ activeCompany }) => {
   const [networkStatus, setNetworkStatus] = useState<Record<string, boolean>>({});
+  const [engagement, setEngagement] = useState([]);
+
   const [openTwitterAuthModal, setOpenTwitterAuthModal] = useState(false);
   const [openLinkedinAuthModal, setOpenLinkedinAuthModal] = useState(false);
   const [openFacebookAuthModal, setOpenFacebookAuthModal] = useState(false);
@@ -284,6 +287,31 @@ const SocialMediaDashboard: React.FC<SocialMediaDashboardProps> = ({ activeCompa
     console.log("Credenciais salvas:", credentials);
   };
 
+  const getIconForNetwork = (network) => {
+    switch (network.toLowerCase()) {
+      case "twitter":
+        return <FaTwitter style={{ color: "#1DA1F2", fontSize: 20, marginRight: 8 }} />;
+      case "linkedin":
+        return <FaLinkedin style={{ color: "#0A66C2", fontSize: 20, marginRight: 8 }} />;
+      case "facebook":
+        return <FaFacebook style={{ color: "#1877F2", fontSize: 20, marginRight: 8 }} />;
+      case "youtube":
+        return <FaYoutube style={{ color: "#FF0000", fontSize: 20, marginRight: 8 }} />;
+      case "whatsapp":
+        return <FaWhatsapp style={{ color: "#25D366", fontSize: 20, marginRight: 8 }} />;
+      case "instagram":
+        return <FaInstagram style={{ color: "#E4405F", fontSize: 20, marginRight: 8 }} />;
+      case "tiktok":
+        return <FaTiktok style={{ color: "#000000", fontSize: 20, marginRight: 8 }} />;
+      case "pinterest":
+        return <FaPinterest style={{ color: "#E4405F", fontSize: 20, marginRight: 8 }} />;
+      case "reddit":
+        return <FaReddit style={{ color: "#FF4500", fontSize: 20, marginRight: 8 }} />;
+      default:
+        return null;
+    }
+  };
+
   const handleConnectNetwork = (networkKey: string) => {
     switch (networkKey) {
       case "twitter":
@@ -307,6 +335,14 @@ const SocialMediaDashboard: React.FC<SocialMediaDashboardProps> = ({ activeCompa
   };
 
   useEffect(() => {
+    EngagementService.get(activeCompany)
+    .then((res)=>{
+      setEngagement(res.data)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
+
     const checkNetworkStatus = async () => {
       const newStatus: Record<string, boolean> = {};
 
@@ -338,9 +374,6 @@ const SocialMediaDashboard: React.FC<SocialMediaDashboardProps> = ({ activeCompa
         {/* Gráfico de linha (Evolução do engajamento) */}
         <Card sx={{ marginBottom: 4 }}>
           <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Evolução do Engajamento (Últimos 7 dias)
-            </Typography>
             <Box sx={{ width: "100%", height: 300 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={engagementOverTime}>
@@ -351,7 +384,7 @@ const SocialMediaDashboard: React.FC<SocialMediaDashboardProps> = ({ activeCompa
                   <Legend />
                   <Line
                     type="monotone"
-                    dataKey="engajamento"
+                    dataKey=""
                     stroke="#8884d8"
                     strokeWidth={2}
                     dot={{ r: 3 }}
@@ -362,38 +395,49 @@ const SocialMediaDashboard: React.FC<SocialMediaDashboardProps> = ({ activeCompa
             </Box>
           </CardContent>
         </Card>
-        <Grid container spacing={2} sx={{marginBottom:'50px'}}>
-        {posts.map((post, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
+        <Grid container spacing={2} sx={{ marginBottom: "50px" }}>
+        {engagement.map((item) => (
+          <Grid item xs={12} sm={6} md={4} key={item.id}>
             <Card sx={{ height: "100%" }}>
               <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {post.title}
-                </Typography>
+                {item.image && (
+                  <Box sx={{ mb: 2 }}>
+                    <img
+                      src={item.image}
+                      alt={`Imagem do engajamento da ${item.network}`}
+                      style={{ width: "100%", height: "auto", borderRadius: "4px" }}
+                    />
+                  </Box>
+                )}
+                  <Box display="flex" alignItems="center" mb={1}>
+                    {getIconForNetwork(item.network)}
+                    <Typography variant="h6">
+                      {item.network.toUpperCase()}
+                    </Typography>
+                  </Box>
                 <Typography variant="subtitle2" color="textSecondary">
-                  Data: {post.date}
+                  Data: {new Date(item.createdAt).toLocaleDateString()}
                 </Typography>
-
-                {/* Exemplo de informações adicionais do post */}
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="body2" color="textSecondary">
-                    Likes: {post.likes}
+                    Likes: {item.likes}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Comentários: {post.comments}
+                    Comentários: {item.comments}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Compartilhamentos: {post.shares}
+                    Compartilhamentos: {item.shares}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Impressões: {item.impressions}
                   </Typography>
                 </Box>
-
-                {/* Caso queira, coloque mais detalhes aqui */}
               </CardContent>
             </Card>
           </Grid>
         ))}
       </Grid>
-        {/* Cards das redes sociais */}
+
         <Grid container spacing={2}>
           {socialNetworks.map((network) => {
             const isConnected = networkStatus[network.key] === true;

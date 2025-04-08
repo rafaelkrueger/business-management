@@ -22,19 +22,27 @@ import {
   DialogActions,
   MenuItem,
   Skeleton,
+  AccordionSummary,
+  Accordion,
+  AccordionDetails,
 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { ArrowBackIos } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AutomationService from "../../../../services/automation.service.ts";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import EmailService from "../../../../services/email.service.ts";
 import EmailConfigurationModal from "../../email-config/index.tsx";
-import EmailTemplateSelector from "../../email-template-selector/index.tsx"; // ajuste o path conforme sua estrutura
+import EmailTemplateSelector from "../../email-template-selector/index.tsx";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import AiService from "../../../../services/ai.service.ts";
-import { Brain } from "lucide-react";
+import { Brain, SettingsIcon } from "lucide-react";
+import { Drawer } from "@mui/material";
+import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { FaEnvelope, FaTwitter, FaLinkedin, FaYoutube, FaFacebook, FaWhatsapp, FaBrain, FaClock } from 'react-icons/fa';
 
 import TwitterService from '../../../../services/twitter.service.ts';
@@ -51,6 +59,8 @@ import TwitterAuthModal from "../../twitter/twitter-create/index.tsx";
 import TwitterNodeEditor from "../../twitter/twitter-post/index.tsx";
 import YouTubeNodeEditor from "../../youtube/youtube-post/index.tsx";
 import FacebookNodeEditor from "../../facebook/facebook-post/index.tsx";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 const nodeStyles = {
   padding: "10px",
@@ -163,13 +173,14 @@ const getSortedNodes = (nodes, edges) => {
   return sortedNodes.map(({ children, indegree, ...node }) => node);
 };
 
-const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => {
+const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEditingAutomation }) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
-  // Estados para fluxo
   const [flowName, setFlowName] = useState("");
-  const [nextExecutionTime, setNextExecutionTime] = useState("");
+  const [nextExecutionTime, setNextExecutionTime] = useState<string>(
+    new Date().toISOString().slice(0, 16)
+  );
   const [repeatInterval, setRepeatInterval] = useState("");
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -185,6 +196,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
   const [hasTwitterCredentials, setHasTwitterCredentials] = useState(false);
   const [loadingTwitterCheck, setLoadingTwitterCheck] = useState(true);
   const [facebookPages, setFacebookPages] = useState([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
 
 
   const [openEmailConfigModal, setOpenEmailConfigModal] = useState(false);
@@ -197,30 +209,35 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
       name: t("block.email"),
       icon: <FaEnvelope style={{ color: "#b4a01b", fontSize: 26 }} />,
       params: { recipients: "", subject: "", template: {} },
+      purpose:t('automationFlow.purposes.socialMedia'),
     },
     TWITTER: {
       type: "twitter",
       name: t("block.twitter"),
       icon: <FaTwitter style={{ color: "#1DA1F2", fontSize: 26 }} />,
       params: { tweetContent: "" },
+      purpose:t('automationFlow.purposes.socialMedia'),
     },
     LINKEDIN: {
       type: "linkedin",
       name: t("block.linkedin"),
       icon: <FaLinkedin style={{ color: "#0A66C2", fontSize: 26 }} />,
       params: { linkedinContent: "" },
+      purpose:t('automationFlow.purposes.socialMedia'),
     },
     YOUTUBE: {
       type: "youtube",
       name: t("block.youtube"),
       icon: <FaYoutube style={{ color: "#FF0000", fontSize: 26 }} />,
       params: { youtubeContent: "" },
+      purpose:t('automationFlow.purposes.socialMedia'),
     },
     FACEBOOK: {
       type: "facebook",
       name: t("block.facebook"),
       icon: <FaFacebook style={{ color: "#1877F2", fontSize: 26 }} />,
       params: { facebookContent: "" },
+      purpose:t('automationFlow.purposes.socialMedia'),
     },
     // Caso deseje habilitar o WhatsApp, descomente o bloco abaixo:
     // WHATSAPP: {
@@ -239,12 +256,14 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
         tone: "neutral",
         keywords: "",
       },
+      purpose:t('automationFlow.purposes.createContent'),
     },
     WAIT: {
       type: "wait",
       name: t("block.wait"),
       icon: <FaClock style={{ color: "#000", fontSize: 26 }} />,
       params: { waitTime: 1, waitHours: 0 },
+      purpose:t('automationFlow.purposes.action'),
     },
   };
 
@@ -478,10 +497,9 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
   const handleSaveAutomation = async () => {
     const automationData = {
       name: flowName,
-      // Ordena os nodes com base nas conexões antes de enviar
       nodes: getSortedNodes(nodes, edges),
       edges,
-      nextExecutionTime,
+      nextExecutionTime: format(new Date(nextExecutionTime), "yyyy-MM-dd'T'HH:mm"),
       repeatInterval,
       activeCompany: activeCompany,
     };
@@ -581,116 +599,174 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
     });
   };
 
+  const blocksByPurpose = Object.values(BLOCK_TYPES).reduce((acc, block) => {
+    const translatedPurpose = block.purpose;
+    if (!acc[translatedPurpose]) {
+      acc[translatedPurpose] = [];
+    }
+    acc[translatedPurpose].push(block);
+    return acc;
+  }, {});
+
   return (
     <Box sx={{ height: "100vh", width: "100%" }}>
-    <Box
+      <ArrowBackIos style={{cursor:'pointer'}} onClick={()=>{setIsCreating(false);setEditingAutomation(false)}}/>
+    <IconButton sx={{marginTop:'-45px', marginLeft:'97%'}} onClick={() => setIsDrawerOpen(true)}>
+      <SettingsIcon />
+    </IconButton>
+
+      <Drawer
+    anchor="right"
+    open={isDrawerOpen}
+    onClose={() => setIsDrawerOpen(false)}
+    PaperProps={{ sx: { width: 400, padding: 3 } }}
+  >
+    <Typography variant="h5" fontWeight="bold" color="primary" mb={2}>
+      {t("automationFlow.title")}
+    </Typography>
+
+    <TextField
+      label={t("automationFlow.flowName")}
+      variant="outlined"
+      value={flowName}
+      onChange={(e) => setFlowName(e.target.value)}
+      fullWidth
+      sx={{ mb: 2 }}
+    />
+
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
+      <DateTimePicker
+        value={nextExecutionTime ? new Date(nextExecutionTime) : null}
+        onChange={(newValue: Date | null) => {
+          if (newValue) {
+            // Formata para o formato ISO sem segundos (yyyy-MM-dd'T'HH:mm)
+            const formattedDate = format(newValue, "yyyy-MM-dd'T'HH:mm");
+            setNextExecutionTime(formattedDate);
+          } else {
+            setNextExecutionTime("");
+          }
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            fullWidth
+            sx={{ mb: 2 }}
+          />
+        )}
+        ampm={false}
+        inputFormat="dd/MM/yyyy HH:mm"
+        views={["year", "month", "day", "hours", "minutes"]}
+      />
+    </LocalizationProvider>
+
+    <br/>
+    <TextField
+      label={t("automationFlow.repeatInterval")}
+      variant="outlined"
+      type="number"
+      value={repeatInterval}
+      onChange={(e) => setRepeatInterval(e.target.value)}
+      fullWidth
+      sx={{ mb: 2 }}
+    />
+  <Typography sx={{ fontWeight: 200, fontSize:'15pt' }}>Blocks</Typography>
+  <br/>
+  {Object.entries(blocksByPurpose).map(([purpose, blocks]) => (
+  <Accordion key={purpose} sx={{ mb: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+    <AccordionSummary
+      expandIcon={<ExpandMoreIcon sx={{ color: 'primary.main' }} />}
       sx={{
-        backgroundColor: "#fafafa",
-        padding: 3,
-        borderBottom: "2px solid #e0e0e0",
+        backgroundColor: 'background.paper',
+        borderRadius: 1,
+        '&:hover': { backgroundColor: 'action.hover' }
       }}
     >
-      <Typography variant="h4" fontWeight="bold" mb={3} color="primary">
-        {t("automationFlow.title")}
+      <Typography
+        variant="subtitle1"
+        sx={{
+          fontWeight: 500,
+          color: 'text.primary',
+          textTransform: 'capitalize'
+        }}
+      >
+        {purpose}
       </Typography>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 3, mb: 3 }}>
-        <TextField
-          label={t("automationFlow.flowName")}
-          variant="outlined"
-          value={flowName}
-          onChange={(e) => setFlowName(e.target.value)}
-          fullWidth
-        />
-        <TextField
-          label={t("automationFlow.executionTime")}
-          variant="outlined"
-          type="datetime-local"
-          value={nextExecutionTime}
-          onChange={(e) => setNextExecutionTime(e.target.value)}
-          fullWidth
-          InputLabelProps={{ shrink: true }}
-        />
-        <TextField
-          label={t("automationFlow.repeatInterval")}
-          variant="outlined"
-          type="number"
-          value={repeatInterval}
-          onChange={(e) => setRepeatInterval(e.target.value)}
-          fullWidth
-        />
-      </Box>
+    </AccordionSummary>
+
+    <AccordionDetails sx={{ pt: 2, px: 2, pb: 3 }}>
       <Box
         sx={{
           display: "flex",
-          alignItems: "center",
           flexWrap: "wrap",
           gap: 2,
+          '& > *': { flexShrink: 0 }
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            flexWrap: "wrap",
-            overflowX: "auto",
-          }}
-        >
-          {Object.values(BLOCK_TYPES).map((block) => (
-            <Button
-              sx={{ background:'white', color:'black', border:'0.1px #578acc solid' }}
-              key={block.type}
-              variant="contained"
-              startIcon={<span style={{marginBottom:'-10px'}}>{block.icon}</span>}
-              onClick={() => {
-                if (block.type === "email") {
-                  handleAddEmailBlock();
-                } else if (block.type === "twitter") {
-                  handleAddTwitterBlock();
-                } else if (block.type === "linkedin") {
-                  handleAddLinkedinBlock();
-                } else if (block.type === "facebook") {
-                  handleAddFacebookBlock();
-                } else if (block.type === "whatsapp") {
-                  handleAddWhatsappBlock();
-                } else if (block.type === "youtube") {
-                  handleAddYoutubeBlock();
-                } else {
-                  addNode(block);
-                }
-              }}
-            >
-              {block.name}
-            </Button>
-          ))}
-        </Box>
+        {blocks?.map((block) => (
+          <Button
+            key={block.type}
+            variant="outlined"
+            size="medium"
+            startIcon={
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                color: 'primary.main',
+                '& svg': { fontSize: '1.2rem' }
+              }}>
+                {block.icon}
+              </Box>
+            }
+            sx={{
+              minWidth: 140,
+              px: 2,
+              py: 1.5,
+              borderRadius: 2,
+              '&:hover': {
+                boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+              }
+            }}
+            onClick={() => {
+              const handlers = {
+                email: handleAddEmailBlock,
+                twitter: handleAddTwitterBlock,
+                linkedin: handleAddLinkedinBlock,
+                facebook: handleAddFacebookBlock,
+                whatsapp: handleAddWhatsappBlock,
+                youtube: handleAddYoutubeBlock
+              };
 
-        <Box sx={{ marginLeft: "auto", display: "flex", gap: 2, marginTop:'50px' }}>
-          <Button
-            sx={{
-              backgroundColor: "white",
-              color: "green",
-              border: "1px solid green",
-              textTransform: "none",
+              handlers[block.type] ? handlers[block.type]() : addNode(block);
             }}
-            variant="contained"
-            onClick={handleTestAutomation}
           >
-            {t("automationFlow.testAutomation")}
+            <Typography variant="body2" component="span">
+              {block.name}
+            </Typography>
           </Button>
-          <Button
-            sx={{
-              backgroundColor: "green",
-              color: "white",
-              textTransform: "none",
-            }}
-            variant="contained"
-            onClick={handleSaveAutomation}
-          >
-            {t("automationFlow.saveAutomation")}
-          </Button>
-        </Box>
+        ))}
       </Box>
+    </AccordionDetails>
+  </Accordion>
+))}
+
+    <Box mt={4} display="flex" justifyContent="space-between" gap={2}>
+      <Button
+        variant="outlined"
+        color="success"
+        onClick={handleTestAutomation}
+      >
+        {t("automationFlow.testAutomation")}
+      </Button>
+      <Button
+        variant="contained"
+        color="success"
+        onClick={handleSaveAutomation}
+      >
+        {t("automationFlow.saveAutomation")}
+      </Button>
     </Box>
+  </Drawer>
+
 
 
       <ReactFlow
@@ -828,6 +904,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation }) => 
                     {t("platform.instagram")}
                   </MenuItem>
                   <MenuItem value="email">{t("platform.email")}</MenuItem>
+                  <MenuItem value="facebook">Facebook</MenuItem>
                 </TextField>
 
                 {/* Escolher o Tom de Voz */}

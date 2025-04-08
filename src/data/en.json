@@ -102,6 +102,7 @@
     }
   },
   "notifications": "Notifications",
+  "integrations": "Integrations",
   "configurations": "Configurations",
   "support": "If you want to update your information or reset your password, please contact support.",
   "notification": {
@@ -427,7 +428,7 @@
     "crm": "CRM for Leads & Clients",
     "crm_desc": "Manage leads and customers, track negotiations, and increase conversions.",
     "ab_testing": "A/B Testing & Conversion Optimization",
-    "ab_testing_desc": "Test different versions of pages and campaigns to maximize conversions.",
+    "ab_testing_desc": "Test different versions of pages and campaigns.",
     "landing_pages": "Landing Pages & Lead Capture",
     "landing_pages_desc": "Capture and qualify leads automatically.",
     "automation": "Automation",
@@ -557,7 +558,7 @@
     "saveAutomation": "Save Automation",
     "tweetTitle": "Tweet Title",
     "noTweetDefined": "Tweet post",
-    "configureAI": "Configure Intelligent AI",
+    "configureAI": "Configure AI",
     "aiActionLabel": "What should the AI do?",
     "aiActionGenerateContent": "Generate Content",
     "platform": "Platform",
@@ -576,7 +577,12 @@
     "twitterConnectNeeded": "You need to connect your Twitter account before using this block.",
     "twitterConnectionError": "Error checking Twitter connection. Please try again.",
     "linkedinPostContent": "LinkedIn post content",
-    "linkedinPostImageUrl": "Post image URL"
+    "linkedinPostImageUrl": "Post image URL",
+    "purposes": {
+      "action":"Action",
+      "createContent":"Create Content",
+      "socialMedia":"Social Media"
+    }
   },
   "block": {
     "email": "Email",
@@ -586,7 +592,7 @@
     "facebook": "Facebook",
     "whatsapp": "Whatsapp",
     "youtube": "Youtube",
-    "chatgpt": "CHAT GPT"
+    "chatgpt": "AI Text"
   },
   "platform": {
     "whatsapp": "WhatsApp",

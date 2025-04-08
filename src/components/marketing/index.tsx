@@ -27,13 +27,13 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
   });
 
   const cards = [
-    { icon: <FileText size={24} />, title: t("marketing.landing_pages"), description: t("marketing.landing_pages_desc"), module: "createLeads" },
     { icon: <Zap size={24} />, title: t("marketing.automation"), description: t("marketing.automation_desc"), module: "automation" },
-    { icon: <MessageCircle size={24} />, title: t("marketing.social"), description: t("marketing.social_desc"), module: "social-media" },
-    { icon: <Target size={24} />, title: t("marketing.paid_traffic"), description: t("marketing.paid_traffic_desc") },
-    { icon: <Globe size={24} />, title: t("marketing.seo"), description: t("marketing.seo_desc") },
-    { icon: <DollarSign size={24} />, title: t("marketing.community"), description: t("marketing.community_desc") },
-    { icon: <BarChart2 size={24} />, title: t("marketing.ab_testing"), description: t("marketing.ab_testing_desc") },
+    // { icon: <FileText size={24} />, title: t("marketing.landing_pages"), description: t("marketing.landing_pages_desc"), module: "createLeads" },
+    // { icon: <MessageCircle size={24} />, title: t("marketing.social"), description: t("marketing.social_desc"), module: "social-media" },
+    // { icon: <Target size={24} />, title: t("marketing.paid_traffic"), description: t("marketing.paid_traffic_desc") },
+    // { icon: <Globe size={24} />, title: t("marketing.seo"), description: t("marketing.seo_desc") },
+    // { icon: <DollarSign size={24} />, title: t("marketing.community"), description: t("marketing.community_desc") },
+    // { icon: <BarChart2 size={24} />, title: t("marketing.ab_testing"), description: t("marketing.ab_testing_desc") },
   ];
 
   return (
@@ -78,7 +78,7 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
       ) : module === 'createLeads' ? (
         <CapturePages activeCompany={props.activeCompany} setModule={setModule} />
       ) : module === 'automation' ? (
-        <AutomationDashboard activeCompany={props.activeCompany} />
+        <AutomationDashboard activeCompany={props.activeCompany} setModule={setModule} />
       ) : module === 'social-media' ? (
         <SocialMediaDashboard activeCompany={props.activeCompany} />
       ) : null}
