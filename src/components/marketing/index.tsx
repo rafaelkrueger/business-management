@@ -28,7 +28,7 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
 
   const cards = [
     { icon: <Zap size={24} />, title: t("marketing.automation"), description: t("marketing.automation_desc"), module: "automation" },
-    // { icon: <FileText size={24} />, title: t("marketing.landing_pages"), description: t("marketing.landing_pages_desc"), module: "createLeads" },
+    { icon: <FileText size={24} />, title: t("marketing.landing_pages"), description: t("marketing.landing_pages_desc"), module: "createLeads" },
     // { icon: <MessageCircle size={24} />, title: t("marketing.social"), description: t("marketing.social_desc"), module: "social-media" },
     // { icon: <Target size={24} />, title: t("marketing.paid_traffic"), description: t("marketing.paid_traffic_desc") },
     // { icon: <Globe size={24} />, title: t("marketing.seo"), description: t("marketing.seo_desc") },

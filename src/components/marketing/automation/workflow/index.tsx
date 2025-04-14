@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import ReactFlow, {
   addEdge,
   Controls,
@@ -25,6 +25,9 @@ import {
   AccordionSummary,
   Accordion,
   AccordionDetails,
+  FormControlLabel,
+  FormLabel,
+  RadioGroup,
 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -39,7 +42,7 @@ import EmailTemplateSelector from "../../email-template-selector/index.tsx";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import AiService from "../../../../services/ai.service.ts";
-import { Brain, SettingsIcon } from "lucide-react";
+import { Brain, Radio, SettingsIcon } from "lucide-react";
 import { Drawer } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -61,6 +64,8 @@ import YouTubeNodeEditor from "../../youtube/youtube-post/index.tsx";
 import FacebookNodeEditor from "../../facebook/facebook-post/index.tsx";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import WhatsappService from "../../../../services/whatsapp.service.ts";
+import ProgressService from "../../../../services/progress.service.ts";
 
 const nodeStyles = {
   padding: "10px",
@@ -71,64 +76,251 @@ const nodeStyles = {
   minWidth: "150px",
 };
 
-const CustomNode = ({ data, id }) => {
+const CustomNode = ({ data, id, activeCompany }) => {
   const { t } = useTranslation();
+  const [status, setStatus] = useState(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await ProgressService.getProgress(activeCompany);
+        const sectionKey = `${data.blockType}[0]`;
+        const currentStatus = res.data?.[sectionKey];
+        setStatus(currentStatus);
+      } catch (err) {
+        console.error("Erro ao buscar progresso", err);
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [activeCompany, data.blockType, data.index]);
+
+  const getStatusColor = () => {
+    switch (status) {
+      case "loading": return "#FFA726"; // Laranja mais vibrante
+      case "done": return "#66BB6A";   // Verde mais suave
+      case "error": return "#EF5350";   // Vermelho mais moderno
+      default: return "#B0BEC5";       // Cinza azulado
+    }
+  };
+
+  const getStatusShadow = () => {
+    switch (status) {
+      case "loading": return "0 0 8px rgba(255, 167, 38, 0.7)";
+      case "done": return "0 0 8px rgba(102, 187, 106, 0.7)";
+      case "error": return "0 0 8px rgba(239, 83, 80, 0.7)";
+      default: return "none";
+    }
+  };
+
+  const getBlockIcon = (blockType) => {
+    const iconSize = 16;
+
+    switch (blockType) {
+      case "email":
+        return <FaEnvelope size={iconSize} color="#b4a01b" />;
+      case "twitter":
+        return <FaTwitter size={iconSize} color="#1DA1F2" />;
+      case "linkedin":
+        return <FaLinkedin size={iconSize} color="#0A66C2" />;
+      case "youtube":
+        return <FaYoutube size={iconSize} color="#FF0000" />;
+      case "facebook":
+        return <FaFacebook size={iconSize} color="#1877F2" />;
+      case "whatsapp":
+        return <FaWhatsapp size={iconSize} color="#25D366" />;
+      case "chatgpt":
+        return <FaBrain size={iconSize} color="purple" />;
+      case "wait":
+        return <FaClock size={iconSize} color="#000" />;
+      case "formSubmitted":
+        return <FaEnvelope size={iconSize} color="#b4a01b" />;
+      default:
+        return <FaEnvelope size={iconSize} color="#777" />;
+    }
+  };
+
   return (
-    <Paper style={{ ...nodeStyles, position: "relative" }}>
+    <Box
+      sx={{
+        position: "relative",
+        minWidth: 220,
+        maxWidth: 280,
+        borderRadius: "12px",
+        background: "#FFFFFF",
+        boxShadow: isHovered
+          ? "0 10px 20px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.05)"
+          : "0 4px 12px rgba(0, 0, 0, 0.08)",
+        border: "1px solid rgba(0, 0, 0, 0.05)",
+        transition: "all 0.3s ease",
+        overflow: "visible",
+        "&:hover": {
+          transform: "translateY(-2px)",
+        },
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Barra lateral colorida */}
+      <Box
+        sx={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: "6px",
+          backgroundColor: getStatusColor(),
+          backgroundImage: status === "loading"
+            ? "linear-gradient(180deg, #FFA726 0%, #FF7043 100%)"
+            : "none",
+        }}
+      />
+
+      {/* Status indicator (versão anterior com semáforo) */}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          width: 14,
+          height: 14,
+          borderRadius: "50%",
+          backgroundColor: getStatusColor(),
+          boxShadow: getStatusShadow(),
+          transition: "all 0.3s ease",
+          animation: status === "loading" ? "pulse 1.5s infinite" : "none",
+        }}
+      />
+
+      {/* Header com ícone alinhado à esquerda */}
+      <Box
+        sx={{
+          padding: "12px 16px 12px 24px", // Mais padding à esquerda
+          background: "linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)",
+          borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+        }}
+      >
+        {/* Ícone do tipo de bloco */}
+        <Box
+          sx={{
+            width: 32,
+            height: 32,
+            borderRadius: "8px",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          {getBlockIcon(data.blockType)}
+        </Box>
+
+        <Typography
+          variant="subtitle1"
+          sx={{
+            fontWeight: 600,
+            color: "#2D3748",
+          }}
+        >
+          {data.label}
+        </Typography>
+      </Box>
+
+      {/* Conteúdo com padding maior à esquerda */}
+      <Box sx={{ padding: "14px 16px 14px 24px" }}>
+        {data.blockType === "twitter" && (
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#4A5568",
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              mb: 1,
+            }}
+          >
+            {data.params.tweetTitle || t("automationFlow.tweetTitle")}
+          </Typography>
+        )}
+
+        {/* Action buttons */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 1,
+            mt: 1.5,
+          }}
+        >
+          <IconButton
+            size="small"
+            onClick={() => data.onEdit(id)}
+            sx={{
+              bgcolor: "rgba(30, 136, 229, 0.1)",
+              color: "#1E88E5",
+              borderRadius: "8px",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                bgcolor: "rgba(30, 136, 229, 0.2)",
+                transform: "scale(1.1)",
+              },
+            }}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            onClick={() => data.onDelete(id)}
+            sx={{
+              bgcolor: "rgba(229, 57, 53, 0.1)",
+              color: "#E53935",
+              borderRadius: "8px",
+              transition: "all 0.2s ease",
+              "&:hover": {
+                bgcolor: "rgba(229, 57, 53, 0.2)",
+                transform: "scale(1.1)",
+              },
+            }}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      </Box>
+
+      {/* Handles with modern style */}
       <Handle
         type="target"
         position={Position.Top}
-        style={{ background: "#555", width: "12px", height: "12px" }}
-      />
-      <Typography variant="body1">{data.label}</Typography>
-
-      {data.blockType === "twitter" && (
-        <Typography variant="body2" color="primary">
-          <FaTwitter style={{marginBottom:'-3px'}} size={20} color="#1DA1F2" /> {data.params.tweetTitle || t("automationFlow.tweetTitle")}
-        </Typography>
-      )}
-
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          gap: 1,
-          mt: 1,
+        style={{
+          top: -7.5,
+          background: "#4FD1C5",
+          width: "14px",
+          height: "14px",
+          border: "2px solid white",
+          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
         }}
-      >
-        <IconButton
-          size="small"
-          onClick={() => data.onEdit(id)}
-          sx={{
-            bgcolor: "#e3f2fd",
-            "&:hover": { bgcolor: "#bbdefb" },
-          }}
-        >
-          <EditIcon fontSize="small" />
-        </IconButton>
-        <IconButton
-          size="small"
-          onClick={() => data.onDelete(id)}
-          sx={{
-            bgcolor: "#ffebee",
-            "&:hover": { bgcolor: "#ffcdd2" },
-          }}
-        >
-          <DeleteIcon fontSize="small" />
-        </IconButton>
-      </Box>
+      />
       <Handle
         type="source"
         position={Position.Bottom}
-        style={{ background: "#555", width: "12px", height: "12px" }}
+        style={{
+          bottom: -7.5,
+          background: "#4FD1C5",
+          width: "14px",
+          height: "14px",
+          border: "2px solid white",
+          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+        }}
       />
-    </Paper>
+    </Box>
   );
 };
 
-const nodeTypes = {
-  custom: CustomNode,
-};
 
 // Função auxiliar para ordenar os nodes de forma topológica
 const getSortedNodes = (nodes, edges) => {
@@ -197,6 +389,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
   const [loadingTwitterCheck, setLoadingTwitterCheck] = useState(true);
   const [facebookPages, setFacebookPages] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [startType, setStartType] = useState<'scheduled' | 'event'>('scheduled');
+  const [selectedEvent, setSelectedEvent] = useState<string>("lead.captured");
+  const [blockProgress, setBlockProgress] = useState<Record<string, 'loading' | 'done' | 'error'>>({});
+  const nodeTypes = useMemo(() => ({
+    custom: (props) => <CustomNode {...props} activeCompany={activeCompany} />,
+  }), [activeCompany]);
+
 
 
   const [openEmailConfigModal, setOpenEmailConfigModal] = useState(false);
@@ -204,6 +403,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
   const [emailTemplates, setEmailTemplates] = useState([]);
 
   const BLOCK_TYPES = {
+    TRIGGERS: {
+      type: "formSubmitted",
+      name: t("block.formTrigger"),
+      icon: <FaEnvelope style={{ color: "#b4a01b", fontSize: 26 }} />,
+      params: { recipients: "", subject: "", template: {} },
+      purpose:t('automationFlow.purposes.triggers'),
+    },
     EMAIL: {
       type: "email",
       name: t("block.email"),
@@ -412,12 +618,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       setNextExecutionTime(editingAutomation.nextExecutionTime?.slice(0, 16));
       setRepeatInterval(editingAutomation.repeatInterval);
 
-      const mappedNodes = editingAutomation.nodes.map((node) => ({
+      const mappedNodes = editingAutomation.nodes.map((node, index) => ({
         ...node,
         data: {
           ...node.data,
           onEdit: handleEdit,
           onDelete: handleDelete,
+          index,
         },
       }));
       setNodes(mappedNodes);
@@ -599,15 +806,22 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
     });
   };
 
-  const blocksByPurpose = Object.values(BLOCK_TYPES).reduce((acc, block) => {
-    const translatedPurpose = block.purpose;
-    if (!acc[translatedPurpose]) {
-      acc[translatedPurpose] = [];
+  const filteredBlockTypes = Object.values(BLOCK_TYPES).filter(block => {
+    const isTriggerPurpose = block.purpose === t('automationFlow.purposes.triggers');
+
+    if (isTriggerPurpose && startType !== "event") {
+      return false;
     }
-    acc[translatedPurpose].push(block);
+
+    return true;
+  });
+
+  const blocksByPurpose = filteredBlockTypes.reduce((acc, block) => {
+    const key = block.purpose;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(block);
     return acc;
   }, {});
-
   return (
     <Box sx={{ height: "100vh", width: "100%" }}>
       <ArrowBackIos style={{cursor:'pointer'}} onClick={()=>{setIsCreating(false);setEditingAutomation(false)}}/>
@@ -615,160 +829,171 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       <SettingsIcon />
     </IconButton>
 
-      <Drawer
-    anchor="right"
-    open={isDrawerOpen}
-    onClose={() => setIsDrawerOpen(false)}
-    PaperProps={{ sx: { width: 400, padding: 3 } }}
-  >
-    <Typography variant="h5" fontWeight="bold" color="primary" mb={2}>
-      {t("automationFlow.title")}
-    </Typography>
+    <Drawer
+      anchor="right"
+      open={isDrawerOpen}
+      onClose={() => setIsDrawerOpen(false)}
+      PaperProps={{ sx: { width: 400, padding: 3 } }}
+    >
+      <Typography variant="h5" fontWeight="bold" color="primary" mb={2}>
+        {t("automationFlow.title")}
+      </Typography>
 
-    <TextField
-      label={t("automationFlow.flowName")}
-      variant="outlined"
-      value={flowName}
-      onChange={(e) => setFlowName(e.target.value)}
-      fullWidth
-      sx={{ mb: 2 }}
-    />
+      <TextField
+        label={t("automationFlow.flowName")}
+        variant="outlined"
+        value={flowName}
+        onChange={(e) => setFlowName(e.target.value)}
+        fullWidth
+        sx={{ mb: 2 }}
+      />
 
-    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
-      <DateTimePicker
-        value={nextExecutionTime ? new Date(nextExecutionTime) : null}
-        onChange={(newValue: Date | null) => {
-          if (newValue) {
-            // Formata para o formato ISO sem segundos (yyyy-MM-dd'T'HH:mm)
-            const formattedDate = format(newValue, "yyyy-MM-dd'T'HH:mm");
-            setNextExecutionTime(formattedDate);
-          } else {
-            setNextExecutionTime("");
-          }
+      <FormLabel component="legend">{t('automationFlow.triggers.title')}</FormLabel>
+      <RadioGroup
+        row
+        value={startType}
+        sx={{marginLeft:'12px'}}
+        onChange={(e) => {
+          setStartType(e.target.value as 'scheduled' | 'event');
         }}
-        renderInput={(params) => (
+      >
+        <FormControlLabel onClick={()=>{setStartType("scheduled")}} value="scheduled" control={<Radio />} label={t('automationFlow.triggers.dateTrigger')} />
+        <FormControlLabel onClick={()=>{setStartType("event")}} value="event" control={<Radio />} label={t('automationFlow.triggers.eventTrigger')} />
+      </RadioGroup>
+      <br/>
+
+      {startType === "scheduled" && (
+        <>
+          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
+            <DateTimePicker
+              value={nextExecutionTime ? new Date(nextExecutionTime) : null}
+              onChange={(newValue: Date | null) => {
+                if (newValue) {
+                  const formattedDate = format(newValue, "yyyy-MM-dd'T'HH:mm");
+                  setNextExecutionTime(formattedDate);
+                } else {
+                  setNextExecutionTime("");
+                }
+              }}
+              renderInput={(params) => (
+                <TextField {...params} fullWidth sx={{ mb: 2 }} />
+              )}
+              ampm={false}
+              inputFormat="dd/MM/yyyy HH:mm"
+              views={["year", "month", "day", "hours", "minutes"]}
+            />
+          </LocalizationProvider>
+          <br/>
           <TextField
-            {...params}
+            label={t("automationFlow.repeatInterval")}
+            variant="outlined"
+            type="number"
+            value={repeatInterval}
+            onChange={(e) => setRepeatInterval(e.target.value)}
             fullWidth
             sx={{ mb: 2 }}
           />
-        )}
-        ampm={false}
-        inputFormat="dd/MM/yyyy HH:mm"
-        views={["year", "month", "day", "hours", "minutes"]}
-      />
-    </LocalizationProvider>
+        </>
+      )}
 
-    <br/>
-    <TextField
-      label={t("automationFlow.repeatInterval")}
-      variant="outlined"
-      type="number"
-      value={repeatInterval}
-      onChange={(e) => setRepeatInterval(e.target.value)}
-      fullWidth
-      sx={{ mb: 2 }}
-    />
-  <Typography sx={{ fontWeight: 200, fontSize:'15pt' }}>Blocks</Typography>
-  <br/>
-  {Object.entries(blocksByPurpose).map(([purpose, blocks]) => (
-  <Accordion key={purpose} sx={{ mb: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-    <AccordionSummary
-      expandIcon={<ExpandMoreIcon sx={{ color: 'primary.main' }} />}
-      sx={{
-        backgroundColor: 'background.paper',
-        borderRadius: 1,
-        '&:hover': { backgroundColor: 'action.hover' }
-      }}
-    >
-      <Typography
-        variant="subtitle1"
-        sx={{
-          fontWeight: 500,
-          color: 'text.primary',
-          textTransform: 'capitalize'
-        }}
-      >
-        {purpose}
-      </Typography>
-    </AccordionSummary>
+      <Typography sx={{ fontWeight: 200, fontSize: '15pt' }}>Blocks</Typography>
+      <br />
 
-    <AccordionDetails sx={{ pt: 2, px: 2, pb: 3 }}>
-      <Box
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 2,
-          '& > *': { flexShrink: 0 }
-        }}
-      >
-        {blocks?.map((block) => (
-          <Button
-            key={block.type}
-            variant="outlined"
-            size="medium"
-            startIcon={
-              <Box sx={{
-                display: 'flex',
-                alignItems: 'center',
-                color: 'primary.main',
-                '& svg': { fontSize: '1.2rem' }
-              }}>
-                {block.icon}
-              </Box>
-            }
+      {Object.entries(blocksByPurpose).map(([purpose, blocks]) => (
+        <Accordion key={purpose} sx={{ mb: 1, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon sx={{ color: 'primary.main' }} />}
             sx={{
-              minWidth: 140,
-              px: 2,
-              py: 1.5,
-              borderRadius: 2,
-              '&:hover': {
-                boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
-              }
-            }}
-            onClick={() => {
-              const handlers = {
-                email: handleAddEmailBlock,
-                twitter: handleAddTwitterBlock,
-                linkedin: handleAddLinkedinBlock,
-                facebook: handleAddFacebookBlock,
-                whatsapp: handleAddWhatsappBlock,
-                youtube: handleAddYoutubeBlock
-              };
-
-              handlers[block.type] ? handlers[block.type]() : addNode(block);
+              backgroundColor: 'background.paper',
+              borderRadius: 1,
+              '&:hover': { backgroundColor: 'action.hover' }
             }}
           >
-            <Typography variant="body2" component="span">
-              {block.name}
+            <Typography
+              variant="subtitle1"
+              sx={{
+                fontWeight: 500,
+                color: 'text.primary',
+                textTransform: 'capitalize'
+              }}
+            >
+              {purpose}
             </Typography>
-          </Button>
-        ))}
+          </AccordionSummary>
+
+          <AccordionDetails sx={{ pt: 2, px: 2, pb: 3 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 2,
+                '& > *': { flexShrink: 0 }
+              }}
+            >
+              {blocks?.map((block) => (
+                <Button
+                  key={block.type}
+                  variant="outlined"
+                  size="medium"
+                  startIcon={
+                    <Box sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: 'primary.main',
+                      '& svg': { fontSize: '1.2rem' }
+                    }}>
+                      {block.icon}
+                    </Box>
+                  }
+                  sx={{
+                    minWidth: 140,
+                    px: 2,
+                    py: 1.5,
+                    borderRadius: 2,
+                    '&:hover': {
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                    }
+                  }}
+                  onClick={() => {
+                    const handlers = {
+                      email: handleAddEmailBlock,
+                      twitter: handleAddTwitterBlock,
+                      linkedin: handleAddLinkedinBlock,
+                      facebook: handleAddFacebookBlock,
+                      whatsapp: handleAddWhatsappBlock,
+                      youtube: handleAddYoutubeBlock
+                    };
+
+                    handlers[block.type] ? handlers[block.type]() : addNode(block);
+                  }}
+                >
+                  <Typography variant="body2" component="span">
+                    {block.name}
+                  </Typography>
+                </Button>
+              ))}
+            </Box>
+          </AccordionDetails>
+        </Accordion>
+      ))}
+
+      <Box mt={4} display="flex" justifyContent="space-between" gap={2}>
+        <Button
+          variant="outlined"
+          color="success"
+          onClick={handleTestAutomation}
+        >
+          {t("automationFlow.testAutomation")}
+        </Button>
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleSaveAutomation}
+        >
+          {t("automationFlow.saveAutomation")}
+        </Button>
       </Box>
-    </AccordionDetails>
-  </Accordion>
-))}
-
-    <Box mt={4} display="flex" justifyContent="space-between" gap={2}>
-      <Button
-        variant="outlined"
-        color="success"
-        onClick={handleTestAutomation}
-      >
-        {t("automationFlow.testAutomation")}
-      </Button>
-      <Button
-        variant="contained"
-        color="success"
-        onClick={handleSaveAutomation}
-      >
-        {t("automationFlow.saveAutomation")}
-      </Button>
-    </Box>
-  </Drawer>
-
-
-
+    </Drawer>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -806,7 +1031,40 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         isConnectedToChatGPT={isConnectedToChatGPT}
         />
       )}
-
+      {editingNode.data.blockType === "formSubmitted" && (
+      <p>Lalala</p>
+      //Seleciona o formulário
+      // <TextField
+      //   select
+      //   label="Selecione a Página"
+      //   value={
+      //     editingNode.data.params.selectedPage
+      //       ? JSON.stringify(editingNode.data.params.selectedPage)
+      //       : ""
+      //   }
+      //   onChange={(e) => {
+      //     const selectedPage = JSON.parse(e.target.value);
+      //     setEditingNode({
+      //       ...editingNode,
+      //       data: {
+      //         ...editingNode.data,
+      //         params: {
+      //           ...editingNode.data.params,
+      //           selectedPage: selectedPage,
+      //         },
+      //       },
+      //     });
+      //   }}
+      //   sx={{ marginTop: "15px", width: "91%", marginLeft: "28px" }}
+      // >
+      //   {facebookPages &&
+      //     facebookPages.map((page) => (
+      //       <MenuItem key={page.id} value={JSON.stringify(page)}>
+      //         {page.name}
+      //       </MenuItem>
+      //     ))}
+      // </TextField>
+      )}
 
           {editingNode.data.blockType === "linkedin" && (
             <Box>

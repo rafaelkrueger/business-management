@@ -14,6 +14,11 @@ import {
   Box,
   Tabs,
   Tab,
+  ToggleButtonGroup,
+  ToggleButton,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { PlusCircle } from "lucide-react";
 import React from "react";
@@ -35,6 +40,8 @@ import {
 } from "chart.js";
 import LeadGeneration from "../create-leads/index.tsx";
 import FormDetailsModal from "../leads-details/index.tsx";
+import { ArrowBackIos, FormatListBulletedOutlined, InsertDriveFileOutlined } from "@mui/icons-material";
+import AiService from "../../../services/ai.service.ts";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -420,8 +427,8 @@ const TemplateDialog: React.FC<{
   loading: boolean;
   selectedTemplate: Template | null;
   setSelectedTemplate: (template: Template) => void;
-  newPage: { title: string; description: string };
-  setNewPage: React.Dispatch<React.SetStateAction<{ title: string; description: string }>>;
+  newPage: { title: string; description: string; aiPrompt?: string };
+  setNewPage: React.Dispatch<React.SetStateAction<{ title: string; description: string; aiPrompt?: string }>>;
   activeCompany: any;
   setPreviewUrl: (url: string) => void;
 }> = ({
@@ -437,74 +444,214 @@ const TemplateDialog: React.FC<{
   setPreviewUrl,
 }) => {
   const { t } = useTranslation();
+  const [mode, setMode] = useState<"choose" | "ai">("choose");
+  const [sections, setSections] = useState<string[]>([
+    "navbar", "benefits", "social proof", "prices", "call to action", "footer",
+  ]);
+  const [customSectionInput, setCustomSectionInput] = useState("");
+  const [generating, setGenerating] = useState(false);
+
+  const sectionLabels: Record<string, string> = {
+    navbar: t("marketing.templateSections.navbar"),
+    benefits: t("marketing.templateSections.benefits"),
+    demo: t("marketing.templateSections.demo"),
+    "social proof": t("marketing.templateSections.social proof"),
+    prices: t("marketing.templateSections.prices"),
+    "call to action": t("marketing.templateSections.call to action"),
+    footer: t("marketing.templateSections.footer"),
+  };
+
+  const handleDrag = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+    e.dataTransfer.setData("sectionIndex", index.toString());
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, dropIndex: number) => {
+    const draggedIndex = parseInt(e.dataTransfer.getData("sectionIndex"));
+    if (!isNaN(draggedIndex)) {
+      const updated = [...sections];
+      const [removed] = updated.splice(draggedIndex, 1);
+      updated.splice(dropIndex, 0, removed);
+      setSections(updated);
+    }
+  };
+
+  const handleAddCustomSection = () => {
+    const trimmed = customSectionInput.trim();
+    if (trimmed && !sections.includes(trimmed)) {
+      const withoutFooter = sections.filter((s) => s !== "footer");
+      setSections([...withoutFooter, trimmed, "footer"]);
+      setCustomSectionInput("");
+    }
+  };
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>{t("marketing.templateDialog.title")}</DialogTitle>
       <DialogContent>
-        <TextField
-          label={t("marketing.templateDialog.titleLabel")}
-          fullWidth
-          margin="dense"
-          onChange={(e) => setNewPage({ ...newPage, title: e.target.value })}
-        />
-        <TextField
-          label={t("marketing.templateDialog.descriptionLabel")}
-          fullWidth
-          margin="dense"
-          onChange={(e) => setNewPage({ ...newPage, description: e.target.value })}
-        />
-        <Typography variant="h6" style={{ marginTop: "20px" }}>
-          {t("marketing.templateDialog.availableTemplates")}
-        </Typography>
-        <Grid container spacing={2} style={{ marginTop: "10px" }}>
-          {loading
-            ? [...Array(6)].map((_, index) => (
-                <Grid item xs={4} key={index}>
-                  <Skeleton variant="rectangular" width="100%" height={180} />
-                  <Skeleton width="60%" height={25} style={{ marginTop: "10px" }} />
-                  <Skeleton width="80%" height={20} />
-                </Grid>
-              ))
-            : templates.map((template) => (
-                <Grid item xs={4} key={template.id}>
-                  <Card
-                    onClick={() => setSelectedTemplate(template)}
-                    sx={{
-                      cursor: "pointer",
-                      border: selectedTemplate?.id === template.id ? "2px solid blue" : "none",
-                    }}
-                  >
-                    <CardContent>
-                      <Typography variant="h6">{template.name}</Typography>
-                      {template.screenshotUrl ? (
-                        <img
-                          src={template.screenshotUrl}
-                          alt={template.name}
-                          width="100%"
-                          style={{ borderRadius: "5px", marginTop: "10px" }}
+        {generating ? (
+          <Box
+            mt={4}
+            p={4}
+            borderRadius={2}
+            bgcolor="#f9f9f9"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Typography variant="h6" fontWeight={600} mb={2}>
+              {t("marketing.templateDialog.generatingSections")}
+            </Typography>
+            <Skeleton variant="rectangular" width="100%" height={200} />
+          </Box>
+        ) : (
+          <>
+            <ToggleButtonGroup
+              value={mode}
+              exclusive
+              onChange={(_, newMode) => newMode && setMode(newMode)}
+              sx={{ mb: 2 }}
+              fullWidth
+            >
+              <ToggleButton value="choose">{t("marketing.templateDialog.chooseTemplate")}</ToggleButton>
+              <ToggleButton value="ai">{t("marketing.templateDialog.createAiTemplate")}</ToggleButton>
+            </ToggleButtonGroup>
+
+            <TextField
+              label={t("marketing.templateDialog.titleLabel")}
+              fullWidth
+              margin="dense"
+              onChange={(e) => setNewPage({ ...newPage, title: e.target.value })}
+            />
+            <TextField
+              label={t("marketing.templateDialog.descriptionLabel")}
+              fullWidth
+              margin="dense"
+              onChange={(e) => setNewPage({ ...newPage, description: e.target.value })}
+            />
+
+            {mode === "choose" && (
+              <Grid container spacing={2} sx={{ mt: 2, p: 2, background: 'rgba(223, 223, 223, 0.187)', borderRadius: '20px' }}>
+                {loading
+                  ? [...Array(6)].map((_, index) => (
+                      <Grid item xs={4} key={index}>
+                        <Skeleton variant="rectangular" width="100%" height={180} />
+                        <Skeleton width="60%" height={25} sx={{ mt: 1 }} />
+                        <Skeleton width="80%" height={20} />
+                      </Grid>
+                    ))
+                  : templates.map((template) => (
+                      <Grid item xs={4} key={template.id}>
+                        <Card
+                          onClick={() => setSelectedTemplate(template)}
+                          sx={{
+                            cursor: "pointer",
+                            boxShadow: 3,
+                            border: selectedTemplate?.id === template.id ? "2px solid blue" : "none",
+                          }}
+                        >
+                          {template.screenshotUrl ? (
+                            <img src={template.screenshotUrl} alt={template.name} width="100%" style={{ borderRadius: 5 }} />
+                          ) : (
+                            <Skeleton variant="rectangular" width="100%" height={150} />
+                          )}
+                        </Card>
+                      </Grid>
+                    ))}
+              </Grid>
+            )}
+
+            {mode === "ai" && (
+              <Box mt={3}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={4}
+                  placeholder={t("marketing.templateDialog.aiPromptHint")}
+                  onChange={(e) => setNewPage({ ...newPage, aiPrompt: e.target.value })}
+                />
+
+                <FormGroup sx={{ mt: 3 }}>
+                  <Typography fontWeight={600} mb={1}>{t("marketing.templateDialog.chooseSections")}</Typography>
+                  <Box>
+                    {sections.map((section, index) => (
+                      <Box
+                        key={section + index}
+                        draggable
+                        onDragStart={(e) => handleDrag(e, index)}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => handleDrop(e, index)}
+                        sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, p: 1, border: '1px dashed #ccc', borderRadius: 1 }}
+                      >
+                        <Checkbox
+                          checked
+                          onChange={() => {
+                            const updated = sections.filter((s) => s !== section);
+                            setSections(updated);
+                          }}
                         />
-                      ) : (
-                        <Skeleton variant="rectangular" width="100%" height={150} />
-                      )}
-                      <Typography variant="body2">{template.description}</Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-        </Grid>
+                        <Typography>{sectionLabels[section] || section}</Typography>
+                        <Typography variant="caption" sx={{ ml: 'auto', color: '#888', cursor:'pointer' }}>::  ::</Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                </FormGroup>
+
+                <Box mt={3}>
+                  <Typography fontWeight={500} mb={1}>{t("marketing.templateDialog.addMoreSections")}</Typography>
+                  <Box display="flex" gap={1} alignItems="center">
+                    <TextField
+                      fullWidth
+                      value={customSectionInput}
+                      onChange={(e) => setCustomSectionInput(e.target.value)}
+                      placeholder="Ex: FAQ, Newsletter..."
+                      margin="dense"
+                    />
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      sx={{ height: '55px', borderTopLeftRadius:'0px', borderBottomLeftRadius:'0px', whiteSpace: 'nowrap', mt: '4px', marginLeft:'-8px' }}
+                      onClick={handleAddCustomSection}
+                    >
+                      <PlusCircle size={30}/>
+                    </Button>
+                  </Box>
+                </Box>
+              </Box>
+            )}
+          </>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>{t("common.cancel")}</Button>
         <Button
           variant="contained"
           color="primary"
-          disabled={!selectedTemplate || newPage.title === ""}
-          onClick={() => {
-            if (!selectedTemplate) return;
-            setPreviewUrl(`https://roktune.duckdns.org/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
+          disabled={newPage.title === "" || (mode === "choose" && !selectedTemplate) || generating}
+          onClick={async () => {
+            if (mode === "choose") {
+              setPreviewUrl(`http://localhost:3005/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
+            } else {
+              const orderedSections = sections.filter((s) => s.trim() !== "");
+              setGenerating(true);
+
+              await LandingPageService.postAiTemplate({
+                title: newPage.title,
+                description: newPage.description,
+                aiPrompt: newPage.aiPrompt,
+                sections: orderedSections,
+              }).then((res)=>{
+                setGenerating(false);
+                setPreviewUrl(`http://localhost:3005/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
+              })
+              .catch((err)=>{console.log(err)});
+
+              setGenerating(false);
+            }
           }}
         >
-          {t("marketing.templateDialog.viewAndEdit")}
+          {mode === "choose"
+            ? t("marketing.templateDialog.viewAndEdit")
+            : t("marketing.templateDialog.generateAiTemplate")}
         </Button>
       </DialogActions>
     </Dialog>
@@ -617,16 +764,10 @@ const PreviewDialog: React.FC<{
                     • {t("marketing.previewDialog.instructionText1")}
                   </Typography>
                   <Typography variant="body2" gutterBottom>
-                    • {t("marketing.previewDialog.instructionText2")}
-                  </Typography>
-                  <Typography variant="body2" gutterBottom>
                     • {t("marketing.previewDialog.instructionText3")}
                   </Typography>
                   <Typography variant="body2" gutterBottom>
                     • {t("marketing.previewDialog.instructionText4")}
-                  </Typography>
-                  <Typography variant="body2" gutterBottom>
-                    • {t("marketing.previewDialog.instructionText5")}
                   </Typography>
                 </div>
               )}
@@ -806,35 +947,52 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
 
   return (
     <div style={{ padding: "20px" }}>
-      <Typography variant="h4" gutterBottom>
-        {t("marketing.capturePages.title")}
-      </Typography>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: 2,
+        marginBottom: 2
+      }}>
+          <Box sx={{display:'flex'}}>
+            <ArrowBackIos style={{cursor:'pointer', marginTop:'10px', marginRight:'20px'}} onClick={()=>{setModule('')}}/>
+            <Typography variant="h4">
+              {t("marketing.capturePages.title")}
+            </Typography>
+          </Box>
 
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<PlusCircle />}
-        onClick={() => setOpenForm(true)}
-      >
-        {t("marketing.capturePages.createLandingPage")}
-      </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<PlusCircle />}
+            onClick={() => setOpenForm(true)}
+            sx={{ whiteSpace: 'nowrap' }}
+          >
+            {t("marketing.capturePages.createLandingPage")}
+          </Button>
 
-      <Button
-        sx={{ marginLeft: "15px" }}
-        variant="contained"
-        color="primary"
-        startIcon={<PlusCircle />}
-        onClick={() => setLeadGenerationEnabled(true)}
-      >
-        {t("marketing.capturePages.createForm")}
-      </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<PlusCircle />}
+            onClick={() => setLeadGenerationEnabled(true)}
+            sx={{ whiteSpace: 'nowrap' }}
+          >
+            {t("marketing.capturePages.createForm")}
+          </Button>
+        </Box>
+      </Box>
 
-      <Box sx={{ borderBottom: 1, borderColor: "divider", marginTop: "20px" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={currentTab} onChange={handleTabChange}>
           <Tab label={t("marketing.capturePages.landingPagesTab")} />
           <Tab label={t("marketing.capturePages.formsTab")} />
         </Tabs>
       </Box>
+    </Box>
 
       {currentTab === 0 && (
         <Box sx={{ marginTop: "20px" }}>
@@ -857,9 +1015,33 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
                 />
               ))
             ) : (
-              <Typography sx={{marginLeft:'20px', marginTop:'20px'}} variant="body2">
-                {t("marketing.capturePages.noLandingPageFound")}
-              </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              mt: 8,
+              opacity: 0.8,
+            }}
+          >
+            <InsertDriveFileOutlined sx={{ fontSize: 80, color: "grey.400" }} />
+            <Typography variant="h6" sx={{ mt: 2 }}>
+              {t("marketing.capturePages.noLandingPageFound")}
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 1, color: "text.secondary" }}>
+              {t("marketing.capturePages.tryCreatingOne")}
+            </Typography>
+            <Button
+              variant="outlined"
+              color="primary"
+              sx={{ mt: 3 }}
+              onClick={setOpenForm}
+            >
+              {t("marketing.capturePages.createPage")}
+            </Button>
+          </Box>
             )}
           </Grid>
         </Box>
@@ -889,9 +1071,33 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
               ))}
             </Grid>
           ) : (
-            <Typography variant="body2">
-              {t("marketing.capturePages.noFormFound")}
-            </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            mt: 8,
+            opacity: 0.8,
+          }}
+        >
+          <FormatListBulletedOutlined sx={{ fontSize: 80, color: "grey.400" }} />
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            {t("marketing.capturePages.noFormFound")}
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 1, color: "text.secondary" }}>
+            {t("marketing.capturePages.tryCreatingOneForm")}
+          </Typography>
+          <Button
+            variant="outlined"
+            color="primary"
+            sx={{ mt: 3 }}
+            onClick={setLeadGenerationEnabled}
+          >
+            {t("marketing.capturePages.createForm")}
+          </Button>
+        </Box>
           )}
         </Box>
       )}

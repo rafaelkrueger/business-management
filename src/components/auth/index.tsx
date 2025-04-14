@@ -17,7 +17,7 @@ import {
   LoadingIcon,
 } from './styles.ts';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import AuthCoverImage from '../../images/improved_image.png';
+import AuthCoverImage from '../../images/auth-cover.png';
 import LogoImage from '../../images/logo.png';
 import AllInOneService from '../../services/all-in-one.service.ts';
 import { useLocalStorage } from '../../hooks/useLocalStorage.ts';

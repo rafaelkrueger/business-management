@@ -49,7 +49,6 @@ const FacebookNodeEditor = ({ editingNode, setEditingNode, facebookPages, isConn
 
   return (
     <>
-      {/* Dropdown para seleção da página */}
       <TextField
         select
         label="Selecione a Página"
@@ -66,7 +65,7 @@ const FacebookNodeEditor = ({ editingNode, setEditingNode, facebookPages, isConn
               ...editingNode.data,
               params: {
                 ...editingNode.data.params,
-                selectedPage: selectedPage, // Armazena o objeto completo (id e accessToken)
+                selectedPage: selectedPage,
               },
             },
           });
@@ -81,7 +80,6 @@ const FacebookNodeEditor = ({ editingNode, setEditingNode, facebookPages, isConn
           ))}
       </TextField>
 
-      {/* Campo para o conteúdo do post */}
       <TextField
         sx={{
           padding: "10px",

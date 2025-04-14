@@ -13,5 +13,9 @@ class LandingPageService {
 	static post(body) {
 		return http.post(`/landing-pages/activate`,body);
 	}
+
+	static postAiTemplate(body) {
+		return http.post(`/landing-pages/ai-templates`,body);
+	}
 }
 export default LandingPageService;

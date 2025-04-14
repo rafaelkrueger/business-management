@@ -455,13 +455,17 @@
     },
     "automation_desc": "Automatize seu funil de vendas para conversões.",
     "capturePages": {
-      "title": "Landing Page e Formulário de Captura de Leads",
-      "createLandingPage": "Criar Nova Landing Page",
-      "createForm": "Criar Novo Formulário de Captura",
+      "title": "Landing Pages & Formulários",
+      "createLandingPage": "Landing Page",
+      "createForm": "Formulário de Captura",
       "landingPagesTab": "Landing Pages",
       "formsTab": "Formulários de Captura",
       "noLandingPageFound": "Nenhuma landing page encontrada.",
-      "noFormFound": "Nenhum formulário disponível.",
+      "tryCreatingOne": "Crie uma nova página.",
+      "createPage": "Criar Página",
+      "noFormFound": "Nenhum formulário encontrado.",
+      "tryCreatingOneForm": "Tente criar um novo formulário para encontrar clientes",
+      "createPageForm": "Criar novo formulário",
       "viewDetails": "Ver Detalhes",
       "viewLandingPage": "Ver Landing Page",
       "viewForm": "Ver Formulário",
@@ -471,10 +475,27 @@
     },
     "templateDialog": {
       "title": "Escolha um Template",
-      "titleLabel": "Título",
+      "titleLabel": "Caminho",
       "descriptionLabel": "Descrição",
       "availableTemplates": "Templates Disponíveis",
-      "viewAndEdit": "Pré-visualizar e Editar"
+      "viewAndEdit": "Pré-visualizar e Editar",
+      "chooseTemplate": "Escolher Template",
+      "createAiTemplate": "Crie um template com IA",
+      "aiPromptHint":"Ex: Crie um design minimalista e azul",
+      "chooseSections": "Escolha as sessões",
+      "addSections":"Adicionar Sessão",
+      "addMoreSections":"Adicione mais sessões",
+      "generatingSections":"Criando sua landing page..."
+    },
+    "templateSections": {
+      "navbar": "Menu de Navegação",
+      "hero": "Cabeçalho com Destaque",
+      "benefits": "Vantagens do Produto",
+      "demo": "Vídeo ou Demonstração",
+      "social proof": "Depoimentos de Clientes",
+      "prices": "Tabela de Preços",
+      "call to action": "Botão de Ação",
+      "footer": "Rodapé da Página"
     },
     "previewDialog": {
       "title": "Pré-visualizar e Editar",
@@ -484,11 +505,12 @@
       "noImage": "Sem imagem",
       "instructionsTitle": "Instruções de Edição",
       "instructionText1": "Clique no elemento para mudar a cor do texto",
-      "instructionText2": "Clique com o botão direito em uma área vazia para inserir uma nova imagem",
       "instructionText3": "Clique com o botão direito na imagem para removê-la",
-      "instructionText4": "Clique e segure para arrastar as imagens",
-      "instructionText5": "Alt + clique com o botão direito para criar links",
-      "createLandingPage": "Criar landing page!"
+      "instructionText4": "Clique com o botão esquerdo na imagem para edita-la",
+      "instructionText5": "Clique e segure para arrastar as imagens",
+      "instructionText6": "Alt + clique com o botão direito para criar links",
+      "createLandingPage": "Criar landing page!",
+      "generateAiTemplate": "Gerar Template IA"
     },
     "detailsDialog": {
       "title": "Detalhes da Landing Page",
@@ -514,12 +536,15 @@
   "leads": {
     "leadGenerationTitle": "Geração de Leads",
     "leadGenerationDescription": "Crie formulários personalizados para capturar leads e aumentar suas conversões.",
+    "formFields": "Campos do formulário",
     "createFormTitle": "Criar Novo Formulário de Captura",
     "formTitle": "Título do Formulário",
     "description": "Descrição",
     "fieldName": "Nome do Campo",
     "addExtraField": "Adicionar Campo Extra",
     "persuasiveMessage": "Mensagem Persuasiva",
+    "incentives": "Incentivos",
+    "salesStrategy": "Estratégia de Vendas",
     "persuasiveMessagePlaceholder": "Digite uma mensagem para persuadir os leads a preencher o formulário",
     "incentivesQuestion": "O que você oferecerá para atrair leads?",
     "salesOptionsTitle": "Opções de Vendas",
@@ -584,10 +609,16 @@
     "twitterConnectionError": "Erro ao verificar a conexão com o Twitter. Por favor, tente novamente.",
     "linkedinPostContent": "Conteúdo do post no LinkedIn",
     "linkedinPostImageUrl": "URL da imagem do post",
+    "triggers": {
+      "title": "Como você deseja iniciar essa automação",
+      "eventTrigger": "Quando um evento acontecer",
+      "dateTrigger": "Data e hora específicas"
+    },
     "purposes": {
       "action":"Ações",
       "createContent":"Criar Conteúdo",
-      "socialMedia":"Redes Sociais"
+      "socialMedia":"Redes Sociais",
+      "triggers":"Gatilhos"
     }
   },
   "block": {
@@ -598,7 +629,8 @@
     "facebook": "Facebook",
     "whatsapp": "Whatsapp",
     "youtube": "Youtube",
-    "chatgpt": "Texto IA"
+    "chatgpt": "Texto IA",
+    "formTrigger": "Formulário Preenchido"
   },
   "platform": {
     "whatsapp": "WhatsApp",

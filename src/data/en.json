@@ -448,13 +448,17 @@
     },
     "automation_desc": "Automate your sales funnel for conversions.",
     "capturePages": {
-      "title": "Landing Page and Lead Capture Form",
-      "createLandingPage": "Create New Landing Page",
-      "createForm": "Create New Capture Form",
+      "title": "Landing Pages & Forms",
+      "createLandingPage": "Landing Page",
+      "createForm": "Capture Form",
       "landingPagesTab": "Landing Pages",
       "formsTab": "Capture Forms",
       "noLandingPageFound": "No landing pages found.",
-      "noFormFound": "No forms available.",
+      "tryCreatingOne": "Try creating a new page to find potential customers",
+      "createPage": "Create New Landing Page",
+      "noFormFound": "No forms found.",
+      "tryCreatingOneForm": "Try creating a new form to find potential customers",
+      "createPageForm": "Create New Capture Form",
       "viewDetails": "View Details",
       "viewLandingPage": "View Landing Page",
       "viewForm": "View Form",
@@ -462,12 +466,30 @@
       "createdAt": "Created on",
       "views": "Views: {{count}}"
     },
+    "templateSections": {
+      "navbar": "Header",
+      "hero": "Hero Section",
+      "benefits": "Product Benefits",
+      "demo": "Video or Demo",
+      "social proof": "Customer Testimonials",
+      "prices": "Pricing Table",
+      "call to action": "Call to Action",
+      "footer": "Page Footer"
+    },
     "templateDialog": {
       "title": "Choose a Template",
       "titleLabel": "Title",
       "descriptionLabel": "Description",
       "availableTemplates": "Available Templates",
-      "viewAndEdit": "Preview and Edit"
+      "viewAndEdit": "Preview and Edit",
+      "chooseTemplate": "Choose Template",
+      "createAiTemplate": "Create Template With AI",
+      "aiPromptHint":"Ex: Create a minimalist design and blue",
+      "chooseSections": "Choose sections",
+      "addSections":"Add Section",
+      "addMoreSections":"Add more sections",
+      "generateAiTemplate": "Generate AI template",
+      "generatingSections":"Creating your landing page..."
     },
     "previewDialog": {
       "title": "Preview and Edit",
@@ -477,10 +499,10 @@
       "noImage": "No image",
       "instructionsTitle": "Editing Instructions",
       "instructionText1": "Click the element to change text color",
-      "instructionText2": "Right-click on an empty area to insert a new image",
       "instructionText3": "Right-click on the image to delete it",
-      "instructionText4": "Click and hold to drag images",
-      "instructionText5": "Alt + right-click to create links",
+      "instructionText4": "Left-click on the image to edit it",
+      "instructionText5": "Click and hold to drag images",
+      "instructionText6": "Alt + right-click to create links",
       "createLandingPage": "Create landing page!"
     },
     "detailsDialog": {
@@ -507,15 +529,18 @@
   "leads": {
     "leadGenerationTitle": "Lead Generation",
     "leadGenerationDescription": "Create custom forms to capture leads and increase your conversions.",
+    "formFields": "Form fields",
     "createFormTitle": "Create New Capture Form",
     "formTitle": "Form Title",
     "description": "Description",
     "fieldName": "Field Name",
     "addExtraField": "Add Extra Field",
     "persuasiveMessage": "Persuasive Message",
+    "incentives": "Incentives",
     "persuasiveMessagePlaceholder": "Enter a message to persuade leads to fill out the form",
     "incentivesQuestion": "What will you offer to attract leads?",
     "salesOptionsTitle": "Sales Options",
+    "salesStrategy": "Sales Strategy",
     "formPreviewTitle": "Form Preview",
     "selectTemplate": "Select a Template",
     "confirmAndCreate": "Confirm and Create",
@@ -578,10 +603,16 @@
     "twitterConnectionError": "Error checking Twitter connection. Please try again.",
     "linkedinPostContent": "LinkedIn post content",
     "linkedinPostImageUrl": "Post image URL",
+    "triggers": {
+      "title": "How you wish to start this automation",
+      "eventTrigger": "When an event happen",
+      "dateTrigger": "Specific date and hour"
+    },
     "purposes": {
       "action":"Action",
       "createContent":"Create Content",
-      "socialMedia":"Social Media"
+      "socialMedia":"Social Media",
+      "triggers":"Triggers"
     }
   },
   "block": {
@@ -592,7 +623,8 @@
     "facebook": "Facebook",
     "whatsapp": "Whatsapp",
     "youtube": "Youtube",
-    "chatgpt": "AI Text"
+    "chatgpt": "AI Text",
+    "formTrigger": "Form Submitted"
   },
   "platform": {
     "whatsapp": "WhatsApp",
