@@ -53,7 +53,6 @@ const FormDetailsModal: React.FC<FormDetailsModalProps> = ({
     }
   }, [open, formId]);
 
-  // Extrai as chaves dinâmicas dos objetos responseData
   const dynamicKeys = Array.from(
     details.reduce((acc: Set<string>, detail) => {
       if (detail.responseData) {
@@ -61,16 +60,16 @@ const FormDetailsModal: React.FC<FormDetailsModalProps> = ({
       }
       return acc;
     }, new Set<string>())
-  ).filter(key => key !== "formId"); // Exclui o campo "formId"
+  ).filter(key => key !== "formId");
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
-      <DialogTitle>Detalhes do Formulário</DialogTitle>
+    <Dialog open={open} onClose={onClose} maxWidth="lg">
+      <DialogTitle>Form Detail</DialogTitle>
       <DialogContent>
         {loading ? (
-          <Typography variant="body2">Carregando...</Typography>
+          <Typography variant="body2">Loading...</Typography>
         ) : details.length === 0 ? (
-          <Typography variant="body2">Nenhum dado encontrado.</Typography>
+          <Typography variant="body2">No data found.</Typography>
         ) : (
           <Table>
             <TableHead>

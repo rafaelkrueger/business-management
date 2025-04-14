@@ -1133,7 +1133,6 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
         onClose={() => setSelectedLandingPage(null)}
       />
 
-      {/* Modal para ver os detalhes dos formulários */}
       <FormDetailsModal
         open={viewFormDetails !== ""}
         formId={viewFormDetails}

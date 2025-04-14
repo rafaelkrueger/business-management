@@ -111,7 +111,7 @@ const EmailTemplateSelector = ({ templates = [], open, onClose, onSelect, isConn
               >
                 {template.screenshot && (
                   <CardActionArea>
-                    <CardMedia component="img" height="140" image={template.screenshot} alt={template.name} />
+                    <CardMedia sx={{height:'200px', width:'100%'}} component="img" height="140" image={template.screenshot} alt={template.name} />
                     <CardContent>
                       <Typography variant="body2" color="textSecondary" align="center">
                         {template.name}

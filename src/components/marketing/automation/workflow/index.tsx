@@ -297,7 +297,7 @@ const CustomNode = ({ data, id, activeCompany }) => {
         type="target"
         position={Position.Top}
         style={{
-          top: -7.5,
+          top: -8.5,
           background: "#4FD1C5",
           width: "14px",
           height: "14px",
@@ -309,7 +309,7 @@ const CustomNode = ({ data, id, activeCompany }) => {
         type="source"
         position={Position.Bottom}
         style={{
-          bottom: -7.5,
+          bottom: -8.5,
           background: "#4FD1C5",
           width: "14px",
           height: "14px",
@@ -410,48 +410,6 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { recipients: "", subject: "", template: {} },
       purpose:t('automationFlow.purposes.triggers'),
     },
-    EMAIL: {
-      type: "email",
-      name: t("block.email"),
-      icon: <FaEnvelope style={{ color: "#b4a01b", fontSize: 26 }} />,
-      params: { recipients: "", subject: "", template: {} },
-      purpose:t('automationFlow.purposes.socialMedia'),
-    },
-    TWITTER: {
-      type: "twitter",
-      name: t("block.twitter"),
-      icon: <FaTwitter style={{ color: "#1DA1F2", fontSize: 26 }} />,
-      params: { tweetContent: "" },
-      purpose:t('automationFlow.purposes.socialMedia'),
-    },
-    LINKEDIN: {
-      type: "linkedin",
-      name: t("block.linkedin"),
-      icon: <FaLinkedin style={{ color: "#0A66C2", fontSize: 26 }} />,
-      params: { linkedinContent: "" },
-      purpose:t('automationFlow.purposes.socialMedia'),
-    },
-    YOUTUBE: {
-      type: "youtube",
-      name: t("block.youtube"),
-      icon: <FaYoutube style={{ color: "#FF0000", fontSize: 26 }} />,
-      params: { youtubeContent: "" },
-      purpose:t('automationFlow.purposes.socialMedia'),
-    },
-    FACEBOOK: {
-      type: "facebook",
-      name: t("block.facebook"),
-      icon: <FaFacebook style={{ color: "#1877F2", fontSize: 26 }} />,
-      params: { facebookContent: "" },
-      purpose:t('automationFlow.purposes.socialMedia'),
-    },
-    // Caso deseje habilitar o WhatsApp, descomente o bloco abaixo:
-    // WHATSAPP: {
-    //   type: "whatsapp",
-    //   name: t("block.whatsapp"),
-    //   icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 36 }} />,
-    //   params: { whatsappContent: "" },
-    // },
     CHATGPT: {
       type: "chatgpt",
       name: t("block.chatgpt"),
@@ -471,6 +429,49 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { waitTime: 1, waitHours: 0 },
       purpose:t('automationFlow.purposes.action'),
     },
+
+    EMAIL: {
+      type: "email",
+      name: t("block.email"),
+      icon: <FaEnvelope style={{ color: "#b4a01b", fontSize: 26 }} />,
+      params: { recipients: "", subject: "", template: {} },
+      purpose:t('automationFlow.purposes.socialMedia'),
+    },
+    TWITTER: {
+      type: "twitter",
+      name: t("block.twitter"),
+      icon: <FaTwitter style={{ color: "#1DA1F2", fontSize: 26 }} />,
+      params: { tweetContent: "" },
+      purpose:t('automationFlow.purposes.socialMedia'),
+    },
+    // LINKEDIN: {
+    //   type: "linkedin",
+    //   name: t("block.linkedin"),
+    //   icon: <FaLinkedin style={{ color: "#0A66C2", fontSize: 26 }} />,
+    //   params: { linkedinContent: "" },
+    //   purpose:t('automationFlow.purposes.socialMedia'),
+    // },
+    // YOUTUBE: {
+    //   type: "youtube",
+    //   name: t("block.youtube"),
+    //   icon: <FaYoutube style={{ color: "#FF0000", fontSize: 26 }} />,
+    //   params: { youtubeContent: "" },
+    //   purpose:t('automationFlow.purposes.socialMedia'),
+    // },
+    FACEBOOK: {
+      type: "facebook",
+      name: t("block.facebook"),
+      icon: <FaFacebook style={{ color: "#1877F2", fontSize: 26 }} />,
+      params: { facebookContent: "" },
+      purpose:t('automationFlow.purposes.socialMedia'),
+    },
+    // Caso deseje habilitar o WhatsApp, descomente o bloco abaixo:
+    // WHATSAPP: {
+    //   type: "whatsapp",
+    //   name: t("block.whatsapp"),
+    //   icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 36 }} />,
+    //   params: { whatsappContent: "" },
+    // },
   };
 
   useEffect(() => {
