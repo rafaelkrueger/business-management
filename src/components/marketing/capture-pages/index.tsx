@@ -19,13 +19,16 @@ import {
   FormGroup,
   FormControlLabel,
   Checkbox,
+  CircularProgress,
+  LinearProgress,
 } from "@mui/material";
-import { PlusCircle } from "lucide-react";
+import { AlertCircle, Check, CheckCircle, Clock, PlusCircle } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import LandingPageService from "../../../services/landing-page.service.ts";
 import LeadsService from "../../../services/leads.service.ts";
 import { useSnackbar } from "notistack";
+import ProgressService from "../../../services/progress.service.ts";
 
 // Importações para o Chart.js
 import { Bar } from "react-chartjs-2";
@@ -40,7 +43,7 @@ import {
 } from "chart.js";
 import LeadGeneration from "../create-leads/index.tsx";
 import FormDetailsModal from "../leads-details/index.tsx";
-import { ArrowBackIos, FormatListBulletedOutlined, InsertDriveFileOutlined } from "@mui/icons-material";
+import { AccessTime, ArrowBackIos, Close, FormatListBulletedOutlined, InsertDriveFileOutlined } from "@mui/icons-material";
 import AiService from "../../../services/ai.service.ts";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -449,6 +452,7 @@ const TemplateDialog: React.FC<{
     "navbar", "benefits", "social proof", "prices", "call to action", "footer",
   ]);
   const [customSectionInput, setCustomSectionInput] = useState("");
+  const [progress, setProgress] = useState();
   const [generating, setGenerating] = useState(false);
 
   const sectionLabels: Record<string, string> = {
@@ -484,26 +488,222 @@ const TemplateDialog: React.FC<{
     }
   };
 
+  useEffect(() => {
+    if (!generating) return;
+
+    const interval = setInterval(() => {
+      ProgressService.getProgress(activeCompany)
+        .then((res) => {
+          setProgress(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [generating]);
+
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogContent>
-        {generating ? (
-          <Box
-            mt={4}
-            p={4}
-            borderRadius={2}
-            bgcolor="#f9f9f9"
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
+      {generating ? (
+        <Box
+          mt={4}
+          p={4}
+          borderRadius="12px"
+          bgcolor="rgba(255, 255, 255, 0.9)"
+          boxShadow="0 8px 32px rgba(0, 0, 0, 0.05)"
+          border="1px solid rgba(0, 0, 0, 0.05)"
+          sx={{
+            backdropFilter: 'blur(8px)',
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(248,250,252,0.96) 100%)'
+          }}
+        >
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{
+              fontWeight: 600,
+              color: 'text.primary',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}
           >
-            <Typography variant="h6" fontWeight={600} mb={2}>
-              {t("marketing.templateDialog.generatingSections")}
-            </Typography>
-            <Skeleton variant="rectangular" width="100%" height={200} />
+            <CircularProgress
+              size={24}
+              thickness={4}
+              sx={{
+                color: 'primary.main',
+                animationDuration: '800ms'
+              }}
+            />
+            Generating your template...
+          </Typography>
+
+          <Box
+            component="ul"
+            sx={{
+              pl: 0,
+              mt: 2,
+              mb: 0,
+              display: 'grid',
+              gap: 1.5
+            }}
+          >
+            {sections.map((section) => {
+              const status = progress?.[section];
+              const label = sectionLabels?.[section] || section;
+
+              return (
+                <Box
+                  key={section}
+                  component="li"
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2,
+                    p: 1.5,
+                    borderRadius: '8px',
+                    transition: 'all 0.3s ease',
+                    backgroundColor: status === 'loading' ? 'rgba(0, 100, 255, 0.03)' : 'transparent',
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.02)'
+                    }
+                  }}
+                >
+                  <Box sx={{ position: 'relative', width: 24, height: 24 }}>
+                    {status === 'loading' ? (
+                      <CircularProgress
+                        size={24}
+                        thickness={4}
+                        sx={{
+                          color: 'primary.main',
+                          position: 'absolute',
+                          animationDuration: '800ms'
+                        }}
+                      />
+                    ) : status === 'done' ? (
+                      <Box
+                        sx={{
+                          width: 24,
+                          height: 24,
+                          borderRadius: '50%',
+                          backgroundColor: 'success.light',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <Check
+                          sx={{
+                            color: 'success.contrastText',
+                            fontSize: 16
+                          }}
+                        />
+                      </Box>
+                    ) : status === 'error' ? (
+                      <Box
+                        sx={{
+                          width: 24,
+                          height: 24,
+                          borderRadius: '50%',
+                          backgroundColor: 'error.light',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <Close
+                          sx={{
+                            color: 'error.contrastText',
+                            fontSize: 16
+                          }}
+                        />
+                      </Box>
+                    ) : (
+                      <Box
+                        sx={{
+                          width: 24,
+                          height: 24,
+                          borderRadius: '50%',
+                          backgroundColor: 'action.disabledBackground',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <AccessTime
+                          sx={{
+                            color: 'action.disabled',
+                            fontSize: 16
+                          }}
+                        />
+                      </Box>
+                    )}
+                  </Box>
+
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      fontWeight: 500,
+                      color: status === 'error' ? 'error.main' : 'text.primary',
+                      flexGrow: 1
+                    }}
+                  >
+                    {label}
+                  </Typography>
+
+                  {status === 'loading' && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary',
+                        fontFeatureSettings: '"tnum"'
+                      }}
+                    >
+                      Processing...
+                    </Typography>
+                  )}
+                </Box>
+              );
+            })}
           </Box>
-        ) : (
+
+          <Box
+            sx={{
+              mt: 3,
+              pt: 2,
+              borderTop: '1px solid',
+              borderColor: 'divider',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+              {sections.filter(s => progress?.[s] === 'done').length} of {sections.length} completed
+            </Typography>
+
+            <LinearProgress
+              variant="determinate"
+              value={(sections.filter(s => progress?.[s] === 'done').length / sections.length) * 100}
+              sx={{
+                height: 6,
+                borderRadius: 3,
+                width: '60%',
+                backgroundColor: 'action.selected',
+                '& .MuiLinearProgress-bar': {
+                  borderRadius: 3,
+                  backgroundColor: 'primary.main'
+                }
+              }}
+            />
+          </Box>
+        </Box>
+      ) : (
           <>
             <ToggleButtonGroup
               value={mode}
@@ -639,6 +839,7 @@ const TemplateDialog: React.FC<{
                 description: newPage.description,
                 aiPrompt: newPage.aiPrompt,
                 sections: orderedSections,
+                companyId: activeCompany,
               }).then((res)=>{
                 setGenerating(false);
                 setPreviewUrl(`http://localhost:3005/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
