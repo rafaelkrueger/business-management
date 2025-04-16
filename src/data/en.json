@@ -464,7 +464,9 @@
       "viewForm": "View Form",
       "noDescription": "No description",
       "createdAt": "Created on",
-      "views": "Views: {{count}}"
+      "views": "Views: {{count}}",
+      "selectInputTitle": "Select a form",
+      "selectInputDescription": "The selected form will trigger an action when it's submitted"
     },
     "templateSections": {
       "navbar": "Header",

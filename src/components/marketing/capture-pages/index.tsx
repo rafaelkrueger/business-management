@@ -684,12 +684,12 @@ const TemplateDialog: React.FC<{
             }}
           >
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              {sections.filter(s => progress?.[s] === 'done').length} of {sections.length} completed
+              {sections.filter(s => progress?.[s] === 'done' || progress?.[s] === 'error').length} of {sections.length} completed
             </Typography>
 
             <LinearProgress
               variant="determinate"
-              value={(sections.filter(s => progress?.[s] === 'done').length / sections.length) * 100}
+              value={(sections.filter(s => progress?.[s] === 'done' || progress?.[s] === 'error').length / sections.length) * 100}
               sx={{
                 height: 6,
                 borderRadius: 3,

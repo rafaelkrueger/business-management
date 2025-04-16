@@ -471,7 +471,9 @@
       "viewForm": "Ver Formulário",
       "noDescription": "Sem descrição",
       "createdAt": "Criado em",
-      "views": "Visualizações: {{count}}"
+      "views": "Visualizações: {{count}}",
+      "selectInputTitle": "Selecione um formulário",
+      "selectInputDescription": "O formulário selecionado irá disparar uma ação quando for enviado"
     },
     "templateDialog": {
       "title": "Escolha um Template",

@@ -66,15 +66,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import WhatsappService from "../../../../services/whatsapp.service.ts";
 import ProgressService from "../../../../services/progress.service.ts";
-
-const nodeStyles = {
-  padding: "10px",
-  border: "1px solid #ddd",
-  borderRadius: "5px",
-  backgroundColor: "#fff",
-  textAlign: "center",
-  minWidth: "150px",
-};
+import PickLeadsForm from "../../create-leads/pick-leads-form/index.tsx";
 
 const CustomNode = ({ data, id, activeCompany }) => {
   const { t } = useTranslation();
@@ -98,10 +90,10 @@ const CustomNode = ({ data, id, activeCompany }) => {
 
   const getStatusColor = () => {
     switch (status) {
-      case "loading": return "#FFA726"; // Laranja mais vibrante
-      case "done": return "#66BB6A";   // Verde mais suave
-      case "error": return "#EF5350";   // Vermelho mais moderno
-      default: return "#B0BEC5";       // Cinza azulado
+      case "loading": return "#FFA726";
+      case "done": return "#66BB6A";
+      case "error": return "#EF5350";
+      default: return "#B0BEC5";
     }
   };
 
@@ -162,7 +154,6 @@ const CustomNode = ({ data, id, activeCompany }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Barra lateral colorida */}
       <Box
         sx={{
           position: "absolute",
@@ -176,8 +167,6 @@ const CustomNode = ({ data, id, activeCompany }) => {
             : "none",
         }}
       />
-
-      {/* Status indicator (versão anterior com semáforo) */}
       <Box
         sx={{
           position: "absolute",
@@ -193,10 +182,9 @@ const CustomNode = ({ data, id, activeCompany }) => {
         }}
       />
 
-      {/* Header com ícone alinhado à esquerda */}
       <Box
         sx={{
-          padding: "12px 16px 12px 24px", // Mais padding à esquerda
+          padding: "12px 16px 12px 24px",
           background: "linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)",
           borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
           display: "flex",
@@ -204,7 +192,6 @@ const CustomNode = ({ data, id, activeCompany }) => {
           gap: "10px",
         }}
       >
-        {/* Ícone do tipo de bloco */}
         <Box
           sx={{
             width: 32,
@@ -231,7 +218,6 @@ const CustomNode = ({ data, id, activeCompany }) => {
         </Typography>
       </Box>
 
-      {/* Conteúdo com padding maior à esquerda */}
       <Box sx={{ padding: "14px 16px 14px 24px" }}>
         {data.blockType === "twitter" && (
           <Typography
@@ -349,7 +335,7 @@ const getSortedNodes = (nodes, edges) => {
   while (queue.length > 0) {
     const current = queue.shift();
     sortedNodes.push(current);
-    current.children.forEach((childId) => {
+    current.children.forEach((childId:any) => {
       nodeMap[childId].indegree--;
       if (nodeMap[childId].indegree === 0) {
         queue.push(nodeMap[childId]);
@@ -444,13 +430,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { tweetContent: "" },
       purpose:t('automationFlow.purposes.socialMedia'),
     },
-    // LINKEDIN: {
-    //   type: "linkedin",
-    //   name: t("block.linkedin"),
-    //   icon: <FaLinkedin style={{ color: "#0A66C2", fontSize: 26 }} />,
-    //   params: { linkedinContent: "" },
-    //   purpose:t('automationFlow.purposes.socialMedia'),
-    // },
+    LINKEDIN: {
+      type: "linkedin",
+      name: t("block.linkedin"),
+      icon: <FaLinkedin style={{ color: "#0A66C2", fontSize: 26 }} />,
+      params: { linkedinContent: "" },
+      purpose:t('automationFlow.purposes.socialMedia'),
+    },
     // YOUTUBE: {
     //   type: "youtube",
     //   name: t("block.youtube"),
@@ -710,6 +696,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       nextExecutionTime: format(new Date(nextExecutionTime), "yyyy-MM-dd'T'HH:mm"),
       repeatInterval,
       activeCompany: activeCompany,
+      startType: startType,
     };
 
     try {
@@ -979,13 +966,17 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       ))}
 
       <Box mt={4} display="flex" justifyContent="space-between" gap={2}>
-        <Button
-          variant="outlined"
-          color="success"
-          onClick={handleTestAutomation}
-        >
-          {t("automationFlow.testAutomation")}
-        </Button>
+        {
+          startType === 'scheduled' && (
+            <Button
+              variant="outlined"
+              color="success"
+              onClick={handleTestAutomation}
+            >
+              {t("automationFlow.testAutomation")}
+            </Button>
+          )
+        }
         <Button
           variant="contained"
           color="success"
@@ -1033,38 +1024,11 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         />
       )}
       {editingNode.data.blockType === "formSubmitted" && (
-      <p>Lalala</p>
-      //Seleciona o formulário
-      // <TextField
-      //   select
-      //   label="Selecione a Página"
-      //   value={
-      //     editingNode.data.params.selectedPage
-      //       ? JSON.stringify(editingNode.data.params.selectedPage)
-      //       : ""
-      //   }
-      //   onChange={(e) => {
-      //     const selectedPage = JSON.parse(e.target.value);
-      //     setEditingNode({
-      //       ...editingNode,
-      //       data: {
-      //         ...editingNode.data,
-      //         params: {
-      //           ...editingNode.data.params,
-      //           selectedPage: selectedPage,
-      //         },
-      //       },
-      //     });
-      //   }}
-      //   sx={{ marginTop: "15px", width: "91%", marginLeft: "28px" }}
-      // >
-      //   {facebookPages &&
-      //     facebookPages.map((page) => (
-      //       <MenuItem key={page.id} value={JSON.stringify(page)}>
-      //         {page.name}
-      //       </MenuItem>
-      //     ))}
-      // </TextField>
+      <PickLeadsForm
+        editingNode={editingNode}
+        setEditingNode={setEditingNode}
+        activeCompany={activeCompany}
+        />
       )}
 
           {editingNode.data.blockType === "linkedin" && (
