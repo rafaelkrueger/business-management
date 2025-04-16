@@ -451,13 +451,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { facebookContent: "" },
       purpose:t('automationFlow.purposes.socialMedia'),
     },
-    // Caso deseje habilitar o WhatsApp, descomente o bloco abaixo:
-    // WHATSAPP: {
-    //   type: "whatsapp",
-    //   name: t("block.whatsapp"),
-    //   icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 36 }} />,
-    //   params: { whatsappContent: "" },
-    // },
+    WHATSAPP: {
+      type: "whatsapp",
+      name: t("block.whatsapp"),
+      icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 36 }} />,
+      params: { whatsappContent: "" },
+      purpose:t('automationFlow.purposes.socialMedia'),
+    },
   };
 
   useEffect(() => {
@@ -577,8 +577,8 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
 
   const handleAddWhatsappBlock = async () => {
     try {
-      const response = await WhatsappService.checkWhatsappStatus(activeCompany);
-      if (response) {
+      const response = await WhatsappService.checkWhatsAppStatus(activeCompany);
+      if (response.data.connected) {
         addNode(BLOCK_TYPES.WHATSAPP);
       } else {
         enqueueSnackbar(t("automationFlow.whatsappConnectNeeded"), {
@@ -588,9 +588,6 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       }
     } catch (error) {
       console.error("Erro ao verificar credenciais do Twitter:", error);
-      enqueueSnackbar(t("automationFlow.twitterConnectionError"), {
-        variant: "error",
-      });
       setOpenWhatsappAuthModal(true);
     }
   };
@@ -783,16 +780,25 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
     setOpenTemplateSelector(false);
   };
 
-  const isConnectedToChatGPT = (emailNodeId) => {
-    return edges.some((edge) => {
-      return (
-        edge.target === emailNodeId &&
-        nodes.find(
-          (node) => node.id === edge.source && node.data.blockType === "chatgpt"
-        )
-      );
-    });
+  const isConnectedToChatGPT = (currentNodeId) => {
+    const incomingEdge = edges.find((edge) => edge.target === currentNodeId);
+    if (!incomingEdge) return false;
+
+    const previousNode = nodes.find((node) => node.id === incomingEdge.source);
+    if (!previousNode) return false;
+
+    if (previousNode.data.blockType === 'wait') {
+      const edgeToWait = edges.find((edge) => edge.target === previousNode.id);
+      if (!edgeToWait) return false;
+
+      const nodeBeforeWait = nodes.find((node) => node.id === edgeToWait.source);
+      return nodeBeforeWait?.data?.blockType === 'chatgpt';
+    }
+
+    return previousNode.data.blockType === 'chatgpt';
   };
+
+
 
   const filteredBlockTypes = Object.values(BLOCK_TYPES).filter(block => {
     const isTriggerPurpose = block.purpose === t('automationFlow.purposes.triggers');
@@ -1398,11 +1404,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
               />
             )}
             {editingNode.data.blockType === "whatsapp" && (
+              <>
               <TextField
                 sx={{ marginTop: "10px" }}
                 label="Mensagem"
                 type="text"
                 fullWidth
+                disabled={isConnectedToChatGPT(editingNode.id)}
                 value={editingNode.data.params.message}
                 onChange={(e) =>
                   setEditingNode({
@@ -1417,6 +1425,45 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                   })
                 }
               />
+              {isConnectedToChatGPT(editingNode.id) && (
+                <>
+                  <Typography
+                    sx={{
+                      color: "#FFA500",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      marginTop: "5px",
+                      textAlign: "center",
+                    }}
+                    variant="body2"
+                  >
+                    <WarningAmberIcon sx={{ fontSize: 18 }} />
+                    {t("automationFlow.subjectBlockedByAI")}
+                  </Typography>
+                  <br/>
+                  </>
+                )}
+              <TextField
+              sx={{ marginTop: "10px" }}
+              label="Números de telefone separados por vírgula"
+              type="text"
+              fullWidth
+              value={editingNode.data.params.numbers}
+              onChange={(e) =>
+                setEditingNode({
+                  ...editingNode,
+                  data: {
+                    ...editingNode.data,
+                    params: {
+                      ...editingNode.data.params,
+                      numbers: e.target.value,
+                    },
+                  },
+                })
+              }
+            />
+              </>
             )}
           </DialogContent>
           <DialogActions>

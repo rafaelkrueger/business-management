@@ -17,28 +17,81 @@ import { useTranslation } from "react-i18next";
 const WhatsAppAuthModal = ({ open, onClose, companyId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(null);
-  const [qrCode, setQrCode] = useState(""); // Agora armazenamos a imagem Base64
+  const [qrCode, setQrCode] = useState("");
+  const [qrTimer, setQrTimer] = useState(60);
+  const [showRefreshButton, setShowRefreshButton] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
 
   useEffect(() => {
+    let interval;
     if (open) {
+      const checkStatus = async () => {
+        try {
+          const status = await WhatsAppService.checkWhatsAppStatus(companyId);
+          setIsConnected(status.data.connected);
+
+          if (!status.data.connected) {
+            const res = await WhatsAppService.getQrCode(companyId);
+            setQrCode(res.data || null);
+            setQrTimer(60);
+            setShowRefreshButton(false);
+          } else {
+            onClose();
+          }
+
+          interval = setInterval(async () => {
+            const status = await WhatsAppService.checkWhatsAppStatus(companyId);
+            if (status.data.connected) {
+              clearInterval(interval);
+              enqueueSnackbar(t("Whatsapp connected"), { variant: "success" });
+              onClose();
+            }
+          }, 3000);
+        } catch (err) {
+          console.error("Erro ao verificar status do WhatsApp:", err);
+        }
+      };
+
       checkStatus();
+
+      return () => {
+        clearInterval(interval);
+      };
     }
   }, [open]);
 
-  const checkStatus = async () => {
-    try {
-      const status = await WhatsAppService.checkWhatsAppStatus(companyId);
-      setIsConnected(status.data.connected);
+  // ⏳ Contador de 60 segundos para o QR
+  useEffect(() => {
+    if (!qrCode) return;
 
-      if (!status.data.connected) {
-        const qrResponse = await WhatsAppService.getQrCode(companyId);
-        setQrCode(qrResponse.data.qrCode); // Agora já vem como imagem Base64
-      }
-    } catch (error) {
-      console.error("Erro ao verificar status do WhatsApp:", error);
-      setIsConnected(false);
+    setQrTimer(60);
+    setShowRefreshButton(false);
+    const countdown = setInterval(() => {
+      setQrTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(countdown);
+          setShowRefreshButton(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(countdown);
+  }, [qrCode]);
+
+  const regenerateQr = async () => {
+    try {
+      setIsLoading(true);
+      const res = await WhatsAppService.getQrCode(companyId);
+      setQrCode(res.data || null);
+      setQrTimer(60);
+      setShowRefreshButton(false);
+    } catch (err) {
+      enqueueSnackbar("Erro", { variant: "error" });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,8 +106,8 @@ const WhatsAppAuthModal = ({ open, onClose, companyId }) => {
         </Box>
       </DialogTitle>
       <DialogContent dividers>
-        <Box textAlign="center" py={2}>
-          {isConnected === null && <CircularProgress />}
+        <Box textAlign="center" py={2} sx={{display:'flex', flexDirection:'column', justifySelf:'center'}}>
+          {isConnected === null && <CircularProgress style={{marginLeft:'75px'}} />}
           {isConnected ? (
             <Typography variant="body1">{t("whatsappAuthModal.connectedMessage")}</Typography>
           ) : (
@@ -63,8 +116,26 @@ const WhatsAppAuthModal = ({ open, onClose, companyId }) => {
               <Typography variant="body2" color="textSecondary">
                 {t("whatsappAuthModal.scanQrToConnect")}
               </Typography>
+              <br/>
               {qrCode ? (
-                <img src={qrCode} alt="QR Code" width="200" height="200" />
+                <>
+                  <img src={qrCode} alt="QR Code" width="200" height="200" style={{marginLeft:'75px'}} />
+                  {!showRefreshButton ? (
+                    <Typography mt={1} variant="body2" color="textSecondary">
+                      Expires in {qrTimer}s
+                    </Typography>
+                  ) : (
+                    <Button
+                      onClick={regenerateQr}
+                      variant="contained"
+                      color="primary"
+                      sx={{ mt: 2 }}
+                      disabled={isLoading}
+                    >
+                      New QR Code
+                    </Button>
+                  )}
+                </>
               ) : (
                 <CircularProgress />
               )}
