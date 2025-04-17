@@ -9,6 +9,14 @@ class AiService {
 		return http.get(`/ai/ask-question?companyId=${companyId}&question=${question}`);
 	}
 
+	static askQuickImage(formData: FormData) {
+		return http.post(`/ai/ask-quick-image`, formData, {
+		  headers: {
+			'Content-Type': 'multipart/form-data',
+		  },
+		});
+	  }
+
     static craeteAiAssistant(body) {
 		return http.post(`/ai/create-assistant`, body);
 	}

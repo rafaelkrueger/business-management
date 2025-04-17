@@ -31,6 +31,7 @@ import {
 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { ArrowBackIos } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -42,7 +43,7 @@ import EmailTemplateSelector from "../../email-template-selector/index.tsx";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import AiService from "../../../../services/ai.service.ts";
-import { Brain, Radio, SettingsIcon } from "lucide-react";
+import { Brain, CloudUploadIcon, ImageIcon, Radio, SettingsIcon } from "lucide-react";
 import { Drawer } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -123,6 +124,8 @@ const CustomNode = ({ data, id, activeCompany }) => {
       case "whatsapp":
         return <FaWhatsapp size={iconSize} color="#25D366" />;
       case "chatgpt":
+        return <FaBrain size={iconSize} color="purple" />;
+      case "chatgptImage":
         return <FaBrain size={iconSize} color="purple" />;
       case "wait":
         return <FaClock size={iconSize} color="#000" />;
@@ -408,6 +411,17 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       },
       purpose:t('automationFlow.purposes.createContent'),
     },
+    CHATGPT_IMAGE: {
+      type: "chatgptImage",
+      name: t("block.chatgptImage"),
+      icon: <Brain style={{ color: "purple", fontSize: 26 }} />,
+      params: {
+        prompt: "",
+        file: "",
+        platform: "chat_gpt_image",
+      },
+      purpose:t('automationFlow.purposes.createContent'),
+    },
     WAIT: {
       type: "wait",
       name: t("block.wait"),
@@ -430,20 +444,6 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { tweetContent: "" },
       purpose:t('automationFlow.purposes.socialMedia'),
     },
-    LINKEDIN: {
-      type: "linkedin",
-      name: t("block.linkedin"),
-      icon: <FaLinkedin style={{ color: "#0A66C2", fontSize: 26 }} />,
-      params: { linkedinContent: "" },
-      purpose:t('automationFlow.purposes.socialMedia'),
-    },
-    // YOUTUBE: {
-    //   type: "youtube",
-    //   name: t("block.youtube"),
-    //   icon: <FaYoutube style={{ color: "#FF0000", fontSize: 26 }} />,
-    //   params: { youtubeContent: "" },
-    //   purpose:t('automationFlow.purposes.socialMedia'),
-    // },
     FACEBOOK: {
       type: "facebook",
       name: t("block.facebook"),
@@ -458,6 +458,35 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { whatsappContent: "" },
       purpose:t('automationFlow.purposes.socialMedia'),
     },
+    // LINKEDIN: {
+    //   type: "linkedin",
+    //   name: t("block.linkedin"),
+    //   icon: <FaLinkedin style={{ color: "#0A66C2", fontSize: 26 }} />,
+    //   params: { linkedinContent: "" },
+    //   purpose:t('automationFlow.purposes.socialMedia'),
+    // },
+    // YOUTUBE: {
+    //   type: "youtube",
+    //   name: t("block.youtube"),
+    //   icon: <FaYoutube style={{ color: "#FF0000", fontSize: 26 }} />,
+    //   params: { youtubeContent: "" },
+    //   purpose:t('automationFlow.purposes.socialMedia'),
+    // },
+
+    // INSTAGRAM: {
+    //   type: "instagram",
+    //   name: t("block.instagram"),
+    //   icon: <FaInstagram style={{ color: "#0A66C2", fontSize: 26 }} />,
+    //   params: { instagramContent: "" },
+    //   purpose:t('automationFlow.purposes.socialMedia'),
+    // },
+    // TIKTOK: {
+    //   type: "tiktok",
+    //   name: t("block.tiktok"),
+    //   icon: <FaTikTok style={{ color: "#FF0000", fontSize: 26 }} />,
+    //   params: { tiktokContent: "" },
+    //   purpose:t('automationFlow.purposes.socialMedia'),
+    // },
   };
 
   useEffect(() => {
@@ -1189,15 +1218,15 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                     setIsLoadingAi(true);
                     try {
                       const prompt = `
-                        Gere um conteúdo para a plataforma: ${
+                        Create content for this platform: ${
                           editingNode.data.params.platform || "indefinida"
                         }.
-                        Ação: ${
+                        Action: ${
                           editingNode.data.params.action ||
                           t("automationFlow.aiActionGenerateContent")
                         }.
-                        Tom de voz: ${editingNode.data.params.tone || "Padrão"}.
-                        Instruções do usuário: ${
+                        Voice: ${editingNode.data.params.tone || "Padrão"}.
+                        User instructions and language: ${
                           editingNode.data.params.instructions ||
                           "Nenhuma instrução específica"
                         }.
@@ -1277,6 +1306,253 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
               </DialogActions>
             </Dialog>
           )}
+          {editingNode && editingNode.data.blockType === "chatgptImage" && (
+          <Dialog open={!!openEditDialog} onClose={() => setOpenEditDialog("")} fullWidth>
+            <DialogTitle>{t("automationFlow.configureAI")}</DialogTitle>
+            <DialogContent>
+              <TextField
+                label={t("automationFlow.instructions")}
+                fullWidth
+                sx={{ marginTop: "10px" }}
+                value={editingNode.data.params.instructions || ""}
+                onChange={(e) =>
+                  setEditingNode({
+                    ...editingNode,
+                    data: {
+                      ...editingNode.data,
+                      params: {
+                        ...editingNode.data.params,
+                        instructions: e.target.value,
+                      },
+                    },
+                  })
+                }
+              />
+
+              {/* Área de Upload de Arquivo Aprimorada */}
+              <Box
+                sx={{
+                  position: 'relative',
+                  marginTop: '20px',
+                  border: '1px dashed #ccc',
+                  borderRadius: '4px',
+                  padding: '16px',
+                  textAlign: 'center',
+                  transition: 'all 0.3s ease',
+                  minHeight: '150px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  '&:hover': {
+                    borderColor: '#1976d2',
+                    backgroundColor: editingNode.data.params.file ? 'transparent' : 'rgba(25, 118, 210, 0.04)'
+                  }
+                }}
+              >
+              {!editingNode.data.params.file ? (
+                <>
+                  {/* <input
+                    type="file"
+                    accept=".jpg,.png,.jpeg,.pdf"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (file.size > 20 * 1024 * 1024) {
+                          alert(t("automationFlow.fileSizeError"));
+                          return;
+                        }
+
+                        const toBase64 = (file) =>
+                          new Promise<string>((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            reader.onload = () => resolve(reader.result as string);
+                            reader.onerror = (error) => reject(error);
+                          });
+
+                        const base64 = await toBase64(file);
+
+                        setEditingNode({
+                          ...editingNode,
+                          data: {
+                            ...editingNode.data,
+                            params: {
+                              ...editingNode.data.params,
+                              file: {
+                                name: file.name,
+                                type: file.type,
+                                size: file.size,
+                                base64, // ✅ base64 string goes here
+                              },
+                            },
+                          },
+                        });
+                      }
+                    }}
+                    style={{
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                      top: 0,
+                      left: 0,
+                      opacity: 0,
+                      cursor: 'pointer',
+                    }}
+                    id="file-upload"
+                  />
+                  <label htmlFor="file-upload">
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <CloudUploadIcon sx={{ color: '#1976d2', fontSize: '40px' }} />
+                      <Typography variant="body1" sx={{ mt: 1 }}>
+                        <strong>{t("automationFlow.clickToUpload")}</strong>
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        {t("automationFlow.acceptedFormats")}: .jpg, .png, .jpeg, .pdf
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                        {t("automationFlow.maxSize")}: 20MB
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: 'text.disabled', mt: 1 }}>
+                        {t("automationFlow.optional")}
+                      </Typography>
+                    </Box>
+                  </label> */}
+                </>
+              ) : (
+                <Box sx={{ width: '100%' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      {editingNode.data.params.file.type.includes('image/') ? (
+                        <ImageIcon color="primary" />
+                      ) : (
+                        <PictureAsPdfIcon color="primary" />
+                      )}
+                      <Box>
+                        <Typography variant="body1" noWrap sx={{ maxWidth: '300px' }}>
+                          {editingNode.data.params.file.name}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                          {Math.round(editingNode.data.params.file.size / 1024)} KB
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <IconButton
+                      onClick={() =>
+                        setEditingNode({
+                          ...editingNode,
+                          data: {
+                            ...editingNode.data,
+                            params: {
+                              ...editingNode.data.params,
+                              file: null,
+                            },
+                          },
+                        })
+                      }
+                      color="error"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+
+                  {/* Preview if it's an image */}
+                  {editingNode.data.params.file.type.includes('image/') && (
+                    <Box sx={{ mt: 2, maxHeight: '200px', overflow: 'hidden', borderRadius: '4px' }}>
+                      <img
+                        src={editingNode.data.params.file.base64} // ✅ Use base64 directly here
+                        alt="Preview"
+                        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                      />
+                    </Box>
+                  )}
+                </Box>
+              )}
+
+              </Box>
+
+              {/* Testar IA */}
+              <Button
+                sx={{ marginTop: "15px" }}
+                variant="outlined"
+                onClick={async () => {
+                  setIsLoadingAi(true);
+                  try {
+                    const formData = new FormData();
+                    formData.append('companyId', activeCompany);
+                    formData.append('instructions', editingNode.data.params.instructions);
+
+                    if (editingNode.data.params.file) {
+                      formData.append('file', editingNode.data.params.file);
+                    }
+
+                    const response = await AiService.askQuickImage(formData);
+                    if (response.data) {
+                      setEditingNode({
+                        ...editingNode,
+                        data: {
+                          ...editingNode.data,
+                          params: {
+                            ...editingNode.data.params,
+                            aiResponse: response.data,
+                          },
+                        },
+                      });
+                    } else {
+                      console.error('Erro ao gerar imagem:', response);
+                    }
+                  } catch (error) {
+                    console.error("Erro ao obter resposta da IA:", error);
+                  } finally {
+                    setIsLoadingAi(false);
+                  }
+                }}
+
+                disabled={isLoadingAi || !editingNode.data.params.instructions}
+              >
+                {isLoadingAi
+                  ? t("automationFlow.generating")
+                  : t("automationFlow.testAI")}
+              </Button>
+
+              {/* Skeleton enquanto a resposta carrega */}
+              {isLoadingAi && (
+                <Box sx={{ marginTop: "15px" }}>
+                  <Skeleton variant="text" width="100%" height={20} />
+                  <Skeleton variant="text" width="90%" height={20} />
+                  <Skeleton variant="text" width="95%" height={20} />
+                  <Skeleton variant="text" width="80%" height={20} />
+                </Box>
+              )}
+
+              {/* Exibir Resposta da IA */}
+              {!isLoadingAi && editingNode.data.params.aiResponse && (
+                <Box
+                  sx={{
+                    marginTop: "15px",
+                    padding: "10px",
+                    border: "1px solid #ddd",
+                    borderRadius: "5px",
+                  }}
+                >
+                  <img style={{width:'500px', height:'300px'}} src={editingNode.data.params.aiResponse.imageUrl} />
+                </Box>
+              )}
+            </DialogContent>
+
+            <DialogActions>
+              <Button onClick={() => setOpenEditDialog("")}>
+                {t("form.cancel")}
+              </Button>
+              <Button
+                onClick={handleSaveEdit}
+                variant="contained"
+                disabled={!editingNode.data.params.aiResponse}
+              >
+                {t("form.save")}
+              </Button>
+            </DialogActions>
+          </Dialog>
+        )}
           <DialogContent>
             {editingNode.data.blockType === "email" && (
               <>
