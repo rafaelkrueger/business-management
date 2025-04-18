@@ -68,6 +68,7 @@ import { ptBR } from "date-fns/locale";
 import WhatsappService from "../../../../services/whatsapp.service.ts";
 import ProgressService from "../../../../services/progress.service.ts";
 import PickLeadsForm from "../../create-leads/pick-leads-form/index.tsx";
+import { IoIosClose } from "react-icons/io";
 
 const CustomNode = ({ data, id, activeCompany }) => {
   const { t } = useTranslation();
@@ -900,11 +901,14 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       anchor="right"
       open={isDrawerOpen}
       onClose={() => setIsDrawerOpen(false)}
-      PaperProps={{ sx: { width: 400, padding: 3 } }}
+      PaperProps={{ sx: { width: window.outerWidth > 600 ? '35%' : '90%', padding: 3 } }}
     >
+      <Box sx={{display:'flex', justifyContent:'space-between'}}>
       <Typography variant="h5" fontWeight="bold" color="primary" mb={2}>
         {t("automationFlow.title")}
       </Typography>
+      {window.outerWidth < 600 ? <IoIosClose size={35} onClick={() => setIsDrawerOpen(false)} /> : ''}
+      </Box>
 
       <TextField
         label={t("automationFlow.flowName")}
