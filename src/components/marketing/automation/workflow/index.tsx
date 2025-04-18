@@ -123,6 +123,8 @@ const CustomNode = ({ data, id, activeCompany }) => {
         return <FaFacebook size={iconSize} color="#1877F2" />;
       case "whatsapp":
         return <FaWhatsapp size={iconSize} color="#25D366" />;
+      case "whatsappTrigger":
+        return <FaWhatsapp size={iconSize} color="#25D366" />;
       case "chatgpt":
         return <FaBrain size={iconSize} color="purple" />;
       case "chatgptImage":
@@ -378,7 +380,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
   const [loadingTwitterCheck, setLoadingTwitterCheck] = useState(true);
   const [facebookPages, setFacebookPages] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
-  const [startType, setStartType] = useState<'scheduled' | 'event'>('scheduled');
+  const [startType, setStartType] = useState<'scheduled' | 'event'>(editingNode?.type ?? 'scheduled');
   const [selectedEvent, setSelectedEvent] = useState<string>("lead.captured");
   const [blockProgress, setBlockProgress] = useState<Record<string, 'loading' | 'done' | 'error'>>({});
   const nodeTypes = useMemo(() => ({
@@ -399,6 +401,14 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { recipients: "", subject: "", template: {} },
       purpose:t('automationFlow.purposes.triggers'),
     },
+    WHATSAPP_TRIGGER: {
+      type: "whatsappTrigger",
+      name: t("block.whatsappTrigger"),
+      icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 26 }} />,
+      params: { expectedWhatsappContent: "" },
+      purpose:t('automationFlow.purposes.triggers'),
+    },
+
     CHATGPT: {
       type: "chatgpt",
       name: t("block.chatgpt"),
@@ -454,7 +464,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
     WHATSAPP: {
       type: "whatsapp",
       name: t("block.whatsapp"),
-      icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 36 }} />,
+      icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 26 }} />,
       params: { whatsappContent: "" },
       purpose:t('automationFlow.purposes.socialMedia'),
     },
@@ -824,7 +834,41 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       return nodeBeforeWait?.data?.blockType === 'chatgpt';
     }
 
+    if (previousNode.data.blockType === 'chatgptImage') {
+      const edgeToWait = edges.find((edge) => edge.target === previousNode.id);
+      if (!edgeToWait) return false;
+
+      const nodeBeforeWait = nodes.find((node) => node.id === edgeToWait.source);
+      return nodeBeforeWait?.data?.blockType === 'chatgpt';
+    }
+
     return previousNode.data.blockType === 'chatgpt';
+  };
+
+  const isConnectedToChatGPTImage = (currentNodeId) => {
+    const incomingEdge = edges.find((edge) => edge.target === currentNodeId);
+    if (!incomingEdge) return false;
+
+    const previousNode = nodes.find((node) => node.id === incomingEdge.source);
+    if (!previousNode) return false;
+
+    if (previousNode.data.blockType === 'wait') {
+      const edgeToWait = edges.find((edge) => edge.target === previousNode.id);
+      if (!edgeToWait) return false;
+
+      const nodeBeforeWait = nodes.find((node) => node.id === edgeToWait.source);
+      return nodeBeforeWait?.data?.blockType === 'chatgptImage';
+    }
+
+    if (previousNode.data.blockType === 'chatgpt') {
+      const edgeToWait = edges.find((edge) => edge.target === previousNode.id);
+      if (!edgeToWait) return false;
+
+      const nodeBeforeWait = nodes.find((node) => node.id === edgeToWait.source);
+      return nodeBeforeWait?.data?.blockType === 'chatgptImage';
+    }
+
+    return previousNode.data.blockType === 'chatgptImage';
   };
 
 
@@ -1065,7 +1109,34 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         activeCompany={activeCompany}
         />
       )}
-
+      {editingNode.data.blockType === "whatsappTrigger" && (
+        <Box sx={{ padding: '24px', width: '500px' }}>
+          <Typography variant="h6" gutterBottom>
+            Mensagem esperada do WhatsApp
+          </Typography>
+          <TextField
+            label="Conteúdo esperado (ex: oi, quero saber mais, etc)"
+            placeholder="Digite a mensagem que o cliente deve enviar..."
+            fullWidth
+            value={editingNode.data.params.expectedWhatsappContent || ""}
+            onChange={(e) =>
+              setEditingNode({
+                ...editingNode,
+                data: {
+                  ...editingNode.data,
+                  params: {
+                    ...editingNode.data.params,
+                    expectedWhatsappContent: e.target.value,
+                  },
+                },
+              })
+            }
+          />
+          <Typography variant="body2" sx={{ color: 'gray', mt: 1 }}>
+            Essa mensagem será usada como gatilho para continuar a automação. Ela deve combinar exatamente com o que o cliente vai escrever no WhatsApp.
+          </Typography>
+        </Box>
+      )}
           {editingNode.data.blockType === "linkedin" && (
             <Box>
               <TextField
@@ -1081,7 +1152,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                 fullWidth
                 multiline
                 rows={4}
-                inputProps={{ maxLength: 1300 }} // Limite de caracteres para post no LinkedIn
+                inputProps={{ maxLength: 1300 }}
                 value={editingNode.data.params.linkedinContent || ""}
                 disabled={isConnectedToChatGPT()}
                 onChange={(e) => {
@@ -1720,9 +1791,167 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                   <br/>
                   </>
                 )}
+              <Box
+                sx={{
+                  position: 'relative',
+                  marginTop: '20px',
+                  border: '1px dashed #ccc',
+                  borderRadius: '4px',
+                  padding: '16px',
+                  textAlign: 'center',
+                  transition: 'all 0.3s ease',
+                  minHeight: '150px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  '&:hover': {
+                    borderColor: '#1976d2',
+                    backgroundColor: editingNode.data.params.file ? 'transparent' : 'rgba(25, 118, 210, 0.04)'
+                  }
+                }}
+              >
+              {!editingNode.data.params.file ? (
+                <>
+                  <input
+                    disabled={isConnectedToChatGPTImage(editingNode.id)}
+                    type="file"
+                    accept=".jpg,.png,.jpeg"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (file.size > 60 * 1024 * 1024) {
+                          alert(t("automationFlow.fileSizeError"));
+                          return;
+                        }
+
+                        const toBase64 = (file) =>
+                          new Promise<string>((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            reader.onload = () => resolve(reader.result as string);
+                            reader.onerror = (error) => reject(error);
+                          });
+
+                        const base64 = await toBase64(file);
+
+                        setEditingNode({
+                          ...editingNode,
+                          data: {
+                            ...editingNode.data,
+                            params: {
+                              ...editingNode.data.params,
+                              file: {
+                                name: file.name,
+                                type: file.type,
+                                size: file.size,
+                                base64,
+                              },
+                            },
+                          },
+                        });
+                      }
+                    }}
+                    style={{
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                      top: 0,
+                      left: 0,
+                      opacity: 0,
+                      cursor: 'pointer',
+                    }}
+                    id="file-upload"
+                  />
+                  <label htmlFor="file-upload">
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <CloudUploadIcon sx={{ color: '#1976d2', fontSize: '40px' }} />
+                      <Typography variant="body1" sx={{ mt: 1 }}>
+                        <strong>{t("automationFlow.clickToUpload")}</strong>
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        {t("automationFlow.acceptedFormats")}: .jpg, .png, .jpeg
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
+                        {t("automationFlow.maxSize")}: 60MB
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: 'text.disabled', mt: 1 }}>
+                        {t("automationFlow.optional")}
+                      </Typography>
+                    </Box>
+                  </label>
+                </>
+              ) : (
+                <Box sx={{ width: '100%' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      {editingNode.data.params.file.type.includes('image/') ? (
+                        <ImageIcon color="primary" />
+                      ) : (
+                        <PictureAsPdfIcon color="primary" />
+                      )}
+                      <Box>
+                        <Typography variant="body1" noWrap sx={{ maxWidth: '300px' }}>
+                          {editingNode.data.params.file.name}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                          {Math.round(editingNode.data.params.file.size / 1024)} KB
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <IconButton
+                      onClick={() =>
+                        setEditingNode({
+                          ...editingNode,
+                          data: {
+                            ...editingNode.data,
+                            params: {
+                              ...editingNode.data.params,
+                              file: null,
+                            },
+                          },
+                        })
+                      }
+                      color="error"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+
+                  {editingNode.data.params.file.type.includes('image/') && (
+                    <Box sx={{ mt: 2, maxHeight: '200px', overflow: 'hidden', borderRadius: '4px' }}>
+                      <img
+                        src={editingNode.data.params.file.base64}
+                        alt="Preview"
+                        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                      />
+                    </Box>
+                  )}
+                </Box>
+              )}
+              {isConnectedToChatGPTImage(editingNode.id) && (
+                <>
+                  <Typography
+                    sx={{
+                      color: "#FFA500",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      marginTop: "5px",
+                      textAlign: "center",
+                    }}
+                    variant="body2"
+                  >
+                    <WarningAmberIcon sx={{ fontSize: 18 }} />
+                    {t("automationFlow.imageBlockedByAI")}
+                  </Typography>
+                  <br/>
+                  </>
+                )}
+              </Box>
+              <br/>
+              <Typography>Números de telefone (separados por vírgula)</Typography>
               <TextField
               sx={{ marginTop: "10px" }}
-              label="Números de telefone separados por vírgula"
               type="text"
               fullWidth
               value={editingNode.data.params.numbers}

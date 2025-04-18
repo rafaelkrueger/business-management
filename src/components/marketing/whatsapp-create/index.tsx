@@ -8,6 +8,7 @@ import {
   CircularProgress,
   Typography,
   Box,
+  Skeleton,
 } from "@mui/material";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { useSnackbar } from "notistack";
@@ -119,7 +120,7 @@ const WhatsAppAuthModal = ({ open, onClose, companyId }) => {
               <br/>
               {qrCode ? (
                 <>
-                  <img src={qrCode} alt="QR Code" width="200" height="200" style={{marginLeft:'75px'}} />
+                  <img src={qrCode} alt="QR Code" width="200" height="200" style={{marginLeft:'62px'}} />
                   {!showRefreshButton ? (
                     <Typography mt={1} variant="body2" color="textSecondary">
                       Expires in {qrTimer}s
@@ -137,7 +138,7 @@ const WhatsAppAuthModal = ({ open, onClose, companyId }) => {
                   )}
                 </>
               ) : (
-                <CircularProgress />
+                <Skeleton style={{height:'390px'}} />
               )}
             </>
           )}

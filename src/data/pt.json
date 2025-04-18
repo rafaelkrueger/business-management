@@ -600,8 +600,13 @@
     "aiResponse": "Resposta da IA:",
     "emailName": "📧 Nome do Email",
     "recipients": "Destinatários (separados por vírgula)",
+    "clickToUpload": "Clique para enviar",
+    "acceptedFormats": "Formatos aceitos",
+    "maxSize": "Tamanho máximo aceito",
+    "optional": "Este campo é opcional",
     "subject": "Assunto",
     "subjectBlockedByAI": "Este campo está bloqueado, pois o assunto será gerado pela IA.",
+    "imageBlockedByAI": "Este campo está bloqueado, pois a imagem será gerado pela IA.",
     "selectedTemplate": "Template Selecionado:",
     "noTemplateSelected": "Nenhum template selecionado.",
     "chooseTemplate": "Escolher Template",
@@ -633,7 +638,8 @@
     "youtube": "Youtube",
     "chatgpt": "Texto IA",
     "chatgptImage": "Imagem IA",
-    "formTrigger": "Formulário Preenchido"
+    "formTrigger": "Formulário Preenchido",
+    "whatsappTrigger": "Received Message"
   },
   "platform": {
     "whatsapp": "WhatsApp",
@@ -718,6 +724,7 @@
     "connectedMessage": "Sua conta do WhatsApp está conectada!",
     "connectedDescription": "Agora você pode enviar mensagens automaticamente.",
     "notConnectedMessage": "Sua conta do WhatsApp não está conectada.",
+    "scanQrToConnect": "Scaneie QR Code para conectar.",
     "enterDetails": "Insira os detalhes da sua conta do WhatsApp Business.",
     "accessToken": "Token de Acesso",
     "phoneNumberId": "ID do Número do WhatsApp",
