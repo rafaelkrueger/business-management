@@ -60,7 +60,7 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
 
   useEffect(() => {
     fetchAutomations();
-  }, [activeCompany, fetchAutomations]);
+  }, [activeCompany, fetchAutomations, isCreating]);
 
   const handleToggle = async (automation) => {
     const newStatus = automation.status === "PENDING" ? "DISABLED" : "PENDING";
@@ -174,7 +174,7 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
         />
       </TableCell>
       <TableCell>
-        {new Date(automation.nextExecutionTime).toLocaleString()}
+        {automation.type === 'event' ? '' : new Date(automation.nextExecutionTime).toLocaleString()}
       </TableCell>
       {!isMobile && (
         <TableCell>

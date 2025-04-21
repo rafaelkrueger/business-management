@@ -381,13 +381,12 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
   const [loadingTwitterCheck, setLoadingTwitterCheck] = useState(true);
   const [facebookPages, setFacebookPages] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
-  const [startType, setStartType] = useState<'scheduled' | 'event'>(editingNode?.type ?? 'scheduled');
+  const [startType, setStartType] = useState<'scheduled' | 'event'>(editingAutomation?.type ?? 'scheduled');
   const [selectedEvent, setSelectedEvent] = useState<string>("lead.captured");
   const [blockProgress, setBlockProgress] = useState<Record<string, 'loading' | 'done' | 'error'>>({});
   const nodeTypes = useMemo(() => ({
     custom: (props) => <CustomNode {...props} activeCompany={activeCompany} />,
   }), [activeCompany]);
-
 
 
   const [openEmailConfigModal, setOpenEmailConfigModal] = useState(false);
@@ -555,6 +554,57 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
     }
   };
 
+  const variableInstructions = () => {
+    if (
+      !editingNode?.data?.params.useFormData ||
+      !editingNode.data.params.selectedFields?.length
+    ) {
+      return null;
+    }
+
+    const selectedVars = editingNode.data.params.selectedFields.map(field => `{{form.${field}}}`);
+    const example = `Ex: Muito obrigado ${selectedVars.join(" ")}`;
+
+    return (
+      <Box sx={{ mt: 2 }}>
+        <Typography variant="body2" sx={{ mb: 1 }}>
+          Ao inserir o texto enviado, adicione as variáveis:
+        </Typography>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+          {selectedVars.map((field) => (
+            <Button
+              key={field}
+              size="small"
+              variant="outlined"
+              onClick={() => {
+                const insert = field;
+                const newMessage = editingNode.data.params.message
+                  ? `${editingNode.data.params.message} ${insert}`
+                  : insert;
+
+                setEditingNode((prev) => ({
+                  ...prev,
+                  data: {
+                    ...prev.data,
+                    params: {
+                      ...prev.data.params,
+                      message: newMessage,
+                    },
+                  },
+                }));
+              }}
+            >
+              {field}
+            </Button>
+          ))}
+        </Box>
+        <Typography variant="caption" color="text.secondary">
+          {example}
+        </Typography>
+      </Box>
+    );
+  };
+
   const handleAddLinkedinBlock = async () => {
     try {
       const response = await LinkedinService.checkLinkedinStatus(activeCompany);
@@ -680,6 +730,19 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
   }, [editingNode]);
 
   const addNode = (block) => {
+    const isTrigger = block.type === "formSubmitted" || block.type === "whatsappTrigger";
+
+    if (isTrigger) {
+      const alreadyHasTrigger = nodes.some((node) =>
+        ["formSubmitted", "whatsappTrigger"].includes(node.data.blockType)
+      );
+
+      if (alreadyHasTrigger) {
+        enqueueSnackbar(t("automationFlow.onlyOneTriggerAllowed"), { variant: "warning" });
+        return;
+      }
+    }
+
     const newNode = {
       id: uuidv4(),
       type: "custom",
@@ -918,20 +981,70 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         fullWidth
         sx={{ mb: 2 }}
       />
+      <Box sx={{ mb: 3 }}>
+        <FormLabel component="legend" sx={{
+          mb: 1.5,
+          fontWeight: 500,
+          fontSize: '0.875rem',
+          color: 'text.primary',
+          display: 'block'
+        }}>
+          {t('automationFlow.triggers.title')}
+        </FormLabel>
 
-      <FormLabel component="legend">{t('automationFlow.triggers.title')}</FormLabel>
-      <RadioGroup
-        row
-        value={startType}
-        sx={{marginLeft:'12px'}}
-        onChange={(e) => {
-          setStartType(e.target.value as 'scheduled' | 'event');
-        }}
-      >
-        <FormControlLabel onClick={()=>{setStartType("scheduled")}} value="scheduled" control={<Radio />} label={t('automationFlow.triggers.dateTrigger')} />
-        <FormControlLabel onClick={()=>{setStartType("event")}} value="event" control={<Radio />} label={t('automationFlow.triggers.eventTrigger')} />
-      </RadioGroup>
-      <br/>
+        <RadioGroup
+          value={startType}
+          onChange={(e) => setStartType(e.target.value as 'scheduled' | 'event')}
+          sx={{ gap: 1 }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              cursor: editingAutomation ? 'not-allowed' : 'pointer',
+              opacity: editingAutomation ? 0.7 : 1,
+            }}
+            onClick={() => !editingAutomation && setStartType('scheduled')}
+          >
+            <Box sx={{
+              width: 18,
+              height: 18,
+              borderRadius: '50%',
+              border: startType === 'scheduled' ? '5px solid' : '2px solid',
+              borderColor: startType === 'scheduled' ? 'primary.main' : 'action.disabled',
+              mr: 1.5,
+              transition: 'all 0.2s ease',
+            }} />
+            <Typography variant="body2">
+              {t('automationFlow.triggers.dateTrigger')}
+            </Typography>
+          </Box>
+
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              cursor: editingAutomation ? 'not-allowed' : 'pointer',
+              opacity: editingAutomation ? 0.7 : 1,
+            }}
+            onClick={() => !editingAutomation && setStartType('event')}
+          >
+            <Box sx={{
+              width: 18,
+              height: 18,
+              borderRadius: '50%',
+              border: startType === 'event' ? '5px solid' : '2px solid',
+              borderColor: startType === 'event' ? 'primary.main' : 'action.disabled',
+              mr: 1.5,
+              transition: 'all 0.2s ease',
+            }} />
+            <Typography variant="body2">
+              {t('automationFlow.triggers.eventTrigger')}
+            </Typography>
+          </Box>
+        </RadioGroup>
+      </Box>
+<br/>
 
       {startType === "scheduled" && (
         <>
@@ -1048,7 +1161,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         </Accordion>
       ))}
 
-      <Box mt={4} display="flex" justifyContent="space-between" gap={2}>
+      <Box mt={4} display="flex" justifyContent="space-between" gap={2} style={{marginBottom:'50px'}}>
         {
           startType === 'scheduled' && (
             <Button
@@ -1081,15 +1194,17 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         <Background />
         <Controls />
       </ReactFlow>
-
       {editingNode && (
         <Dialog open={!!openEditDialog} onClose={() => setOpenEditDialog("")}>
       {editingNode.data.blockType === "twitter" && (
+        <>
+        {variableInstructions()}
         <TwitterNodeEditor
           editingNode={editingNode}
           setEditingNode={setEditingNode}
           isConnectedToChatGPT={isConnectedToChatGPT}
-        />
+          />
+          </>
       )}
       {editingNode.data.blockType === "youtube" && (
         <YouTubeNodeEditor
@@ -1113,34 +1228,34 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         activeCompany={activeCompany}
         />
       )}
-      {editingNode.data.blockType === "whatsappTrigger" && (
-        <Box sx={{ padding: '24px', width: '500px' }}>
-          <Typography variant="h6" gutterBottom>
-            Mensagem esperada do WhatsApp
-          </Typography>
-          <TextField
-            label="Conteúdo esperado (ex: oi, quero saber mais, etc)"
-            placeholder="Digite a mensagem que o cliente deve enviar..."
-            fullWidth
-            value={editingNode.data.params.expectedWhatsappContent || ""}
-            onChange={(e) =>
-              setEditingNode({
-                ...editingNode,
-                data: {
-                  ...editingNode.data,
-                  params: {
-                    ...editingNode.data.params,
-                    expectedWhatsappContent: e.target.value,
-                  },
-                },
-              })
-            }
-          />
-          <Typography variant="body2" sx={{ color: 'gray', mt: 1 }}>
-            Essa mensagem será usada como gatilho para continuar a automação. Ela deve combinar exatamente com o que o cliente vai escrever no WhatsApp.
-          </Typography>
-        </Box>
-      )}
+          {editingNode.data.blockType === "whatsappTrigger" && (
+            <Box sx={{ padding: '24px', width: '500px' }}>
+              {/* <Typography variant="h6" gutterBottom>
+                Mensagem esperada do WhatsApp
+              </Typography>
+              <TextField
+                label="Conteúdo esperado (ex: oi, quero saber mais, etc)"
+                placeholder="Digite a mensagem que o cliente deve enviar..."
+                fullWidth
+                value={editingNode.data.params.expectedWhatsappContent || ""}
+                onChange={(e) =>
+                  setEditingNode({
+                    ...editingNode,
+                    data: {
+                      ...editingNode.data,
+                      params: {
+                        ...editingNode.data.params,
+                        expectedWhatsappContent: e.target.value,
+                      },
+                    },
+                  })
+                }
+              />
+              <Typography variant="body2" sx={{ color: 'gray', mt: 1 }}>
+                Essa mensagem será usada como gatilho para continuar a automação. Ela deve combinar exatamente com o que o cliente vai escrever no WhatsApp.
+              </Typography> */}
+            </Box>
+          )}
           {editingNode.data.blockType === "linkedin" && (
             <Box>
               <TextField
@@ -1182,7 +1297,6 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
             >
               <DialogTitle>{t("automationFlow.configureAI")}</DialogTitle>
               <DialogContent>
-                {/* Escolher a Ação */}
                 <TextField
                   select
                   label={t("automationFlow.aiActionLabel")}
@@ -1294,16 +1408,16 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                     try {
                       const prompt = `
                         Create content for this platform: ${
-                          editingNode.data.params.platform || "indefinida"
+                          editingNode.data.params.platform || "undefined"
                         }.
                         Action: ${
                           editingNode.data.params.action ||
                           t("automationFlow.aiActionGenerateContent")
                         }.
-                        Voice: ${editingNode.data.params.tone || "Padrão"}.
+                        Voice: ${editingNode.data.params.tone || "Normal"}.
                         User instructions and language: ${
                           editingNode.data.params.instructions ||
-                          "Nenhuma instrução específica"
+                          "Not specified"
                         }.
                       `;
 
@@ -1972,7 +2086,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                 })
               }
             />
-              </>
+            </>
             )}
           </DialogContent>
           <DialogActions>

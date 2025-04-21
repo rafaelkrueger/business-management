@@ -251,13 +251,23 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
 
           {/* Documento */}
           <TextField
-            label={t("createEnterpriseModal.document")}
-            name="document"
-            value={enterprise.document}
-            onChange={handleChange}
-            placeholder={t("createEnterpriseModal.documentPlaceholder")}
-            fullWidth
-          />
+          label={t("createEnterpriseModal.businessType")}
+          name="businessType"
+          value={enterprise.businessType || ""}
+          onChange={handleChange}
+          placeholder={t("createEnterpriseModal.businessTypePlaceholder")}
+          fullWidth
+        />
+
+        <TextField
+          label={t("createEnterpriseModal.industry")}
+          name="industry"
+          value={enterprise.industry || ""}
+          onChange={handleChange}
+          placeholder={t("createEnterpriseModal.industryPlaceholder")}
+          fullWidth
+        />
+
 
           {/* Ativo */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -287,7 +297,6 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
             )}
           </Button>
 
-          {/* Mensagem Informativa */}
           <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
             {t("createEnterpriseModal.infoMessage")}
           </Typography>
