@@ -829,7 +829,7 @@ const TemplateDialog: React.FC<{
           disabled={newPage.title === "" || (mode === "choose" && !selectedTemplate) || generating}
           onClick={async () => {
             if (mode === "choose") {
-              setPreviewUrl(`http://localhost:3005/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
+              setPreviewUrl(`https://roktune.duckdns.org/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
             } else {
               const orderedSections = sections.filter((s) => s.trim() !== "");
               setGenerating(true);
@@ -842,7 +842,7 @@ const TemplateDialog: React.FC<{
                 companyId: activeCompany,
               }).then((res)=>{
                 setGenerating(false);
-                setPreviewUrl(`http://localhost:3005/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
+                setPreviewUrl(`https://roktune.duckdns.org/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
               })
               .catch((err)=>{console.log(err)});
 

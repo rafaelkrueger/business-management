@@ -27,6 +27,8 @@ import AutomationDashboard from "./automation/index.tsx";
 import SocialMediaDashboard from "./social-media/index.tsx";
 import StyledAIAssistant from "./ai/index.tsx";
 import { useSnackbar } from 'notistack';
+import CRMApp from "./crm/index.tsx";
+import SalesFunnel from "./funnel/index.tsx";
 
 const AnimatedCard = styled(Card)(({ theme }) => ({
   transition: 'all 0.3s ease-in-out',
@@ -128,44 +130,41 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
     },
     {
       icon: <Brain size={24} color={"#B0B0B0"} />,
-      title: t("marketing.ai"),
-      description: t("marketing.aiDescription"),
-      module: "",
+      title: t("marketing.crmTitle"),
+      description: t("marketing.crm_desc"),
+      module: "crm",
       color: "#e0e0e0",
-      disabled: true
-    },
-    {
-      icon: <Zap size={24} color={"#B0B0B0"} />,
-      title: t("marketing.ab_tests"),
-      description: t("marketing.ab_tests_desc"),
-      module: "",
-      color: "#e0e0e0",
-      disabled: true
     },
     {
       icon: <FileText size={24} color={"#B0B0B0"} />,
       title: t("marketing.funnels"),
       description: t("marketing.funnels_desc"),
-      module: "",
+      module: "funnel",
       color: "#e0e0e0",
-      disabled: true
     },
     {
       icon: <Brain size={24} color={"#B0B0B0"} />,
-      title: t("marketing.crm"),
-      description: t("marketing.crm_desc"),
-      module: "",
+      title: t("marketing.ai"),
+      description: t("marketing.aiDescription"),
+      module: "marketingAi",
       color: "#e0e0e0",
-      disabled: true
     },
-    {
-      icon: <Zap size={24} color={"#B0B0B0"} />,
-      title: t("marketing.campaign_manager"),
-      description: t("marketing.campaign_manager_desc"),
-      module: "",
-      color: "#e0e0e0",
-      disabled: true
-    }
+    // {
+    //   icon: <Zap size={24} color={"#B0B0B0"} />,
+    //   title: t("marketing.ab_tests"),
+    //   description: t("marketing.ab_tests_desc"),
+    //   module: "",
+    //   color: "#e0e0e0",
+    //   disabled: true
+    // },
+    // {
+    //   icon: <Zap size={24} color={"#B0B0B0"} />,
+    //   title: t("marketing.campaign_manager"),
+    //   description: t("marketing.campaign_manager_desc"),
+    //   module: "",
+    //   color: "#e0e0e0",
+    //   disabled: true
+    // }
   ];
 
 
@@ -293,7 +292,7 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
               </Zoom>
             ) : (
               <Zoom in timeout={(index + 1) * 200}>
-                <AnimatedCard onClick={() => setModule(card.module || '')}>
+                <AnimatedCard sx={{cursor:'pointer'}} onClick={() => setModule(card.module || '')}>
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Box sx={{
                       width: 48,
@@ -336,6 +335,10 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
         <SocialMediaDashboard activeCompany={props.activeCompany} />
       ) : module === 'marketingAi' ? (
         <StyledAIAssistant/>
+      ) : module === 'crm' ? (
+        <CRMApp activeCompany={props.activeCompany} />
+      ) : module === 'funnel' ? (
+        <SalesFunnel/>
       ) : null}
     </Box>
   );

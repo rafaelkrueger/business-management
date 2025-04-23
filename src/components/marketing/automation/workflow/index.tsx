@@ -240,7 +240,6 @@ const CustomNode = ({ data, id, activeCompany }) => {
           </Typography>
         )}
 
-        {/* Action buttons */}
         <Box
           sx={{
             display: "flex",
@@ -284,7 +283,6 @@ const CustomNode = ({ data, id, activeCompany }) => {
         </Box>
       </Box>
 
-      {/* Handles with modern style */}
       <Handle
         type="target"
         position={Position.Top}
@@ -313,8 +311,6 @@ const CustomNode = ({ data, id, activeCompany }) => {
   );
 };
 
-
-// Função auxiliar para ordenar os nodes de forma topológica
 const getSortedNodes = (nodes, edges) => {
   const nodeMap = {};
   nodes.forEach((node) => {
@@ -401,14 +397,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { recipients: "", subject: "", template: {} },
       purpose:t('automationFlow.purposes.triggers'),
     },
-    WHATSAPP_TRIGGER: {
-      type: "whatsappTrigger",
-      name: t("block.whatsappTrigger"),
-      icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 26 }} />,
-      params: { expectedWhatsappContent: "" },
-      purpose:t('automationFlow.purposes.triggers'),
-    },
-
+    // WHATSAPP_TRIGGER: {
+    //   type: "whatsappTrigger",
+    //   name: t("block.whatsappTrigger"),
+    //   icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 26 }} />,
+    //   params: { expectedWhatsappContent: "" },
+    //   purpose:t('automationFlow.purposes.triggers'),
+    // },
     CHATGPT: {
       type: "chatgpt",
       name: t("block.chatgpt"),
@@ -554,53 +549,104 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
     }
   };
 
-  const variableInstructions = () => {
-    if (
-      !editingNode?.data?.params.useFormData ||
-      !editingNode.data.params.selectedFields?.length
-    ) {
+  const variableInstructions = (editingNode) => {
+    if (!editingNode) return null;
+
+    const incomingEdge = edges.find(edge => edge.target === editingNode.id);
+    if (!incomingEdge) return null;
+
+    const previousNode = nodes.find(node => node.id === incomingEdge.source);
+    if (!previousNode?.data?.params?.useFormData || !previousNode.data.params.selectedFields?.length) {
       return null;
     }
 
-    const selectedVars = editingNode.data.params.selectedFields.map(field => `{{form.${field}}}`);
-    const example = `Ex: Muito obrigado ${selectedVars.join(" ")}`;
+    if (previousNode.data.blockType !== 'formSubmitted') {
+      return null;
+    }
+
+    const selectedVars = previousNode.data.params.selectedFields.map(field => `{{form.${field}}}`);
+    const exampleText = `${t('marketing.formSubmitted.examplePrefix')} ${selectedVars[0]}`
+
+    const handleInsertVariable = (variable) => {
+      const newMessage = editingNode.data.params.message
+        ? `${editingNode.data.params.message} ${variable}`
+        : variable;
+
+      setEditingNode(prev => ({
+        ...prev,
+        data: {
+          ...prev.data,
+          params: {
+            ...prev.data.params,
+            message: newMessage,
+          },
+        },
+      }));
+    };
 
     return (
-      <Box sx={{ mt: 2 }}>
-        <Typography variant="body2" sx={{ mb: 1 }}>
-          Ao inserir o texto enviado, adicione as variáveis:
+      <Box sx={{
+        mt: 3,
+        p: 2,
+        backgroundColor: 'rgba(245, 245, 245, 0.5)',
+        borderLeft: '3px solid',
+        borderRight: '3px solid',
+        borderLeftColor: 'primary.main',
+        borderRightColor: 'primary.main'
+      }}>
+        <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600 }}>
+          {t('marketing.formSubmitted.availableVariables')}
         </Typography>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {t('marketing.formSubmitted.clickToInsert')}
+        </Typography>
+
+        <Box sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 1,
+          mb: 2.5,
+          '& .MuiButton-root': {
+            fontSize: '0.75rem',
+            textTransform: 'none',
+            borderRadius: 2,
+            py: 0.5,
+            px: 1.5
+          }
+        }}>
           {selectedVars.map((field) => (
             <Button
               key={field}
               size="small"
               variant="outlined"
-              onClick={() => {
-                const insert = field;
-                const newMessage = editingNode.data.params.message
-                  ? `${editingNode.data.params.message} ${insert}`
-                  : insert;
-
-                setEditingNode((prev) => ({
-                  ...prev,
-                  data: {
-                    ...prev.data,
-                    params: {
-                      ...prev.data.params,
-                      message: newMessage,
-                    },
-                  },
-                }));
+              color="primary"
+              onClick={() => handleInsertVariable(field)}
+              sx={{
+                '&:hover': {
+                  backgroundColor: 'primary.light',
+                }
               }}
             >
               {field}
             </Button>
           ))}
         </Box>
-        <Typography variant="caption" color="text.secondary">
-          {example}
-        </Typography>
+
+        <Box sx={{
+          p: 1.5,
+          backgroundColor: 'background.paper',
+          borderRadius: 1,
+          border: '1px solid',
+          borderColor: 'divider'
+        }}>
+          <Typography variant="caption" component="div" sx={{ fontWeight: 500 }}>
+            {t('marketing.formSubmitted.usageExample')}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {exampleText}
+          </Typography>
+        </Box>
       </Box>
     );
   };
@@ -824,7 +870,6 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
   const handleTestAutomation = async () => {
     const automationData = {
       name: flowName,
-      // Ordena os nodes também para o teste
       nodes: getSortedNodes(nodes, edges),
       edges,
       nextExecutionTime,
@@ -861,14 +906,12 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       const response = await EmailService.createAccount(config);
       console.log("Conta de e-mail criada com sucesso:", response.data);
       setOpenEmailConfigModal(false);
-      // Após salvar a configuração, adiciona o nó de e-mail
       addNode(BLOCK_TYPES.EMAIL);
     } catch (error) {
       console.error("Erro ao criar conta de e-mail:", error);
     }
   };
 
-  // Callback chamado quando um template é selecionado
   const handleTemplateSelect = (template) => {
     setEditingNode((prev) => ({
       ...prev,
@@ -909,6 +952,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
     return previousNode.data.blockType === 'chatgpt';
   };
 
+
   const isConnectedToChatGPTImage = (currentNodeId) => {
     const incomingEdge = edges.find((edge) => edge.target === currentNodeId);
     if (!incomingEdge) return false;
@@ -933,6 +977,24 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
     }
 
     return previousNode.data.blockType === 'chatgptImage';
+  };
+
+  const isConnectedToSubmittedForms = (currentNodeId) => {
+    const incomingEdge = edges.find((edge) => edge.target === currentNodeId);
+    if (!incomingEdge) return false;
+
+    const previousNode = nodes.find((node) => node.id === incomingEdge.source);
+    if (!previousNode) return false;
+
+    if (previousNode.data.blockType === 'wait') {
+      const edgeToWait = edges.find((edge) => edge.target === previousNode.id);
+      if (!edgeToWait) return false;
+
+      const nodeBeforeWait = nodes.find((node) => node.id === edgeToWait.source);
+      return nodeBeforeWait?.data?.blockType === 'formSubmitted';
+    }
+
+    return previousNode.data.blockType === 'formSubmitted';
   };
 
 
@@ -1196,9 +1258,9 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       </ReactFlow>
       {editingNode && (
         <Dialog open={!!openEditDialog} onClose={() => setOpenEditDialog("")}>
+          {variableInstructions(editingNode)}
       {editingNode.data.blockType === "twitter" && (
         <>
-        {variableInstructions()}
         <TwitterNodeEditor
           editingNode={editingNode}
           setEditingNode={setEditingNode}
@@ -1517,8 +1579,6 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                   })
                 }
               />
-
-              {/* Área de Upload de Arquivo Aprimorada */}
               <Box
                 sx={{
                   position: 'relative',
@@ -1872,7 +1932,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
               <>
               <TextField
                 sx={{ marginTop: "10px" }}
-                label="Mensagem"
+                label={t('marketing.whatsappMessage')}
                 type="text"
                 fullWidth
                 disabled={isConnectedToChatGPT(editingNode.id)}
@@ -2067,7 +2127,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                 )}
               </Box>
               <br/>
-              <Typography>Números de telefone (separados por vírgula)</Typography>
+              <Typography>{t('marketing.whatsappCommaMessage')}</Typography>
               <TextField
               sx={{ marginTop: "10px" }}
               type="text"

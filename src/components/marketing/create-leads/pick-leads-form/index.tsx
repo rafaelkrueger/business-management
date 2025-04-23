@@ -101,13 +101,13 @@ const PickLeadsForm = ({ editingNode, setEditingNode, activeCompany }) => {
                 }}
               />
             }
-            label="Usar dados do formulário nos próximos blocos?"
+            label={t('marketing.capturePages.automationNextBlocks')}
           />
 
           {editingNode?.data?.params?.useFormData && (
             <Box sx={{ mt: 1 }}>
               <Typography variant="body2" sx={{ mb: 1 }}>
-                Selecione os campos que deseja utilizar:
+                {t('marketing.capturePages.automationSelectFields')}
               </Typography>
               <FormGroup>
                 {selectedForm.fields.map((field, i) => (
