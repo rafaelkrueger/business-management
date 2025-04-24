@@ -126,18 +126,30 @@ const AiAssistantModal: React.FC<AiAssistantModalProps> = ({
                 <Typography variant="h6" gutterBottom>
                   AI Analysis
                 </Typography>
-                <Box component="pre" sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontFamily: 'inherit' }}>
-                  {glanceData}
-                </Box>
+                <Box sx={{ wordBreak: 'break-word', fontFamily: 'inherit' }}>
+                {typeof glanceData === 'string' && glanceData.match(/\d+\.\s/) ? (
+                  <Box component="ol" sx={{ pl: 2 }}>
+                    {glanceData
+                      .split(/\d+\.\s/)
+                      .slice(1)
+                      .map((item, index) => (
+                        <li key={index}>
+                          <Typography variant="body2" sx={{ lineHeight: 1.8 }}>
+                            <strong>{index + 1}.</strong> {item.trim()}
+                          </Typography>
+                        </li>
+                      ))}
+                  </Box>
+                ) : (
+                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                    {glanceData}
+                  </Typography>
+                )}
+              </Box>
               </Paper>
             ) : (
               <Paper elevation={3} sx={{ p: 2, mt: 2, maxHeight: '400px', overflowY: 'auto' }}>
                 <Box component="pre" sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontFamily: 'inherit' }}>
-                  <Skeleton variant="text" width="100%" height={20} sx={{ mb: 1 }} />
-                  <Skeleton variant="text" width="100%" height={20} sx={{ mb: 1 }} />
-                  <Skeleton variant="text" width="100%" height={20} sx={{ mb: 1 }} />
-                  <Skeleton variant="text" width="100%" height={20} sx={{ mb: 1 }} />
-                  <Skeleton variant="text" width="100%" height={20} sx={{ mb: 1 }} />
                   <Skeleton variant="text" width="100%" height={20} sx={{ mb: 1 }} />
                   <Skeleton variant="text" width="100%" height={20} sx={{ mb: 1 }} />
                   <Skeleton variant="text" width="100%" height={20} sx={{ mb: 1 }} />

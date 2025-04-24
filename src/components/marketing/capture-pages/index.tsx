@@ -842,6 +842,7 @@ const TemplateDialog: React.FC<{
                 companyId: activeCompany,
               }).then((res)=>{
                 setGenerating(false);
+                setProgress({});
                 setPreviewUrl(`https://roktune.duckdns.org/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
               })
               .catch((err)=>{console.log(err)});

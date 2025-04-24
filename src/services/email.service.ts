@@ -7,5 +7,9 @@ class EmailService {
     static getAccount(companyId) {
 		return http.get(`email/${companyId}`);
 	}
+
+	static postAiTemplate(body) {
+		return http.post(`/email/create-template`,body);
+	}
 }
 export default EmailService;

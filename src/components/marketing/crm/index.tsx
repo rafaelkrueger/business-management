@@ -5,6 +5,8 @@ import { SearchOutlined, FilterOutlined, PlusOutlined, EditOutlined, DeleteOutli
 import { useTranslation } from 'react-i18next';
 import CrmService from '../../../services/crm.service.ts'
 import dayjs from 'dayjs';
+import { Box, Typography } from '@mui/material';
+import { ArrowBackIos } from '@mui/icons-material';
 
 // Tipos de dados
 interface Customer {
@@ -33,7 +35,7 @@ interface FilterCondition {
   value: any;
 }
 
-const CRMApp: React.FC = ({ activeCompany }) => {
+const CRMApp: React.FC = ({ activeCompany, setModule }) => {
   const { t } = useTranslation();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
@@ -207,7 +209,6 @@ const CRMApp: React.FC = ({ activeCompany }) => {
     };
 
     if (currentCustomer) {
-      // Atualiza cliente existente
       setCustomers(customers.map(c =>
         c.id === currentCustomer.id ? { ...c, ...customerData, id: currentCustomer.id } : c
       ));
@@ -223,7 +224,6 @@ const CRMApp: React.FC = ({ activeCompany }) => {
     setIsCustomerModalVisible(false);
   };
 
-  // Calcula métricas
   const calculateMetrics = () => {
     const totalCustomers = customers.length;
     const activeCustomers = customers.filter(c => c.status === 'customer').length;
@@ -301,6 +301,12 @@ const CRMApp: React.FC = ({ activeCompany }) => {
 
   return (
     <div style={{ padding: 24 }}>
+      <Box sx={{display:'flex', marginTop:'30px', marginBottom:'35px'}}>
+        <ArrowBackIos style={{cursor:'pointer', marginTop:'10px', marginRight:'20px'}} onClick={()=>{setModule('')}}/>
+        <Typography variant="h4">
+          {t("marketing.crmTitle")}
+        </Typography>
+      </Box>
       <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
         <Card title={t('marketing.crm.totalCustomers')} style={{ flex: 1 }}>
           <h2>{metrics.totalCustomers}</h2>
@@ -326,14 +332,14 @@ const CRMApp: React.FC = ({ activeCompany }) => {
           onChange={handleSearch}
         />
 
-        <Select
+        {/* <Select
           placeholder={t('marketing.crm.selectSegment')}
           style={{ width: 250 }}
           value={selectedSegment}
           onChange={handleSegmentChange}
           options={segments.map(s => ({ value: s.id, label: s.name }))}
           allowClear
-        />
+        /> */}
 
         {/* <Button
           icon={<FilterOutlined />}

@@ -462,6 +462,56 @@
     "automation": "Automação",
     "ai": "IA de Marketing",
     "aiDescription": "Discuta, pergunte e ensine seu Agente IA de marketing",
+    "aiAssistant": {
+      "all":"Todos",
+      "suggestionsTitle":"Sugestões",
+      "performance":"Performance",
+      "campaing":"Campanhas",
+      "placeholder":"💡 Digite sua pergunta ou selecione uma sugestão acima...",
+      "send":"Enviar",
+      "suggestions": {
+        "improveEngagement": {
+          "title": "Como melhorar meu engajamento?",
+          "description": "Descubra estratégias baseadas em dados para aumentar suas taxas de interação",
+          "category": "Sugestões"
+        },
+        "channelPriority": {
+          "title": "Quais canais devo priorizar?",
+          "description": "Análise comparativa dos canais com melhor ROI para seu segmento",
+          "category": "Performance"
+        },
+        "emailGuide": {
+          "title": "Guia completo: Campanhas de e-mail",
+          "description": "Do briefing à análise de resultados em 7 passos simples",
+          "category": "Campanhas"
+        },
+        "leadQualification": {
+          "title": "Qualificação de leads avançada",
+          "description": "Saiba como identificar e classificar seus leads de forma eficiente",
+          "category": "Sugestões"
+        },
+        "preciseSegmentation": {
+          "title": "Segmentação precisa",
+          "description": "Técnicas avançadas para dividir seu público-alvo com precisão",
+          "category": "Performance"
+        },
+        "instagramSchedule": {
+          "title": "Cronograma ideal para Instagram",
+          "description": "Melhores horários e frequência baseados em seus dados históricos",
+          "category": "Campanhas"
+        },
+        "viralLinkedin": {
+          "title": "Conteúdos virais para LinkedIn",
+          "description": "10 modelos prontos para posts profissionais de alto engajamento",
+          "category": "Sugestões"
+        },
+        "funnelAnalysis": {
+          "title": "Análise do funil de vendas",
+          "description": "Métricas essenciais e pontos de otimização para cada etapa",
+          "category": "Performance"
+        }
+      }
+    },
     "formSubmitted": {
       "availableVariables": "Variáveis disponíveis do formulário:",
       "clickToInsert": "Clique em uma variável para inserir no conteúdo:",
@@ -469,27 +519,27 @@
       "examplePrefix": "Exemplo: Muito obrigado"
     },
     "crm": {
-      "title": "CRM System",
-      "totalCustomers": "Total Customers",
-      "activeCustomers": "Active Customers",
-      "totalValue": "Total Value",
-      "averageValue": "Average Value",
-      "searchPlaceholder": "Search customers...",
-      "selectSegment": "Select a segment",
-      "addCustomer": "Add Customer",
-      "editCustomer": "Edit Customer",
-      "createCustomer": "Create Customer",
-      "updateCustomer": "Update Customer",
-      "createSegment": "Create New Segment",
-      "name": "Name",
+      "title": "Sistema CRM",
+      "totalCustomers": "Total de Clientes",
+      "activeCustomers": "Clientes Ativos",
+      "totalValue": "Valor Total",
+      "averageValue": "Valor Médio",
+      "searchPlaceholder": "Buscar clientes...",
+      "selectSegment": "Selecione um segmento",
+      "addCustomer": "Adicionar Cliente",
+      "editCustomer": "Editar Cliente",
+      "createCustomer": "Criar Cliente",
+      "updateCustomer": "Atualizar Cliente",
+      "createSegment": "Criar Novo Segmento",
+      "name": "Nome",
       "email": "Email",
-      "phone": "Phone",
+      "phone": "Telefone",
       "status": "Status",
-      "value": "Value",
-      "lastContact": "Last Contact",
+      "value": "Valor",
+      "lastContact": "Último Contato",
       "tags": "Tags",
-      "source": "Source",
-      "createdAt": "Created At"
+      "source": "Origem",
+      "createdAt": "Data de Criação"
     },
     "automationTable": {
       "emptyStateTitle": "Nenhuma automação encontrada",
@@ -505,7 +555,7 @@
       "viewTable": "Tabela",
       "viewCalendar": "Calendário"
     },
-    "automation_desc": "Automatize seu funil de vendas para conversões.",
+    "automation_desc": "Automatize suas redes sociais e marketing de email.",
     "capturePages": {
       "title": "Landing Pages & Formulários",
       "createLandingPage": "Landing Page",

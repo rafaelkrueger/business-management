@@ -2200,13 +2200,12 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         activeCompany={activeCompany}
       />
 
-      {/* Modal para seleção de templates */}
       <EmailTemplateSelector
         templates={emailTemplates}
         open={openTemplateSelector}
         onClose={() => setOpenTemplateSelector(false)}
         onSelect={handleTemplateSelect}
-        isConnectedToChatGpt={isConnectedToChatGPT(editingNode?.id)}
+        activeCompany={activeCompany}
       />
     </Box>
   );

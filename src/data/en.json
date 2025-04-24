@@ -455,6 +455,56 @@
     "automation": "Automation",
     "ai": "Marketing AI",
     "aiDescription": "Discuss, ask and teach your AI Marketing agent",
+    "aiAssistant": {
+      "all":"All",
+      "suggestionTitle":"Suggestions",
+      "performance":"Performance",
+      "campaing":"Campaign",
+      "placeholder":"💡 Type your question or select a suggestion above...",
+      "send":"Send",
+      "suggestions": {
+        "improveEngagement": {
+          "title": "How to improve my engagement?",
+          "description": "Discover data-driven strategies to boost your interaction rates",
+          "category": "Suggestions"
+        },
+        "channelPriority": {
+          "title": "Which channels should I prioritize?",
+          "description": "Comparative analysis of the channels with the best ROI for your segment",
+          "category": "Performance"
+        },
+        "emailGuide": {
+          "title": "Complete guide: Email campaigns",
+          "description": "From briefing to results analysis in 7 simple steps",
+          "category": "Campaigns"
+        },
+        "leadQualification": {
+          "title": "Advanced lead qualification",
+          "description": "Learn how to efficiently identify and classify your leads",
+          "category": "Suggestions"
+        },
+        "preciseSegmentation": {
+          "title": "Precise segmentation",
+          "description": "Advanced techniques to accurately divide your target audience",
+          "category": "Performance"
+        },
+        "instagramSchedule": {
+          "title": "Ideal Instagram schedule",
+          "description": "Best times and frequency based on your historical data",
+          "category": "Campaigns"
+        },
+        "viralLinkedin": {
+          "title": "Viral LinkedIn content",
+          "description": "10 ready-to-use templates for high-engagement professional posts",
+          "category": "Suggestions"
+        },
+        "funnelAnalysis": {
+          "title": "Sales funnel analysis",
+          "description": "Essential metrics and optimization points for each stage",
+          "category": "Performance"
+        }
+      }
+    },
     "formSubmitted" : {
       "availableVariables": "Available form variables:",
       "clickToInsert": "Click a variable to insert into the content:",
@@ -462,27 +512,27 @@
       "examplePrefix": "Example: Thank you"
     },
     "crm": {
-      "title": "Sistema CRM",
-      "totalCustomers": "Total de Clientes",
-      "activeCustomers": "Clientes Ativos",
-      "totalValue": "Valor Total",
-      "averageValue": "Valor Médio",
-      "searchPlaceholder": "Buscar clientes...",
-      "selectSegment": "Selecione um segmento",
-      "addCustomer": "Adicionar Cliente",
-      "editCustomer": "Editar Cliente",
-      "createCustomer": "Criar Cliente",
-      "updateCustomer": "Atualizar Cliente",
-      "createSegment": "Criar Novo Segmento",
-      "name": "Nome",
+      "title": "CRM System",
+      "totalCustomers": "Total Customers",
+      "activeCustomers": "Active Customers",
+      "totalValue": "Total Value",
+      "averageValue": "Average Value",
+      "searchPlaceholder": "Search customers...",
+      "selectSegment": "Select a segment",
+      "addCustomer": "Add Customer",
+      "editCustomer": "Edit Customer",
+      "createCustomer": "Create Customer",
+      "updateCustomer": "Update Customer",
+      "createSegment": "Create New Segment",
+      "name": "Name",
       "email": "Email",
-      "phone": "Telefone",
+      "phone": "Phone",
       "status": "Status",
-      "value": "Valor",
-      "lastContact": "Último Contato",
+      "value": "Value",
+      "lastContact": "Last Contact",
       "tags": "Tags",
-      "source": "Origem",
-      "createdAt": "Data de Criação"
+      "source": "Source",
+      "createdAt": "Created At"
     },
     "automationTable": {
       "emptyStateTitle": "No automation found",
@@ -498,7 +548,7 @@
       "viewTable": "Table",
       "viewCalendar": "Calendar"
     },
-    "automation_desc": "Automate your sales funnel for conversions.",
+    "automation_desc": "Automate your social media and email marketing.",
     "capturePages": {
       "title": "Landing Pages & Forms",
       "createLandingPage": "Landing Page",

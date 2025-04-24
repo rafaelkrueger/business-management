@@ -16,6 +16,8 @@ import { Line, Bar } from "react-chartjs-2";
 import {
   Brain,
   FileText,
+  Layout,
+  Users,
   Zap
 } from "lucide-react";
 import { useState } from "react";
@@ -122,32 +124,33 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
       color: theme.palette.primary.main
     },
     {
-      icon: <FileText size={24} color={theme.palette.error.light} />,
+      icon: <Layout size={24} color={theme.palette.error.light} />,
       title: t("marketing.landing_pages"),
       description: t("marketing.landing_pages_desc"),
       module: "createLeads",
-      color: theme.palette.secondary.main
+      color: theme.palette.secondary.main,
     },
     {
-      icon: <Brain size={24} color={"#B0B0B0"} />,
+      icon: <Users size={24} color={theme.palette.info.light} />,
       title: t("marketing.crmTitle"),
       description: t("marketing.crm_desc"),
       module: "crm",
-      color: "#e0e0e0",
+      color: theme.palette.info.main,
     },
     {
-      icon: <FileText size={24} color={"#B0B0B0"} />,
+      icon: <FileText size={24} color={theme.palette.warning.light} />,
       title: t("marketing.funnels"),
       description: t("marketing.funnels_desc"),
       module: "funnel",
-      color: "#e0e0e0",
+      color: theme.palette.warning.main,
+      disabled: true
     },
     {
-      icon: <Brain size={24} color={"#B0B0B0"} />,
+      icon: <Brain size={24} color={"#9C27B0"} />,
       title: t("marketing.ai"),
       description: t("marketing.aiDescription"),
       module: "marketingAi",
-      color: "#e0e0e0",
+      color: "#9C27B0",
     },
     // {
     //   icon: <Zap size={24} color={"#B0B0B0"} />,
@@ -334,9 +337,9 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
       ) : module === 'social-media' ? (
         <SocialMediaDashboard activeCompany={props.activeCompany} />
       ) : module === 'marketingAi' ? (
-        <StyledAIAssistant/>
+        <StyledAIAssistant activeCompany={props.activeCompany} setModule={setModule}/>
       ) : module === 'crm' ? (
-        <CRMApp activeCompany={props.activeCompany} />
+        <CRMApp activeCompany={props.activeCompany} setModule={setModule} />
       ) : module === 'funnel' ? (
         <SalesFunnel/>
       ) : null}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -9,113 +9,154 @@ import {
   useTheme,
   TextField,
   Button,
-  Avatar,
-  Badge,
-  IconButton,
   Fade,
-  Grow
+  Grow,
+  Skeleton
 } from '@mui/material';
 import {
   SmartToy,
   Send,
   HelpOutline,
   TrendingUp,
-  Group,
   Campaign,
   Star,
-  ChevronRight
+  ChevronRight,
+  ArrowBackIos
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
+import ChatAiService from '../../../services/chat-ai.service.ts';
 
-const categories = [
-  { label: 'Todos', icon: <Star />, color: '#6366F1' },
-  { label: 'Sugestões', icon: <HelpOutline />, color: '#0A6CCC' },
-  { label: 'Performance', icon: <TrendingUp />, color: '#059669' },
-  { label: 'Equipes', icon: <Group />, color: '#F97316' },
-  { label: 'Campanhas', icon: <Campaign />, color: '#8B5CF6' }
-];
-
-const suggestionCards = [
-  {
-    title: 'Como melhorar meu engajamento?',
-    description: 'Descubra estratégias baseadas em dados para aumentar suas taxas de interação em até 300%',
-    category: 'Sugestões',
-    stars: 4.8
-  },
-  {
-    title: 'Quais canais devo priorizar?',
-    description: 'Análise comparativa dos canais com melhor ROI para seu segmento',
-    category: 'Performance',
-    stars: 4.5
-  },
-  {
-    title: 'Guia completo: Campanhas de e-mail',
-    description: 'Do briefing à análise de resultados em 7 passos simples',
-    category: 'Campanhas',
-    stars: 4.9
-  },
-  {
-    title: 'Qualificação de leads avançada',
-    description: 'Saiba como identificar e classificar seus leads de forma eficiente',
-    category: 'Sugestões',
-    stars: 4.7
-  },
-  {
-    title: 'Segmentação precisa',
-    description: 'Técnicas avançadas para dividir seu público-alvo com precisão',
-    category: 'Performance',
-    stars: 4.6
-  },
-  {
-    title: 'Cronograma ideal para Instagram',
-    description: 'Melhores horários e frequência baseados em seus dados históricos',
-    category: 'Campanhas',
-    stars: 4.4
-  },
-  {
-    title: 'Conteúdos virais para LinkedIn',
-    description: '10 modelos prontos para posts profissionais de alto engajamento',
-    category: 'Sugestões',
-    stars: 4.8
-  },
-  {
-    title: 'Análise do funil de vendas',
-    description: 'Métricas essenciais e pontos de otimização para cada etapa',
-    category: 'Performance',
-    stars: 4.7
-  }
-];
-
-export default function PremiumMarketingAssistant() {
+export default function PremiumMarketingAssistant({activeCompany, setModule}) {
   const theme = useTheme();
-  const [activeCategory, setActiveCategory] = useState('Todos');
+  const { t } = useTranslation();
+  const [activeCategory, setActiveCategory] = useState(t("marketing.aiAssistant.all"));
   const [inputValue, setInputValue] = useState('');
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [isWaitingResponse, setIsWaitingResponse] = useState(false);
+  const [showSkeleton, setShowSkeleton] = useState(false);
+  const [messages, setMessages] = useState([]);
 
-  const handleSend = () => {
-    if (selectedCard || inputValue.trim()) {
-      console.log('Mensagem enviada:', selectedCard || inputValue);
-      setInputValue('');
-      setSelectedCard(null);
+  const generateSkeletonLines = () => {
+    const lines = Math.floor(Math.random() * 3) + 1;
+    return Array.from({ length: lines }, () => Math.floor(Math.random() * 60) + 40);
+  };
+
+
+  useEffect(() => {
+    const initChat = async () => {
+      const id = await ChatAiService.startConversation();
+      setConversationId(id);
+    };
+    initChat();
+  }, []);
+
+  useEffect(() => {
+    const scrollContainer = document.querySelector('#root > div > div.sc-ktwOfi.gVIUQZ') as HTMLElement;
+    if (scrollContainer) {
+      scrollContainer.style.overflow = 'hidden';
+    }
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.style.overflow = 'auto';
+      }
+    };
+  }, []);
+
+  const categories = [
+    { label: t("marketing.aiAssistant.all"), icon: <Star />, color: '#6366F1' },
+    { label: t("marketing.aiAssistant.suggestionTitle"), icon: <HelpOutline />, color: '#0A6CCC' },
+    { label: t("marketing.aiAssistant.performance"), icon: <TrendingUp />, color: '#059669' },
+    // { label: t("marketing.aiAssistant.campaing"), icon: <Campaign />, color: '#8B5CF6' }
+  ];
+
+  const suggestionCards = [
+    {
+      title: t('marketing.aiAssistant.suggestions.improveEngagement.title'),
+      description: t('marketing.aiAssistant.suggestions.improveEngagement.description'),
+      category: t('marketing.aiAssistant.suggestions.improveEngagement.category'),
+      stars: 4.8,
+    },
+    {
+      title: t('marketing.aiAssistant.suggestions.channelPriority.title'),
+      description: t('marketing.aiAssistant.suggestions.channelPriority.description'),
+      category: t('marketing.aiAssistant.suggestions.channelPriority.category'),
+      stars: 4.5,
+    },
+    {
+      title: t('marketing.aiAssistant.suggestions.emailGuide.title'),
+      description: t('marketing.aiAssistant.suggestions.emailGuide.description'),
+      category: t('marketing.aiAssistant.suggestions.emailGuide.category'),
+      stars: 4.9,
+    },
+    {
+      title: t('marketing.aiAssistant.suggestions.leadQualification.title'),
+      description: t('marketing.aiAssistant.suggestions.leadQualification.description'),
+      category: t('marketing.aiAssistant.suggestions.leadQualification.category'),
+      stars: 4.7,
+    },
+
+  ];
+
+  const handleSend = async () => {
+    if (!conversationId || (!selectedCard && !inputValue.trim())) return;
+
+    const content = selectedCard || inputValue.trim();
+    setInputValue('');
+    setSelectedCard(null);
+
+    const userMessage = {
+      id: crypto.randomUUID(),
+      sender: 'user',
+      content,
+      timestamp: new Date()
+    };
+
+
+    const loadingMessage = {
+      id: 'typing',
+      sender: 'assistant',
+      content: '',
+      timestamp: new Date()
+    };
+
+    setMessages((prev) => [...prev, userMessage, loadingMessage]);
+    setIsWaitingResponse(true);
+
+    try {
+      const updatedMessages = await ChatAiService.sendMessage(conversationId, content, activeCompany);
+      setMessages(updatedMessages);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev.filter((m) => m.id !== 'typing'),
+        {
+          id: crypto.randomUUID(),
+          sender: 'assistant',
+          content: 'Error, please try again later.',
+          timestamp: new Date()
+        }
+      ]);
+    } finally {
+      setIsWaitingResponse(false);
     }
   };
 
-  const filteredCards = activeCategory === 'Todos'
+  const filteredCards = activeCategory === t("marketing.aiAssistant.all")
     ? suggestionCards
     : suggestionCards.filter(card => card.category === activeCategory);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4, height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{display:'flex', marginTop:'30px', marginBottom:'35px'}}>
+        <ArrowBackIos style={{cursor:'pointer', marginTop:'10px', marginRight:'20px', zIndex:1000}} onClick={()=>{setModule('')}}/>
+      </Box>
         <Box sx={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        mb: 4,
-        px: 2,
-        pt: 4
+        marginTop:'-65px'
         }}>
-
-        {/* Título principal */}
         <Box sx={{
             display: 'flex',
             alignItems: 'center',
@@ -126,11 +167,9 @@ export default function PremiumMarketingAssistant() {
             letterSpacing: '-0.5px',
             color: theme.palette.text.primary
             }}>
-            Marketing Assistant
+            {t("marketing.ai")}
             </Typography>
         </Box>
-
-        {/* Subtítulo */}
         <Typography variant="body1" sx={{
             color: theme.palette.text.secondary,
             mb: 3,
@@ -138,12 +177,10 @@ export default function PremiumMarketingAssistant() {
             textAlign: 'center',
             lineHeight: 1.6
         }}>
-            Obtenha insights inteligentes e recomendações personalizadas
+            {t("marketing.aiDescription")}
         </Typography>
 
         </Box>
-
-      {/* Categorias */}
       <Box sx={{
         display: 'flex',
         flexWrap: 'wrap',
@@ -173,112 +210,163 @@ export default function PremiumMarketingAssistant() {
         ))}
       </Box>
 
-      {/* Cards de Sugestões */}
-      <Box sx={{ flex: 1, overflowY: 'auto', mb: 3, px: 1}}>
-        <Grid container spacing={3}>
-          {filteredCards.map((card, idx) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={idx} height={200} marginBottom={5}>
-              <Grow in={true} timeout={(idx + 1) * 200}>
-                <Paper
-                  elevation={selectedCard === card.title ? 8 : hoveredCard === card.title ? 6 : 2}
-                  onClick={() => {
-                    setSelectedCard(card.title);
-                    setInputValue(card.title);
-                  }}
-                  onMouseEnter={() => setHoveredCard(card.title)}
-                  onMouseLeave={() => setHoveredCard(null)}
+      <Box sx={{ flex: 1, overflowY: 'auto', mb: 3, px: 1 }}>
+  {messages.length === 0 ? (
+    <Grid container spacing={3}>
+      {filteredCards.map((card, idx) => (
+        <Grid item xs={12} sm={6} md={4} lg={3} key={idx} height={200} marginBottom={5}>
+          <Grow in={true} timeout={(idx + 1) * 200}>
+            <Paper
+              elevation={selectedCard === card.title ? 8 : hoveredCard === card.title ? 6 : 2}
+              onClick={() => {
+                setSelectedCard(card.title);
+                setInputValue(card.title);
+              }}
+              onMouseEnter={() => setHoveredCard(card.title)}
+              onMouseLeave={() => setHoveredCard(null)}
+              sx={{
+                p: 2.5,
+                borderRadius: 3,
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                height: '100%',
+                border: selectedCard === card.title
+                  ? `2px solid ${theme.palette.primary.main}`
+                  : `1px solid ${theme.palette.divider}`,
+                background: `linear-gradient(to bottom right, ${theme.palette.background.paper}, ${theme.palette.background.default})`,
+                position: 'relative',
+                overflow: 'hidden',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                  boxShadow: 6,
+                },
+              }}
+            >
+              {selectedCard === card.title && (
+                <Box sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 4,
+                  background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+                }} />
+              )}
+
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} sx={{
+                    fontSize: 16,
+                    color: i < Math.floor(card.stars) ? '#FFC107' : theme.palette.action.disabled
+                  }} />
+                ))}
+                <Typography variant="caption" sx={{ ml: 0.5, color: theme.palette.text.secondary }}>
+                  {card.stars}
+                </Typography>
+              </Box>
+
+              <Typography
+                variant="subtitle1"
+                fontWeight={600}
+                gutterBottom
+                sx={{
+                  color: selectedCard === card.title ? theme.palette.primary.main : 'inherit',
+                  minHeight: '3em',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                {card.title}
+              </Typography>
+
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                {card.description}
+              </Typography>
+
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Chip
+                  label={card.category}
+                  size="small"
                   sx={{
-                    p: 2.5,
-                    borderRadius: 3,
-                    cursor: 'pointer',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    height: '100%',
-                    border: selectedCard === card.title
-                      ? `2px solid ${theme.palette.primary.main}`
-                      : `1px solid ${theme.palette.divider}`,
-                    background: `linear-gradient(to bottom right, ${theme.palette.background.paper}, ${theme.palette.background.default})`,
-                    position: 'relative',
-                    overflow: 'hidden',
-                    '&:hover': {
-                      transform: 'translateY(-5px)',
-                      boxShadow: 6,
-                    },
+                    backgroundColor: categories.find(c => c.label === card.category)?.color + '10',
+                    color: categories.find(c => c.label === card.category)?.color,
+                    fontWeight: 500,
+                    fontSize: '0.7rem'
                   }}
-                >
-                  {/* Efeito de brilho ao selecionar */}
-                  {selectedCard === card.title && (
-                    <Box sx={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: 4,
-                      background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
-                    }} />
-                  )}
-
-                  {/* Rating */}
-                  <Box sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    mb: 1
-                  }}>
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} sx={{
-                        fontSize: 16,
-                        color: i < Math.floor(card.stars) ? '#FFC107' : theme.palette.action.disabled
-                      }} />
-                    ))}
-                    <Typography variant="caption" sx={{ ml: 0.5, color: theme.palette.text.secondary }}>
-                      {card.stars}
-                    </Typography>
-                  </Box>
-
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight={600}
-                    gutterBottom
-                    sx={{
-                      color: selectedCard === card.title ? theme.palette.primary.main : 'inherit',
-                      minHeight: '3em',
-                      display: 'flex',
-                      alignItems: 'center'
-                    }}
-                  >
-                    {card.title}
-                  </Typography>
-
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    {card.description}
-                  </Typography>
-
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Chip
-                      label={card.category}
-                      size="small"
-                      sx={{
-                        backgroundColor: categories.find(c => c.label === card.category)?.color + '10',
-                        color: categories.find(c => c.label === card.category)?.color,
-                        fontWeight: 500,
-                        fontSize: '0.7rem'
-                      }}
-                    />
-                    <Fade in={hoveredCard === card.title || selectedCard === card.title}>
-                      <ChevronRight sx={{
-                        color: theme.palette.primary.main,
-                        transition: 'all 0.3s ease'
-                      }} />
-                    </Fade>
-                  </Box>
-                </Paper>
-              </Grow>
-            </Grid>
-          ))}
+                />
+                <Fade in={hoveredCard === card.title || selectedCard === card.title}>
+                  <ChevronRight sx={{
+                    color: theme.palette.primary.main,
+                    transition: 'all 0.3s ease'
+                  }} />
+                </Fade>
+              </Box>
+            </Paper>
+          </Grow>
         </Grid>
-      </Box>
+      ))}
+    </Grid>
+  ) : (
+    messages.map((msg) => (
+      <Box
+      key={msg.id}
+      sx={{
+        mb: 2,
+        textAlign: msg.sender === 'user' ? 'right' : 'left',
+        display: 'flex',
+        justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start'
+      }}
+    >
+      <Paper
+        elevation={2}
+        sx={{
+          display: 'inline-block',
+          p: 1.5,
+          borderRadius: 2,
+          maxWidth: '70%',
+          backgroundColor: msg.sender === 'user'
+            ? theme.palette.primary.main
+            : theme.palette.grey[200],
+          color: msg.sender === 'user'
+            ? theme.palette.primary.contrastText
+            : theme.palette.text.primary,
+          minWidth: msg.id === 'typing' ? 200 : undefined
+        }}
+      >
+        {msg.id === 'typing' ? (
+          <Box>
+            <Skeleton variant="text" width="80%" height={20} sx={{ mb: 1 }} />
+            <Skeleton variant="text" width="90%" height={20} />
+          </Box>
+        ) : (
+          <Box>
+            {msg.content.match(/\d+\.\s/) ? (
+              <ul style={{ paddingLeft: '1.2rem', margin: 0 }}>
+                {msg.content
+                  .split(/\d+\.\s/)
+                  .slice(1)
+                  .map((item, index) => (
+                    <li key={index}>
+                      <Typography variant="body2" sx={{ lineHeight: 1.8 }}>
+                        <strong>{index + 1}.</strong> {item.trim()}
+                      </Typography>
+                    </li>
+                  ))}
+              </ul>
+            ) : (
+              <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>
+                {msg.content}
+              </Typography>
+            )}
+          </Box>
+        )}
+      </Paper>
+    </Box>
+    ))
+  )}
+</Box>
 
-      {/* Área de Input */}
-{/* Área de Input Premium */}
+
 <Paper
   elevation={6}
   sx={{
@@ -307,11 +395,10 @@ export default function PremiumMarketingAssistant() {
       position: 'relative',
     }}
   >
-    {/* TextField Aprimorado */}
     <TextField
       fullWidth
       variant="outlined"
-      placeholder={selectedCard ? "✨ Pronto para enviar sua dúvida..." : "💡 Digite sua pergunta ou selecione uma sugestão acima..."}
+      placeholder={t("marketing.aiAssistant.placeholder")}
       value={selectedCard || inputValue}
       onChange={(e) => {
         setInputValue(e.target.value);
@@ -351,7 +438,6 @@ export default function PremiumMarketingAssistant() {
       }}
     />
 
-    {/* Botão Premium */}
     <Button
       variant="contained"
       color="primary"
@@ -359,6 +445,7 @@ export default function PremiumMarketingAssistant() {
       disabled={!inputValue && !selectedCard}
       onClick={handleSend}
       endIcon={<Send sx={{
+        width:'16px',
         transition: 'transform 0.3s ease',
         transform: !inputValue && !selectedCard ? 'scale(1)' : 'scale(1.2)'
       }} />}
@@ -376,36 +463,15 @@ export default function PremiumMarketingAssistant() {
           boxShadow: `${theme.palette.primary.light} 0 6px 16px`,
           background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
         },
-        '&:active': {
-          transform: 'translateY(0)'
-        },
         '&.Mui-disabled': {
           background: theme.palette.action.disabledBackground,
           boxShadow: 'none'
         }
       }}
     >
-      Enviar
+      {t("marketing.aiAssistant.send")}
     </Button>
   </Box>
-
-  {/* Dica flutuante */}
-  {!inputValue && !selectedCard && (
-    <Fade in={!inputValue && !selectedCard}>
-      <Typography
-        variant="caption"
-        sx={{
-          display: 'block',
-          textAlign: 'center',
-          mt: 1,
-          color: theme.palette.text.secondary,
-          fontStyle: 'italic'
-        }}
-      >
-        Selecione uma sugestão ou digite sua pergunta
-      </Typography>
-    </Fade>
-  )}
 </Paper>
     </Container>
   );
