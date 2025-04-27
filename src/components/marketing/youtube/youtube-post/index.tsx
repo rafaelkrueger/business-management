@@ -178,8 +178,58 @@ const YouTubeNodeEditor = ({ editingNode, setEditingNode, isConnectedToChatGPT }
         }
       />
 
-      {/* Seção de upload do vídeo */}
+      {/* Seção de upload da thumbnail */}
       <Box
+        sx={{
+          padding: "10px",
+          width: "550px",
+          marginTop: "15px",
+          marginRight: "15px",
+          marginLeft: "15px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          border: "1px dashed #ccc",
+          borderRadius: "8px",
+        }}
+      >
+        <input
+          accept="image/*"
+          style={{ display: "none" }}
+          id="youtube-thumbnail-upload"
+          type="file"
+          onChange={handleThumbnailChange}
+          disabled={isConnectedToChatGPT()}
+        />
+        <label htmlFor="youtube-thumbnail-upload">
+          {!editingNode.data.params.youtubeThumbnailUrl && (
+            <Button variant="contained" component="span">
+              {t("youtubeNodeEditor.chooseThumbnail")}
+            </Button>
+          )}
+        </label>
+
+        {/* Pré-visualização da thumbnail */}
+        {editingNode.data.params.youtubeThumbnailUrl && (
+          <Box sx={{ marginTop: "10px", textAlign: "center", position: "relative" }}>
+            <img
+              src={editingNode.data.params.youtubeThumbnailUrl}
+              alt={t("youtubeNodeEditor.thumbnailPreview")}
+              style={{ maxWidth: "300px", maxHeight: "200px" }}
+            />
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleClearThumbnail}
+              sx={{ marginTop: "10px", position: "absolute", bottom: 10, right: 10 }}
+            >
+              <Trash2Icon />
+            </Button>
+          </Box>
+        )}
+      </Box>
+            {/* Seção de upload do vídeo */}
+            <Box
         sx={{
           padding: "10px",
           width: "550px",
@@ -224,57 +274,6 @@ const YouTubeNodeEditor = ({ editingNode, setEditingNode, isConnectedToChatGPT }
               variant="contained"
               color="secondary"
               onClick={handleClearVideo}
-              sx={{ marginTop: "10px", position: "absolute", bottom: 10, right: 10 }}
-            >
-              <Trash2Icon />
-            </Button>
-          </Box>
-        )}
-      </Box>
-
-      {/* Seção de upload da thumbnail */}
-      <Box
-        sx={{
-          padding: "10px",
-          width: "550px",
-          marginTop: "15px",
-          marginRight: "15px",
-          marginLeft: "15px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          border: "1px dashed #ccc",
-          borderRadius: "8px",
-        }}
-      >
-        <input
-          accept="image/*"
-          style={{ display: "none" }}
-          id="youtube-thumbnail-upload"
-          type="file"
-          onChange={handleThumbnailChange}
-          disabled={isConnectedToChatGPT()}
-        />
-        <label htmlFor="youtube-thumbnail-upload">
-          {!editingNode.data.params.youtubeThumbnailUrl && (
-            <Button variant="contained" component="span">
-              {t("youtubeNodeEditor.chooseThumbnail")}
-            </Button>
-          )}
-        </label>
-
-        {/* Pré-visualização da thumbnail */}
-        {editingNode.data.params.youtubeThumbnailUrl && (
-          <Box sx={{ marginTop: "10px", textAlign: "center", position: "relative" }}>
-            <img
-              src={editingNode.data.params.youtubeThumbnailUrl}
-              alt={t("youtubeNodeEditor.thumbnailPreview")}
-              style={{ maxWidth: "300px", maxHeight: "200px" }}
-            />
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleClearThumbnail}
               sx={{ marginTop: "10px", position: "absolute", bottom: 10, right: 10 }}
             >
               <Trash2Icon />

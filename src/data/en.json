@@ -714,6 +714,7 @@
     "twitterConnectNeeded": "You need to connect your Twitter account before using this block.",
     "twitterConnectionError": "Error checking Twitter connection. Please try again.",
     "linkedinPostContent": "LinkedIn post content",
+    "facebookPostContent": "Facebook post content",
     "linkedinPostImageUrl": "Post image URL",
     "triggers": {
       "title": "How you wish to start this automation",
@@ -737,6 +738,7 @@
     "youtube": "Youtube",
     "chatgpt": "AI Text",
     "formTrigger": "Form Submitted",
+    "chatgptImage": "AI Image",
     "whatsappTrigger": "Mensagem Recebida"
   },
   "platform": {
@@ -791,6 +793,13 @@
     "chooseImage": "Choose Image",
     "preview": "Preview",
     "removeImage": "Remove Image"
+  },
+  "youtubeNodeEditor": {
+    "videoTitle": "Video title",
+    "videoDescription": "Write your description here...",
+    "videoCategory": "Video category",
+    "chooseVideo":"Upload your video",
+    "chooseThumbnail":"Thumbnail Image"
   },
   "linkedinAuthModal": {
     "titleConnected": "LinkedIn Connected",

@@ -89,7 +89,7 @@ const FacebookNodeEditor = ({ editingNode, setEditingNode, facebookPages, isConn
           marginLeft: "15px",
           cursor: isConnectedToChatGPT(editingNode.id) ? "not-allowed" : "text",
         }}
-        label={t("facebookNodeEditor.postContent")}
+        label={"Facebook text content"}
         fullWidth
         multiline
         rows={4}
@@ -135,7 +135,7 @@ const FacebookNodeEditor = ({ editingNode, setEditingNode, facebookPages, isConn
         />
         <label htmlFor="facebook-media-upload">
           <Button variant="contained" component="span">
-            {t("facebookNodeEditor.chooseImage")}
+            {t("twitterNodeEditor.chooseImage")}
           </Button>
         </label>
 

@@ -874,6 +874,7 @@ const PreviewDialog: React.FC<{
   components: Template[];
   handleShowComponents: () => void;
   saveLandingPageAsActive: () => void;
+  creatingLandingpage: boolean;
 }> = ({
   open,
   previewUrl,
@@ -884,6 +885,7 @@ const PreviewDialog: React.FC<{
   components,
   handleShowComponents,
   saveLandingPageAsActive,
+  creatingLandingpage
 }) => {
   const { t } = useTranslation();
   return (
@@ -963,7 +965,7 @@ const PreviewDialog: React.FC<{
                 <div>
                   <Typography variant="subtitle1" gutterBottom>{t("marketing.previewDialog.instructionsTitle")}</Typography>
                   <Typography variant="body2" gutterBottom>
-                    • {t("marketing.previewDialog.instructionText1")}
+                    • {t("marketing.previewDialog.instructionText6")}
                   </Typography>
                   <Typography variant="body2" gutterBottom>
                     • {t("marketing.previewDialog.instructionText3")}
@@ -980,8 +982,15 @@ const PreviewDialog: React.FC<{
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={saveLandingPageAsActive}>{t("marketing.previewDialog.createLandingPage")}</Button>
-      </DialogActions>
+      <Button
+        onClick={saveLandingPageAsActive}
+        disabled={creatingLandingpage}
+        variant="contained"
+        startIcon={creatingLandingpage ? <CircularProgress size={20} /> : null}
+      >
+        {creatingLandingpage ? '' : t("marketing.previewDialog.createLandingPage")}
+      </Button>
+    </DialogActions>
     </Dialog>
   );
 };
@@ -1038,6 +1047,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   const [viewFormDetails, setViewFormDetails] = useState("");
   const [forms, setForms] = useState<FormLead[]>([]);
   const [loadingForms, setLoadingForms] = useState(true);
+  const [creatingLandingpage, setCreatingLandingPage] = useState(false);
   const [selectedLandingPage, setSelectedLandingPage] = useState<LandingPage | null>(null);
 
   const fetchLandingPages = () => {
@@ -1122,13 +1132,23 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
     window.open(`https://roktune.duckdns.org/leads/form?apiKey=${form.apiKey}`, "_blank");
   };
 
-  const saveLandingPageAsActive = () => {
+  const saveLandingPageAsActive = async () => {
+    setCreatingLandingPage(true)
     const iframe = document.getElementById("previewIframe") as HTMLIFrameElement;
-    if (iframe && iframe.contentWindow) {
-      iframe.contentWindow.postMessage({ type: "TRIGGER_SAVE" }, "*");
+
+    if (iframe?.contentWindow && iframe.contentDocument) {
+      const saveButton = iframe.contentDocument.getElementById("saveButton") as HTMLButtonElement;
+      if (saveButton) {
+        saveButton.click();
+      } else {
+        console.error("Botão saveButton não encontrado dentro do iframe.");
+      }
     } else {
       console.error("Iframe não encontrado ou inacessível.");
     }
+
+    await new Promise((resolve) => setTimeout(resolve, 10000));
+
     LandingPageService.post({ companyId: activeCompany, title: newPage.title })
       .then((res) => {
         enqueueSnackbar(t("marketing.capturePages.pageCreated"), {
@@ -1140,8 +1160,11 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
       })
       .catch((error) => {
         console.error("Erro ao criar landing page:", error);
+      }).finally(()=>{
+        setCreatingLandingPage(false)
       });
   };
+
 
   if (leadGenerationEnabled) {
     return <LeadGeneration activeCompany={activeCompany} setModule={setModule} />;
@@ -1327,6 +1350,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
         components={[]}
         handleShowComponents={() => {}}
         saveLandingPageAsActive={saveLandingPageAsActive}
+        creatingLandingpage={creatingLandingpage}
       />
 
       <DetailsDialog

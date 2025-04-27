@@ -47,7 +47,7 @@ import { Brain, CloudUploadIcon, ImageIcon, Radio, SettingsIcon } from "lucide-r
 import { Drawer } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { FaEnvelope, FaTwitter, FaLinkedin, FaYoutube, FaFacebook, FaWhatsapp, FaBrain, FaClock } from 'react-icons/fa';
+import { FaEnvelope, FaTwitter, FaLinkedin, FaYoutube, FaFacebook, FaWhatsapp, FaBrain, FaClock, FaInstagram, FaTiktok } from 'react-icons/fa';
 
 import TwitterService from '../../../../services/twitter.service.ts';
 import LinkedinService from "../../../../services/linkedin.service.ts";
@@ -463,32 +463,31 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { whatsappContent: "" },
       purpose:t('automationFlow.purposes.socialMedia'),
     },
-    // LINKEDIN: {
-    //   type: "linkedin",
-    //   name: t("block.linkedin"),
-    //   icon: <FaLinkedin style={{ color: "#0A66C2", fontSize: 26 }} />,
-    //   params: { linkedinContent: "" },
-    //   purpose:t('automationFlow.purposes.socialMedia'),
-    // },
-    // YOUTUBE: {
-    //   type: "youtube",
-    //   name: t("block.youtube"),
-    //   icon: <FaYoutube style={{ color: "#FF0000", fontSize: 26 }} />,
-    //   params: { youtubeContent: "" },
-    //   purpose:t('automationFlow.purposes.socialMedia'),
-    // },
-
+    LINKEDIN: {
+      type: "linkedin",
+      name: t("block.linkedin"),
+      icon: <FaLinkedin style={{ color: "#0A66C2", fontSize: 26 }} />,
+      params: { linkedinContent: "" },
+      purpose:t('automationFlow.purposes.socialMedia'),
+    },
+    YOUTUBE: {
+      type: "youtube",
+      name: t("block.youtube"),
+      icon: <FaYoutube style={{ color: "#FF0000", fontSize: 26 }} />,
+      params: { youtubeContent: "" },
+      purpose:t('automationFlow.purposes.socialMedia'),
+    },
     // INSTAGRAM: {
     //   type: "instagram",
     //   name: t("block.instagram"),
-    //   icon: <FaInstagram style={{ color: "#0A66C2", fontSize: 26 }} />,
+    //   icon: <FaInstagram style={{ color: "#c20a8e", fontSize: 26 }} />,
     //   params: { instagramContent: "" },
     //   purpose:t('automationFlow.purposes.socialMedia'),
     // },
     // TIKTOK: {
     //   type: "tiktok",
     //   name: t("block.tiktok"),
-    //   icon: <FaTikTok style={{ color: "#FF0000", fontSize: 26 }} />,
+    //   icon: <FaTiktok style={{ color: "#000000", fontSize: 26 }} />,
     //   params: { tiktokContent: "" },
     //   purpose:t('automationFlow.purposes.socialMedia'),
     // },
