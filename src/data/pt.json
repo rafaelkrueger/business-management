@@ -22,6 +22,42 @@
     "female": "Feminino",
     "noOpinion": "Prefiro não dizer"
   },
+  "plans": {
+    "subtitle": "Comece com um teste gratuito ou desbloqueie recursos poderosos",
+    "recommended": "RECOMENDADO",
+    "help": "Precisa de ajuda para escolher?",
+    "contact": "Fale conosco",
+    "trial": {
+      "title": "Teste Gratuito",
+      "duration": "14 dias",
+      "button": "Iniciar Teste Gratuito",
+      "feature1": "IA Vertical",
+      "feature2": "Criação de E-mails e Landing Pages com IA",
+      "feature3": "Assistente de IA com uso limitado",
+      "feature4": "Não requer cartão de crédito"
+    },
+    "elite": {
+      "title": "Plano Elite",
+      "duration": "por mês",
+      "button": "Assinar Elite",
+      "feature1": "Todos os recursos do teste gratuito",
+      "feature2": "Acesso total ao assistente de IA",
+      "feature3": "Automação de marketing com fluxos inteligentes",
+      "feature4": "Suporte prioritário e onboarding personalizado",
+      "feature5": "Análises de SEO e redes sociais"
+    },
+    "pro": {
+      "title": "Plano Pro",
+      "duration": "por mês",
+      "button": "Escolher Pro",
+      "feature1": "Todos os recursos do plano Elite",
+      "feature2": "IA Vertical personalizada para sua empresa",
+      "feature3": "Ferramentas avançadas de colaboração em equipe",
+      "feature4": "Suporte dedicado 24/7",
+      "feature5": "Automação ilimitada e CRM inteligente",
+      "feature6": "Acesso completo à API + integrações externas"
+    }
+  },
   "error": {
     "authError": "Erro de autenticação",
     "emailRequired": "Email é obrigatório",
@@ -722,6 +758,11 @@
     "linkedinPostContent": "Conteúdo do post no LinkedIn",
     "facebookPostContent": "Conteúdo do post no Facebook",
     "linkedinPostImageUrl": "URL da imagem do post",
+    "configureWhatsappChatbot": "Configure Chatbot",
+    "chatbotName": "Nome Chatbot",
+    "expectedStartMessage": "Mennsagem inicial aguardada (Ex: Olá, Oi, vazio)",
+    "waitWhatsappTitle": "Aguardar mensagem do whatsapp",
+    "expectedReply": "Resposta aguardada (Ex: Sim, eu quero!)",
     "triggers": {
       "title": "Como você deseja iniciar essa automação",
       "eventTrigger": "Quando um evento acontecer",
@@ -737,6 +778,7 @@
   "block": {
     "email": "Email",
     "wait": "Aguarde...",
+    "waitWhatsapp": "Aguardar whatsapp...",
     "twitter": "Twitter",
     "linkedin": "Linkedin",
     "facebook": "Facebook",
@@ -745,7 +787,7 @@
     "chatgpt": "Texto IA",
     "chatgptImage": "Imagem IA",
     "formTrigger": "Formulário Preenchido",
-    "whatsappTrigger": "Received Message"
+    "whatsappTrigger": "Chatbot"
   },
   "platform": {
     "whatsapp": "WhatsApp",

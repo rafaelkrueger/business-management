@@ -17,6 +17,42 @@
     "alreadyAccount": "Already have an account?",
     "forgotPassword": "Forgot your password?"
   },
+"plans": {
+  "subtitle": "Start with a free trial or unlock powerful features",
+  "recommended": "RECOMMENDED",
+  "help": "Need help choosing?",
+  "contact": "Contact us",
+  "trial": {
+    "title": "Free Trial",
+    "duration": "14 days",
+    "button": "Start Free Trial",
+    "feature1": "Vertical AI",
+    "feature2": "AI Emails and Landing Pages",
+    "feature3": "Limited AI Assistant",
+    "feature4": "No credit card required"
+  },
+  "elite": {
+    "title": "Elite Plan",
+    "duration": "per month",
+    "button": "Go Elite",
+    "feature1": "All features from 'Free Trial'",
+    "feature2": "Full access to AI assistant",
+    "feature3": "Marketing automation workflows",
+    "feature4": "Priority support & onboarding",
+    "feature5": "SEO & social media analytics"
+  },
+  "pro": {
+    "title": "Pro Plan",
+    "duration": "per month",
+    "button": "Choose Pro",
+    "feature1": "All features from free 'Elite Plan'",
+    "feature2": "Custom-trained Vertical AI for your business",
+    "feature3": "Advanced team collaboration tools",
+    "feature4": "24/7 dedicated support",
+    "feature5": "Unlimited automations & smart CRM",
+    "feature6": "Full API access + external integrations"
+  }
+  },
   "gender": {
     "male": "Male",
     "female": "Female",
@@ -716,6 +752,11 @@
     "linkedinPostContent": "LinkedIn post content",
     "facebookPostContent": "Facebook post content",
     "linkedinPostImageUrl": "Post image URL",
+    "configureWhatsappChatbot": "Configure Chatbot",
+    "chatbotName": "Chatbot Name",
+    "expectedStartMessage": "Expected Start Message (Ex: Hello, Hi, empty)",
+    "waitWhatsappTitle": "Wait whatsapp message",
+    "expectedReply": "Expected repply (Ex: Yes, I would like!)",
     "triggers": {
       "title": "How you wish to start this automation",
       "eventTrigger": "When an event happen",
@@ -731,6 +772,7 @@
   "block": {
     "email": "Email",
     "wait": "Wait...",
+    "waitWhatsapp": "Wait whatsapp...",
     "twitter": "Twitter",
     "linkedin": "Linkedin",
     "facebook": "Facebook",
@@ -739,7 +781,7 @@
     "chatgpt": "AI Text",
     "formTrigger": "Form Submitted",
     "chatgptImage": "AI Image",
-    "whatsappTrigger": "Mensagem Recebida"
+    "whatsappTrigger": "Chatbot"
   },
   "platform": {
     "whatsapp": "WhatsApp",

@@ -25,14 +25,24 @@ import { useNavigate } from 'react-router-dom';
 import i18n from '../../i18next.js';
 import { jwtDecode } from 'jwt-decode';
 import { useSnackbar } from 'notistack';
+import { Avatar, Box, Button, Card, CardActions, CardContent, Chip, Divider, Fade, Modal, Paper, styled, Typography, useTheme, Zoom } from '@mui/material';
+import { Check, CheckCircle, Shield } from 'lucide-react';
+import { Apartment, Business, FreeBreakfast, RocketLaunch, Whatshot } from '@mui/icons-material';
+import PaymentSelectionModal from './payments/index.tsx';
+import { useTranslation } from 'react-i18next';
 
 const clientId = "1008084799451-u095ep4ps18ej4l28i571osdssnomtmp.apps.googleusercontent.com";
+
 
 const Auth = () => {
   const [isNewUser, setIsNewUser] = useState(true);
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useLocalStorage('accessToken', null);
   const { enqueueSnackbar } = useSnackbar();
+  const [showPlanSelection, setShowPlanSelection] = useState(false);
+  const [pendingToken, setPendingToken] = useState(null);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
   const navigate = useNavigate();
   const [user, setUser] = useState({
     name: '',
@@ -126,7 +136,12 @@ const Auth = () => {
     action(user)
       .then((res) => {
         if (res.data) {
-          setToken(res.data);
+          if(action === AllInOneService.create){
+            setPendingToken(res.data);
+            setShowPlanSelection(true);
+            return;
+          }
+          setToken(res.data)
         }
         setLoading(false);
       })
@@ -185,14 +200,181 @@ const Auth = () => {
   };
 
   useEffect(() => {
-    if (token) navigate('/dashboard');
-  }, [token, navigate]);
+    if (token && !showPlanSelection) {
+      navigate('/dashboard');
+    }
+  }, [token, navigate, showPlanSelection]);
 
   const errorStyle = { color: '#E57373', fontSize: '12px', marginTop: '-15px', marginBottom: '12px' };
+
+  const StyledCard = styled(Card)(({ theme, highlighted }) => ({
+    transition: 'transform 0.3s, box-shadow 0.3s',
+    transform: highlighted ? 'scale(1.05)' : 'scale(1)',
+    border: highlighted ? `2px solid ${theme.palette.primary.main}` : '2px solid #ccc',
+    backgroundColor: '#fff',
+    minHeight: '460px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    '&:hover': {
+      transform: 'scale(1.03)',
+      boxShadow: theme.shadows[10],
+    },
+  }));
+
+  const PlanSelectionModal = () => {
+    const theme = useTheme();
+    const { t } = useTranslation();
+
+    const handleSelectPlan = async (plan) => {
+      if (plan === 'trial') {
+        await setToken(pendingToken);
+        navigate('/dashboard');
+      } else {
+        setSelectedPlan(plan);
+        setPaymentModalOpen(true);
+      }
+    };
+
+
+    const plans = [
+      {
+        id: 'trial',
+        title: t('plans.trial.title'),
+        price: '0',
+        duration: t('plans.trial.duration'),
+        features: ['plans.trial.feature1', 'plans.trial.feature2', 'plans.trial.feature3'],
+        icon: <FreeBreakfast sx={{ fontSize: 50, color: '#578acd' }} />,
+        buttonText: t('plans.trial.button'),
+        recommended: false,
+      },
+      {
+        id: 'elite',
+        title: t('plans.elite.title'),
+        price: '10',
+        duration: t('plans.elite.duration'),
+        features: ['plans.elite.feature1', 'plans.elite.feature2', 'plans.elite.feature3', 'plans.elite.feature4'],
+        icon: <RocketLaunch sx={{ fontSize: 50, color: '#578acd' }} />,
+        buttonText: t('plans.elite.button'),
+        recommended: true,
+      },
+      {
+        id: 'pro',
+        title: t('plans.pro.title'),
+        price: '39',
+        duration: t('plans.pro.duration'),
+        features: [
+          'plans.pro.feature1',
+          'plans.pro.feature2',
+          'plans.pro.feature3',
+          'plans.pro.feature4',
+          'plans.pro.feature5',
+        ],
+        icon: <Apartment sx={{ fontSize: 50, color: '#578acd' }} />,
+        buttonText: t('plans.pro.button'),
+        recommended: false,
+      },
+    ];
+
+    return (
+      <Modal open sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(5px)', backgroundColor: 'rgba(0,0,0,0.3)' }}>
+        <Fade in>
+          <Paper sx={{ width: '90%', maxWidth: '1000px', p: 4, borderRadius: 4, bgcolor: '#fff' }} elevation={12}>
+            <Box textAlign="center" mb={4}>
+              <Typography variant="h6" fontWeight="bold" color="#202020">
+                {t('plans.subtitle')}
+              </Typography>
+            </Box>
+
+            <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: 'repeat(3, 1fr)' }} gap={4} mt={4}>
+              {plans.map((plan, index) => (
+                <Zoom in key={plan.id} style={{ transitionDelay: `${index * 100}ms` }}>
+                  <StyledCard highlighted={plan.recommended}>
+                    <CardContent sx={{ position: 'relative' }}>
+                      {plan.recommended && (
+                        <Chip
+                          label={t('plans.recommended')}
+                          color="primary"
+                          size="small"
+                          sx={{ position: 'absolute', top: -17, right: 90, fontWeight: 'bold', zIndex: 1000000000 }}
+                        />
+                      )}
+
+                      <Box display="flex" justifyContent="center" mb={2}>
+                        {plan.icon}
+                      </Box>
+
+                      <Typography variant="h5" fontWeight={700} gutterBottom textAlign="center">
+                        {plan.title}
+                      </Typography>
+
+                      <Typography variant="h4" fontWeight={800} textAlign="center">
+                        ${plan.price}
+                        <Typography variant="body2" component="span" color="text.secondary">
+                          /{plan.duration}
+                        </Typography>
+                      </Typography>
+
+                      <Divider sx={{ my: 2 }} />
+
+                      <Box textAlign="left" px={1}>
+                        {plan.features.map((featureKey, i) => (
+                          <Box key={i} display="flex" alignItems="center" mb={1}>
+                            <Check size={20} color={plan.recommended ? '#578acd' : '#252525'} style={{ marginRight: '10px' }} />
+                            <Typography variant="body2">{t(featureKey)}</Typography>
+                          </Box>
+                        ))}
+                      </Box>
+                    </CardContent>
+
+                    <CardActions sx={{ justifyContent: 'center', pb: 3 }}>
+                      <Button
+                        variant={plan.recommended ? 'contained' : 'outlined'}
+                        color="primary"
+                        size="large"
+                        fullWidth
+                        onClick={() => handleSelectPlan(plan.id)}
+                        sx={{
+                          py: 1.5,
+                          fontWeight: 700,
+                          fontSize: '1rem',
+                          borderRadius: 2,
+                          textTransform: 'none',
+                        }}
+                      >
+                        {plan.buttonText}
+                      </Button>
+                    </CardActions>
+                  </StyledCard>
+                </Zoom>
+              ))}
+            </Box>
+
+            <Box mt={5} textAlign="center">
+              <Typography variant="body2" color="text.secondary">
+                {t('plans.help')} <Button size="small" sx={{ color: '#578acd' }}>{t('plans.contact')}</Button>
+              </Typography>
+            </Box>
+          </Paper>
+        </Fade>
+      </Modal>
+    );
+  };
+
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <AuthContainer>
+      {showPlanSelection && <PlanSelectionModal />}
+      {paymentModalOpen && (
+        <PaymentSelectionModal
+          open={paymentModalOpen}
+          onClose={() => setPaymentModalOpen(false)}
+          selectedPlan={selectedPlan}
+          pendingToken={pendingToken}
+          userEmail={user.email}
+        />
+      )}
         <AuthContainerLeft>
           <AuthContainerElements>
             <AuthContainerLeftLogo src={LogoImage} alt="Logo" />

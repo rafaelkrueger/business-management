@@ -69,6 +69,8 @@ import WhatsappService from "../../../../services/whatsapp.service.ts";
 import ProgressService from "../../../../services/progress.service.ts";
 import PickLeadsForm from "../../create-leads/pick-leads-form/index.tsx";
 import { IoIosClose } from "react-icons/io";
+import WhatsappChatbotModal from "../../whatsapp-chatbot/index.tsx";
+import WaitWhatsappModal from "../../whatsapp-chatbot/wait-whatsapp/index.tsx";
 
 const CustomNode = ({ data, id, activeCompany }) => {
   const { t } = useTranslation();
@@ -125,6 +127,8 @@ const CustomNode = ({ data, id, activeCompany }) => {
       case "whatsapp":
         return <FaWhatsapp size={iconSize} color="#25D366" />;
       case "whatsappTrigger":
+        return <FaWhatsapp size={iconSize} color="#25D366" />;
+      case "waitWhatsapp":
         return <FaWhatsapp size={iconSize} color="#25D366" />;
       case "chatgpt":
         return <FaBrain size={iconSize} color="purple" />;
@@ -377,7 +381,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
   const [loadingTwitterCheck, setLoadingTwitterCheck] = useState(true);
   const [facebookPages, setFacebookPages] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
-  const [startType, setStartType] = useState<'scheduled' | 'event'>(editingAutomation?.type ?? 'scheduled');
+  const [startType, setStartType] = useState<'scheduled' | 'event'>(editingAutomation?.type ?? 'event');
   const [selectedEvent, setSelectedEvent] = useState<string>("lead.captured");
   const [blockProgress, setBlockProgress] = useState<Record<string, 'loading' | 'done' | 'error'>>({});
   const nodeTypes = useMemo(() => ({
@@ -397,13 +401,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { recipients: "", subject: "", template: {} },
       purpose:t('automationFlow.purposes.triggers'),
     },
-    // WHATSAPP_TRIGGER: {
-    //   type: "whatsappTrigger",
-    //   name: t("block.whatsappTrigger"),
-    //   icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 26 }} />,
-    //   params: { expectedWhatsappContent: "" },
-    //   purpose:t('automationFlow.purposes.triggers'),
-    // },
+    WHATSAPP_TRIGGER: {
+      type: "whatsappTrigger",
+      name: t("block.whatsappTrigger"),
+      icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 26 }} />,
+      params: { expectedWhatsappContent: "" },
+      purpose:t('automationFlow.purposes.triggers'),
+    },
     CHATGPT: {
       type: "chatgpt",
       name: t("block.chatgpt"),
@@ -434,7 +438,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { waitTime: 1, waitHours: 0 },
       purpose:t('automationFlow.purposes.action'),
     },
-
+    WAIT_WHATSAPP: {
+      type: "waitWhatsapp",
+      name: t("block.waitWhatsapp"),
+      icon: <FaClock style={{ color: "#000", fontSize: 26 }} />,
+      params: { waitTime: 1, waitHours: 0 },
+      purpose:t('automationFlow.purposes.action'),
+    },
     EMAIL: {
       type: "email",
       name: t("block.email"),
@@ -1290,32 +1300,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         />
       )}
           {editingNode.data.blockType === "whatsappTrigger" && (
-            <Box sx={{ padding: '24px', width: '500px' }}>
-              {/* <Typography variant="h6" gutterBottom>
-                Mensagem esperada do WhatsApp
-              </Typography>
-              <TextField
-                label="Conteúdo esperado (ex: oi, quero saber mais, etc)"
-                placeholder="Digite a mensagem que o cliente deve enviar..."
-                fullWidth
-                value={editingNode.data.params.expectedWhatsappContent || ""}
-                onChange={(e) =>
-                  setEditingNode({
-                    ...editingNode,
-                    data: {
-                      ...editingNode.data,
-                      params: {
-                        ...editingNode.data.params,
-                        expectedWhatsappContent: e.target.value,
-                      },
-                    },
-                  })
-                }
-              />
-              <Typography variant="body2" sx={{ color: 'gray', mt: 1 }}>
-                Essa mensagem será usada como gatilho para continuar a automação. Ela deve combinar exatamente com o que o cliente vai escrever no WhatsApp.
-              </Typography> */}
-            </Box>
+            <WhatsappChatbotModal
+              editingNode={editingNode}
+              setEditingNode={setEditingNode}
+              open={!!openEditDialog}
+              onClose={() => setOpenEditDialog("")}
+              onSave={handleSaveEdit}
+            />
           )}
           {editingNode.data.blockType === "linkedin" && (
             <Box>
@@ -1925,6 +1916,15 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                     },
                   })
                 }
+              />
+            )}
+            {editingNode.data.blockType === "waitWhatsapp" && (
+              <WaitWhatsappModal
+                editingNode={editingNode}
+                setEditingNode={setEditingNode}
+                open={!!openEditDialog}
+                onClose={() => setOpenEditDialog("")}
+                onSave={handleSaveEdit}
               />
             )}
             {editingNode.data.blockType === "whatsapp" && (
