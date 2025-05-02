@@ -808,7 +808,7 @@
   },
   "emailConfiguration": {
     "success": "Email account configured successfully!",
-    "error": "Error configuring email account.",
+    "error": "Error configuring email account. Please check your credentials",
     "title": "Configure Email Account",
     "tooltip": "You can find this information in your email provider's documentation or in your account control panel.",
     "emailLabel": "Email Address",

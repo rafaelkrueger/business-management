@@ -26,8 +26,10 @@ const EmailConfigurationModal = ({ open, onClose, onSave, activeCompany }) => {
   const [port, setPort] = useState("");
   const [password, setPassword] = useState("");
   const [useSSL, setUseSSL] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
+    setLoading(true)
     const config = {
       email,
       smtpServer,
@@ -45,6 +47,8 @@ const EmailConfigurationModal = ({ open, onClose, onSave, activeCompany }) => {
     } catch (error) {
       console.error("Erro ao criar conta de e-mail:", error);
       enqueueSnackbar(t("emailConfiguration.error"), { variant: "error" });
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -111,7 +115,7 @@ const EmailConfigurationModal = ({ open, onClose, onSave, activeCompany }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>{t("form.cancel")}</Button>
-        <Button variant="contained" onClick={handleSave}>
+        <Button disabled={loading} variant="contained" onClick={handleSave}>
           {t("form.save")}
         </Button>
       </DialogActions>

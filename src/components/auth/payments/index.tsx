@@ -36,7 +36,7 @@ import { useNavigate } from 'react-router-dom';
 import AllInOneService from '../../../services/all-in-one.service.ts';
 
 //prod -- pk_live_51QqzL1HHmMmwGxT0IJuUJkhH1k05x1MexJpqUXeptyugtbaEQ9PBEtG595YHzRwFes5l56oyPmKKCrSvfxw7um7s00x6IVEyuM
-const stripePromise = loadStripe('pk_live_51QqzL1HHmMmwGxT0IJuUJkhH1k05x1MexJpqUXeptyugtbaEQ9PBEtG595YHzRwFes5l56oyPmKKCrSvfxw7um7s00x6IVEyuM');
+const stripePromise = loadStripe('pk_test_51QqzL1HHmMmwGxT0sksZdZko2S4drJ1Iwazt43WMSWVGgoaGWT8UeqENQzzPBdN5nn3H0u7m6Ui2FENH79LE2J8I00kGgsbz56');
 
 const PaymentCard = styled(Paper)(({ theme, selected }) => ({
   padding: theme.spacing(3),
@@ -84,8 +84,8 @@ const CheckoutForm = ({ selectedPlan, onClose, pendingToken, userEmail }) => {
     //elite -- price_1RJabGHHmMmwGxT0GMKaq7x6
     //pro -- price_1RJdbbHHmMmwGxT0L86AWVjz
     const priceId = selectedPlan === 'elite'
-      ? 'price_1RJabGHHmMmwGxT0GMKaq7x6'
-      : 'price_1RJdbbHHmMmwGxT0L86AWVjz';
+      ? 'price_1RJac2HHmMmwGxT01IAIsZqw'
+      : 'price_1RJdXYHHmMmwGxT0dW8Wk7Hs';
 
     try {
       const cardElement = elements.getElement(CardElement);

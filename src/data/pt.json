@@ -814,7 +814,7 @@
   },
   "emailConfiguration": {
     "success": "Conta de e-mail configurada com sucesso!",
-    "error": "Erro ao configurar a conta de e-mail.",
+    "error": "Erro ao configurar a conta de e-mail. Verifique suas credenciais",
     "title": "Configurar Conta de E-mail",
     "tooltip": "Você pode encontrar essas informações na documentação do seu provedor de e-mail ou no painel de controle da sua conta.",
     "emailLabel": "Endereço de E-mail",

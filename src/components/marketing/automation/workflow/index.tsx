@@ -848,7 +848,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       name: flowName,
       nodes: getSortedNodes(nodes, edges),
       edges,
-      nextExecutionTime: format(new Date(nextExecutionTime), "yyyy-MM-dd'T'HH:mm"),
+      nextExecutionTime: new Date(nextExecutionTime).toISOString(),
       repeatInterval,
       activeCompany: activeCompany,
       startType: startType,

@@ -277,9 +277,9 @@ const Auth = () => {
     ];
 
     return (
-      <Modal open sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(5px)', backgroundColor: 'rgba(0,0,0,0.3)' }}>
+      <Modal open sx={{ overflowY:'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(5px)', backgroundColor: 'rgba(0,0,0,0.3)' }}>
         <Fade in>
-          <Paper sx={{ width: '90%', maxWidth: '1000px', p: 4, borderRadius: 4, bgcolor: '#fff' }} elevation={12}>
+          <Paper sx={{ width: '90%', maxWidth: '1000px', p: 4, borderRadius: 4, bgcolor: '#fff', marginTop: { xs: '600px', sm: '0px' } }} elevation={12}>
             <Box textAlign="center" mb={4}>
               <Typography variant="h6" fontWeight="bold" color="#202020">
                 {t('plans.subtitle')}

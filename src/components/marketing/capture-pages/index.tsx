@@ -1048,6 +1048,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   const [forms, setForms] = useState<FormLead[]>([]);
   const [loadingForms, setLoadingForms] = useState(true);
   const [creatingLandingpage, setCreatingLandingPage] = useState(false);
+  const [saveButton, setSaveButton] = useState(false);
   const [selectedLandingPage, setSelectedLandingPage] = useState<LandingPage | null>(null);
 
   const fetchLandingPages = () => {
@@ -1133,9 +1134,12 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   };
 
   const saveLandingPageAsActive = async () => {
-    setCreatingLandingPage(true)
+    if(!saveButton){
+      enqueueSnackbar('Click on save button before creating a new landing page', {variant:'info'})
+      setSaveButton(true)
+    }
     const iframe = document.getElementById("previewIframe") as HTMLIFrameElement;
-
+    console.log(iframe.contentDocument)
     if (iframe?.contentWindow && iframe.contentDocument) {
       const saveButton = iframe.contentDocument.getElementById("saveButton") as HTMLButtonElement;
       if (saveButton) {
