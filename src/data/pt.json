@@ -1,5 +1,7 @@
 {
   "auth": {
+    "title":"Marketing Inteligente",
+    "knowMore":"Saiba Mais",
     "email": "Email",
     "emailPlaceholder": "Digite seu email",
     "password": "Senha",
@@ -15,7 +17,56 @@
     "select": "Selecione",
     "noAccount": "Ainda não possui uma conta?",
     "alreadyAccount": "Já possui uma conta?",
-    "forgotPassword": "Esqueceu sua senha?"
+    "forgotPassword": "Esqueceu sua senha?",
+    "welcome": "Bem Vindo!",
+    "orContinueWith": "Ou continue com",
+    "securityNote":"Seus dados são criptografados e protegidos"
+  },
+  "features": {
+    "aiAssistant": {
+      "title": "IA de Marketing",
+      "desc": "Treine uma IA exclusiva com os dados da sua empresa e gere páginas, automações e conteúdo sob demanda."
+    },
+    "socialAutomation": {
+      "title": "Automação de Redes Sociais",
+      "desc": "WhatsApp, Facebook, Instagram, Twitter, LinkedIn e YouTube Agende e publique posts automatizados com IA."
+    },
+    "landingPages": {
+      "title": "Crie de Landing Pages com IA",
+      "desc": "Ensine a IA sobre sua empresa e crie landing pages responsivas e otimizadas com apenas um comando."
+    },
+    "crm": {
+      "title": "CRM Inteligente & Segmentação",
+      "desc": "Gerencie leads, crie segmentos personalizados e receba sugestões automáticas da IA para ações."
+    },
+    "salesFunnels": {
+      "title": "Funis de Vendas Visuais com IA",
+      "desc": "Visualize cada etapa da jornada do cliente em tempo real e deixe a IA sugerir otimizações."
+    },
+    "analytics": {
+      "title": "Analytics com Inteligência Artificial",
+      "desc": "Monitore o desempenho das campanhas com análises preditivas, atribuição multicanal e sugestões de melhoria automatizadas."
+    }
+  },
+  "checkout": {
+    "credit_card": "Cartão de Crédito",
+    "credit_card_description": "Pague com Visa, Mastercard ou outros cartões",
+    "popular": "Popular",
+    "select_payment_method": "Selecione o Método de Pagamento",
+    "secure_payment": "Pagamentos 100% seguros e criptografados",
+    "need_help": "Precisa de ajuda?",
+    "contact_support": "Fale com o suporte",
+    "processing": "Processando...",
+    "pay_amount": "Pagar {{amount}}",
+    "payment_failed": "Pagamento falhou: {{error}}",
+    "elite_plan": "Plano Elite",
+    "pro_plan": "Plano Pro",
+    "elite_price": "R$10/mês",
+    "pro_price": "R$39/mês"
+  },
+  "payment": {
+    "success": "Pagamento realizado com sucesso!",
+    "error": "Ocorreu um erro no pagamento"
   },
   "gender": {
     "male": "Masculino",

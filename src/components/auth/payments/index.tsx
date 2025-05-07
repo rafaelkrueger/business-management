@@ -30,6 +30,7 @@ import {
 } from '@stripe/react-stripe-js';
 import PaymentService from '../../../services/payments-stripe.service.ts';
 import i18n from '../../../i18next.js';
+import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { useLocalStorage } from '../../../hooks/useLocalStorage.ts';
 import { useNavigate } from 'react-router-dom';
@@ -63,6 +64,7 @@ const CheckoutForm = ({ selectedPlan, onClose, pendingToken, userEmail }) => {
   const [userId, setUserId] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (token) {
@@ -74,7 +76,6 @@ const CheckoutForm = ({ selectedPlan, onClose, pendingToken, userEmail }) => {
     AllInOneService.getUserByToken(pendingToken)
       .then((res) => setUserId(res.data._id))
   },[pendingToken])
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -112,14 +113,14 @@ const CheckoutForm = ({ selectedPlan, onClose, pendingToken, userEmail }) => {
       });
 
       if (result.error) {
-        alert('Payment failed: ' + result.error.message);
+        alert(t('checkout.payment_failed', { error: result.error.message }));
       } else if (result.paymentIntent.status === 'succeeded') {
-        enqueueSnackbar(i18n.t('payment.success'), { variant: 'success' });
+        enqueueSnackbar(t('payment.success'), { variant: 'success' });
         setToken(pendingToken);
       }
     } catch (err) {
       console.error(err);
-      enqueueSnackbar(i18n.t('payment.error'), { variant: 'error' });
+      enqueueSnackbar(t('payment.error'), { variant: 'error' });
     } finally {
       setIsProcessing(false);
     }
@@ -148,30 +149,35 @@ const CheckoutForm = ({ selectedPlan, onClose, pendingToken, userEmail }) => {
         disabled={!stripe || isProcessing}
         sx={{ mt: 4 }}
       >
-        {isProcessing ? 'Processing...' : `Pay ${selectedPlan === 'elite' ? '$10' : '$39'}`}
+        {isProcessing ? t('checkout.processing') : t('checkout.pay_amount', { amount: selectedPlan === 'elite' ? '$10' : '$39' })}
       </Button>
     </form>
   );
 };
 
-
 const PaymentSelectionModal = ({ open, onClose, selectedPlan, pendingToken, userEmail }) => {
   const theme = useTheme();
   const [selectedMethod, setSelectedMethod] = useState(null);
+  const { t } = useTranslation();
 
   const paymentMethods = [
     {
       id: 'credit_card',
-      name: 'Credit Card',
+      name: t('checkout.credit_card'),
       icon: <CreditCard sx={{ fontSize: 32 }} />,
-      description: 'Pay with Visa, Mastercard or other cards',
+      description: t('checkout.credit_card_description'),
       popular: true
     }
   ];
 
   const planPrices = {
-    elite: '$10/month',
-    pro: '$39/month'
+    elite: t('checkout.elite_price'),
+    pro: t('checkout.pro_price')
+  };
+
+  const planNames = {
+    elite: t('checkout.elite_plan'),
+    pro: t('checkout.pro_plan')
   };
 
   return (
@@ -207,13 +213,13 @@ const PaymentSelectionModal = ({ open, onClose, selectedPlan, pendingToken, user
               <Close />
             </Button>
             <Typography variant="h6" textAlign="left" sx={{ opacity: 0.9, mt: 1 }}>
-              {selectedPlan === 'elite' ? 'Elite Plan' : 'Pro Plan'} • {planPrices[selectedPlan]}
+              {planNames[selectedPlan]} • {planPrices[selectedPlan]}
             </Typography>
           </Box>
 
           <Box sx={{ p: 4 }}>
             <Typography variant="h6" fontWeight="600" mb={2}>
-              Select Payment Method
+              {t('checkout.select_payment_method')}
             </Typography>
 
             <Stack spacing={3} mt={3}>
@@ -236,7 +242,7 @@ const PaymentSelectionModal = ({ open, onClose, selectedPlan, pendingToken, user
                         </Typography>
                         {method.popular && (
                           <Chip
-                            label="Popular"
+                            label={t('checkout.popular')}
                             size="small"
                             color="primary"
                             sx={{ ml: 2, fontSize: '0.7rem' }}
@@ -264,7 +270,7 @@ const PaymentSelectionModal = ({ open, onClose, selectedPlan, pendingToken, user
             <Box mt={3} textAlign="center">
               <Typography variant="caption" color="text.secondary">
                 <Lock sx={{ fontSize: 14, verticalAlign: 'middle', mr: 0.5 }} />
-                Payments are 100% secure and encrypted
+                {t('checkout.secure_payment')}
               </Typography>
             </Box>
           </Box>
@@ -272,7 +278,7 @@ const PaymentSelectionModal = ({ open, onClose, selectedPlan, pendingToken, user
           <Divider />
           <Box sx={{ p: 2, textAlign: 'center' }}>
             <Typography variant="body2" color="text.secondary">
-              Need help? <Button size="small" sx={{ color: theme.palette.primary.main }}>Contact support</Button>
+              {t('checkout.need_help')} <Button size="small" sx={{ color: theme.palette.primary.main }}>{t('checkout.contact_support')}</Button>
             </Typography>
           </Box>
         </Paper>

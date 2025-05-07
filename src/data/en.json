@@ -1,5 +1,7 @@
 {
   "auth": {
+    "title":"Intelligent Marketing",
+    "knowMore":"Know More",
     "email": "Email",
     "emailPlaceholder": "Enter your email",
     "password": "Password",
@@ -15,7 +17,56 @@
     "select": "Select",
     "noAccount": "Don't have an account?",
     "alreadyAccount": "Already have an account?",
-    "forgotPassword": "Forgot your password?"
+    "forgotPassword": "Forgot your password?",
+    "welcome": "Welcome!",
+    "orContinueWith": "Or continue with",
+    "securityNote":"Your data is encrypted and protected with security"
+  },
+  "features": {
+    "aiAssistant": {
+      "title": "Trainable AI Assistant",
+      "desc": "Train a custom AI with your company’s data and generate pages, campaigns, content, and automations on demand."
+    },
+    "socialAutomation": {
+      "title": "Social Media Automation",
+      "desc": "Automatically schedule and publish posts on WhatsApp, Facebook, Instagram, Twitter, LinkedIn, and YouTube with contextual intelligence."
+    },
+    "landingPages": {
+      "title": "AI-Generated Landing Pages",
+      "desc": "Create responsive, optimized landing pages with a single text command. The AI handles layout, content, and calls-to-action."
+    },
+    "crm": {
+      "title": "Smart CRM & Segmentation",
+      "desc": "Manage leads, create custom segments, and receive AI-powered suggestions for personalized engagement."
+    },
+    "salesFunnels": {
+      "title": "AI-Powered Sales Funnels",
+      "desc": "Visualize every step of the customer journey in real time and let AI suggest improvements to boost conversions."
+    },
+    "analytics": {
+      "title": "AI Marketing Analytics",
+      "desc": "Track campaign performance with predictive analytics, multichannel attribution, and automatic improvement suggestions."
+    }
+  },
+  "checkout": {
+    "credit_card": "Credit Card",
+    "credit_card_description": "Pay with Visa, Mastercard or other cards",
+    "popular": "Popular",
+    "select_payment_method": "Select Payment Method",
+    "secure_payment": "Payments are 100% secure and encrypted",
+    "need_help": "Need help?",
+    "contact_support": "Contact support",
+    "processing": "Processing...",
+    "pay_amount": "Pay {{amount}}",
+    "payment_failed": "Payment failed: {{error}}",
+    "elite_plan": "Elite Plan",
+    "pro_plan": "Pro Plan",
+    "elite_price": "$10/month",
+    "pro_price": "$39/month"
+  },
+  "payment": {
+    "success": "Payment successful!",
+    "error": "Payment error occurred"
   },
 "plans": {
   "subtitle": "Start with a free trial or unlock powerful features",

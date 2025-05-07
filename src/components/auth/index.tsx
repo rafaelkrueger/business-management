@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import {
   AuthContainer,
-  AuthContainerElements,
-  AuthContainerLeft,
-  AuthContainerLeftButton,
-  AuthContainerLeftForgotPassword,
-  AuthContainerLeftForgotSignup,
-  AuthContainerLeftInput,
-  AuthContainerLeftLabelInput,
-  AuthContainerLeftLabelPassword,
-  AuthContainerLeftPassword,
-  AuthContainerRight,
-  AuthContainerRightImage,
-  AuthContainerLeftForgotSignupLink,
-  AuthContainerLeftLogo,
-  LoadingIcon,
+  AuthFormContainer,
+  AuthLeftPanel,
+  AuthRightPanel,
+  AuthLogo,
+  AuthTitle,
+  AuthSubtitle,
+  AuthForm,
+  AuthInput,
+  AuthLabel,
+  AuthButton,
+  AuthDivider,
+  AuthFooterLink,
+  AuthImage,
+  AuthFeatureList,
+  AuthFeatureItem,
+  AuthPlanCard,
+  AuthPlanTitle,
+  AuthPlanPrice,
+  AuthPlanFeatures,
+  AuthErrorText
 } from './styles.ts';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import AuthCoverImage from '../../images/auth-cover.png';
@@ -25,14 +31,50 @@ import { useNavigate } from 'react-router-dom';
 import i18n from '../../i18next.js';
 import { jwtDecode } from 'jwt-decode';
 import { useSnackbar } from 'notistack';
-import { Avatar, Box, Button, Card, CardActions, CardContent, Chip, Divider, Fade, Modal, Paper, styled, Typography, useTheme, Zoom } from '@mui/material';
-import { Check, CheckCircle, Shield } from 'lucide-react';
-import { Apartment, Business, FreeBreakfast, RocketLaunch, Whatshot } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Divider,
+  Fade,
+  Modal,
+  Paper,
+  Typography,
+  useTheme,
+  Avatar,
+  IconButton,
+  Grid
+} from '@mui/material';
+import {
+  Check,
+  ArrowRight,
+  Shield,
+  Lock,
+  Mail,
+  User,
+  Smartphone,
+  Key,
+  ChevronLeft
+} from 'lucide-react';
+import {
+  RocketLaunch,
+  Star,
+  Diamond,
+  CheckCircle,
+  Analytics,
+  AutoGraph,
+  Campaign,
+  Contacts,
+  SmartToy,
+  Timeline
+} from '@mui/icons-material';
 import PaymentSelectionModal from './payments/index.tsx';
 import { useTranslation } from 'react-i18next';
+import SpaceAnimation from '../space-animation/index.tsx';
 
 const clientId = "1008084799451-u095ep4ps18ej4l28i571osdssnomtmp.apps.googleusercontent.com";
-
 
 const Auth = () => {
   const [isNewUser, setIsNewUser] = useState(true);
@@ -44,6 +86,9 @@ const Auth = () => {
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const { t } = useTranslation();
+
   const [user, setUser] = useState({
     name: '',
     email: '',
@@ -53,7 +98,6 @@ const Auth = () => {
     birthDate: '',
   });
 
-  // Estado para erros de validação dos campos
   const [fieldErrors, setFieldErrors] = useState({
     name: '',
     email: '',
@@ -61,14 +105,7 @@ const Auth = () => {
     password: '',
   });
 
-  // Expressões regulares para validação de e-mail e celular
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  const genderOptions = [
-    i18n.t('gender.male'),
-    i18n.t('gender.female'),
-    i18n.t('gender.noOpinion'),
-  ];
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
@@ -82,7 +119,6 @@ const Auth = () => {
     }
   }, [token, navigate]);
 
-  // Função para validar cada campo individualmente
   const validateField = (field, value) => {
     switch (field) {
       case 'email':
@@ -91,6 +127,7 @@ const Auth = () => {
         return '';
       case 'password':
         if (!value) return i18n.t('error.passwordRequired');
+        if (value.length < 6) return i18n.t('error.passwordMinLength');
         return '';
       case 'name':
         if (!value.trim()) return i18n.t('error.nameRequired');
@@ -103,14 +140,12 @@ const Auth = () => {
     }
   };
 
-  // Atualiza o estado do usuário e valida o campo em tempo real
   const handleChange = (field, value) => {
     setUser(prev => ({ ...prev, [field]: value }));
     const errorMsg = validateField(field, value);
     setFieldErrors(prev => ({ ...prev, [field]: errorMsg }));
   };
 
-  // Validação final do formulário ao submeter
   const validateForm = () => {
     const newErrors = {};
     if (isNewUser) {
@@ -205,27 +240,7 @@ const Auth = () => {
     }
   }, [token, navigate, showPlanSelection]);
 
-  const errorStyle = { color: '#E57373', fontSize: '12px', marginTop: '-15px', marginBottom: '12px' };
-
-  const StyledCard = styled(Card)(({ theme, highlighted }) => ({
-    transition: 'transform 0.3s, box-shadow 0.3s',
-    transform: highlighted ? 'scale(1.05)' : 'scale(1)',
-    border: highlighted ? `2px solid ${theme.palette.primary.main}` : '2px solid #ccc',
-    backgroundColor: '#fff',
-    minHeight: '460px',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    '&:hover': {
-      transform: 'scale(1.03)',
-      boxShadow: theme.shadows[10],
-    },
-  }));
-
   const PlanSelectionModal = () => {
-    const theme = useTheme();
-    const { t } = useTranslation();
-
     const handleSelectPlan = async (plan) => {
       if (plan === 'trial') {
         await setToken(pendingToken);
@@ -236,7 +251,6 @@ const Auth = () => {
       }
     };
 
-
     const plans = [
       {
         id: 'trial',
@@ -244,7 +258,7 @@ const Auth = () => {
         price: '0',
         duration: t('plans.trial.duration'),
         features: ['plans.trial.feature1', 'plans.trial.feature2', 'plans.trial.feature3'],
-        icon: <FreeBreakfast sx={{ fontSize: 50, color: '#578acd' }} />,
+        icon: <Star sx={{ fontSize: 40, color: theme.palette.primary.main }} />,
         buttonText: t('plans.trial.button'),
         recommended: false,
       },
@@ -254,7 +268,7 @@ const Auth = () => {
         price: '10',
         duration: t('plans.elite.duration'),
         features: ['plans.elite.feature1', 'plans.elite.feature2', 'plans.elite.feature3', 'plans.elite.feature4'],
-        icon: <RocketLaunch sx={{ fontSize: 50, color: '#578acd' }} />,
+        icon: <RocketLaunch sx={{ fontSize: 40, color: '#fff' }} />,
         buttonText: t('plans.elite.button'),
         recommended: true,
       },
@@ -267,93 +281,107 @@ const Auth = () => {
           'plans.pro.feature1',
           'plans.pro.feature2',
           'plans.pro.feature3',
-          'plans.pro.feature4',
           'plans.pro.feature5',
         ],
-        icon: <Apartment sx={{ fontSize: 50, color: '#578acd' }} />,
+        icon: <Diamond sx={{ fontSize: 40, color: theme.palette.primary.main }} />,
         buttonText: t('plans.pro.button'),
         recommended: false,
       },
     ];
 
     return (
-      <Modal open sx={{ overflowY:'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(5px)', backgroundColor: 'rgba(0,0,0,0.3)' }}>
+      <Modal open sx={{
+        overflowY: 'auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backdropFilter: 'blur(5px)',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+      }}>
         <Fade in>
-          <Paper sx={{ width: '90%', maxWidth: '1000px', p: 4, borderRadius: 4, bgcolor: '#fff', marginTop: { xs: '600px', sm: '0px' } }} elevation={12}>
-            <Box textAlign="center" mb={4}>
-              <Typography variant="h6" fontWeight="bold" color="#202020">
-                {t('plans.subtitle')}
-              </Typography>
-            </Box>
-
-            <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: 'repeat(3, 1fr)' }} gap={4} mt={4}>
+          <Paper sx={{
+            width: '90%',
+            maxWidth: '1200px',
+            p: 4,
+            borderRadius: 4,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            height:'80%'
+          }}>
+            <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: 'repeat(3, 1fr)' }} gap={4}>
               {plans.map((plan, index) => (
-                <Zoom in key={plan.id} style={{ transitionDelay: `${index * 100}ms` }}>
-                  <StyledCard highlighted={plan.recommended}>
-                    <CardContent sx={{ position: 'relative' }}>
-                      {plan.recommended && (
-                        <Chip
-                          label={t('plans.recommended')}
-                          color="primary"
-                          size="small"
-                          sx={{ position: 'absolute', top: -17, right: 90, fontWeight: 'bold', zIndex: 1000000000 }}
-                        />
-                      )}
-
-                      <Box display="flex" justifyContent="center" mb={2}>
-                        {plan.icon}
-                      </Box>
-
-                      <Typography variant="h5" fontWeight={700} gutterBottom textAlign="center">
-                        {plan.title}
-                      </Typography>
-
-                      <Typography variant="h4" fontWeight={800} textAlign="center">
-                        ${plan.price}
-                        <Typography variant="body2" component="span" color="text.secondary">
-                          /{plan.duration}
-                        </Typography>
-                      </Typography>
-
-                      <Divider sx={{ my: 2 }} />
-
-                      <Box textAlign="left" px={1}>
-                        {plan.features.map((featureKey, i) => (
-                          <Box key={i} display="flex" alignItems="center" mb={1}>
-                            <Check size={20} color={plan.recommended ? '#578acd' : '#252525'} style={{ marginRight: '10px' }} />
-                            <Typography variant="body2">{t(featureKey)}</Typography>
-                          </Box>
-                        ))}
-                      </Box>
-                    </CardContent>
-
-                    <CardActions sx={{ justifyContent: 'center', pb: 3 }}>
-                      <Button
-                        variant={plan.recommended ? 'contained' : 'outlined'}
+                <Fade in key={plan.id} style={{ transitionDelay: `${index * 100}ms` }}>
+                  <AuthPlanCard style={{height: '90%'}} highlighted={plan.recommended}>
+                    {plan.recommended && (
+                      <Chip
+                        label={t('plans.recommended')}
                         color="primary"
-                        size="large"
-                        fullWidth
-                        onClick={() => handleSelectPlan(plan.id)}
                         sx={{
-                          py: 1.5,
-                          fontWeight: 700,
-                          fontSize: '1rem',
-                          borderRadius: 2,
-                          textTransform: 'none',
+                          position: 'absolute',
+                          top: -15,
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          fontWeight: 'bold',
+                          fontSize: '0.75rem'
                         }}
-                      >
-                        {plan.buttonText}
-                      </Button>
-                    </CardActions>
-                  </StyledCard>
-                </Zoom>
-              ))}
-            </Box>
+                      />
+                    )}
 
-            <Box mt={5} textAlign="center">
-              <Typography variant="body2" color="text.secondary">
-                {t('plans.help')} <Button size="small" sx={{ color: '#578acd' }}>{t('plans.contact')}</Button>
-              </Typography>
+                    <Box display="flex" justifyContent="center" mb={3}>
+                      <Avatar sx={{
+                        bgcolor: plan.recommended ? theme.palette.primary.main : 'action.selected',
+                        width: 80,
+                        height: 80
+                      }}>
+                        {plan.icon}
+                      </Avatar>
+                    </Box>
+
+                    <AuthPlanTitle>{plan.title}</AuthPlanTitle>
+
+                    <AuthPlanPrice>
+                      ${plan.price}
+                      <span>/{plan.duration}</span>
+                    </AuthPlanPrice>
+
+                    <Divider sx={{ my: 3 }} />
+
+                    <AuthPlanFeatures>
+                      {plan.features.map((featureKey, i) => (
+                        <Box key={i} display="flex" alignItems="center" mb={2}>
+                          <CheckCircle sx={{
+                            fontSize: 20,
+                            color: plan.recommended ? 'primary.main' : 'text.secondary',
+                            mr: 1.5
+                          }} />
+                          <Typography variant="body2" color="text.primary">
+                            {t(featureKey)}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </AuthPlanFeatures>
+
+                    <Button
+                      fullWidth
+                      variant={plan.recommended ? 'contained' : 'outlined'}
+                      color="primary"
+                      size="large"
+                      endIcon={<ArrowRight size={20} />}
+                      onClick={() => handleSelectPlan(plan.id)}
+                      sx={{
+                        mt: 3,
+                        py: 1.5,
+                        borderRadius: 2,
+                        fontWeight: 600,
+                        textTransform: 'none',
+                        fontSize: '1rem',
+                      }}
+                    >
+                      {plan.buttonText}
+                    </Button>
+                  </AuthPlanCard>
+                </Fade>
+              ))}
             </Box>
           </Paper>
         </Fade>
@@ -361,214 +389,481 @@ const Auth = () => {
     );
   };
 
+  const cardData = [
+    {
+      icon: <SmartToy sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+      title: t('features.aiAssistant.title'),
+      desc: t('features.aiAssistant.desc')
+    },
+    {
+      icon: <AutoGraph sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+      title: t('features.socialAutomation.title'),
+      desc: t('features.socialAutomation.desc')
+    },
+    {
+      icon: <Campaign sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+      title: t('features.landingPages.title'),
+      desc: t('features.landingPages.desc')
+    },
+    {
+      icon: <Contacts sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+      title: t('features.crm.title'),
+      desc: t('features.crm.desc')
+    },
+    {
+      icon: <Timeline sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+      title: t('features.salesFunnels.title'),
+      desc: t('features.salesFunnels.desc')
+    },
+  ];
+
+
+  const videoMap = [
+    'https://www.youtube.com/embed/sMshKg8-tO0', // IA de Marketing
+    'https://www.youtube.com/embed/SgU_o7GEyzM', // Automação
+    'https://www.youtube.com/embed/sMshKg8-tO0', // Landing Pages
+    'https://www.youtube.com/embed/acTuztqvNxI', // CRM
+    'https://www.youtube.com/embed/yWdXxEZAE3Q', // Funis
+  ];
+  const [videoIndex, setVideoIndex] = useState(0);
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <AuthContainer>
-      {showPlanSelection && <PlanSelectionModal />}
-      {paymentModalOpen && (
-        <PaymentSelectionModal
-          open={paymentModalOpen}
-          onClose={() => setPaymentModalOpen(false)}
-          selectedPlan={selectedPlan}
-          pendingToken={pendingToken}
-          userEmail={user.email}
-        />
-      )}
-        <AuthContainerLeft>
-          <AuthContainerElements>
-            <AuthContainerLeftLogo src={LogoImage} alt="Logo" />
+        {showPlanSelection && <PlanSelectionModal />}
+        {paymentModalOpen && (
+          <PaymentSelectionModal
+            open={paymentModalOpen}
+            onClose={() => setPaymentModalOpen(false)}
+            selectedPlan={selectedPlan}
+            pendingToken={pendingToken}
+            userEmail={user.email}
+          />
+        )}
 
-            {/* Seção de login */}
-            {!isNewUser ? (
-              <>
-                <div style={{ marginTop: '40px' }}>
-                  <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={() =>
-                      enqueueSnackbar(i18n.t('error.authError'), { variant: "error" })
-                    }
-                  />
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginBlock: '20px',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <hr
-                    style={{
-                      flex: 1,
-                      border: 'none',
-                      borderTop: '1px solid #ccc',
-                    }}
-                  />
-                  <span
-                    style={{
-                      margin: '0 10px',
-                      fontWeight: 'bold',
-                      color: '#333',
-                    }}
-                  >
-                    Or
-                  </span>
-                  <hr
-                    style={{
-                      flex: 1,
-                      border: 'none',
-                      borderTop: '1px solid #ccc',
-                    }}
-                  />
-                </div>
-                <AuthContainerLeftLabelInput>{i18n.t('auth.email')}</AuthContainerLeftLabelInput>
-                <AuthContainerLeftInput
+        <AuthLeftPanel>
+          <AuthFormContainer style={{marginTop:'0px'}}>
+        <Box
+          sx={{
+            position: 'relative',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            mb: 2,
+            flexDirection: 'column'
+          }}
+        >
+        </Box>
+            <Box sx={{ mb: 3 }}>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => enqueueSnackbar(i18n.t('error.authError'), { variant: "error" })}
+                shape="pill"
+                theme="filled_blue"
+                size="large"
+                width="100%"
+              />
+            </Box>
+
+            <AuthDivider>
+              <span>{t('auth.orContinueWith')}</span>
+            </AuthDivider>
+
+            <AuthForm>
+              {isNewUser && (
+                <>
+                  <Box sx={{ mb: 2 }}>
+                    <AuthLabel>
+                      <User size={18} style={{ marginRight: 8 }} />
+                      {t('auth.name')}
+                    </AuthLabel>
+                    <AuthInput
+                      placeholder={t('auth.namePlaceholder')}
+                      onChange={(e) => handleChange('name', e.target.value)}
+                      error={!!fieldErrors.name}
+                    />
+                    {fieldErrors.name && (
+                      <AuthErrorText>
+                        {fieldErrors.name}
+                      </AuthErrorText>
+                    )}
+                  </Box>
+
+                  <Box sx={{ mb: 2 }}>
+                    <AuthLabel>
+                      <Smartphone size={18} style={{ marginRight: 8 }} />
+                      {t('auth.cellphone')}
+                    </AuthLabel>
+                    <AuthInput
+                      placeholder={t('auth.cellphonePlaceholder')}
+                      onChange={(e) => handleChange('cellphone', e.target.value)}
+                      error={!!fieldErrors.cellphone}
+                    />
+                    {fieldErrors.cellphone && (
+                      <AuthErrorText>
+                        {fieldErrors.cellphone}
+                      </AuthErrorText>
+                    )}
+                  </Box>
+                </>
+              )}
+
+              <Box sx={{ mb: 2 }}>
+                <AuthLabel>
+                  <Mail size={18} style={{ marginRight: 8 }} />
+                  {t('auth.email')}
+                </AuthLabel>
+                <AuthInput
                   type="email"
+                  placeholder={t('auth.emailPlaceholder')}
                   onKeyDown={handleKeyDown}
                   onChange={(e) => handleChange('email', e.target.value)}
+                  error={!!fieldErrors.email}
                 />
                 {fieldErrors.email && (
-                  <div style={errorStyle}>
+                  <AuthErrorText>
                     {fieldErrors.email}
-                  </div>
+                  </AuthErrorText>
                 )}
+              </Box>
 
-                <AuthContainerLeftLabelPassword>
-                  {i18n.t('auth.password')}
-                </AuthContainerLeftLabelPassword>
-                <AuthContainerLeftPassword
+              <Box sx={{ mb: 3 }}>
+                <AuthLabel>
+                  <Lock size={18} style={{ marginRight: 8 }} />
+                  {t('auth.password')}
+                </AuthLabel>
+                <AuthInput
                   type="password"
+                  placeholder={t('auth.passwordPlaceholder')}
                   onChange={(e) => handleChange('password', e.target.value)}
+                  error={!!fieldErrors.password}
                 />
                 {fieldErrors.password && (
-                  <div style={errorStyle}>
+                  <AuthErrorText>
                     {fieldErrors.password}
-                  </div>
+                  </AuthErrorText>
                 )}
+              </Box>
 
-                <AuthContainerLeftButton onClick={handleAuth} disabled={loading}>
-                  {loading ? <LoadingIcon className="loading-icon" /> : i18n.t('auth.signIn')}
-                </AuthContainerLeftButton>
+              <AuthButton
+                onClick={handleAuth}
+                disabled={loading}
+                fullWidth
+                variant="contained"
+                size="large"
+                endIcon={!loading && <ArrowRight size={20} />}
+              >
+                {loading ? t('auth.loading') :
+                  isNewUser ? t('auth.signUp') : t('auth.signIn')}
+              </AuthButton>
 
-                <AuthContainerLeftForgotSignup>
-                  {i18n.t('auth.noAccount')}{' '}
-                  <AuthContainerLeftForgotSignupLink onClick={() => setIsNewUser(true)}>
-                    {i18n.t('auth.signUp')}
-                  </AuthContainerLeftForgotSignupLink>
-                </AuthContainerLeftForgotSignup>
-
-                <AuthContainerLeftForgotPassword>
-                  {i18n.t('auth.forgotPassword')}
-                </AuthContainerLeftForgotPassword>
-              </>
-            ) : (
-              // Seção de cadastro
-              <>
-                <div style={{ marginTop: '20px' }}>
-                  <GoogleLogin
-                    onSuccess={handleGoogleSuccess}
-                    onError={() =>
-                      enqueueSnackbar(i18n.t('error.authError'), { variant: "error" })
-                    }
-                  />
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    marginBlock: '20px',
-                    justifyContent: 'center',
-                  }}
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                mt: 3
+              }}>
+                <Typography variant="body2" color="text.secondary">
+                  {isNewUser ? t('auth.alreadyAccount') : t('auth.noAccount')}
+                </Typography>
+                <AuthFooterLink
+                  onClick={() => setIsNewUser(!isNewUser)}
+                  sx={{ ml: 1 }}
                 >
-                  <hr
-                    style={{
-                      flex: 1,
-                      border: 'none',
-                      borderTop: '1px solid #ccc',
-                    }}
-                  />
-                  <span
-                    style={{
-                      margin: '0 10px',
-                      fontWeight: 'bold',
-                      color: '#333',
-                    }}
-                  >
-                    Or
-                  </span>
-                  <hr
-                    style={{
-                      flex: 1,
-                      border: 'none',
-                      borderTop: '1px solid #ccc',
-                    }}
-                  />
-                </div>
-                <AuthContainerLeftLabelInput>{i18n.t('auth.name')}</AuthContainerLeftLabelInput>
-                <AuthContainerLeftInput
-                  onChange={(e) => handleChange('name', e.target.value)}
-                />
-                {fieldErrors.name && (
-                  <div style={errorStyle}>
-                    {fieldErrors.name}
-                  </div>
-                )}
+                  {isNewUser ? t('auth.signIn') : t('auth.signUp')}
+                </AuthFooterLink>
+              </Box>
 
-                <AuthContainerLeftLabelInput>
-                  {i18n.t('auth.cellphone')}
-                </AuthContainerLeftLabelInput>
-                <AuthContainerLeftInput
-                  onChange={(e) => handleChange('cellphone', e.target.value)}
-                />
-                {fieldErrors.cellphone && (
-                  <div style={errorStyle}>
-                    {fieldErrors.cellphone}
-                  </div>
-                )}
+              {!isNewUser && (
+                <Box sx={{ textAlign: 'center', mt: 2 }}>
+                  <AuthFooterLink>
+                    {t('auth.forgotPassword')}
+                  </AuthFooterLink>
+                </Box>
+              )}
+            </AuthForm>
 
-                <AuthContainerLeftLabelInput>{i18n.t('auth.email')}</AuthContainerLeftLabelInput>
-                <AuthContainerLeftInput
-                  type="email"
-                  onChange={(e) => handleChange('email', e.target.value)}
-                />
-                {fieldErrors.email && (
-                  <div style={errorStyle}>
-                    {fieldErrors.email}
-                  </div>
-                )}
+            <Box sx={{
+              mt: 4,
+              p: 3,
+              borderRadius: 2,
+              bgcolor: 'background.default',
+              border: `1px solid ${theme.palette.divider}`,
+              display:'flex',
+              flexDirection:'space-between'
+            }}>
+              <span style={{ marginRight: 35, verticalAlign: 'middle', fontSize:'13pt' }}>🔐</span>
+              <Typography variant="body2" color="text.secondary" textAlign="center" style={{marginTop:'2.5px'}}>
+                {t('auth.securityNote')}
+              </Typography>
+            </Box>
+          </AuthFormContainer>
+        </AuthLeftPanel>
+        <Box
+  sx={{
+    background: `linear-gradient(135deg, #578acd 0%, #38639a 100%)`,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    p: '0 40px',
+    position: 'relative',
+    overflow: 'hidden',
+    borderLeft: '1px solid rgba(255,255,255,0.1)',
+    maxWidth:'45%'
+  }}
+>
+  <SpaceAnimation />
 
-                <AuthContainerLeftLabelPassword>
-                  {i18n.t('auth.password')}
-                </AuthContainerLeftLabelPassword>
-                <AuthContainerLeftPassword
-                  type="password"
-                  onChange={(e) => handleChange('password', e.target.value)}
-                />
-                {fieldErrors.password && (
-                  <div style={errorStyle}>
-                    {fieldErrors.password}
-                  </div>
-                )}
+  <Box
+    sx={{
+      position: 'relative',
+      zIndex: 1,
+      maxWidth: 900,
+      width: '100%',
+      textAlign: 'center',
+      color: 'common.white',
+      mx: 'auto',
+      mt:-10,
+    }}
+  >
 
-                <AuthContainerLeftButton onClick={handleAuth} disabled={loading}>
-                  {loading ? <LoadingIcon className="loading-icon" /> : i18n.t('auth.signUp')}
-                </AuthContainerLeftButton>
+    <Box sx={{
+      textAlign: 'center',
+      mt:12.5,
+      mb: 4,
+      position: 'relative',
+      '&::before, &::after': {
+        content: '""',
+        position: 'absolute',
+        top: '50%',
+        width: '30%',
+        height: '1px',
+        background: '#ffffff',
+      },
+      '&::before': {
+        left: 0
+      },
+      '&::after': {
+        right: 0
+      }
+    }}>
+      <Typography
+        variant="h5"
+        component="h3"
+        sx={{
+          display: 'inline-block',
+          px: 3,
+          fontWeight: 600,
+          background: '#ffffff',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          position: 'relative',
+          zIndex: 1
+        }}
+      >
+        {t('auth.title')}
+      </Typography>
+    </Box>
 
-                <AuthContainerLeftForgotSignup>
-                  {i18n.t('auth.alreadyAccount')}{' '}
-                  <AuthContainerLeftForgotSignupLink onClick={() => setIsNewUser(false)}>
-                    {i18n.t('auth.signIn')}
-                  </AuthContainerLeftForgotSignupLink>
-                </AuthContainerLeftForgotSignup>
-              </>
-            )}
-          </AuthContainerElements>
-        </AuthContainerLeft>
+    {/* Vídeo demonstrativo dinâmico */}
+    <Box sx={{ mb: 6, borderRadius: 2, overflow: 'hidden', height: 300, mt:4 }}>
+      <Box
+        component="iframe"
+        src={`${videoMap[videoIndex]}?autoplay=1&mute=1&rel=0`}
+        width="100%"
+        height="100%"
+        frameBorder="0"
+        allow="autoplay; encrypted-media"
+        allowFullScreen
+      />
+    </Box>
 
-        <AuthContainerRight>
-          <AuthContainerRightImage src={AuthCoverImage} alt="Auth Cover" />
-        </AuthContainerRight>
+    <Box sx={{
+  mb: 6,
+  position: 'relative',
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: '40px',
+    background: 'linear-gradient(90deg, rgba(10, 37, 64, 0) 0%, #0A2540 100%)',
+    pointerEvents: 'none',
+    zIndex: 2
+  }
+}}>
+<Box sx={{
+  display: 'flex',
+  overflowX: 'auto',
+  scrollbarWidth: 'none',
+  '&::-webkit-scrollbar': { display: 'none' },
+  pb: 3,
+  gap: 3,
+  px: 2,
+  position: 'relative',
+  mt:-2
+}}>
+  {cardData.map((item, idx) => (
+    <Box
+      key={idx}
+      onClick={() => setVideoIndex(idx)}
+      sx={{
+        minWidth: 260,
+        mt:1,
+        maxWidth: 260,
+        cursor: 'pointer',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        p: 3,
+        backgroundColor: videoIndex === idx
+          ? 'rgba(87,138,205,0.15)'
+          : 'rgba(255,255,255,0.03)',
+        borderRadius: 2,
+        height: '100%',
+        textAlign: 'left',
+        transition: 'all 0.3s ease',
+        flexShrink: 0,
+        border: videoIndex === idx
+          ? '1px solid #fff'
+          : '1px solid rgba(255,255,255,0.08)',
+        boxShadow: videoIndex === idx
+          ? '0 0 20px rgba(87,138,205,0.4)'
+          : '0 2px 8px rgba(0,0,0,0.15)',
+        position: 'relative',
+        overflow: 'hidden',
+        '&:hover': {
+          backgroundColor: 'rgba(87,138,205,0.1)',
+          transform: 'translateY(-4px)',
+          borderColor: '#fff'
+        },
+        // Efeito de onda quando selecionado
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          background: '#fff',
+          transition: 'height 0.3s ease'
+        }
+      }}
+    >
+      {/* Indicador de "Now Playing" */}
+      {videoIndex === idx && (
+        <Box sx={{
+          position: 'absolute',
+          top: 12,
+          right: 12,
+          display: 'flex',
+          alignItems: 'center',
+          backgroundColor: 'rgba(0,0,0,0.7)',
+          borderRadius: '12px',
+          px: 1.5,
+          py: 0.5
+        }}>
+          <Box sx={{
+            width: 8,
+            height: 8,
+            backgroundColor: '#578acd',
+            borderRadius: '50%',
+            mr: 1,
+            animation: 'pulse 1.5s infinite'
+          }} />
+          <Typography variant="caption" sx={{
+            color: '#fff',
+            fontWeight: 500,
+            fontSize: '0.7rem',
+            letterSpacing: '0.5px'
+          }}>
+            PLAYING
+          </Typography>
+        </Box>
+      )}
+
+      {/* Ícone com efeito de play */}
+      <Box sx={{
+        mb: 2,
+        position: 'relative',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 40,
+          height: 40,
+          backgroundColor: videoIndex === idx
+            ? 'rgba(87,138,205,0.3)'
+            : 'transparent',
+          borderRadius: '50%',
+          transition: 'all 0.3s ease'
+        }
+      }}>
+        {React.cloneElement(item.icon, {
+          sx: {
+            fontSize: '2rem',
+            color: videoIndex === idx ? '#ffffff' : 'rgba(255,255,255,0.6)',
+            position: 'relative',
+            zIndex: 1
+          }
+        })}
+      </Box>
+
+      <Typography
+        variant="subtitle1"
+        fontWeight="600"
+        sx={{
+          color: videoIndex === idx ? '#fff' : 'rgba(255,255,255,0.9)',
+          mb: 1,
+          transition: 'color 0.3s ease'
+        }}
+      >
+        {item.title}
+      </Typography>
+      <Typography
+        variant="body2"
+        sx={{
+          opacity: 0.85,
+          color: 'rgba(255,255,255,0.7)',
+          lineHeight: 1.5,
+          fontSize: '0.9rem'
+        }}
+      >
+        {item.desc}
+      </Typography>
+
+      {/* Barra de progresso sutil */}
+      {videoIndex === idx && (
+        <Box sx={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '2px',
+          background: 'rgba(255,255,255,0.1)',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            height: '100%',
+            width: '30%', // Simula progresso do vídeo
+            background: '#578acd',
+            animation: 'progress 5s linear infinite'
+          }
+        }} />
+      )}
+    </Box>
+  ))}
+</Box>
+
+</Box>
+  </Box>
+</Box>
+
+
       </AuthContainer>
     </GoogleOAuthProvider>
   );
