@@ -5,6 +5,10 @@ export const AuthContainer = styled('div')`
   display: flex;
   min-height: 100vh;
   background-color: #f5f5f5;
+  @media (max-width: 600px) {
+    display: flex;
+    flex-direction: column;
+  }
 `;
 
 export const AuthLeftPanel = styled('div')`

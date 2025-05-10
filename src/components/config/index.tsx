@@ -243,7 +243,7 @@ const Config: React.FC<{
 
         setCompanyData(initialData);
         setOriginalCompanyData(initialData);
-      });
+      }).catch((err)=>{console.log(err)});
     }
   }, [props.activeCompany]);
 
@@ -723,14 +723,6 @@ const Config: React.FC<{
             </form>
           </CardContent>
         </Card>
-
-        <CreateEnterpriseModal
-          userData={user}
-          isOpen={createCompany}
-          onClose={() => {
-            setCreateCompany(false);
-          }}
-        />
       </Box>
     </>
   );

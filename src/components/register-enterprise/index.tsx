@@ -249,16 +249,6 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
             FormHelperTextProps={{ sx: errorStyle }}
           />
 
-          {/* Documento */}
-          <TextField
-          label={t("createEnterpriseModal.businessType")}
-          name="businessType"
-          value={enterprise.businessType || ""}
-          onChange={handleChange}
-          placeholder={t("createEnterpriseModal.businessTypePlaceholder")}
-          fullWidth
-        />
-
         <TextField
           label={t("createEnterpriseModal.industry")}
           name="industry"

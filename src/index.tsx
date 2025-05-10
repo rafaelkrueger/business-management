@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { SnackbarProvider } from "notistack";
@@ -9,11 +9,34 @@ import 'react-quill/dist/quill.snow.css';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+const ResponsiveSnackbarProvider = ({ children }) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 600);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return (
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{
+        vertical: isMobile ? 'top' : 'bottom',
+        horizontal: isMobile ? 'center' : 'left',
+      }}
+    >
+      {children}
+    </SnackbarProvider>
+  );
+};
+
 root.render(
   <React.StrictMode>
-    <SnackbarProvider maxSnack={3}>
+    <ResponsiveSnackbarProvider>
       <App />
-    </SnackbarProvider>
+    </ResponsiveSnackbarProvider>
   </React.StrictMode>
 );
 

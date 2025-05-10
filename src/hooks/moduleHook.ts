@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 const useActiveModule = (initialModules) => {
   const [dashboardModules, setDashboardModules] = useState(initialModules);
-  const [activeModuleName, setActiveModuleName] = useState('Config');
+  const [activeModuleName, setActiveModuleName] = useState('config');
 
   const activateModule = (moduleName) => {
     const updatedModules = dashboardModules.map((module) => ({

@@ -16,55 +16,6 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import Select from 'react-select';
 import ModulesService from '../../services/modules.service.ts';
 
-// Módulos do dashboard com traduções
-export const dashboardModules = [
-  {
-    module: '',
-    name: 'Home',
-    icon: <IoIosHome size={26} />,
-  },
-  {
-    module: '',
-    name: 'Payments',
-    icon: <FaMoneyBill size={26} />,
-  },
-  {
-    module: '',
-    name: 'Products',
-    icon: <MdSell size={26} />,
-  },
-  {
-    module: '',
-    name: 'Customers',
-    icon: <RiAdminLine size={26} />,
-  },
-  {
-    module: '',
-    name: 'Employees',
-    icon: <TiBusinessCard size={26} />,
-  },
-  {
-    module: '',
-    name: 'Calendar',
-    icon: <FaCalendar size={26} />,
-  },
-  {
-    module: '',
-    name: 'Orders',
-    icon: <CiCreditCard1 size={26} />,
-  },
-  {
-    module: '',
-    name: 'Online Management',
-    icon: <CgWebsite size={26} />,
-  },
-  {
-    module: '',
-    name: 'Marketing',
-    icon: <CampaignIcon size={26} />,
-  },
-
-];
 
 const icons = {
   IoIosHome: IoIosHome,
@@ -100,7 +51,7 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive: any, activateM
           if (res.data.length === 0) {
             props.setHasNoCompanies(true);
           } else {
-            props.activateModule('Config');
+            props.activateModule('config');
           }
         });
     }
@@ -180,7 +131,7 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive: any, activateM
             if (window.outerWidth < 600) {
               props.setIsMenuActive(!props.isMenuActive);
             }
-            props.activateModule('Config');
+            props.activateModule('config');
           }}
           style={{ marginLeft: '6%', marginBottom:'17px', fontSize:'13pt' }}
         >

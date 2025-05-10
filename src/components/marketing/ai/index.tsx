@@ -181,6 +181,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
         </Typography>
 
         </Box>
+    {messages.length === 0 && (
       <Box sx={{
         display: 'flex',
         flexWrap: 'wrap',
@@ -209,7 +210,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
           />
         ))}
       </Box>
-
+    )}
       <Box sx={{ flex: 1, overflowY: 'auto', mb: 3, px: 1 }}>
   {messages.length === 0 ? (
     <Grid container spacing={3}>
@@ -415,6 +416,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
           backgroundColor: theme.palette.background.paper,
           border: `1px solid ${theme.palette.divider}`,
           transition: 'all 0.3s ease',
+          height:'40px',
           '&:hover': {
             borderColor: theme.palette.primary.main,
           },
@@ -426,15 +428,6 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
             border: 'none'
           }
         },
-        startAdornment: (
-          <Box sx={{
-            display: 'flex',
-            mr: 1,
-            color: theme.palette.text.secondary
-          }}>
-            <SmartToy fontSize="small" />
-          </Box>
-        )
       }}
     />
 
@@ -444,18 +437,13 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
       size="large"
       disabled={!inputValue && !selectedCard}
       onClick={handleSend}
-      endIcon={<Send sx={{
-        width:'16px',
-        transition: 'transform 0.3s ease',
-        transform: !inputValue && !selectedCard ? 'scale(1)' : 'scale(1.2)'
-      }} />}
       sx={{
         px: 4,
         borderRadius: 2,
         textTransform: 'none',
         fontWeight: 700,
-        minWidth: '140px',
-        height: '56px',
+        width: '20px',
+        height: '36px',
         background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
         transition: 'all 0.3s ease',
         '&:hover': {
@@ -469,7 +457,11 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
         }
       }}
     >
-      {t("marketing.aiAssistant.send")}
+      <Send sx={{
+        width:'16px',
+        transition: 'transform 0.3s ease',
+        transform: !inputValue && !selectedCard ? 'scale(1)' : 'scale(1.2)'
+      }} />
     </Button>
   </Box>
 </Paper>

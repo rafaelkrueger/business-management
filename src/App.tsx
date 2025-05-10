@@ -3,6 +3,7 @@ import React from 'react'
 import Auth from './components/auth/index.tsx';
 import Dashboard from './pages/Dashboard/dashboard.tsx';
 import 'react-quill/dist/quill.snow.css';
+import MobileAuth from './components/auth/mobile/index.tsx';
 
 
 const App: React.FC = () => {
@@ -12,7 +13,7 @@ const App: React.FC = () => {
         <Routes>
           <Route
           path="/"
-          element={<Auth/>}
+          element={window.outerWidth > 600 ? <Auth/> : <MobileAuth/>}
           />
           </Routes>
           <Routes>

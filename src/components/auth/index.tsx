@@ -73,6 +73,7 @@ import {
 import PaymentSelectionModal from './payments/index.tsx';
 import { useTranslation } from 'react-i18next';
 import SpaceAnimation from '../space-animation/index.tsx';
+import { AnimatedRocket } from './mobile/styles.ts';
 
 const clientId = "1008084799451-u095ep4ps18ej4l28i571osdssnomtmp.apps.googleusercontent.com";
 
@@ -442,7 +443,10 @@ const Auth = () => {
         )}
 
         <AuthLeftPanel>
-          <AuthFormContainer style={{marginTop:'0px'}}>
+            <AuthFormContainer style={{marginTop:'0px'}}>
+          <Box sx={{justifyContent:'center', textAlignLast: 'center', marginTop:'-50px', marginBottom:'25px'}}>
+            <AnimatedRocket />
+          </Box>
         <Box
           sx={{
             position: 'relative',
@@ -573,30 +577,7 @@ const Auth = () => {
                   {isNewUser ? t('auth.signIn') : t('auth.signUp')}
                 </AuthFooterLink>
               </Box>
-
-              {!isNewUser && (
-                <Box sx={{ textAlign: 'center', mt: 2 }}>
-                  <AuthFooterLink>
-                    {t('auth.forgotPassword')}
-                  </AuthFooterLink>
-                </Box>
-              )}
             </AuthForm>
-
-            <Box sx={{
-              mt: 4,
-              p: 3,
-              borderRadius: 2,
-              bgcolor: 'background.default',
-              border: `1px solid ${theme.palette.divider}`,
-              display:'flex',
-              flexDirection:'space-between'
-            }}>
-              <span style={{ marginRight: 35, verticalAlign: 'middle', fontSize:'13pt' }}>🔐</span>
-              <Typography variant="body2" color="text.secondary" textAlign="center" style={{marginTop:'2.5px'}}>
-                {t('auth.securityNote')}
-              </Typography>
-            </Box>
           </AuthFormContainer>
         </AuthLeftPanel>
         <Box
@@ -609,7 +590,7 @@ const Auth = () => {
     position: 'relative',
     overflow: 'hidden',
     borderLeft: '1px solid rgba(255,255,255,0.1)',
-    maxWidth:'45%'
+    maxWidth:{xs:'100%', sm:'54%'}
   }}
 >
   <SpaceAnimation />

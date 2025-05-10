@@ -1,7 +1,7 @@
 {
   "auth": {
     "title":"Marketing Inteligente",
-    "knowMore":"Saiba Mais",
+    "knowMore":"Saiba Mais Sobre Roktune",
     "email": "Email",
     "emailPlaceholder": "Digite seu email",
     "password": "Senha",
@@ -18,9 +18,10 @@
     "noAccount": "Ainda não possui uma conta?",
     "alreadyAccount": "Já possui uma conta?",
     "forgotPassword": "Esqueceu sua senha?",
-    "welcome": "Bem Vindo!",
+    "welcome": "Bem Vindo a Roktune!",
+    "welcomeSubtitle": "Sua IA de Marketing treinada por você",
     "orContinueWith": "Ou continue com",
-    "securityNote":"Seus dados são criptografados e protegidos"
+    "securityNote":"Seus dados são criptografados"
   },
   "features": {
     "aiAssistant": {
@@ -153,6 +154,8 @@
   },
   "config": {
     "title": "Configurações Gerais",
+    "profile":"Perfil",
+    "company":"Empresa",
     "form": {
       "name": "Nome",
       "email": "Email",
@@ -209,7 +212,7 @@
   },
   "notifications": "Notificações",
   "integrations": "Integrações",
-  "configurations": "Configurações",
+  "configurations": "Config",
   "support": "Se você deseja atualizar suas informações ou redefinir sua senha, por favor, entre em contato com o suporte.",
   "notification": {
     "updated-modules": "Módulos atualizados com sucesso!",
@@ -523,6 +526,9 @@
     "conversions": "Conversões",
     "paid_traffic": "Tráfego Pago",
     "tools": "Ferramentas",
+    "visits":"Visitas",
+    "leads":"Leads",
+    "conversion":"Conversões",
     "paid_traffic_desc": "Gerencie e otimize campanhas de anúncios.",
     "ab_tests": "Testes A/B",
     "ab_tests_desc": "Crie e analise variações para otimizar suas conversões.",
@@ -545,7 +551,7 @@
     "ab_testing": "Testes A/B & Otimização de Conversão",
     "ab_testing_desc": "Teste diferentes versões de páginas e campanhas.",
     "landing_pages": "Landing Pages & Captura de Leads",
-    "landing_pages_desc": "Capture e qualifique leads automaticamente.",
+    "landing_pages_desc": "Capture e qualifique leads.",
     "automation": "Automação",
     "ai": "IA de Marketing",
     "aiDescription": "Discuta, pergunte e ensine seu Agente IA de marketing",

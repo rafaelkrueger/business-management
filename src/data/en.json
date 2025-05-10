@@ -1,7 +1,7 @@
 {
   "auth": {
     "title":"Intelligent Marketing",
-    "knowMore":"Know More",
+    "knowMore":"Know More about Roktune",
     "email": "Email",
     "emailPlaceholder": "Enter your email",
     "password": "Password",
@@ -18,9 +18,10 @@
     "noAccount": "Don't have an account?",
     "alreadyAccount": "Already have an account?",
     "forgotPassword": "Forgot your password?",
-    "welcome": "Welcome!",
+    "welcome": "Welcome to Roktune!",
+    "welcomeSubtitle": "Your AI Marketing agent trained by you!",
     "orContinueWith": "Or continue with",
-    "securityNote":"Your data is encrypted and protected with security"
+    "securityNote":"Your data is encrypted"
   },
   "features": {
     "aiAssistant": {
@@ -153,6 +154,8 @@
   },
   "config": {
     "title": "General Settings",
+    "profile":"Profile",
+    "company":"Company",
     "form": {
       "name": "Name",
       "email": "Email",
@@ -202,7 +205,7 @@
   },
   "notifications": "Notifications",
   "integrations": "Integrations",
-  "configurations": "Configurations",
+  "configurations": "Config",
   "support": "If you want to update your information or reset your password, please contact support.",
   "notification": {
     "updated-modules": "Modules updated successfully!",
@@ -515,6 +518,9 @@
     "performance": "Marketing Performance",
     "conversions": "Conversions",
     "paid_traffic": "Paid Traffic",
+    "visits":"Visits",
+    "leads":"Leads",
+    "conversion":"Conversions",
     "paid_traffic_desc": "Manage and optimize ad campaigns.",
     "ab_tests": "A/B Testing",
     "ab_tests_desc": "Create and analyze variations to optimize conversions.",
