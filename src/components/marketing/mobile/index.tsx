@@ -5,18 +5,19 @@ import {
   Grid,
   useTheme,
   Box,
-  Fade,
-  Grow,
-  Zoom,
   styled,
   alpha,
   IconButton,
   Avatar,
-  Divider,
   BottomNavigation,
-  BottomNavigationAction
+  BottomNavigationAction,
+  LinearProgress,
+  Badge,
+  Chip,
+  useMediaQuery,
+  Collapse
 } from "@mui/material";
-import { Line, Bar, Pie } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 import {
   Brain,
   FileText,
@@ -26,13 +27,20 @@ import {
   Home,
   BarChart2,
   Settings,
+  ChevronLeft,
+  Check,
+  Lock,
+  Award,
+  Rocket,
+  Star,
   Bell,
-  ChevronLeft
+  Trophy
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSnackbar } from 'notistack';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import Confetti from 'react-confetti';
 import LeadGeneration from "./create-leads/index.tsx";
 import CapturePages from "../capture-pages/index.tsx";
 import AutomationDashboard from "../automation/index.tsx";
@@ -40,6 +48,7 @@ import SocialMediaDashboard from "../social-media/index.tsx";
 import StyledAIAssistant from "../ai/index.tsx";
 import CRMApp from "../crm/index.tsx";
 import SalesFunnel from "../funnel/index.tsx";
+import UserProgressService from '../../../services/user-progress.service.ts'
 
 const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
   const { t } = useTranslation();
@@ -47,8 +56,219 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const [navValue, setNavValue] = useState('home');
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // Custom styled components
+    useEffect(() => {
+    const fetchProgress = async () => {
+      if (!props.activeCompany) return;
+
+      try {
+
+        const res = await UserProgressService.get(props.activeCompany, 'marketing');
+        if (res?.data?.completedSteps) {
+          setCompletedModules(res.data.completedSteps);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar progresso:', error);
+      }
+    };
+
+    fetchProgress();
+  }, [props.activeCompany]);
+
+const moduleDependencies = {
+  marketingAi: [],
+  createLeads: ['marketingAi'],
+  automation: ['marketingAi', 'createLeads', 'leadsForm'],
+  crm: ['marketingAi', 'createLeads', 'leadsForm' ,'automation'],
+  funnel: ['marketingAi', 'createLeads', 'leadsForm' , 'automation', 'crm']
+};
+
+const isModuleCompleted = (moduleKey) => {
+  const requiredSteps = moduleDependencies[moduleKey] || [];
+  return requiredSteps.every(step => completedModules.includes(step));
+};
+
+const isModuleUnlocked = (moduleKey) => {
+  const requiredSteps = moduleDependencies[moduleKey] || [];
+  return requiredSteps.every(step => completedModules.includes(step));
+};
+
+  const ModuleTimeline = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    margin: theme.spacing(3, 0),
+    padding: theme.spacing(2),
+    background: alpha(theme.palette.background.paper, 0.7),
+    borderRadius: theme.shape.borderRadius,
+    position: 'relative',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: '50%',
+      left: theme.spacing(2),
+      right: theme.spacing(2),
+      height: 2,
+      background: alpha(theme.palette.primary.main, 0.2),
+      zIndex: 0
+    }
+  }));
+
+  const ModuleStep = styled(Box)(({ theme, completed, active }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    zIndex: 1,
+    '& .step-icon': {
+      width: 40,
+      height: 40,
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: completed
+        ? theme.palette.success.main
+        : active
+          ? theme.palette.primary.main
+          : alpha(theme.palette.text.disabled, 0.2),
+      color: completed || active ? '#fff' : theme.palette.text.disabled,
+      marginBottom: theme.spacing(1),
+      transition: 'all 0.3s ease',
+      boxShadow: completed ? `0 0 0 4px ${alpha(theme.palette.success.main, 0.3)}` : 'none'
+    },
+    '& .step-label': {
+      fontSize: 12,
+      fontWeight: completed || active ? 600 : 400,
+      color: completed
+        ? theme.palette.success.main
+        : active
+          ? theme.palette.primary.main
+          : theme.palette.text.disabled
+    }
+  }));
+
+  const [progress, setProgress] = useState(0);
+  const [completedModules, setCompletedModules] = useState([]);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [unlockedBadges, setUnlockedBadges] = useState([]);
+  const [dailyMission, setDailyMission] = useState({
+    task: "📤 Publicar 1 post",
+    completed: false,
+    points: 10
+  });
+  const [userPoints, setUserPoints] = useState(0);
+  const [showMission, setShowMission] = useState(true);
+  const [liveData, setLiveData] = useState({
+    leads: 0,
+    views: 0,
+    conversions: 0
+  });
+
+    const modulesTimeline = [
+      { id: 'marketingAi', label: 'IA', icon: <Brain size={16} /> },
+      { id: 'createLeads', label: 'Landing Page', icon: <Layout size={16} /> },
+      { id: 'automation', label: 'Automação', icon: <Zap size={16} /> },
+      { id: 'crm', label: 'CRM', icon: <Users size={16} /> },
+      { id: 'funnel', label: 'Vendas', icon: <FileText size={16} /> }
+    ];
+
+  useEffect(() => {
+    const totalModules = 5;
+    const calculatedProgress = (completedModules.length / totalModules) * 100;
+    setProgress(calculatedProgress);
+
+    if (calculatedProgress === 100) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 4000);
+      enqueueSnackbar('🎉 Você completou todo o setup!', {
+        variant: 'success',
+        autoHideDuration: 3000
+      });
+      addBadge('rocket');
+    }
+  }, [completedModules]);
+
+  useEffect(() => {
+    if (completedModules.length > 0) {
+      const interval = setInterval(() => {
+        setLiveData(prev => ({
+          leads: prev.leads + (completedModules.includes('createLeads') ? Math.floor(Math.random() * 2) : 0),
+          views: prev.views + (completedModules.includes('createLeads') ? Math.floor(Math.random() * 5) : 0),
+          conversions: prev.conversions + (completedModules.includes('automation') ? Math.floor(Math.random() * 1) : 0)
+        }));
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [completedModules]);
+
+  const addBadge = (badgeType) => {
+    if (!unlockedBadges.includes(badgeType)) {
+      setUnlockedBadges([...unlockedBadges, badgeType]);
+      enqueueSnackbar(
+        <Box display="flex" alignItems="center">
+          <Trophy size={20} style={{ marginRight: 8 }} />
+          <span>Novo emblema desbloqueado!</span>
+        </Box>,
+        { variant: 'success', autoHideDuration: 3000 }
+      );
+    }
+  };
+
+  const handleModuleComplete = (moduleName) => {
+    if (!completedModules.includes(moduleName)) {
+      setCompletedModules([...completedModules, moduleName]);
+
+      let message = '';
+      let emoji = '✅';
+
+      switch(moduleName) {
+        case 'createLeads':
+          message = 'Página ativada! Primeiros leads chegando...';
+          emoji = '📈';
+          addBadge('page-creator');
+          break;
+        case 'automation':
+          message = 'Automação ligada! Seu marketing agora trabalha 24/7';
+          emoji = '⚡';
+          addBadge('automation-pro');
+          break;
+        case 'crm':
+          message = 'CRM pronto! Organize seus leads agora';
+          emoji = '👥';
+          addBadge('crm-expert');
+          break;
+      }
+
+      enqueueSnackbar(
+        <Box display="flex" alignItems="center">
+          <span style={{ marginRight: 8 }}>{emoji}</span>
+          <span>{message}</span>
+        </Box>,
+        { variant: 'success', autoHideDuration: 3000 }
+      );
+
+      // Adiciona pontos
+      setUserPoints(prev => prev + 20);
+    }
+  };
+
+  const completeDailyMission = () => {
+    if (!dailyMission.completed) {
+      setDailyMission({...dailyMission, completed: true});
+      setUserPoints(prev => prev + dailyMission.points);
+      enqueueSnackbar(
+        <Box display="flex" alignItems="center">
+          <span style={{ marginRight: 8 }}>🎯</span>
+          <span>Missão completa! +{dailyMission.points} pontos</span>
+        </Box>,
+        { variant: 'success', autoHideDuration: 3000 }
+      );
+    }
+  };
+
+  // Componentes estilizados
   const GlassCard = styled(Card)(({ theme }) => ({
     background: `linear-gradient(135deg, ${alpha('#578acd', 0.15)} 0%, ${alpha('#fff', 0.2)} 100%)`,
     backdropFilter: 'blur(12px)',
@@ -71,7 +291,23 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
     }
   }));
 
-  // Chart data
+  const ProgressCard = styled(GlassCard)(({ theme }) => ({
+    background: `linear-gradient(135deg, ${alpha('#4caf50', 0.1)} 0%, ${alpha('#fff', 0.2)} 100%)`,
+    position: 'relative',
+    overflow: 'hidden',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      height: '100%',
+      width: `${progress}%`,
+      background: alpha('#4caf50', 0.2),
+      transition: 'width 0.5s ease'
+    }
+  }));
+
+  // Dados para gráficos
   const [lineData] = useState({
     labels: ["Jan", "Fev", "Mar", "Abr", "Mai"],
     datasets: [
@@ -83,17 +319,7 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
         tension: 0.4,
         borderWidth: 2,
         pointBackgroundColor: '#578acd',
-        pointRadius: 4
-      },
-      {
-        label: t("marketing.clicks"),
-        data: [0, 0, 0, 0, 0],
-        borderColor: '#4caf50',
-        backgroundColor: alpha('#4caf50', 0.2),
-        tension: 0.4,
-        borderWidth: 2,
-        pointBackgroundColor: '#4caf50',
-        pointRadius: 4
+        pointRadius: 3
       }
     ]
   });
@@ -103,113 +329,72 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
     datasets: [{
       label: t("marketing.conversions"),
       data: [0, 0, 0, 0, 0],
-      backgroundColor: alpha('#578acd', 0.7),
-      borderRadius: 8
+      backgroundColor: alpha('#4caf50', 0.7),
+      borderRadius: 4
     }]
   });
 
-  const [pieData] = useState({
-    labels: [
-      t("marketing.automation"),
-      t("marketing.landing_pages"),
-      t("marketing.crmTitle"),
-      t("marketing.ai")
-    ],
-    datasets: [{
-      data: [0, 0, 0, 0],
-      backgroundColor: [
-        alpha('#578acd', 0.8),
-        alpha('#4caf50', 0.8),
-        alpha('#ff9800', 0.8),
-        alpha('#9c27b0', 0.8)
-      ],
-      borderWidth: 0
-    }]
-  });
+const cards = [
+  {
+    icon: <Brain size={24} color={"#9C27B0"} />,
+    title: t("marketing.ai"),
+    description: t("marketing.aiDescription"),
+    module: "marketingAi",
+    color: "#9C27B0",
+    completed: isModuleCompleted("marketingAi"),
+    disabled: false
+  },
+  {
+    icon: <Layout size={24} color={theme.palette.error.light} />,
+    title: t("marketing.landing_pages"),
+    description: t("marketing.landing_pages_desc"),
+    module: "createLeads",
+    color: theme.palette.secondary.main,
+    completed: isModuleCompleted("createLeads"),
+    disabled: !isModuleUnlocked("createLeads"),
+  },
+  {
+    icon: <Zap size={24} color={theme.palette.primary.main} />,
+    title: t("marketing.automation"),
+    description: t("marketing.automation_desc"),
+    module: "automation",
+    color: theme.palette.primary.main,
+    completed: isModuleCompleted("automation"),
+    disabled: !isModuleUnlocked("automation"),
+  },
+  {
+    icon: <Users size={24} color={theme.palette.info.light} />,
+    title: t("marketing.crmTitle"),
+    description: t("marketing.crm_desc"),
+    module: "crm",
+    color: theme.palette.info.main,
+    completed: isModuleCompleted("crm"),
+    disabled: !isModuleUnlocked("crm"),
+  },
+  {
+    icon: <FileText size={24} color={theme.palette.warning.light} />,
+    title: t("marketing.funnels"),
+    description: t("marketing.funnels_desc"),
+    module: "funnel",
+    color: theme.palette.warning.main,
+    completed: isModuleCompleted("funnel"),
+    disabled: !isModuleUnlocked("funnel"),
+  },
+];
 
-  // Dashboard cards
-  const cards = [
-    {
-      icon: <Zap size={20} color="#578acd" />,
-      title: t("marketing.automation"),
-      description: t("marketing.automation_desc"),
-      module: "automation",
-      color: '#578acd'
-    },
-    {
-      icon: <Layout size={20} color="#4caf50" />,
-      title: t("marketing.landing_pages"),
-      description: t("marketing.landing_pages_desc"),
-      module: "createLeads",
-      color: '#4caf50',
-    },
-    {
-      icon: <Users size={20} color="#ff9800" />,
-      title: t("marketing.crmTitle"),
-      description: t("marketing.crm_desc"),
-      module: "crm",
-      color: '#ff9800',
-    },
-    {
-      icon: <FileText size={20} color="#f44336" />,
-      title: t("marketing.funnels"),
-      description: t("marketing.funnels_desc"),
-      module: "funnel",
-      color: '#f44336',
-      disabled: true
-    },
-    {
-      icon: <Brain size={20} color="#9c27b0" />,
-      title: t("marketing.ai"),
-      description: t("marketing.aiDescription"),
-      module: "marketingAi",
-      color: "#9c27b0",
-    }
-  ];
-
-  // Stats data
-  const stats = [
-    { value: "0", label: t("marketing.visits"), change: "+0%" },
-    { value: "0", label: t("marketing.leads"), change: "+0%" },
-    { value: "0%", label: t("marketing.conversion"), change: "+0%" }
-  ];
-
+  // Navegação para módulos
   if (module === 'createLeads') {
-    return <CapturePages activeCompany={props.activeCompany} setModule={setModule} />;
+    return <CapturePages activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('createLeads')} />;
   } else if (module === 'automation') {
-    return <AutomationDashboard activeCompany={props.activeCompany} setModule={setModule} />;
+    return <AutomationDashboard activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('automation')} />;
   } else if (module === 'social-media') {
     return <SocialMediaDashboard activeCompany={props.activeCompany} />;
   } else if (module === 'marketingAi') {
-    return <StyledAIAssistant activeCompany={props.activeCompany} setModule={setModule} />;
+    return <StyledAIAssistant activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('marketingAi')} />;
   } else if (module === 'crm') {
-    return <CRMApp activeCompany={props.activeCompany} setModule={setModule} />;
+    return <CRMApp activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('crm')} />;
   } else if (module === 'funnel') {
     return <SalesFunnel />;
-  } else if (module) {
-    return (
-      <Box sx={{ p: 2, height: '100vh' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-          <IconButton onClick={() => setModule('')} sx={{ mr: 1 }}>
-            <ChevronLeft size={24} />
-          </IconButton>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            {cards.find(c => c.module === module)?.title || t("marketing.module")}
-          </Typography>
-        </Box>
-        <Box sx={{
-          bgcolor: 'background.paper',
-          borderRadius: 3,
-          p: 3,
-          textAlign: 'center',
-          boxShadow: theme.shadows[1]
-        }}>
-          <Typography color="text.secondary">
-            {t("marketing.module_content")}
-          </Typography>
-        </Box>
-      </Box>
-    );
   }
 
   return (
@@ -218,32 +403,66 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
       background: 'linear-gradient(180deg, #f8faff 0%, #ffffff 100%)',
       minHeight: '100vh'
     }}>
+      {showConfetti && (
+        <Confetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+          numberOfPieces={isSmallScreen ? 200 : 400}
+        />
+      )}
 
-      {/* Main Content */}
       <Box sx={{ p: 2 }}>
-        {/* Stats Overview */}
+      <ModuleTimeline>
+        {modulesTimeline.map((step, index) => {
+          const isCompleted = completedModules.includes(step.id);
+          const isUnlocked = isModuleUnlocked(step.id);
+
+          return (
+            <ModuleStep
+              key={step.id}
+              completed={isCompleted}
+              active={!isCompleted && isUnlocked}
+            >
+              <Box className="step-icon">
+                {isCompleted ? <Check size={20} /> : isUnlocked ? step.icon : <Lock size={20} />}
+              </Box>
+              <Typography className="step-label">{step.label}</Typography>
+            </ModuleStep>
+          );
+        })}
+      </ModuleTimeline>
+
+
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          {stats.map((stat, index) => (
+          {[
+            { value: liveData.views, label: t("marketing.views"), icon: <BarChart2 size={16} />, color: '#578acd' },
+            { value: liveData.leads, label: t("marketing.leads"), icon: <Users size={16} />, color: '#4caf50' },
+            { value: liveData.conversions, label: t("marketing.conversions"), icon: <Zap size={16} />, color: '#ff9800' }
+          ].map((stat, index) => (
             <Grid item xs={4} key={index}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: 0.2 + (index * 0.1) }}
               >
                 <GlassCard>
-                  <CardContent sx={{ p: 1.5, textAlign: 'center' }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, color: '#578acd' }}>
+                  <CardContent sx={{ p: 1, textAlign: 'center' }}>
+                    <Avatar sx={{
+                      bgcolor: alpha(stat.color, 0.1),
+                      width: 32,
+                      height: 32,
+                      mb: 0.5,
+                      margin: '0 auto',
+                      color: stat.color
+                    }}>
+                      {stat.icon}
+                    </Avatar>
+                    <Typography variant="h6" sx={{ fontWeight: 700 }}>
                       {stat.value}
                     </Typography>
                     <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                       {stat.label}
-                    </Typography>
-                    <Typography variant="caption" sx={{
-                      display: 'block',
-                      color: stat.change.startsWith('+') ? '#4caf50' : '#f44336',
-                      fontWeight: 500
-                    }}>
-                      {stat.change}
                     </Typography>
                   </CardContent>
                 </GlassCard>
@@ -252,7 +471,7 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
           ))}
         </Grid>
 
-        {/* Mini Charts */}
+        {/* Gráficos compactos */}
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid item xs={12} sm={6}>
             <motion.div
@@ -262,10 +481,21 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
             >
               <GlassCard>
                 <CardContent sx={{ p: 1.5 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
-                    {t("marketing.performance")}
-                  </Typography>
-                  <Box sx={{ height: 150 }}>
+                  <Box display="flex" alignItems="center" mb={1}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                      Desempenho
+                    </Typography>
+                    {completedModules.includes('createLeads') && (
+                      <Chip
+                        label="Ao vivo"
+                        size="small"
+                        sx={{ ml: 1 }}
+                        color="success"
+                        avatar={<Avatar sx={{ bgcolor: alpha('#4caf50', 0.2), width: 20, height: 20 }}><Zap size={12} /></Avatar>}
+                      />
+                    )}
+                  </Box>
+                  <Box sx={{ height: 120 }}>
                     <Line
                       data={lineData}
                       options={{
@@ -292,9 +522,9 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
               <GlassCard>
                 <CardContent sx={{ p: 1.5 }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
-                    {t("marketing.conversions")}
+                    Conversões
                   </Typography>
-                  <Box sx={{ height: 150 }}>
+                  <Box sx={{ height: 120 }}>
                     <Bar
                       data={barData}
                       options={{
@@ -314,7 +544,7 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
           </Grid>
         </Grid>
 
-        {/* Tools Section */}
+        {/* Seção de Ferramentas */}
         <Typography variant="subtitle1" sx={{
           fontWeight: 600,
           mb: 1.5,
@@ -336,16 +566,23 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
                 whileTap={{ scale: 0.95 }}
               >
                 {card.disabled ? (
-                  <DisabledCard onClick={() => enqueueSnackbar(t("marketing.module_maintenance"), { variant: 'info' })}>
-                    <CardContent sx={{ p: 2 }}>
-                      <Avatar sx={{
-                        bgcolor: alpha(card.color, 0.1),
-                        width: 36,
-                        height: 36,
-                        mb: 1
-                      }}>
-                        {card.icon}
-                      </Avatar>
+                  <DisabledCard onClick={() => enqueueSnackbar(t("userProgress.blocked"), { variant: 'info' })}>
+                    <CardContent sx={{ p: 1.5 }}>
+                      <Badge
+                        overlap="circular"
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        badgeContent={<Lock size={12} />}
+                      >
+                        <Avatar sx={{
+                          bgcolor: alpha(card.color, 0.1),
+                          width: 36,
+                          height: 36,
+                          mb: 1,
+                          color: card.color
+                        }}>
+                          {card.icon}
+                        </Avatar>
+                      </Badge>
                       <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                         {card.title}
                       </Typography>
@@ -361,16 +598,26 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
                     </CardContent>
                   </DisabledCard>
                 ) : (
-                  <GlassCard onClick={() => setModule(card.module)}>
-                    <CardContent sx={{ p: 2 }}>
-                      <Avatar sx={{
-                        bgcolor: alpha(card.color, 0.1),
-                        width: 36,
-                        height: 36,
-                        mb: 1
-                      }}>
-                        {card.icon}
-                      </Avatar>
+                    <GlassCard
+                      sx={{
+                        borderTop: isModuleCompleted(card.module)
+                          ? `5px solid ${theme.palette.success.main}`
+                          : isModuleUnlocked(card.module)
+                            ? `5px solid ${theme.palette.primary.main}`
+                            : '5px solid transparent'
+                      }}
+                      onClick={() => setModule(card.module)}
+                    >
+                    <CardContent sx={{ p: 1.5 }}>
+                        <Avatar sx={{
+                          bgcolor: alpha(card.color, 0.1),
+                          width: 36,
+                          height: 36,
+                          mb: 1,
+                          color: card.color
+                        }}>
+                          {card.icon}
+                        </Avatar>
                       <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                         {card.title}
                       </Typography>
@@ -383,6 +630,15 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
                       }}>
                         {card.description}
                       </Typography>
+                      {card.completed && (
+                        <Box sx={{
+                          mt: 1,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'flex-end'
+                        }}>
+                        </Box>
+                      )}
                     </CardContent>
                   </GlassCard>
                 )}
@@ -392,6 +648,7 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
         </Grid>
       </Box>
 
+      {/* Bottom Navigation */}
       <BottomNavigation
         value={navValue}
         onChange={(event, newValue) => setNavValue(newValue)}
@@ -412,7 +669,11 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
         />
         <BottomNavigationAction
           value="analytics"
-          icon={<BarChart2 size={20} />}
+          icon={
+            <Badge badgeContent={unlockedBadges.length} color="primary">
+              <BarChart2 size={20} />
+            </Badge>
+          }
           sx={{ minWidth: 0 }}
         />
         <BottomNavigationAction

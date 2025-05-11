@@ -49,6 +49,13 @@
       "desc": "Monitore o desempenho das campanhas com análises preditivas, atribuição multicanal e sugestões de melhoria automatizadas."
     }
   },
+  "userProgress":{
+    "blocked":"Conclua os passos anteriores para acessar."
+  },
+  "mainModules":"Módulo principal",
+  "mainModuleTag":"Principal",
+  "supportModules":"Recursos Extras",
+  "supportModulesTooltip": "Essas ferramentas servem de apoio para suas operações de marketing.",
   "checkout": {
     "credit_card": "Cartão de Crédito",
     "credit_card_description": "Pague com Visa, Mastercard ou outros cartões",
@@ -200,7 +207,7 @@
       "customers": "Clientes",
       "calendar": "Calendário",
       "online": "Gestão Online",
-      "marketing": "Marketing"
+      "marketing": "Marketing & Vendas"
     }
   },
   "messages": {

@@ -38,7 +38,7 @@ import {
   Star
 } from 'lucide-react';
 import { useSnackbar } from 'notistack';
-import { Avatar, Box, Button, Chip, Divider, Fade, Modal, Paper, Typography, useTheme } from '@mui/material';
+import { Avatar, Box, Button, Chip, CircularProgress, Divider, Fade, Modal, Paper, Typography, useTheme } from '@mui/material';
 import { AutoGraph, Campaign, Contacts, RocketLaunch, SmartToy, Timeline } from '@mui/icons-material';
 import AllInOneService from '../../../services/all-in-one.service.ts';
 import i18n from '../../../i18next.js';
@@ -602,13 +602,17 @@ const MobileAuth = () => {
       disabled={loading}
       endIcon={!loading && <ArrowRight size={20} />}
     >
-      {loading ? t('auth.loading') :
-        isNewUser ? (
-          <>
-            <Rocket size={18} style={{ marginRight: 8 }} />
-            {t('auth.signUp')}
-          </>
-        ) : t('auth.signIn')}
+      {loading
+        ? <CircularProgress size={24} color="inherit" />
+        : isNewUser ? (
+            <>
+              <Rocket size={18} style={{ marginRight: 8 }} />
+              {t('auth.signUp')}
+            </>
+          ) : (
+            t('auth.signIn')
+          )
+      }
     </AuthButton>
 
     <div style={{

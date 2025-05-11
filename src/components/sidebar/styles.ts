@@ -114,3 +114,29 @@ export const SidebarContainerBodyElement = styled.p`
         color: #00a8ff; /* Azul claro no hover */
     }
 `;
+
+export const SupportModuleLabel = styled.div`
+  margin: 20px 0 10px 10px;
+  font-size: 0.8em;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 5px;
+`;
+
+export const MainModuleIndicator = styled.span`
+  font-size: 0.8em;
+  color: #00a8ff;
+  margin-left: 5px;
+`;
+
+export const ActiveModuleIndicator = styled.div`
+  width: 8px;
+  height: 8px;
+  background-color: #00a8ff;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 8px;
+  vertical-align: middle;
+`;

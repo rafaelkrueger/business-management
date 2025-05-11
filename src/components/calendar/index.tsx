@@ -137,7 +137,7 @@ const Calendar: React.FC<{ activeCompany: string, userData: any }> = ({ activeCo
 
   return (
     <>
-      <div style={{marginTop:window.innerWidth < 600 ? '15%' : '0%', marginLeft:window.innerWidth < 600 ? '3%' : '0%'}}>
+      <div style={{marginTop:window.innerWidth < 600 ? '15%' : '0%', marginLeft:window.innerWidth < 600 ? '3%' : '4%'}}>
           <h1>{t('calendar.title')}</h1>
         <h4 style={{ color: 'rgba(0,0,0,0.5)', marginTop: '-2%' }}>{t('calendar.subtitle')}</h4>
       </div>

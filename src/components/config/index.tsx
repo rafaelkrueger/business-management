@@ -366,9 +366,9 @@ const Config: React.FC<{
         {/* Card da Empresa */}
         <Card
           sx={{
-            maxWidth: 600,
+            maxWidth: 700,
             flex: 2,
-            minWidth: 300,
+            minWidth: 700,
             padding: 2,
             height: "auto",
           }}

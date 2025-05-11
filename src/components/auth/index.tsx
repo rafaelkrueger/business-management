@@ -45,7 +45,8 @@ import {
   useTheme,
   Avatar,
   IconButton,
-  Grid
+  Grid,
+  CircularProgress
 } from '@mui/material';
 import {
   Check,
@@ -549,17 +550,18 @@ const Auth = () => {
                 )}
               </Box>
 
-              <AuthButton
-                onClick={handleAuth}
-                disabled={loading}
-                fullWidth
-                variant="contained"
-                size="large"
-                endIcon={!loading && <ArrowRight size={20} />}
-              >
-                {loading ? t('auth.loading') :
-                  isNewUser ? t('auth.signUp') : t('auth.signIn')}
-              </AuthButton>
+            <AuthButton
+              onClick={handleAuth}
+              disabled={loading}
+              fullWidth
+              variant="contained"
+              size="large"
+            >
+              {loading
+                ? <CircularProgress size={24} color="inherit" />
+                : (isNewUser ? t('auth.signUp') : t('auth.signIn'))
+              }
+            </AuthButton>
 
               <Box sx={{
                 display: 'flex',

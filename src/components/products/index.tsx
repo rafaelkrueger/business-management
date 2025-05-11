@@ -117,7 +117,7 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
     );
 
             return (
-                <TrainContainer>
+                <TrainContainer style={{margin:'3%'}}>
                     <AiAssistantModal isOpen={aiAssistant} onClose={()=>{setAiAssistant(false)}} companyId={props.activeCompany} type={t('aiAssistant.types.product')}/>
                     <div>
                       <div style={{display:'flex'}}>

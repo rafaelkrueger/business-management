@@ -88,7 +88,7 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
     <div style={{ padding: '20px' }}>
       <AiAssistantModal isOpen={aiAssistant} onClose={()=>{setAiAssistant(false)}} companyId={activeCompany} type={t('aiAssistant.types.payments')}/>
       <HomeContainerHeader>
-        <div style={{display:'flex'}}>
+        <div style={{display:'flex', marginLeft:'18px'}}>
         {t('payments.title')}
         {
           window.innerWidth > 600 && (
@@ -99,7 +99,7 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
         }
         </div>
       </HomeContainerHeader>
-      <HomeContainerHeader style={{ marginTop: '-7%', fontSize: '15pt', marginBottom: '1%', color: 'rgba(0,0,0,0.5)' }}>
+      <HomeContainerHeader style={{ marginTop: '-7%', fontSize: '15pt', marginBottom: '1%', color: 'rgba(0,0,0,0.5)', marginLeft:'18px' }}>
         {t('payments.financialInfo')}
       </HomeContainerHeader>
       <HomeContainerBody>

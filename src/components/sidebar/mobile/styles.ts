@@ -264,6 +264,7 @@ export const BottomSection = styled.div`
   z-index: 1000;
   display: flex;
   align-items: center;
+  margin-top: 100px;
 `;
 
 export const ModulesScroll = styled.div`
@@ -296,8 +297,7 @@ export const CompactModuleItem = styled.div`
   padding-left: 5px;
   padding-right: 5px;
   min-width: ${props => props.active ? '80px' : '50px'};
-  height: 50px;
-  background: ${props => props.active ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)'};
+  height: 40px;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;

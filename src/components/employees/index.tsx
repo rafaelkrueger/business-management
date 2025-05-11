@@ -224,7 +224,7 @@ const Employees: React.FC<{ activeCompany }> = ({ ...props }) => {
   };
 
   return (
-    <TrainContainer style={{marginRight:window.innerWidth > 600 ? '0%' : '7%'}}>
+    <TrainContainer style={{marginRight:window.innerWidth > 600 ? '0%' : '7%', margin:window.innerWidth > 600 ? '3%' : 'unset'}}>
       <AiAssistantModal isOpen={aiAssistant} onClose={()=>{setAiAssistant(false)}} companyId={props.activeCompany} type={t('aiAssistant.types.employees')}/>
 
       <div style={{display:'flex'}}>

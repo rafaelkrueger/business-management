@@ -463,7 +463,9 @@ export const AnimatedRocket = styled(RocketLaunch)`
   }
 
   @media (min-width: 600px) {
-  font-size: 100px !important;
+    font-size: 90px !important;
+    margin-bottom: -20px;
+    margin-top: 20px;
   }
 `;
 

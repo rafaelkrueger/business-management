@@ -49,6 +49,13 @@
       "desc": "Track campaign performance with predictive analytics, multichannel attribution, and automatic improvement suggestions."
     }
   },
+    "userProgress":{
+    "blocked":"Complete the previous steps to access this."
+  },
+  "mainModules":"Main Modules",
+  "mainModuleTag":"Main",
+  "supportModules":"Extra Tools",
+  "supportModulesTooltip": "These tools complement and support your main marketing operations",
   "checkout": {
     "credit_card": "Credit Card",
     "credit_card_description": "Pay with Visa, Mastercard or other cards",
@@ -200,7 +207,7 @@
       "customers": "Customers",
       "calendar": "Calendar",
       "online": "Online Management",
-      "marketing": "Marketing"
+      "marketing": "Marketing & Sales"
     }
   },
   "notifications": "Notifications",

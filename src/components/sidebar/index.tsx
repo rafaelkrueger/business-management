@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next'; // Importe o hook de tradução
-import { SidebarContainer, SidebarContainerBody, SidebarContainerBodyElement, SidebarContainerBodyElementContainer, SidebarContainerBodyElementIcon, SidebarContainerFooter, SidebarContainerHeader, SidebarContainerHeaderProfile, SidebarContainerHeaderProfileName } from './styles.ts';
+import { useTranslation } from 'react-i18next';
+import {
+  SidebarContainer,
+  SidebarContainerBody,
+  SidebarContainerBodyElement,
+  SidebarContainerBodyElementContainer,
+  SidebarContainerBodyElementIcon,
+  SidebarContainerFooter,
+  SidebarContainerHeader,
+  SidebarContainerHeaderProfile,
+  SidebarContainerHeaderProfileName,
+  SupportModuleLabel,
+  MainModuleIndicator
+} from './styles.ts';
 import UserNoImage from '../../images/user.png';
 import { CiCreditCard1 } from "react-icons/ci";
 import { IoIosHome } from "react-icons/io";
@@ -15,7 +27,8 @@ import HomeService from '../../services/home.service.ts';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import Select from 'react-select';
 import ModulesService from '../../services/modules.service.ts';
-
+import { Box, IconButton, Tooltip } from '@mui/material';
+import { HelpCircleIcon } from 'lucide-react';
 
 const icons = {
   IoIosHome: IoIosHome,
@@ -29,9 +42,21 @@ const icons = {
   CampaignIcon: CampaignIcon
 };
 
-const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive: any, activateModule, userData, setActiveCompany, companies, setCompanies, setHasNoCompanies, hasNoCompanies, modulesUpdating }> = ({ ...props }) => {
-  const { t } = useTranslation(); // Use o hook de tradução
-  const [modules, setModules] = useState([]);
+const Sidebar: React.FC<{
+  isMenuActive: boolean,
+  setIsMenuActive: any,
+  activateModule,
+  userData,
+  setActiveCompany,
+  companies,
+  setCompanies,
+  setHasNoCompanies,
+  hasNoCompanies,
+  modulesUpdating
+}> = ({ ...props }) => {
+  const { t } = useTranslation();
+  const [mainModule, setMainModule] = useState(null);
+  const [supportModules, setSupportModules] = useState([]);
 
   const options = props.companies.map((company) => ({
     value: company.id,
@@ -60,11 +85,22 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive: any, activateM
   useEffect(() => {
     if (props.activeCompany && props.companies.length > 0) {
       ModulesService.get(props.activeCompany)
-        .then((res) => setModules(res.data));
+        .then((res) => {
+          // Filtra módulos que possuem key definida
+          const validModules = res.data.filter(module => module?.key);
+
+          const marketingModule = validModules.find(module => module.key === 'marketing');
+          const otherModules = validModules.filter(module => module.key !== 'marketing');
+
+          setMainModule(marketingModule || null);
+          setSupportModules(otherModules);
+        });
     }
   }, [props.activeCompany, props.companies, props.modulesUpdating]);
 
   function SidebarContainerBodyElementIcon({ icon }) {
+    if (!icon) return null;
+
     const iconName = icon.match(/<(\w+)/)?.[1];
     const IconComponent = icons[iconName];
 
@@ -96,36 +132,67 @@ const Sidebar: React.FC<{ isMenuActive: boolean, setIsMenuActive: any, activateM
         />
       </SidebarContainerHeader>
       <SidebarContainerBody>
-        {modules.map((list) => {
-          if(list){
-            return (
-              <SidebarContainerBodyElementContainer
-                key={list.name}
-                onClick={() => {
-                  if (window.outerWidth < 600) {
-                    props.setIsMenuActive(!props.isMenuActive);
-                  }
-                  props.activateModule(list?.key);
-                }}
-              >
-                <SidebarContainerBodyElementIcon icon={`<${list?.icon} size={26} />`} />
-                <SidebarContainerBodyElement>
-                  {t(`config.establishmentModules.${list?.key}`)}
-                </SidebarContainerBodyElement>
-              </SidebarContainerBodyElementContainer>
-            );
-          }
-        })}
+          <SupportModuleLabel>
+            {t('mainModules')}
+          </SupportModuleLabel>
+        {mainModule && mainModule.key && (
+          <SidebarContainerBodyElementContainer
+            key={mainModule.key}
+            onClick={() => {
+              if (window.outerWidth < 600) {
+                props.setIsMenuActive(!props.isMenuActive);
+              }
+              props.activateModule(mainModule.key);
+            }}
+            style={{
+              backgroundColor: 'rgba(0, 168, 255, 0.1)',
+              borderLeft: '4px solid #00a8ff'
+            }}
+          >
+            <Box sx={{marginRight:'10px'}}>
+              <SidebarContainerBodyElementIcon icon={`<${mainModule.icon} size={26} />`} />
+            </Box>
+            <SidebarContainerBodyElement>
+              {t(`config.establishmentModules.${mainModule.key}`)}
+              <MainModuleIndicator>{t('mainModuleTag')}</MainModuleIndicator>
+            </SidebarContainerBodyElement>
+          </SidebarContainerBodyElementContainer>
+        )}
+        {supportModules.length > 0 && (
+        <Box display="flex" alignItems="center" gap={1} mb={1}>
+          <SupportModuleLabel>{t('supportModules')}</SupportModuleLabel>
+          <Tooltip title={t('supportModulesTooltip') || "Esses módulos complementam e ajudam o módulo de marketing"}>
+            <IconButton sx={{ padding: 0, color:'rgba(255, 255, 255, 0.6)', fontSize:'8pt', width:'14px', marginBottom:'-3px' }}>
+              <HelpCircleIcon fontSize='8pt' />
+            </IconButton>
+          </Tooltip>
+        </Box>
+        )}
+
+        {/* Módulos de Apoio (só mostra se tiver key) */}
+        {supportModules.filter(module => module.key).map((module) => (
+          <SidebarContainerBodyElementContainer
+            key={module.key}
+            onClick={() => {
+              if (window.outerWidth < 600) {
+                props.setIsMenuActive(!props.isMenuActive);
+              }
+              props.activateModule(module.key);
+            }}
+          >
+            <SidebarContainerBodyElementIcon icon={`<${module.icon} size={26} />`} />
+            <SidebarContainerBodyElement>
+              {t(`config.establishmentModules.${module.key}`)}
+            </SidebarContainerBodyElement>
+          </SidebarContainerBodyElementContainer>
+        ))}
       </SidebarContainerBody>
       <SidebarContainerFooter>
-        <SidebarContainerBodyElement style={{ marginLeft: '6%', marginBottom:'17px', fontSize:'13pt' }}>{t(`notifications`)}</SidebarContainerBodyElement>
-        {/* <SidebarContainerBodyElement
-         onClick={() => {
-            if (window.outerWidth < 600) {
-              props.setIsMenuActive(!props.isMenuActive);
-            }
-            props.activateModule('Integration');
-          }} style={{ marginLeft: '6%', marginBottom:'17px', fontSize:'13pt' }}>{t(`integrations`)}</SidebarContainerBodyElement> */}
+        <SidebarContainerBodyElement
+          style={{ marginLeft: '6%', marginBottom:'17px', fontSize:'13pt' }}
+        >
+          {t(`notifications`)}
+        </SidebarContainerBodyElement>
         <SidebarContainerBodyElement
           onClick={() => {
             if (window.outerWidth < 600) {
