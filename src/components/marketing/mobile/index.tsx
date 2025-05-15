@@ -471,79 +471,6 @@ const cards = [
           ))}
         </Grid>
 
-        {/* Gráficos compactos */}
-        <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} sm={6}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <GlassCard>
-                <CardContent sx={{ p: 1.5 }}>
-                  <Box display="flex" alignItems="center" mb={1}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                      Desempenho
-                    </Typography>
-                    {completedModules.includes('createLeads') && (
-                      <Chip
-                        label="Ao vivo"
-                        size="small"
-                        sx={{ ml: 1 }}
-                        color="success"
-                        avatar={<Avatar sx={{ bgcolor: alpha('#4caf50', 0.2), width: 20, height: 20 }}><Zap size={12} /></Avatar>}
-                      />
-                    )}
-                  </Box>
-                  <Box sx={{ height: 120 }}>
-                    <Line
-                      data={lineData}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                          x: { grid: { display: false } },
-                          y: { grid: { color: 'rgba(0,0,0,0.05)' } }
-                        }
-                      }}
-                    />
-                  </Box>
-                </CardContent>
-              </GlassCard>
-            </motion.div>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <GlassCard>
-                <CardContent sx={{ p: 1.5 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
-                    Conversões
-                  </Typography>
-                  <Box sx={{ height: 120 }}>
-                    <Bar
-                      data={barData}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                          x: { grid: { display: false } },
-                          y: { grid: { color: 'rgba(0,0,0,0.05)' } }
-                        }
-                      }}
-                    />
-                  </Box>
-                </CardContent>
-              </GlassCard>
-            </motion.div>
-          </Grid>
-        </Grid>
-
         {/* Seção de Ferramentas */}
         <Typography variant="subtitle1" sx={{
           fontWeight: 600,
@@ -645,6 +572,72 @@ const cards = [
               </motion.div>
             </Grid>
           ))}
+        </Grid>
+
+        <Grid container spacing={2} sx={{ marginTop:'20px' }}>
+          <Grid item xs={12} sm={6}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <GlassCard>
+                <CardContent sx={{ p: 1.5 }}>
+                  <Box display="flex" alignItems="center" mb={1}>
+                    {completedModules.includes('createLeads') && (
+                      <Chip
+                        label="Ao vivo"
+                        size="small"
+                        sx={{ ml: 1 }}
+                        color="success"
+                        avatar={<Avatar sx={{ bgcolor: alpha('#4caf50', 0.2), width: 20, height: 20 }}><Zap size={12} /></Avatar>}
+                      />
+                    )}
+                  </Box>
+                  <Box sx={{ height: 120 }}>
+                    <Line
+                      data={lineData}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                          x: { grid: { display: false } },
+                          y: { grid: { color: 'rgba(0,0,0,0.05)' } }
+                        }
+                      }}
+                    />
+                  </Box>
+                </CardContent>
+              </GlassCard>
+            </motion.div>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <GlassCard>
+                <CardContent sx={{ p: 1.5 }}>
+                  <Box sx={{ height: 120 }}>
+                    <Bar
+                      data={barData}
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                          x: { grid: { display: false } },
+                          y: { grid: { color: 'rgba(0,0,0,0.05)' } }
+                        }
+                      }}
+                    />
+                  </Box>
+                </CardContent>
+              </GlassCard>
+            </motion.div>
+          </Grid>
         </Grid>
       </Box>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -11,7 +11,18 @@ import {
   Button,
   Fade,
   Grow,
-  Skeleton
+  Skeleton,
+  Avatar,
+  Divider,
+  IconButton,
+  Badge,
+  Tooltip,
+  FormControl,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  Zoom
 } from '@mui/material';
 import {
   SmartToy,
@@ -21,86 +32,354 @@ import {
   Campaign,
   Star,
   ChevronRight,
-  ArrowBackIos
+  ArrowBackIos,
+  AutoAwesome,
+  Person,
+  AttachFile,
+  InsertDriveFile,
+  Close,
+  Check,
+  Lock,
+  Email,
+  PersonPinCircleRounded,
+  WebStoriesRounded,
+  ZoomIn,
+  ZoomOut
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import ChatAiService from '../../../services/chat-ai.service.ts';
+import { AllInOneApi } from '../../../Api.ts';
+import { styled, alpha } from '@mui/material/styles';
+import { IoIosPaper, IoMdPaper } from 'react-icons/io';
+import ProgressService from '../../../services/progress.service.ts';
+
+const ModuleTimeline = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  margin: theme.spacing(3, 0),
+  padding: theme.spacing(2),
+  borderRadius: theme.shape.borderRadius,
+  position: 'relative',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: '50%',
+    left: theme.spacing(2),
+    right: theme.spacing(2),
+    height: 2,
+    background: alpha(theme.palette.primary.main, 0.2),
+    zIndex: 0
+  }
+}));
+
+const ModuleStep = styled(Box)(({ theme, completed, active, loading }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  zIndex: 1,
+  cursor: loading ? 'default' : 'pointer',
+  transition: 'all 0.3s ease',
+  '& .step-icon': {
+    width: 40,
+    height: 40,
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: completed
+      ? theme.palette.success.main
+      : active
+        ? theme.palette.primary.main
+        : loading
+          ? theme.palette.primary.light
+          : theme.palette.action.disabledBackground,
+    color: completed || active || loading ? '#fff' : theme.palette.text.secondary,
+    marginBottom: theme.spacing(1),
+    boxShadow: active
+      ? `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`
+      : loading
+        ? `0 0 0 4px ${alpha(theme.palette.primary.main, 0.4)}`
+        : 'none',
+    position: 'relative',
+    '&::after': loading ? {
+      content: '""',
+      position: 'absolute',
+      top: -4,
+      left: -4,
+      right: -4,
+      bottom: -4,
+      borderRadius: '50%',
+      border: `2px solid ${theme.palette.primary.main}`,
+      animation: 'pulse 1.5s infinite',
+      '@keyframes pulse': {
+        '0%': { opacity: 0.6 },
+        '50%': { opacity: 0.2 },
+        '100%': { opacity: 0.6 }
+      }
+    } : {}
+  },
+  '& .step-label': {
+    fontSize: '0.75rem',
+    fontWeight: 500,
+    color: active
+      ? theme.palette.primary.main
+      : loading
+        ? theme.palette.primary.light
+        : theme.palette.text.secondary,
+    textAlign: 'center'
+  },
+  '&:hover': {
+    '& .step-icon': {
+      transform: loading ? 'scale(1)' : 'scale(1.1)'
+    }
+  }
+}));
+
+const modulesTimeline = [
+  { id: 'general', label: 'Geral', icon: <SmartToy style={{color:'#fff'}} size={20} /> },
+  { id: 'socialMedia', label: 'Social Media', icon: <PersonPinCircleRounded style={{color:'#fff'}} size={20} /> },
+  { id: 'forms', label: 'Forms', icon: <IoIosPaper style={{color:'#fff'}} size={20} /> },
+  { id: 'email', label: 'Email', icon: <Email style={{color:'#fff'}} size={20} /> },
+  { id: 'salesPage', label: 'Sales Page', icon: <WebStoriesRounded style={{color:'#fff'}} size={20} /> },
+];
+
+const ImageContainer = styled(Box)(({ theme }) => ({
+  width: '100%',
+  margin: theme.spacing(1, 0),
+  borderRadius: '12px',
+  overflow: 'hidden',
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  transition: 'all 0.3s ease',
+  border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+  cursor: 'pointer',
+  '&:hover': {
+    transform: 'scale(1.02)',
+    boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)',
+    '& .zoom-icon': {
+      opacity: 1
+    }
+  },
+  '& img': {
+    width: '100%',
+    height: 'auto',
+    maxHeight: '400px',
+    objectFit: 'contain',
+    display: 'block'
+  },
+  position: 'relative',
+  '& .zoom-icon': {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    color: '#fff',
+    borderRadius: '50%',
+    padding: '4px',
+    opacity: 0,
+    transition: 'opacity 0.3s ease'
+  }
+}));
 
 export default function PremiumMarketingAssistant({activeCompany, setModule}) {
   const theme = useTheme();
-  const { t } = useTranslation();
-  const [activeCategory, setActiveCategory] = useState(t("marketing.aiAssistant.all"));
+  const { i18n, t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-  const [conversationId, setConversationId] = useState<string | null>(null);
-  const [isWaitingResponse, setIsWaitingResponse] = useState(false);
-  const [showSkeleton, setShowSkeleton] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [waitingModules, setWaitingModules] = useState<Record<string, boolean>>({});
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [loadingModules, setLoadingModules] = useState<string[]>([]);
+  const [fileName, setFileName] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [activeChat, setActiveChat] = useState('general');
+  const [chats, setChats] = useState({
+    general: {
+      conversationId: null,
+      messages: []
+    },
+    socialMedia: {
+      conversationId: null,
+      messages: []
+    },
+    forms: {
+      conversationId: null,
+      messages: []
+    },
+    email: {
+      conversationId: null,
+      messages: []
+    },
+    salesPage: {
+      conversationId: null,
+      messages: []
+    }
+  });
+  const [completedModules, setCompletedModules] = useState([]);
+  const [enabledFeatures, setEnabledFeatures] = useState<string[]>([]);
+  const [loadingFeatures, setLoadingFeatures] = useState(true);
+  const refreshIntervalRef = useRef<NodeJS.Timeout>();
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  const generateSkeletonLines = () => {
-    const lines = Math.floor(Math.random() * 3) + 1;
-    return Array.from({ length: lines }, () => Math.floor(Math.random() * 60) + 40);
+  const [imageModal, setImageModal] = useState({
+    open: false,
+    src: '',
+    zoom: 1
+  });
+
+  const isModuleUnlocked = (moduleId) => {
+    if (moduleId === 'general') return true;
+
+    const featureMap = {
+      'socialMedia': 'socialMedia',
+      'forms': 'forms',
+      'email': 'email',
+      'salesPage': 'salesPage'
+    };
+
+    return enabledFeatures.includes(featureMap[moduleId]);
   };
 
+  const welcomeMessage = {
+    id: 'welcome',
+    sender: 'assistant',
+    content: t("marketing.aiAssistant.welcomeMessage"),
+    timestamp: new Date()
+  };
+
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chats[activeChat]?.messages]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      scrollToBottom();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [activeChat]);
+
+  const fetchEnabledFeatures = async () => {
+    try {
+      const res = await ProgressService.getProgress(activeCompany);
+      console.log(res.data);
+
+      const loadingMods = [];
+      for (const [key, value] of Object.entries(res.data)) {
+        if (value === 'loading') {
+          loadingMods.push(key);
+        }
+      }
+      setLoadingModules(loadingMods);
+
+      const response = await ChatAiService.getEnabledFeatures(activeCompany);
+      const features = response.data.map(f => f.field);
+      setEnabledFeatures(features);
+    } catch (error) {
+      console.error('Error loading enabled features:', error);
+    } finally {
+      setLoadingFeatures(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEnabledFeatures();
+    refreshIntervalRef.current = setInterval(fetchEnabledFeatures, 5000);
+
+    return () => {
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+    };
+  }, [activeCompany]);
 
   useEffect(() => {
     const initChat = async () => {
-      const id = await ChatAiService.startConversation();
-      setConversationId(id);
-    };
-    initChat();
-  }, []);
+      if (!isModuleUnlocked(activeChat)) return;
 
-  useEffect(() => {
-    const scrollContainer = document.querySelector('#root > div > div.sc-ktwOfi.gVIUQZ') as HTMLElement;
-    if (scrollContainer) {
-      scrollContainer.style.overflow = 'hidden';
-    }
-    return () => {
-      if (scrollContainer) {
-        scrollContainer.style.overflow = 'auto';
+      try {
+        const pastMessages = await ChatAiService.getConversationByType(activeCompany, activeChat);
+        const formattedMessages = pastMessages.map((msg) => ({
+          id: msg.id,
+          sender: msg.sender,
+          content: msg.message,
+          timestamp: msg.createdAt,
+        }));
+
+        setChats(prev => ({
+          ...prev,
+          [activeChat]: {
+            ...prev[activeChat],
+            conversationId: crypto.randomUUID(),
+            messages: formattedMessages.length > 0 ? formattedMessages : [welcomeMessage]
+          }
+        }));
+      } catch (error) {
+        console.error('Erro ao carregar conversa:', error);
       }
     };
-  }, []);
 
-  const categories = [
-    { label: t("marketing.aiAssistant.all"), icon: <Star />, color: '#6366F1' },
-    { label: t("marketing.aiAssistant.suggestionTitle"), icon: <HelpOutline />, color: '#0A6CCC' },
-    { label: t("marketing.aiAssistant.performance"), icon: <TrendingUp />, color: '#059669' },
-    // { label: t("marketing.aiAssistant.campaing"), icon: <Campaign />, color: '#8B5CF6' }
-  ];
+    if (!loadingFeatures) {
+      initChat();
+    }
+  }, [activeChat, loadingFeatures, enabledFeatures]);
 
-  const suggestionCards = [
-    {
-      title: t('marketing.aiAssistant.suggestions.improveEngagement.title'),
-      description: t('marketing.aiAssistant.suggestions.improveEngagement.description'),
-      category: t('marketing.aiAssistant.suggestions.improveEngagement.category'),
-      stars: 4.8,
-    },
-    {
-      title: t('marketing.aiAssistant.suggestions.channelPriority.title'),
-      description: t('marketing.aiAssistant.suggestions.channelPriority.description'),
-      category: t('marketing.aiAssistant.suggestions.channelPriority.category'),
-      stars: 4.5,
-    },
-    {
-      title: t('marketing.aiAssistant.suggestions.emailGuide.title'),
-      description: t('marketing.aiAssistant.suggestions.emailGuide.description'),
-      category: t('marketing.aiAssistant.suggestions.emailGuide.category'),
-      stars: 4.9,
-    },
-    {
-      title: t('marketing.aiAssistant.suggestions.leadQualification.title'),
-      description: t('marketing.aiAssistant.suggestions.leadQualification.description'),
-      category: t('marketing.aiAssistant.suggestions.leadQualification.category'),
-      stars: 4.7,
-    },
+  const openImageModal = (src) => {
+    setImageModal({
+      open: true,
+      src,
+      zoom: 1
+    });
+  };
 
-  ];
+  const closeImageModal = () => {
+    setImageModal({
+      ...imageModal,
+      open: false
+    });
+  };
+
+  const zoomIn = () => {
+    setImageModal(prev => ({
+      ...prev,
+      zoom: Math.min(prev.zoom + 0.25, 3)
+    }));
+  };
+
+  const zoomOut = () => {
+    setImageModal(prev => ({
+      ...prev,
+      zoom: Math.max(prev.zoom - 0.25, 0.5)
+    }));
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      setSelectedFile(file);
+      setFileName(file.name);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    setFileName('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const handleSend = async () => {
-    if (!conversationId || (!selectedCard && !inputValue.trim())) return;
+    const currentChat = chats[activeChat];
+    if (!currentChat.conversationId || (!selectedCard && !inputValue.trim() && !selectedFile) || waitingModules[activeChat]) return;
 
     const content = selectedCard || inputValue.trim();
     setInputValue('');
@@ -109,10 +388,12 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
     const userMessage = {
       id: crypto.randomUUID(),
       sender: 'user',
-      content,
+      content: content || fileName,
+      isFile: !!selectedFile,
+      fileName: selectedFile?.name,
+      fileType: selectedFile?.type,
       timestamp: new Date()
     };
-
 
     const loadingMessage = {
       id: 'typing',
@@ -121,350 +402,626 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
       timestamp: new Date()
     };
 
-    setMessages((prev) => [...prev, userMessage, loadingMessage]);
-    setIsWaitingResponse(true);
+    const updatedMessages = [...currentChat.messages, userMessage, loadingMessage];
+
+    setChats(prev => ({
+      ...prev,
+      [activeChat]: {
+        ...prev[activeChat],
+        messages: updatedMessages
+      }
+    }));
+
+    setWaitingModules(prev => ({ ...prev, [activeChat]: true }));
 
     try {
-      const updatedMessages = await ChatAiService.sendMessage(conversationId, content, activeCompany);
-      setMessages(updatedMessages);
-    } catch (error) {
-      setMessages((prev) => [
-        ...prev.filter((m) => m.id !== 'typing'),
-        {
-          id: crypto.randomUUID(),
-          sender: 'assistant',
-          content: 'Error, please try again later.',
-          timestamp: new Date()
+      const language = i18n.language.startsWith('pt') ? 'pt' : 'en';
+
+      let responseMessages;
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        const response = await AllInOneApi.post('shared/image', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'accept': '*/*',
+          },
+        });
+
+        responseMessages = await ChatAiService.sendMessage(
+          currentChat.conversationId,
+          content || `Arquivo: ${fileName}`,
+          activeCompany,
+          language,
+          activeChat,
+          response?.data.url
+        );
+      } else {
+        responseMessages = await ChatAiService.sendMessage(
+          currentChat.conversationId,
+          content,
+          activeCompany,
+          language,
+          activeChat
+        );
+      }
+
+      setChats(prev => ({
+        ...prev,
+        [activeChat]: {
+          ...prev[activeChat],
+          messages: responseMessages
         }
-      ]);
+      }));
+
+      handleRemoveFile();
+
+      if (!completedModules.includes(activeChat)) {
+        setCompletedModules([...completedModules, activeChat]);
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setChats(prev => ({
+        ...prev,
+        [activeChat]: {
+          ...prev[activeChat],
+          messages: [
+            ...updatedMessages.filter((m) => m.id !== 'typing'),
+            {
+              id: crypto.randomUUID(),
+              sender: 'assistant',
+              content: t("marketing.aiAssistant.errorMessage"),
+              timestamp: new Date()
+            }
+          ]
+        }
+      }));
     } finally {
-      setIsWaitingResponse(false);
+      setWaitingModules(prev => ({ ...prev, [activeChat]: false }));
     }
   };
 
-  const filteredCards = activeCategory === t("marketing.aiAssistant.all")
-    ? suggestionCards
-    : suggestionCards.filter(card => card.category === activeCategory);
+  const handleChatChange = (chatId) => {
+    if (!isModuleUnlocked(chatId)) return;
+    if (loadingModules.includes(chatId)) {
+      const currentChat = chats[activeChat];
+      const loadingMessage = {
+        id: crypto.randomUUID(),
+        sender: 'assistant',
+        content: t("marketing.aiAssistant.moduleLoadingMessage"),
+        timestamp: new Date()
+      };
 
-  return (
-    <Container maxWidth="lg" sx={{ py: 4, height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{display:'flex', marginTop:'30px', marginBottom:'35px'}}>
-        <ArrowBackIos style={{cursor:'pointer', marginTop:'10px', marginRight:'20px', zIndex:1000}} onClick={()=>{setModule('')}}/>
-      </Box>
-        <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginTop:'-65px'
-        }}>
-        <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2,
-            mb: 1
-        }}>
-            <Typography variant="h4" fontWeight={700} sx={{
-            letterSpacing: '-0.5px',
-            color: theme.palette.text.primary
-            }}>
-            {t("marketing.ai")}
-            </Typography>
-        </Box>
-        <Typography variant="body1" sx={{
-            color: theme.palette.text.secondary,
-            mb: 3,
-            maxWidth: 500,
-            textAlign: 'center',
-            lineHeight: 1.6
-        }}>
-            {t("marketing.aiDescription")}
-        </Typography>
+      setChats(prev => ({
+        ...prev,
+        [activeChat]: {
+          ...prev[activeChat],
+          messages: [...prev[activeChat].messages, loadingMessage]
+        }
+      }));
+      return;
+    }
+    setActiveChat(chatId);
+    setInputValue('');
+    setSelectedCard(null);
+    setSelectedFile(null);
+    setFileName('');
+  };
 
-        </Box>
-    {messages.length === 0 && (
-      <Box sx={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        gap: 1,
-        mb: 4,
-        px: 2
-      }}>
-        {categories.map((category) => (
-          <Chip
-            key={category.label}
-            label={category.label}
-            icon={category.icon}
-            clickable
-            variant={activeCategory === category.label ? 'filled' : 'outlined'}
-            onClick={() => setActiveCategory(category.label)}
-            sx={{
-              fontWeight: 600,
-              borderColor: activeCategory === category.label ? category.color : theme.palette.divider,
-              backgroundColor: activeCategory === category.label ? `${category.color}10` : 'transparent',
-              color: activeCategory === category.label ? category.color : theme.palette.text.secondary,
-              '& .MuiChip-icon': {
-                color: activeCategory === category.label ? category.color : 'inherit'
-              }
+  const renderMessageContent = (msg) => {
+    if(msg.content.includes('data:image/png;base64')){
+      return (
+        <ImageContainer onClick={() => openImageModal(msg.content)}>
+          <img
+            src={msg.content}
+            alt="Imagem do chat"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Imagem+não+disponível';
             }}
           />
-        ))}
-      </Box>
-    )}
-      <Box sx={{ flex: 1, overflowY: 'auto', mb: 3, px: 1 }}>
-  {messages.length === 0 ? (
-    <Grid container spacing={3}>
-      {filteredCards.map((card, idx) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={idx} height={200} marginBottom={5}>
-          <Grow in={true} timeout={(idx + 1) * 200}>
-            <Paper
-              elevation={selectedCard === card.title ? 8 : hoveredCard === card.title ? 6 : 2}
-              onClick={() => {
-                setSelectedCard(card.title);
-                setInputValue(card.title);
-              }}
-              onMouseEnter={() => setHoveredCard(card.title)}
-              onMouseLeave={() => setHoveredCard(null)}
-              sx={{
-                p: 2.5,
-                borderRadius: 3,
-                cursor: 'pointer',
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                height: '100%',
-                border: selectedCard === card.title
-                  ? `2px solid ${theme.palette.primary.main}`
-                  : `1px solid ${theme.palette.divider}`,
-                background: `linear-gradient(to bottom right, ${theme.palette.background.paper}, ${theme.palette.background.default})`,
-                position: 'relative',
-                overflow: 'hidden',
-                '&:hover': {
-                  transform: 'translateY(-5px)',
-                  boxShadow: 6,
-                },
-              }}
-            >
-              {selectedCard === card.title && (
-                <Box sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: 4,
-                  background: `linear-gradient(to right, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
-                }} />
-              )}
+          <Box className="zoom-icon">
+            <ZoomIn fontSize="small" />
+          </Box>
+        </ImageContainer>
+      );
+    }
 
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} sx={{
-                    fontSize: 16,
-                    color: i < Math.floor(card.stars) ? '#FFC107' : theme.palette.action.disabled
-                  }} />
-                ))}
-                <Typography variant="caption" sx={{ ml: 0.5, color: theme.palette.text.secondary }}>
-                  {card.stars}
-                </Typography>
-              </Box>
+    if (msg.id === 'welcome') {
+      return (
+        <Box>
+          <Typography variant="body1" sx={{
+            fontWeight: 600,
+            mb: 1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1
+          }}>
+            <AutoAwesome sx={{ fontSize: '1.2rem' }} />
+            {t("marketing.aiAssistant.welcomeTitle")}
+          </Typography>
+          <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>
+            {msg.content}
+          </Typography>
+        </Box>
+      );
+    }
 
-              <Typography
-                variant="subtitle1"
-                fontWeight={600}
-                gutterBottom
-                sx={{
-                  color: selectedCard === card.title ? theme.palette.primary.main : 'inherit',
-                  minHeight: '3em',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
-                {card.title}
-              </Typography>
-
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                {card.description}
-              </Typography>
-
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Chip
-                  label={card.category}
-                  size="small"
-                  sx={{
-                    backgroundColor: categories.find(c => c.label === card.category)?.color + '10',
-                    color: categories.find(c => c.label === card.category)?.color,
-                    fontWeight: 500,
-                    fontSize: '0.7rem'
-                  }}
-                />
-                <Fade in={hoveredCard === card.title || selectedCard === card.title}>
-                  <ChevronRight sx={{
-                    color: theme.palette.primary.main,
-                    transition: 'all 0.3s ease'
-                  }} />
-                </Fade>
-              </Box>
-            </Paper>
-          </Grow>
-        </Grid>
-      ))}
-    </Grid>
-  ) : (
-    messages.map((msg) => (
-      <Box
-      key={msg.id}
-      sx={{
-        mb: 2,
-        textAlign: msg.sender === 'user' ? 'right' : 'left',
-        display: 'flex',
-        justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start'
-      }}
-    >
-      <Paper
-        elevation={2}
-        sx={{
-          display: 'inline-block',
-          p: 1.5,
-          borderRadius: 2,
-          maxWidth: '70%',
+    if (msg.isFile) {
+      return (
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          p: 1,
+          borderRadius: 1,
           backgroundColor: msg.sender === 'user'
-            ? theme.palette.primary.main
-            : theme.palette.grey[200],
-          color: msg.sender === 'user'
-            ? theme.palette.primary.contrastText
-            : theme.palette.text.primary,
-          minWidth: msg.id === 'typing' ? 200 : undefined
+            ? 'rgba(255, 255, 255, 0.1)'
+            : 'rgba(87, 138, 205, 0.1)',
+          border: `1px solid ${msg.sender === 'user'
+            ? 'rgba(255, 255, 255, 0.2)'
+            : 'rgba(87, 138, 205, 0.2)'}`,
+          maxWidth: '100%',
+          wordBreak: 'break-word'
+        }}>
+          <InsertDriveFile sx={{
+            color: msg.sender === 'user' ? '#fff' : '#578acd',
+            fontSize: '1.5rem'
+          }} />
+          <Typography variant="body2" sx={{
+            color: msg.sender === 'user' ? '#fff' : 'text.primary',
+            fontWeight: 500
+          }}>
+            {msg.fileName}
+          </Typography>
+        </Box>
+      );
+    }
+
+    return (
+      <Typography variant="body2" sx={{
+        whiteSpace: 'pre-line',
+        lineHeight: 1.6
+      }}>
+        {msg.content}
+      </Typography>
+    );
+  };
+
+  if (loadingFeatures) {
+    return (
+      <Container maxWidth="lg" sx={{
+        py: 4,
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        background: 'linear-gradient(160deg, #f8faff 0%, #ffffff 100%)'
+      }}>
+        <Box sx={{ textAlign: 'center' }}>
+          <CircularProgress sx={{ color: '#578acd' }} />
+        </Box>
+      </Container>
+    );
+  }
+
+  return (
+    <Container maxWidth="lg" sx={{
+      py: 4,
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      background: 'linear-gradient(160deg, #f8faff 0%, #ffffff 100%)'
+    }}>
+      <Box sx={{
+        background: 'linear-gradient(90deg, #578acd 0%, #6a9ce0 100%)',
+        borderTopLeftRadius: 7,
+        borderTopRightRadius: 7,
+        p: 3,
+        color: '#fff',
+        boxShadow: '0 4px 20px rgba(87, 138, 205, 0.2)',
+        display:'flex',
+        width:'95.5%',
+        justifyContent:'space-around',
+        height:'60px'
+      }}>
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          mb: 0,
+          cursor: 'pointer',
+          width: '5%',
+          '&:hover': {
+            '& .back-arrow': {
+              transform: 'translateX(-3px)'
+            }
+          }
+        }} onClick={() => setModule('')}>
+          <ArrowBackIos className="back-arrow" sx={{
+            color: '#ffffff',
+            transition: 'transform 0.2s ease',
+            fontSize: '2rem'
+          }} />
+        </Box>
+        <ModuleTimeline style={{width: '90%'}}>
+          {modulesTimeline.map((step, index) => {
+            const isCompleted = completedModules.includes(step.id);
+            const isUnlocked = isModuleUnlocked(step.id);
+            const isLoading = loadingModules.includes(step.id);
+
+            if (!isUnlocked && !isLoading) {
+              return (
+                <ModuleStep
+                  key={step.id}
+                  completed={false}
+                  active={false}
+                  loading={false}
+                  onClick={() => {}}
+                >
+                  <Box className="step-icon">
+                    <Lock size={20} />
+                  </Box>
+                  <Typography sx={{color:'#fff', fontSize:'9pt', visibility: 'hidden'}}>.</Typography>
+                </ModuleStep>
+              );
+            }
+
+            return (
+              <ModuleStep
+                key={step.id}
+                completed={false}
+                active={activeChat === step.id}
+                loading={isLoading}
+                onClick={() => !isLoading && handleChatChange(step.id)}
+              >
+                <Box className="step-icon">
+                  {step.icon}
+                  {isLoading && (
+                    <CircularProgress
+                      size={48}
+                      thickness={2}
+                      sx={{
+                        position: 'absolute',
+                        color: '#fff',
+                        top: -4,
+                        left: -4
+                      }}
+                    />
+                  )}
+                </Box>
+                <Typography sx={{
+                  color: isLoading ? theme.palette.primary.light : '#fff',
+                  fontSize:'9pt'
+                }}>
+                  {step.label}
+                </Typography>
+              </ModuleStep>
+            );
+          })}
+        </ModuleTimeline>
+      </Box>
+
+      {/* Chat container */}
+      <Paper
+        elevation={0}
+        ref={chatContainerRef}
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          mb: 2,
+          p: 2,
+          borderBottomLeftRadius: 3,
+          borderBottomRightRadius: 3,
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          border: '1px solid rgba(87, 138, 205, 0.1)',
+          '&::-webkit-scrollbar': {
+            width: '6px'
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: 'rgba(87, 138, 205, 0.3)',
+            borderRadius: '3px'
+          }
         }}
       >
-        {msg.id === 'typing' ? (
-          <Box>
-            <Skeleton variant="text" width="80%" height={20} sx={{ mb: 1 }} />
-            <Skeleton variant="text" width="90%" height={20} />
-          </Box>
-        ) : (
-          <Box>
-            {msg.content.match(/\d+\.\s/) ? (
-              <ul style={{ paddingLeft: '1.2rem', margin: 0 }}>
-                {msg.content
-                  .split(/\d+\.\s/)
-                  .slice(1)
-                  .map((item, index) => (
-                    <li key={index}>
-                      <Typography variant="body2" sx={{ lineHeight: 1.8 }}>
-                        <strong>{index + 1}.</strong> {item.trim()}
-                      </Typography>
-                    </li>
+        {chats[activeChat]?.messages?.map((msg) => (
+          <Fade in key={msg.id}>
+            <Box sx={{
+              mb: 3,
+              display: 'flex',
+              flexDirection: msg.sender === 'user' ? 'row-reverse' : 'row',
+              alignItems: 'flex-start',
+              gap: 1.5
+            }}>
+              <Avatar
+                sx={{
+                  width: 32,
+                  height: 32,
+                  bgcolor: msg.sender === 'user' ? '#578acd' : '#e0e7ff',
+                  color: msg.sender === 'user' ? '#fff' : '#578acd',
+                  fontSize: '0.9rem',
+                  mt: 0.5
+                }}
+              >
+                {msg.sender === 'user' ? (
+                  <Person sx={{ fontSize: '1rem' }} />
+                ) : (
+                  <SmartToy sx={{ fontSize: '1rem' }} />
+                )}
+              </Avatar>
+              <Paper elevation={0} sx={{
+                maxWidth: '80%',
+                p: 2,
+                borderRadius: msg.sender === 'user'
+                  ? '18px 4px 18px 18px'
+                  : '4px 18px 18px 18px',
+                backgroundColor: msg.sender === 'user'
+                  ? '#578acd'
+                  : '#f0f5ff',
+                color: msg.sender === 'user'
+                  ? '#fff'
+                  : 'text.primary',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+                position: 'relative',
+                marginTop:'20px',
+                '&:before': {
+                  content: '""',
+                  position: 'absolute',
+                  width: 0,
+                  height: 0,
+                  [msg.sender === 'user' ? 'right' : 'left']: '-8px',
+                  top: 0,
+                  border: msg.sender === 'user'
+                    ? '8px solid #578acd'
+                    : '8px solid #f0f5ff',
+                  borderColor: msg.sender === 'user'
+                    ? '#578acd transparent transparent transparent'
+                    : '#f0f5ff transparent transparent transparent'
+                }
+              }}>
+                {renderMessageContent(msg)}
+              </Paper>
+            </Box>
+          </Fade>
+        ))}
+        {waitingModules[activeChat] && (
+          <Fade in>
+            <Box sx={{
+              mb: 3,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'flex-start',
+              gap: 1.5
+            }}>
+              <Avatar
+                sx={{
+                  width: 32,
+                  height: 32,
+                  bgcolor: '#e0e7ff',
+                  color: '#578acd',
+                  fontSize: '0.9rem',
+                  mt: 0.5
+                }}
+              >
+                <SmartToy sx={{ fontSize: '1rem' }} />
+              </Avatar>
+              <Paper elevation={0} sx={{
+                maxWidth: '80%',
+                p: 2,
+                borderRadius: '4px 18px 18px 18px',
+                backgroundColor: '#f0f5ff',
+                color: 'text.primary',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+                position: 'relative',
+                marginTop: '20px'
+              }}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  {[1, 2, 3].map((dot) => (
+                    <Box key={dot} sx={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      backgroundColor: 'rgba(87, 138, 205, 0.4)',
+                      animation: 'pulse 1.5s infinite ease-in-out',
+                      animationDelay: `${dot * 0.2}s`,
+                      '@keyframes pulse': {
+                        '0%, 100%': { opacity: 0.4 },
+                        '50%': { opacity: 1 }
+                      }
+                    }} />
                   ))}
-              </ul>
-            ) : (
-              <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>
-                {msg.content}
-              </Typography>
-            )}
-          </Box>
+                </Box>
+              </Paper>
+            </Box>
+          </Fade>
         )}
       </Paper>
-    </Box>
-    ))
-  )}
-</Box>
 
-
-<Paper
-  elevation={6}
-  sx={{
-    p: 2,
-    borderRadius: 3,
-    background: `linear-gradient(to right, ${theme.palette.background.paper}, ${theme.palette.background.default})`,
-    border: `1px solid ${theme.palette.divider}`,
-    position: 'sticky',
-    bottom: 20,
-    mx: 2,
-    mb: 2,
-    backdropFilter: 'blur(8px)',
-    boxShadow: theme.shadows[4],
-    transition: 'all 0.3s ease',
-    '&:hover': {
-      boxShadow: theme.shadows[8],
-      borderColor: theme.palette.primary.light
-    }
-  }}
->
-  <Box
-    sx={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 2,
-      position: 'relative',
-    }}
-  >
-    <TextField
-      fullWidth
-      variant="outlined"
-      placeholder={t("marketing.aiAssistant.placeholder")}
-      value={selectedCard || inputValue}
-      onChange={(e) => {
-        setInputValue(e.target.value);
-        if (selectedCard && e.target.value !== selectedCard) {
-          setSelectedCard(null);
-        }
-      }}
-      onKeyPress={(e) => {
-        if (e.key === 'Enter') handleSend();
-      }}
-      InputProps={{
-        sx: {
-          borderRadius: 2,
-          backgroundColor: theme.palette.background.paper,
-          border: `1px solid ${theme.palette.divider}`,
+      <Box sx={{
+        position: 'sticky',
+        bottom: 0,
+        pb: 2,
+        background: 'linear-gradient(to top, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0) 100%)'
+      }}>
+        <Paper elevation={3} sx={{
+          p: 2,
+          borderRadius: 3,
+          border: '1px solid rgba(87, 138, 205, 0.2)',
+          boxShadow: '0 4px 20px rgba(87, 138, 205, 0.1)',
           transition: 'all 0.3s ease',
-          height:'40px',
           '&:hover': {
-            borderColor: theme.palette.primary.main,
-          },
-          '&.Mui-focused': {
-            borderColor: theme.palette.primary.main,
-            boxShadow: `${theme.palette.primary.main} 0 0 0 2px`
-          },
-          '& .MuiOutlinedInput-notchedOutline': {
-            border: 'none'
+            boxShadow: '0 6px 24px rgba(87, 138, 205, 0.15)'
           }
-        },
-      }}
-    />
+        }}>
+          {selectedFile && (
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              mb: 1,
+              p: 1,
+              borderRadius: 1,
+              backgroundColor: 'rgba(87, 138, 205, 0.1)'
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <InsertDriveFile sx={{ color: '#578acd' }} />
+                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  {fileName}
+                </Typography>
+              </Box>
+              <IconButton size="small" onClick={handleRemoveFile}>
+                <Close sx={{ fontSize: '1rem', color: '#578acd' }} />
+              </IconButton>
+            </Box>
+          )}
 
-    <Button
-      variant="contained"
-      color="primary"
-      size="large"
-      disabled={!inputValue && !selectedCard}
-      onClick={handleSend}
-      sx={{
-        px: 4,
-        borderRadius: 2,
-        textTransform: 'none',
-        fontWeight: 700,
-        width: '20px',
-        height: '36px',
-        background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-        transition: 'all 0.3s ease',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-          boxShadow: `${theme.palette.primary.light} 0 6px 16px`,
-          background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
-        },
-        '&.Mui-disabled': {
-          background: theme.palette.action.disabledBackground,
-          boxShadow: 'none'
-        }
-      }}
-    >
-      <Send sx={{
-        width:'16px',
-        transition: 'transform 0.3s ease',
-        transform: !inputValue && !selectedCard ? 'scale(1)' : 'scale(1.2)'
-      }} />
-    </Button>
-  </Box>
-</Paper>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+              id="file-upload"
+            />
+            <label htmlFor="file-upload">
+              <Tooltip title={t("marketing.aiAssistant.attachFile")} arrow>
+                <IconButton component="span" sx={{
+                  color: '#578acd',
+                  '&:hover': {
+                    backgroundColor: 'rgba(87, 138, 205, 0.1)'
+                  }
+                }}>
+                  <AttachFile />
+                </IconButton>
+              </Tooltip>
+            </label>
+
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder={t("marketing.aiAssistant.placeholder")}
+              value={selectedCard || inputValue}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+                if (selectedCard && e.target.value !== selectedCard) {
+                  setSelectedCard(null);
+                }
+              }}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') handleSend();
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  backgroundColor: '#fff',
+                  '& fieldset': {
+                    borderColor: 'rgba(87, 138, 205, 0.3)'
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(87, 138, 205, 0.5)'
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#578acd',
+                    boxShadow: '0 0 0 2px rgba(87, 138, 205, 0.2)'
+                  }
+                }
+              }}
+            />
+
+            <Button
+              variant="contained"
+              size="large"
+              disabled={(!inputValue && !selectedCard && !selectedFile) || waitingModules[activeChat]}
+              onClick={handleSend}
+              sx={{
+                minWidth: '48px',
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                backgroundColor: '#578acd',
+                color: '#fff',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  backgroundColor: '#4678b5',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(87, 138, 205, 0.4)'
+                },
+                '&.Mui-disabled': {
+                  backgroundColor: 'rgba(87, 138, 205, 0.1)',
+                  color: 'rgba(87, 138, 205, 0.3)'
+                }
+              }}
+            >
+              <Send sx={{
+                fontSize: '1.2rem',
+                transition: 'transform 0.3s ease',
+                transform: (!inputValue && !selectedCard && !selectedFile) || waitingModules[activeChat] ? 'scale(1)' : 'scale(1.1)'
+              }} />
+            </Button>
+          </Box>
+        </Paper>
+      </Box>
+
+      {/* Modal para visualização ampliada da imagem */}
+      <Dialog
+        open={imageModal.open}
+        onClose={closeImageModal}
+        maxWidth="lg"
+        fullWidth
+        TransitionComponent={Zoom}
+        PaperProps={{
+          sx: {
+            overflow: 'hidden',
+            backgroundColor: 'transparent',
+            boxShadow: 'none'
+          }
+        }}
+      >
+        <DialogContent sx={{
+          p: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'rgba(0, 0, 0, 0.8)'
+        }}>
+          <Box
+            component="img"
+            src={imageModal.src}
+            alt="Imagem ampliada"
+            sx={{
+              maxWidth: '100%',
+              maxHeight: '80vh',
+              transform: `scale(${imageModal.zoom})`,
+              transition: 'transform 0.3s ease',
+              cursor: 'zoom-in'
+            }}
+            onClick={zoomIn}
+          />
+        </DialogContent>
+        <DialogActions sx={{
+          position: 'absolute',
+          bottom: 16,
+          right: 16,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          borderRadius: '28px'
+        }}>
+          <Tooltip title="Zoom Out" arrow>
+            <IconButton onClick={zoomOut} color="inherit" sx={{ color: '#fff' }}>
+              <ZoomOut />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Zoom In" arrow>
+            <IconButton onClick={zoomIn} color="inherit" sx={{ color: '#fff' }}>
+              <ZoomIn />
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow>
+            <IconButton onClick={closeImageModal} color="inherit" sx={{ color: '#fff' }}>
+              <Close />
+            </IconButton>
+          </Tooltip>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

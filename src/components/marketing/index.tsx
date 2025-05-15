@@ -281,7 +281,7 @@ const isInProgress = (card) => {
   const [barData] = useState({
     labels: ["Jan", "Fev", "Mar", "Abr", "Mai"],
     datasets: [{
-      label: "Conversões",
+      label: t("marketing.conversions"),
       data: [0, 0, 0, 0, 0],
       backgroundColor: alpha(theme.palette.success.main, 0.7),
       borderRadius: 4,
@@ -447,7 +447,7 @@ const cards = [
                         avatar={<Avatar sx={{ bgcolor: alpha(theme.palette.success.main, 0.2) }}>👥</Avatar>}
                       />
                       <Chip
-                        label={`${liveData.conversions} Conversões`}
+                        label={`${liveData.conversions} ${t("marketing.conversions")}`}
                         size="small"
                         color="success"
                         avatar={<Avatar sx={{ bgcolor: alpha(theme.palette.success.main, 0.2) }}>📈</Avatar>}
@@ -532,10 +532,10 @@ const cards = [
                             left: 0,
                             right: 0,
                             height: 4,
-                            background: isModuleCompleted(card.module)
-                              ? theme.palette.success.main
+                            background: isInProgress(card.module)
+                              ? theme.palette.primary.main
                               : isModuleUnlocked(card.module)
-                                ? theme.palette.primary.main
+                                ? theme.palette.success.main
                                 : 'transparent',
                             transition: 'background 0.3s ease'
                           }

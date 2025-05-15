@@ -5,7 +5,7 @@ import { getStorageValue } from '../hooks/useLocalStorage.ts';
 // https://roktune.duckdns.org/
 
 const axiosInstance = axios.create({
-	baseURL: process.env.REACT_APP_API_URL ?? 'https://roktune.duckdns.org/',
+	baseURL:'https://roktune.duckdns.org/',
 	headers: {
 		'Content-type': 'application/json',
 		'Access-Control-Allow-Origin': '*',

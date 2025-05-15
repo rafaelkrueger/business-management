@@ -76,7 +76,7 @@ const Sidebar: React.FC<{
           if (res.data.length === 0) {
             props.setHasNoCompanies(true);
           } else {
-            props.activateModule('config');
+            props.activateModule('marketing');
           }
         });
     }

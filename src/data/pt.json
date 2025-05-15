@@ -530,6 +530,7 @@
   "marketing": {
     "title": "Dashboard de Marketing",
     "performance": "Desempenho de Marketing",
+    "views": "Views",
     "conversions": "Conversões",
     "paid_traffic": "Tráfego Pago",
     "tools": "Ferramentas",
@@ -565,6 +566,8 @@
     "aiAssistant": {
       "all":"Todos",
       "suggestionsTitle":"Sugestões",
+      "welcomeTitle": "Olá! Eu sou seu Agente de Marketing",
+      "welcomeMessage": "Que bom ter você aqui. Vou criar tudo o que sua empresa precisa — landing pages, e-mails, posts para redes sociais e muito mais. Mas antes, preciso conhecer melhor o seu negócio. Vamos começar?",
       "performance":"Performance",
       "campaing":"Campanhas",
       "placeholder":"💡 Digite sua pergunta ou selecione uma sugestão acima...",

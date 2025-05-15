@@ -524,6 +524,7 @@
     "title": "Marketing Dashboard",
     "performance": "Marketing Performance",
     "conversions": "Conversions",
+    "views": "Views",
     "paid_traffic": "Paid Traffic",
     "visits":"Visits",
     "leads":"Leads",
@@ -558,6 +559,8 @@
     "aiAssistant": {
       "all":"All",
       "suggestionTitle":"Suggestions",
+      "welcomeTitle": "Hey there! I'm your AI Marketing Assistant",
+      "welcomeMessage": "Great to have you here. I’ll create everything your business needs — landing pages, emails, social media posts, and more. But first, I need to understand your company. Ready to begin?",
       "performance":"Performance",
       "campaing":"Campaign",
       "placeholder":"💡 Type your question or select a suggestion above...",
