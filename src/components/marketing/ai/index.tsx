@@ -141,7 +141,7 @@ const modulesTimeline = [
   { id: 'socialMedia', label: 'Social Media', icon: <PersonPinCircleRounded style={{color:'#fff'}} size={20} /> },
   { id: 'forms', label: 'Forms', icon: <IoIosPaper style={{color:'#fff'}} size={20} /> },
   { id: 'email', label: 'Email', icon: <Email style={{color:'#fff'}} size={20} /> },
-  { id: 'salesPage', label: 'Sales Page', icon: <WebStoriesRounded style={{color:'#fff'}} size={20} /> },
+  // { id: 'salesPage', label: 'Sales Page', icon: <WebStoriesRounded style={{color:'#fff'}} size={20} /> },
 ];
 
 const ImageContainer = styled(Box)(({ theme }) => ({
@@ -209,10 +209,10 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
       conversationId: null,
       messages: []
     },
-    salesPage: {
-      conversationId: null,
-      messages: []
-    }
+    // salesPage: {
+    //   conversationId: null,
+    //   messages: []
+    // }
   });
   const [completedModules, setCompletedModules] = useState([]);
   const [enabledFeatures, setEnabledFeatures] = useState<string[]>([]);
@@ -233,7 +233,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
       'socialMedia': 'socialMedia',
       'forms': 'forms',
       'email': 'email',
-      'salesPage': 'salesPage'
+      // 'salesPage': 'salesPage'
     };
 
     return enabledFeatures.includes(featureMap[moduleId]);
@@ -257,7 +257,22 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [chats[activeChat]?.messages]);
+  }, [waitingModules]);
+
+  useEffect(() => {
+    const el = document.querySelector("#main-content");
+    if (el) {
+      el.style.overflow = "hidden";
+      el.scrollTop = 0;
+    }
+    window.scrollTo(0, 0);
+
+    return () => {
+      if (el) {
+        el.style.overflow = "";
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -265,7 +280,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [activeChat]);
+  }, [activeChat, waitingModules]);
 
   const fetchEnabledFeatures = async () => {
     try {
@@ -395,14 +410,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
       timestamp: new Date()
     };
 
-    const loadingMessage = {
-      id: 'typing',
-      sender: 'assistant',
-      content: '',
-      timestamp: new Date()
-    };
-
-    const updatedMessages = [...currentChat.messages, userMessage, loadingMessage];
+    const updatedMessages = [...currentChat.messages, userMessage];
 
     setChats(prev => ({
       ...prev,
@@ -609,10 +617,12 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
   return (
     <Container maxWidth="lg" sx={{
       py: 4,
-      height: '100vh',
+      height: '110vh',
       display: 'flex',
       flexDirection: 'column',
-      background: 'linear-gradient(160deg, #f8faff 0%, #ffffff 100%)'
+      background: 'linear-gradient(160deg, #f8faff 0%, #ffffff 100%)',
+      marginTop: {xs:'-40px', sm:'-50px'},
+      overflowY:'hidden'
     }}>
       <Box sx={{
         background: 'linear-gradient(90deg, #578acd 0%, #6a9ce0 100%)',
@@ -622,9 +632,9 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
         color: '#fff',
         boxShadow: '0 4px 20px rgba(87, 138, 205, 0.2)',
         display:'flex',
-        width:'95.5%',
+        width:{xs: '85.5%', sm:'92.5%', md:'95.5%'},
         justifyContent:'space-around',
-        height:'60px'
+        height:{xs: '30px', sm:'60px'},
       }}>
         <Box sx={{
           display: 'flex',
@@ -632,6 +642,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
           mb: 0,
           cursor: 'pointer',
           width: '5%',
+          marginTop: {xs:'-30px', sm:'-20px'},
           '&:hover': {
             '& .back-arrow': {
               transform: 'translateX(-3px)'
@@ -644,7 +655,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
             fontSize: '2rem'
           }} />
         </Box>
-        <ModuleTimeline style={{width: '90%'}}>
+        <ModuleTimeline style={{width: '90%', marginTop:window.outerWidth > 600 ? '17px' : '-1px'}}>
           {modulesTimeline.map((step, index) => {
             const isCompleted = completedModules.includes(step.id);
             const isUnlocked = isModuleUnlocked(step.id);
@@ -711,6 +722,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
           overflowY: 'auto',
           mb: 2,
           p: 2,
+          maxHeight:{xs:'300px', sm:'unset'},
           borderBottomLeftRadius: 3,
           borderBottomRightRadius: 3,
           backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -839,6 +851,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
 
       <Box sx={{
         position: 'sticky',
+        width:'100%',
         bottom: 0,
         pb: 2,
         background: 'linear-gradient(to top, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0) 100%)'
@@ -875,7 +888,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
             </Box>
           )}
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width:'100%' }}>
             <input
               type="file"
               ref={fileInputRef}

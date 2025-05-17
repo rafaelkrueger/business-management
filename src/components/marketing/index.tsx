@@ -27,7 +27,8 @@ import {
   Lock,
   Rocket,
   Award,
-  Star
+  Star,
+  Coins
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -42,6 +43,7 @@ import CRMApp from "./crm/index.tsx";
 import SalesFunnel from "./funnel/index.tsx";
 import Confetti from 'react-confetti';
 import UserProgressService from '../../services/user-progress.service.ts'
+import { RobotOutlined } from "@ant-design/icons";
 
 const AnimatedCard = styled(Card)(({ theme }) => ({
   transition: 'all 0.3s ease-in-out',
@@ -49,7 +51,8 @@ const AnimatedCard = styled(Card)(({ theme }) => ({
     transform: 'translateY(-5px)',
     boxShadow: theme.shadows[8],
   },
-  height: '100%',
+  maxHeight:'220px',
+  minHeight:'220px',
   display: 'flex',
   flexDirection: 'column',
   background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.8)} 0%, ${alpha(theme.palette.background.default, 0.9)} 100%)`,
@@ -113,15 +116,59 @@ const ModuleStep = styled(Box)(({ theme, completed, active }) => ({
   }
 }));
 
+const NextStepIndicator = styled(Box)(({ theme }) => ({
+  position: 'relative',
+  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+  border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+  borderRadius: '12px',
+  padding: theme.spacing(2),
+  marginBottom: theme.spacing(3),
+  display: 'flex',
+  alignItems: 'center',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: `linear-gradient(90deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, transparent 100%)`,
+    borderRadius: 'inherit',
+    zIndex: 0
+  }
+}));
+
+const PulseDot = styled(Box)(({ theme }) => ({
+  width: 12,
+  height: 12,
+  borderRadius: '50%',
+  backgroundColor: theme.palette.primary.main,
+  marginRight: theme.spacing(1.5),
+  boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0.7)}`,
+  animation: 'pulse 1.5s infinite',
+  '@keyframes pulse': {
+    '0%': {
+      transform: 'scale(0.95)',
+      boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0.7)}`
+    },
+    '70%': {
+      transform: 'scale(1)',
+      boxShadow: `0 0 0 10px ${alpha(theme.palette.primary.main, 0)}`
+    },
+    '100%': {
+      transform: 'scale(0.95)',
+      boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0)}`
+    }
+  }
+}));
+
 const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
   const { t } = useTranslation();
   const [module, setModule] = useState('');
   const theme = useTheme();
+  const { enqueueSnackbar } = useSnackbar();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-  const { enqueueSnackbar } = useSnackbar();
-
-  // Estado para controle de progresso e gamificação
   const [progress, setProgress] = useState(0);
   const [completedModules, setCompletedModules] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -143,6 +190,16 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
 
   fetchProgress();
 }, [props.activeCompany, module]);
+
+const getNextStep = () => {
+  if (!completedModules.includes('marketingAi')) return 'marketingAi';
+  if (!completedModules.includes('createLeads')) return 'createLeads';
+  if (!completedModules.includes('automation')) return 'automation';
+  if (!completedModules.includes('crm')) return 'crm';
+  if (!completedModules.includes('funnel')) return 'funnel';
+  return null;
+};
+
 
 const moduleDependencies = {
   marketingAi: [],
@@ -206,7 +263,6 @@ const isInProgress = (card) => {
         }
       );
 
-      // Sugestão de próxima ação com IA
       setTimeout(() => {
         let suggestion = '';
         if (moduleName === 'createLeads') {
@@ -235,7 +291,8 @@ const isInProgress = (card) => {
     position: 'relative',
     opacity: 0.7,
     cursor: 'not-allowed',
-    height:'220px',
+    maxHeight:'220px',
+    minHeight:'220px',
     '&:hover': {
       transform: 'none',
       boxShadow: theme.shadows[2]
@@ -336,6 +393,26 @@ const cards = [
     completed: isModuleCompleted("funnel"),
     disabled: !isModuleUnlocked("funnel"),
   },
+  {
+    icon: <RobotOutlined size={24} color={theme.palette.text.disabled} />,
+    title: t("marketing.chatbot"),
+    description: t("marketing.chatbot_desc"),
+    module: "chatbot",
+    color: theme.palette.text.disabled,
+    completed: isModuleCompleted("chatbot"),
+    disabled: true,
+    comingSoon: true
+  },
+  {
+    icon: <Coins size={24} color={theme.palette.text.disabled} />,
+    title: t("marketing.sales_page"),
+    description: t("marketing.sales_page_desc"),
+    module: "salesPage",
+    color: theme.palette.text.disabled,
+    completed: isModuleCompleted("salesPage"),
+    disabled: true,
+    comingSoon: true
+  },
 ];
 
   const getCardSize = () => {
@@ -353,59 +430,65 @@ const cards = [
   ];
 
   return (
-    <Box sx={{
-      padding: isMobile ? 2 : 4,
-      marginTop: isMobile ? '50px' : 'unset',
-      background: unlockedTheme === 'professional'
-        ? 'linear-gradient(135deg, #121212 0%, #1a1a2e 100%)'
-        : theme.palette.mode === 'light'
-          ? 'linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%)'
-          : 'linear-gradient(135deg, #121212 0%, #1e1e1e 100%)',
-      minHeight: '100vh',
-      transition: 'background 0.5s ease'
-    }}>
-      {showConfetti && (
-        <Confetti
-          width={window.innerWidth}
-          height={window.innerHeight}
-          recycle={false}
-          numberOfPieces={500}
-        />
-      )}
+<Box sx={{
+  padding: isMobile ? 2 : 4,
+  marginTop: isMobile ? '50px' : 'unset',
+  background: unlockedTheme === 'professional'
+    ? 'linear-gradient(135deg, #121212 0%, #1a1a2e 100%)'
+    : theme.palette.mode === 'light'
+      ? 'linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%)'
+      : 'linear-gradient(135deg, #121212 0%, #1e1e1e 100%)',
+  minHeight: '100vh',
+  transition: 'background 0.5s ease'
+}}>
+  {showConfetti && <Confetti /* ... */ />}
 
-      {module === '' ? (
-        <>
-          <Fade in timeout={500}>
-            <Box>
-              <Typography variant="h4" component="h1" sx={{
-                mb: 1,
-                fontWeight: 700,
-                color: theme.palette.text.primary,
-                textAlign: 'left'
-              }}>
-              </Typography>
+  {module === '' ? (
+    <>
+      <Fade in timeout={500}>
+        <Box>
+          {getNextStep() && (
+            <NextStepIndicator>
+              <PulseDot />
+              <Box sx={{ position: 'relative', zIndex: 1 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, color: theme.palette.primary.main }}>
+                  {t("marketing.nextStep")}
+                </Typography>
+                <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+                  {t(`marketing.nextStepDescription.${getNextStep()}`)}
+                </Typography>
+              </Box>
+            </NextStepIndicator>
+          )}
 
-            <ModuleTimeline>
-              {modulesTimeline.map((step, index) => {
-                const isCompleted = completedModules.includes(step.id);
-                const isUnlocked = isModuleUnlocked(step.id);
+          <ModuleTimeline>
+            {modulesTimeline.map((step, index) => {
+              const isCompleted = completedModules.includes(step.id);
+              const isUnlocked = isModuleUnlocked(step.id);
+              const isNextStep = step.id === getNextStep();
 
-                return (
-                  <ModuleStep
-                    key={step.id}
-                    completed={isCompleted}
-                    active={!isCompleted && isUnlocked}
-                  >
-                    <Box className="step-icon">
-                      {isCompleted ? <Check size={20} /> : isUnlocked ? step.icon : <Lock size={20} />}
-                    </Box>
-                    <Typography className="step-label">{step.label}</Typography>
-                  </ModuleStep>
-                );
-              })}
-            </ModuleTimeline>
-            </Box>
-          </Fade>
+              return (
+                <ModuleStep
+                  key={step.id}
+                  completed={isCompleted}
+                  active={isNextStep}
+                  sx={isNextStep ? {
+                    '& .step-icon': {
+                      boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.3)}`,
+                      animation: 'pulse 2s infinite'
+                    }
+                  } : {}}
+                >
+                  <Box className="step-icon">
+                    {isCompleted ? <Check size={20} /> : isUnlocked ? step.icon : <Lock size={20} />}
+                  </Box>
+                  <Typography className="step-label">{step.label}</Typography>
+                </ModuleStep>
+              );
+            })}
+          </ModuleTimeline>
+        </Box>
+      </Fade>
 
           <Grid container spacing={2} sx={{ mb: 3 }}>
             <Grid item xs={12} md={6}>
@@ -485,39 +568,73 @@ const cards = [
           <Grid container spacing={3} sx={{ marginBottom: isMobile ? 3 : 6 }}>
             {cards.map((card, index) => (
               <Grid item xs={getCardSize()} key={index}>
-                {card.disabled ? (
-                  <Zoom in timeout={(index + 1) * 200}>
-                    <div onClick={() => enqueueSnackbar(t('userProgress.blocked'), { variant: 'info' })}>
-                      <DisabledCard>
-                        <CardContent sx={{ flexGrow: 1 }}>
-                          <Box sx={{
-                            width: 48,
-                            height: 48,
-                            borderRadius: '50%',
-                            backgroundColor: alpha(card.color, 0.1),
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            mb: 2
-                          }}>
-                            {card.icon}
-                          </Box>
-                          <Typography variant="h6" sx={{
-                            mb: 1,
-                            fontWeight: 600
-                          }}>
-                            {card.title}
-                          </Typography>
-                          <Typography variant="body2" sx={{
-                            lineHeight: 1.6
-                          }}>
-                            {card.description}
-                          </Typography>
-                        </CardContent>
-                      </DisabledCard>
-                    </div>
-                  </Zoom>
-                ) : (
+              {card.disabled ? (
+                <Zoom in timeout={(index + 1) * 200}>
+                    <div onClick={() => {
+                      const requiredStep = moduleDependencies[card.module]?.find(
+                        step => !completedModules.includes(step)
+                      );
+
+                      if (requiredStep) {
+                        const requiredStepName = cards.find(c => c.module === requiredStep)?.title || requiredStep;
+
+                        enqueueSnackbar(
+                          t('userProgress.blocked', { step: requiredStepName }),
+                          { variant: 'info' }
+                        );
+                      } else {
+                        enqueueSnackbar(t('userProgress.blocked_generic'), { variant: 'info' });
+                      }
+                    }}>
+                    <DisabledCard>
+                    {card?.comingSoon && (
+                      <Chip
+                        label={t("general.comingSoon")}
+                        size="small"
+                        variant="outlined"
+                        sx={{
+                          position: 'absolute',
+                          top: 12,
+                          right: 12,
+                          fontWeight: 600,
+                          fontSize: '0.5rem',
+                          color: 'rgba(0, 0, 0, 0.8)',
+                          borderColor: 'rgba(0, 0, 0, 0.8)',
+                          backgroundColor: 'rgba(255,255,255,0.8)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px'
+                        }}
+                      />
+                    )}
+                      <CardContent sx={{ flexGrow: 1 }}>
+                        <Box sx={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: '50%',
+                          backgroundColor: alpha(card.color, 0.1),
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          mb: 2
+                        }}>
+                          {card.icon}
+                        </Box>
+                        <Typography variant="h6" sx={{
+                          mb: 1,
+                          fontWeight: 600
+                        }}>
+                          {card.title}
+                        </Typography>
+                        <Typography variant="body2" sx={{
+                          lineHeight: 1.6
+                        }}>
+                          {card.description}
+                        </Typography>
+                      </CardContent>
+                    </DisabledCard>
+                  </div>
+                </Zoom>
+              ) : (
                   <Zoom in timeout={(index + 1) * 200}>
                     <div>
                         <AnimatedCard
@@ -542,6 +659,51 @@ const cards = [
                           }}
                           onClick={() => setModule(card.module || '')}
                         >
+                    <Badge
+                      badgeContent={card.module === getNextStep() ? t('marketing.currentStep') : null}
+                      color="primary"
+                      sx={{
+                        '& .MuiBadge-badge': {
+                          backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                          border: `1px solid ${alpha(theme.palette.primary.main, 1)}`,
+                          color: alpha(theme.palette.primary.main, 0.8),
+                          right: 70,
+                          top: 30,
+                          fontWeight: 'bold',
+                          fontSize: '0.6rem',
+                          textTransform: 'uppercase',
+                          padding: '0 8px',
+                          animation: 'pulse 2s infinite',
+                        '@keyframes pulse': {
+                          '0%': {
+                            boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0.7)}`
+                          },
+                          '70%': {
+                            boxShadow: `0 0 0 10px ${alpha(theme.palette.primary.main, 0)}`
+                          },
+                          '100%': {
+                            boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0)}`
+                          }
+                        }
+                        }
+                      }}
+                    >
+                        {card?.comingSoon && (
+                          <Chip
+                            label={t("general.comingSoon")}
+                            color="warning"
+                            size="small"
+                            sx={{
+                              position: 'absolute',
+                              top: 8,
+                              right: 8,
+                              fontWeight: 600,
+                              backgroundColor: alpha(theme.palette.warning.main, 0.1),
+                              color: theme.palette.warning.dark,
+                              textTransform: 'uppercase'
+                            }}
+                          />
+                        )}
                           <CardContent sx={{ flexGrow: 1 }}>
                             <Box sx={{
                               width: 48,
@@ -569,6 +731,7 @@ const cards = [
                               {card.description}
                             </Typography>
                           </CardContent>
+                        </Badge>
                         </AnimatedCard>
                     </div>
                   </Zoom>

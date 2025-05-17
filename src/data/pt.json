@@ -1,4 +1,7 @@
 {
+  "general": {
+    "comingSoon": "Coming Soon"
+  },
   "auth": {
     "title":"Marketing Inteligente",
     "knowMore":"Saiba Mais Sobre Roktune",
@@ -50,7 +53,8 @@
     }
   },
   "userProgress":{
-    "blocked":"Conclua os passos anteriores para acessar."
+    "blocked": "Conclua \"{{step}}\" para desbloquear os módulos",
+    "blocked_generic":"Módulo não disponível"
   },
   "mainModules":"Módulo principal",
   "mainModuleTag":"Principal",
@@ -542,6 +546,8 @@
     "ab_tests_desc": "Crie e analise variações para otimizar suas conversões.",
     "funnels": "Funis de Vendas",
     "funnels_desc": "Visualize a jornada do cliente e otimize cada etapa.",
+    "chatbot": "Chatbot com IA",
+    "chatbot_desc": "Crie e treine seu chatbot com IA com os dados da sua empresa para gerar suas conversões.",
     "crmTitle": "CRM e Segmentação",
     "crm_desc": "Gerencie leads, contatos e crie segmentos personalizados.",
     "campaign_manager": "Gerenciador de Campanhas",
@@ -559,10 +565,21 @@
     "ab_testing": "Testes A/B & Otimização de Conversão",
     "ab_testing_desc": "Teste diferentes versões de páginas e campanhas.",
     "landing_pages": "Landing Pages & Captura de Leads",
-    "landing_pages_desc": "Capture e qualifique leads.",
+    "landing_pages_desc": "Crie landing pages com IA e capture e qualifique leads.",
+    "sales_page": "Sales Page",
+    "sales_page_desc": "Crie páginas de venda com IA para apresentar suas ofertas e convertê-los em clientes.",
     "automation": "Automação",
     "ai": "IA de Marketing",
     "aiDescription": "Discuta, pergunte e ensine seu Agente IA de marketing",
+    "nextStep": "Próximo Passo",
+    "currentStep": "Etapa Atual",
+    "nextStepDescription": {
+      "marketingAi": "Configure sua IA de marketing para começar",
+      "createLeads": "Crie sua página de captura para gerar leads",
+      "automation": "Configure automações para nutrir seus leads",
+      "crm": "Organize seus leads no CRM",
+      "funnel": "Complete seu funil de vendas"
+    },
     "aiAssistant": {
       "all":"Todos",
       "suggestionsTitle":"Sugestões",

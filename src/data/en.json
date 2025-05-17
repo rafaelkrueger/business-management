@@ -1,4 +1,7 @@
 {
+  "general": {
+    "comingSoon": "Coming Soon"
+  },
   "auth": {
     "title":"Intelligent Marketing",
     "knowMore":"Know More about Roktune",
@@ -49,8 +52,9 @@
       "desc": "Track campaign performance with predictive analytics, multichannel attribution, and automatic improvement suggestions."
     }
   },
-    "userProgress":{
-    "blocked":"Complete the previous steps to access this."
+  "userProgress":{
+    "blocked": "Complete \"{{step}}\" to unlock modules",
+    "blocked_generic":"Module not available"
   },
   "mainModules":"Main Modules",
   "mainModuleTag":"Main",
@@ -534,6 +538,8 @@
     "ab_tests_desc": "Create and analyze variations to optimize conversions.",
     "funnels": "Sales Funnels",
     "funnels_desc": "Visualize the customer journey and optimize each step.",
+    "chatbot": "AI Chatbot",
+    "chatbot_desc": "Build and train your AI chatbot using your company’s data and convert more customers.",
     "crmTitle": "CRM & Segmentation",
     "crm_desc": "Manage leads, contacts, and create personalized segments.",
     "campaign_manager": "Campaign Manager",
@@ -552,10 +558,21 @@
     "ab_testing": "A/B Testing & Conversion Optimization",
     "ab_testing_desc": "Test different versions of pages and campaigns.",
     "landing_pages": "Landing Pages & Lead Capture",
-    "landing_pages_desc": "Capture and qualify leads automatically.",
+    "landing_pages_desc": "Create landing pages using AI and capture and qualify leads automatically.",
+    "sales_page": "Sales Pages & Conversion Tracking",
+    "sales_page_desc": "Create high-impact sales pages with AI to present your offers, engage leads, and convert them into customers while tracking performance.",
     "automation": "Automation",
     "ai": "Marketing AI",
     "aiDescription": "Discuss, ask and teach your AI Marketing agent",
+    "nextStep": "Next Step",
+    "currentStep": "Next Step",
+    "nextStepDescription": {
+      "marketingAi": "Set up your marketing AI to get started",
+      "createLeads": "Create your capture page to generate leads",
+      "automation": "Set up automations to nurture your leads",
+      "crm": "Organize your leads in the CRM",
+      "funnel": "Complete your sales funnel"
+    },
     "aiAssistant": {
       "all":"All",
       "suggestionTitle":"Suggestions",

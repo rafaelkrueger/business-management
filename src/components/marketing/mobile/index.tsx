@@ -34,7 +34,8 @@ import {
   Rocket,
   Star,
   Bell,
-  Trophy
+  Trophy,
+  Coins
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -49,6 +50,7 @@ import StyledAIAssistant from "../ai/index.tsx";
 import CRMApp from "../crm/index.tsx";
 import SalesFunnel from "../funnel/index.tsx";
 import UserProgressService from '../../../services/user-progress.service.ts'
+import { RobotOutlined } from "@ant-design/icons";
 
 const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
   const { t } = useTranslation();
@@ -93,6 +95,23 @@ const isModuleUnlocked = (moduleKey) => {
   const requiredSteps = moduleDependencies[moduleKey] || [];
   return requiredSteps.every(step => completedModules.includes(step));
 };
+
+  const ComingSoonBadge = styled('div')(({ theme }) => ({
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    color: 'rgba(0, 0, 0, 0.8)',
+    borderColor: '0.5pxrgba(0, 0, 0, 0.8) solid',
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    borderRadius: '12px',
+    padding: '2px 8px',
+    fontSize: '0.6rem',
+    fontWeight: 700,
+    letterSpacing: '0.5px',
+    textTransform: 'uppercase',
+    backdropFilter: 'blur(4px)',
+    zIndex: 1
+  }));
 
   const ModuleTimeline = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -147,6 +166,52 @@ const isModuleUnlocked = (moduleKey) => {
           : theme.palette.text.disabled
     }
   }));
+
+  const NextStepIndicator = styled(Box)(({ theme }) => ({
+  position: 'relative',
+  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+  border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+  borderRadius: '12px',
+  padding: theme.spacing(2),
+  marginBottom: theme.spacing(3),
+  display: 'flex',
+  alignItems: 'center',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: `linear-gradient(90deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, transparent 100%)`,
+    borderRadius: 'inherit',
+    zIndex: 0
+  }
+}));
+
+const PulseDot = styled(Box)(({ theme }) => ({
+  width: 12,
+  height: 12,
+  borderRadius: '50%',
+  backgroundColor: theme.palette.primary.main,
+  marginRight: theme.spacing(1.5),
+  boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0.7)}`,
+  animation: 'pulse 1.5s infinite',
+  '@keyframes pulse': {
+    '0%': {
+      transform: 'scale(0.95)',
+      boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0.7)}`
+    },
+    '70%': {
+      transform: 'scale(1)',
+      boxShadow: `0 0 0 10px ${alpha(theme.palette.primary.main, 0)}`
+    },
+    '100%': {
+      transform: 'scale(0.95)',
+      boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0)}`
+    }
+  }
+}));
 
   const [progress, setProgress] = useState(0);
   const [completedModules, setCompletedModules] = useState([]);
@@ -254,18 +319,13 @@ const isModuleUnlocked = (moduleKey) => {
     }
   };
 
-  const completeDailyMission = () => {
-    if (!dailyMission.completed) {
-      setDailyMission({...dailyMission, completed: true});
-      setUserPoints(prev => prev + dailyMission.points);
-      enqueueSnackbar(
-        <Box display="flex" alignItems="center">
-          <span style={{ marginRight: 8 }}>🎯</span>
-          <span>Missão completa! +{dailyMission.points} pontos</span>
-        </Box>,
-        { variant: 'success', autoHideDuration: 3000 }
-      );
-    }
+  const getNextStep = () => {
+    if (!completedModules.includes('marketingAi')) return 'marketingAi';
+    if (!completedModules.includes('createLeads')) return 'createLeads';
+    if (!completedModules.includes('automation')) return 'automation';
+    if (!completedModules.includes('crm')) return 'crm';
+    if (!completedModules.includes('funnel')) return 'funnel';
+    return null;
   };
 
   // Componentes estilizados
@@ -276,6 +336,8 @@ const isModuleUnlocked = (moduleKey) => {
     border: '1px solid rgba(255, 255, 255, 0.2)',
     boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.1)',
     overflow: 'hidden',
+    maxHeight:'160px',
+    minHeight:'160px',
     transition: 'all 0.3s ease',
     '&:hover': {
       transform: 'translateY(-5px)',
@@ -285,6 +347,8 @@ const isModuleUnlocked = (moduleKey) => {
 
   const DisabledCard = styled(GlassCard)(({ theme }) => ({
     opacity: 0.6,
+    maxHeight:'160px',
+    minHeight:'160px',
     '&:hover': {
       transform: 'none',
       boxShadow: 'none'
@@ -380,6 +444,26 @@ const cards = [
     completed: isModuleCompleted("funnel"),
     disabled: !isModuleUnlocked("funnel"),
   },
+  {
+    icon: <RobotOutlined size={24} color={theme.palette.text.disabled} />,
+    title: t("marketing.chatbot"),
+    description: t("marketing.chatbot_desc"),
+    module: "chatbot",
+    color: theme.palette.text.disabled,
+    completed: isModuleCompleted("chatbot"),
+    disabled: true,
+    comingSoon: true
+  },
+  {
+    icon: <Coins size={24} color={theme.palette.text.disabled} />,
+    title: t("marketing.sales_page"),
+    description: t("marketing.sales_page_desc"),
+    module: "salesPage",
+    color: theme.palette.text.disabled,
+    completed: isModuleCompleted("salesPage"),
+    disabled: true,
+    comingSoon: true
+  },
 ];
 
   // Navegação para módulos
@@ -413,6 +497,19 @@ const cards = [
       )}
 
       <Box sx={{ p: 2 }}>
+      {getNextStep() && (
+        <NextStepIndicator>
+          <PulseDot />
+          <Box sx={{ position: 'relative', zIndex: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: theme.palette.primary.main }}>
+              {t("marketing.nextStep")}
+            </Typography>
+            <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
+              {t(`marketing.nextStepDescription.${getNextStep()}`)}
+            </Typography>
+          </Box>
+        </NextStepIndicator>
+      )}
       <ModuleTimeline>
         {modulesTimeline.map((step, index) => {
           const isCompleted = completedModules.includes(step.id);
@@ -446,7 +543,7 @@ const cards = [
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + (index * 0.1) }}
               >
-                <GlassCard>
+                <GlassCard sx={{minHeight:'110px', maxHeight:'110px'}}>
                   <CardContent sx={{ p: 1, textAlign: 'center' }}>
                     <Avatar sx={{
                       bgcolor: alpha(stat.color, 0.1),
@@ -484,94 +581,133 @@ const cards = [
         </Typography>
 
         <Grid container spacing={2}>
-          {cards.map((card, index) => (
-            <Grid item xs={6} key={index}>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 * index }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {card.disabled ? (
-                  <DisabledCard onClick={() => enqueueSnackbar(t("userProgress.blocked"), { variant: 'info' })}>
-                    <CardContent sx={{ p: 1.5 }}>
-                      <Badge
-                        overlap="circular"
-                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                        badgeContent={<Lock size={12} />}
-                      >
-                        <Avatar sx={{
-                          bgcolor: alpha(card.color, 0.1),
-                          width: 36,
-                          height: 36,
-                          mb: 1,
-                          color: card.color
-                        }}>
-                          {card.icon}
-                        </Avatar>
-                      </Badge>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                        {card.title}
-                      </Typography>
-                      <Typography variant="caption" sx={{
-                        color: 'text.secondary',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
-                      }}>
-                        {card.description}
-                      </Typography>
-                    </CardContent>
-                  </DisabledCard>
-                ) : (
-                    <GlassCard
-                      sx={{
-                        borderTop: isModuleCompleted(card.module)
-                          ? `5px solid ${theme.palette.success.main}`
-                          : isModuleUnlocked(card.module)
-                            ? `5px solid ${theme.palette.primary.main}`
-                            : '5px solid transparent'
-                      }}
-                      onClick={() => setModule(card.module)}
+        {cards.map((card, index) => (
+          <Grid item xs={6} key={index}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1 * index }}
+              whileTap={{ scale: 0.95 }}
+              style={{ position: 'relative' }}
+            >
+              {card.disabled ? (
+                <DisabledCard onClick={() => {
+                      const requiredStep = moduleDependencies[card.module]?.find(
+                        step => !completedModules.includes(step)
+                      );
+
+                      if (requiredStep) {
+                        const requiredStepName = cards.find(c => c.module === requiredStep)?.title || requiredStep;
+
+                        enqueueSnackbar(
+                          t('userProgress.blocked', { step: requiredStepName }),
+                          { variant: 'info' }
+                        );
+                      } else {
+                        enqueueSnackbar(t('userProgress.blocked_generic'), { variant: 'info' });
+                      }
+                    }}>
+                  {card.comingSoon && <ComingSoonBadge>{t("general.comingSoon")}</ComingSoonBadge>}
+                  <CardContent sx={{ p: 1.5 }}>
+                    <Badge
+                      overlap="circular"
+                      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                      badgeContent={card.comingSoon ? null : <Lock size={12} />}
                     >
-                    <CardContent sx={{ p: 1.5 }}>
-                        <Avatar sx={{
-                          bgcolor: alpha(card.color, 0.1),
-                          width: 36,
-                          height: 36,
-                          mb: 1,
-                          color: card.color
-                        }}>
-                          {card.icon}
-                        </Avatar>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                        {card.title}
-                      </Typography>
-                      <Typography variant="caption" sx={{
-                        color: 'text.secondary',
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
+                      <Avatar sx={{
+                        bgcolor: alpha(card.color, 0.1),
+                        width: 36,
+                        height: 36,
+                        mb: 1,
+                        color: card.color
                       }}>
-                        {card.description}
-                      </Typography>
-                      {card.completed && (
-                        <Box sx={{
-                          mt: 1,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'flex-end'
-                        }}>
-                        </Box>
-                      )}
-                    </CardContent>
-                  </GlassCard>
-                )}
-              </motion.div>
-            </Grid>
-          ))}
+                        {card.icon}
+                      </Avatar>
+                    </Badge>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                      {card.title}
+                    </Typography>
+                    <Typography variant="caption" sx={{
+                      color: 'text.secondary',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    }}>
+                      {card.description}
+                    </Typography>
+                  </CardContent>
+                </DisabledCard>
+              ) : (
+                <GlassCard
+                  sx={{
+                    borderTop: isModuleCompleted(card.module)
+                      ? `5px solid ${theme.palette.success.main}`
+                      : isModuleUnlocked(card.module)
+                        ? `5px solid ${theme.palette.primary.main}`
+                        : '5px solid transparent'
+                  }}
+                  onClick={() => setModule(card.module)}
+                >
+                  {card.module === getNextStep() && (
+                  <Chip
+                      label={t("marketing.currentStep")}
+                      size="small"
+                      sx={{
+                        position: 'absolute',
+                        top: 12.3,
+                        right: 12,
+                        backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                        border: `1px solid ${alpha(theme.palette.primary.main, 0.5)}`,
+                        color: theme.palette.primary.main,
+                        fontWeight: 700,
+                        fontSize: '0.6rem',
+                        textTransform: 'uppercase',
+                        zIndex: 2,
+                        animation: 'pulse 2s infinite',
+                        '@keyframes pulse': {
+                          '0%': {
+                            boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0.4)}`
+                          },
+                          '70%': {
+                            boxShadow: `0 0 0 8px ${alpha(theme.palette.primary.main, 0)}`
+                          },
+                          '100%': {
+                            boxShadow: `0 0 0 0 ${alpha(theme.palette.primary.main, 0)}`
+                          }
+                        }
+                      }}
+                    />
+                  )}
+                  {card.comingSoon && <ComingSoonBadge>{t("general.comingSoon")}</ComingSoonBadge>}
+                  <CardContent sx={{ p: 1.5 }}>
+                    <Avatar sx={{
+                      bgcolor: alpha(card.color, 0.1),
+                      width: 36,
+                      height: 36,
+                      mb: 1,
+                      color: card.color
+                    }}>
+                      {card.icon}
+                    </Avatar>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                      {card.title}
+                    </Typography>
+                    <Typography variant="caption" sx={{
+                      color: 'text.secondary',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    }}>
+                      {card.description}
+                    </Typography>
+                  </CardContent>
+                </GlassCard>
+              )}
+            </motion.div>
+          </Grid>
+        ))}
         </Grid>
 
         <Grid container spacing={2} sx={{ marginTop:'20px' }}>

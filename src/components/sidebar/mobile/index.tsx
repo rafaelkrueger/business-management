@@ -1,51 +1,88 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled, { keyframes, css } from 'styled-components';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import ColorThief from 'colorthief';
 import { useTranslation } from 'react-i18next';
-import { CgWebsite, CgChevronDown, CgChevronUp, CgExtension } from 'react-icons/cg';
+import { Box, Tooltip } from '@mui/material';
+import { CgWebsite, CgExtension, CgChevronDown, CgChevronUp } from 'react-icons/cg';
 import { CiCreditCard1 } from 'react-icons/ci';
-import { FaMoneyBill, FaCalendar, FaMagic } from 'react-icons/fa';
-import { IoIosHome, IoMdChatboxes, IoMdLogOut, IoMdNotifications } from 'react-icons/io';
+import { FaMoneyBill, FaCalendar } from 'react-icons/fa';
+import { IoIosHome, IoMdChatboxes, IoMdNotifications, IoMdLogOut } from 'react-icons/io';
 import { MdSell } from 'react-icons/md';
 import { RiAdminLine, RiSettingsLine } from 'react-icons/ri';
 import { TiBusinessCard } from 'react-icons/ti';
-import { BsBuilding, BsDot } from 'react-icons/bs';
+import { BsBuilding } from 'react-icons/bs';
+import CampaignIcon from '@mui/icons-material/Campaign';
 import ModulesService from '../../../services/modules.service.ts';
 import HomeService from '../../../services/home.service.ts';
-import CampaignIcon from '@mui/icons-material/Campaign';
 import { SidebarWrapper, TopSection, CompanyHeader, CompanyAvatar, CompanyLogo, CompanyPlaceholder, CompanyInfo, CompanyName, ChevronIcon, CompanyDropdown, CompanyOption, CompanyLogoWrapper, CompanyOptionInfo, CompanyOptionName, SelectedIndicator, GlowingDot, BottomSection, ModulesScroll, ModulesContainer, CompactModuleItem, CompactModuleIcon, CompactModuleLabel, LogoutItem, LogoutLabel } from './styles.ts';
-import { Tooltip } from '@mui/material';
 
-// Adicionando novos estilos para os elementos criativos
-const ExtraModulesToggle = styled.div`
+const BottomNavContainer = styled(Box)`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 12px 0;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 50px;
-
-  &:hover {
-    transform: scale(1.1);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #4A75AE;
+  box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1200;
+  height: 60px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 `;
 
-const MagicWandIcon = styled(FaMagic)`
-  color: ${props => props.text};
-  opacity: 0.7;
-  transition: all 0.3s ease;
+const NavItemsWrapper = styled.div`
+  display: flex;
+  min-width: 100%;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 8px;
+`;
+
+const NavItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  min-width: 60px;
+  cursor: pointer;
+  color: ${({ active }) => (active ? '#fff' : '#e4e4e4')};
+  transition: all 0.2s ease;
+  position: relative;
 
   &:hover {
-    opacity: 1;
-    filter: drop-shadow(0 0 4px ${props => props.text});
+    color: #fff;
   }
+`;
+
+const NavIcon = styled.div`
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+`;
+
+const NavLabel = styled.span`
+  font-size: 0.7rem;
+  white-space: nowrap;
+`;
+
+const ActiveIndicator = styled.div`
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 3px;
+  background-color: ${({ active }) => (active ? '#fff' : '#4A75AE')};
+  border-radius: 0 0 3px 3px;
 `;
 
 const ExtraModulesBadge = styled.div`
   position: absolute;
-  top: -5px;
-  right: -5px;
+  top: 2px;
+  right: 10px;
   background-color: #ff4757;
   color: white;
   border-radius: 50%;
@@ -58,7 +95,7 @@ const ExtraModulesBadge = styled.div`
   font-weight: bold;
 `;
 
-const MobileSidebar = ({
+const MobileBottomNavigation = ({
   activateModule,
   userData,
   setActiveCompany,
@@ -69,30 +106,23 @@ const MobileSidebar = ({
   modulesUpdating
 }) => {
   const { t } = useTranslation();
-  const [activeItem, setActiveItem] = useState('');
+  const [activeItem, setActiveItem] = useState('marketing');
   const [modules, setModules] = useState([]);
-  const [expanded, setExpanded] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [brandColors, setBrandColors] = useState({ primary: '#578acd', secondary: '#1d3e70', text: '#ffffff' });
   const [showExtraModules, setShowExtraModules] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipText, setTooltipText] = useState('');
-  const [brandColors, setBrandColors] = useState({
-    primary: '#578acd',
-    secondary: '#1d3e70',
-    text: '#ffffff'
-  });
-  const scrollRef = useRef(null);
+  const [expandedTop, setExpandedTop] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const colorThief = new ColorThief();
 
   useEffect(() => {
     if (userData._id) {
       HomeService.get(userData._id).then(res => {
         setCompanies(res.data);
-        if (res.data.length === 0) {
-          setHasNoCompanies(true);
-        } else {
+        if (res.data.length === 0) setHasNoCompanies(true);
+        else {
           const firstCompany = res.data[0];
-          setSelectedCompany(firstCompany);
           setActiveCompany(firstCompany.id);
           extractBrandColors(firstCompany.logo);
         }
@@ -103,30 +133,13 @@ const MobileSidebar = ({
   useEffect(() => {
     if (activeCompany && companies.length > 0) {
       const company = companies.find(c => c.id === activeCompany);
-      if (company) {
-        setSelectedCompany(company);
-        extractBrandColors(company.logo);
-      }
+      if (company) extractBrandColors(company.logo);
       ModulesService.get(activeCompany).then(res => setModules(res.data));
     }
-  }, [activeCompany, companies]);
-
-  useEffect(() => {
-    if (activeCompany && companies.length > 0) {
-      ModulesService.get(activeCompany)
-        .then((res) => setModules(res.data));
-    }
-  }, [activeCompany, modulesUpdating]);
+  }, [activeCompany, companies, modulesUpdating]);
 
   const extractBrandColors = (logoUrl) => {
-    if (!logoUrl) {
-      setBrandColors({
-        primary: '#578acd',
-        secondary: '#1d3e70',
-        text: '#ffffff'
-      });
-      return;
-    }
+    if (!logoUrl) return setBrandColors({ primary: '#578acd', secondary: '#1d3e70', text: '#ffffff' });
 
     const img = new Image();
     img.crossOrigin = 'Anonymous';
@@ -136,48 +149,29 @@ const MobileSidebar = ({
       try {
         const palette = colorThief.getPalette(img, 3);
         const [primary, secondary] = palette;
-
         setBrandColors({
           primary: `rgb(${primary.join(',')})`,
           secondary: `rgb(${secondary.join(',')})`,
           text: getContrastColor(primary)
         });
-      } catch (error) {
-        console.error('Error extracting colors:', error);
-        setBrandColors({
-          primary: '#578acd',
-          secondary: '#1d3e70',
-          text: '#ffffff'
-        });
+      } catch (e) {
+        setBrandColors({ primary: '#578acd', secondary: '#1d3e70', text: '#ffffff' });
       }
     };
 
-    img.onerror = () => {
-      setBrandColors({
-        primary: '#578acd',
-        secondary: '#1d3e70',
-        text: '#ffffff'
-      });
-    };
+    img.onerror = () => setBrandColors({ primary: '#578acd', secondary: '#1d3e70', text: '#ffffff' });
   };
 
   const getContrastColor = (rgb) => {
-    const brightness = Math.round(((rgb[0] * 299) + (rgb[1] * 587) + (rgb[2] * 114))) / 1000;
+    const brightness = Math.round(((rgb[0] * 299) + (rgb[1] * 587) + (rgb[2] * 114)) / 1000);
     return brightness > 128 ? '#000000' : '#ffffff';
   };
 
-  const iconComponents = {
-    home: IoIosHome,
-    payments: FaMoneyBill,
-    products: MdSell,
-    customers: RiAdminLine,
-    employees: TiBusinessCard,
-    calendar: FaCalendar,
-    orders: CiCreditCard1,
-    online: CgWebsite,
-    marketing: CampaignIcon,
-    notifications: IoMdChatboxes,
-    config: RiSettingsLine
+  const selectedCompany = companies.find(c => c.id === activeCompany);
+  const handleCompanySelect = (company) => {
+    setActiveCompany(company.id);
+    setExpandedTop(false);
+    extractBrandColors(company.logo);
   };
 
   const toggleExtrasWithTooltip = () => {
@@ -185,30 +179,41 @@ const MobileSidebar = ({
     setTooltipText(t('supportModulesTooltip'));
     setTooltipOpen(true);
     setTimeout(() => setTooltipOpen(false), 3000);
-};
+  };
 
   const handleItemClick = (key) => {
+    if (key === 'logout') {
+      localStorage.removeItem('accessToken');
+      window.location.replace('/');
+      return;
+    }
     const fixedKey = key ? key.toLowerCase() : key;
     activateModule(fixedKey);
     setActiveItem(fixedKey);
   };
 
-  const handleCompanySelect = (company) => {
-    setSelectedCompany(company);
-    setActiveCompany(company.id);
-    setExpanded(false);
-    extractBrandColors(company.logo);
+  const iconComponents = {
+    home: IoIosHome, payments: FaMoneyBill, products: MdSell, customers: RiAdminLine, employees: TiBusinessCard,
+    calendar: FaCalendar, orders: CiCreditCard1, online: CgWebsite, marketing: CampaignIcon, notifications: IoMdNotifications,
+    chat: IoMdChatboxes, config: RiSettingsLine, logout: IoMdLogOut
   };
 
-  // Determina quais módulos são "básicos" e quais são "extras"
-  const basicModules = ['marketing'];
-  const isBasicModule = (moduleKey) => basicModules.includes(moduleKey ? moduleKey.toLowerCase() : moduleKey);
+  const isMainModule = (key) => ['home', 'marketing', 'customers', 'payments'].includes(key);
+
+  const allModules = modules.map(module => ({
+    key: module?.key.toLowerCase(),
+    icon: iconComponents[module?.key.toLowerCase()] || CgExtension,
+    label: t(`config.establishmentModules.${module?.key}`) || module?.key
+  }));
+
+  const mainNavItems = allModules.filter(item => isMainModule(item?.key));
+  const extraNavItems = allModules.filter(item => !isMainModule(item?.key));
 
   return (
-    <SidebarWrapper>
-      {/* Top Section - Company Selector */}
+    <>
+      <SidebarWrapper>
       <TopSection primary={brandColors.primary}>
-        <CompanyHeader onClick={() => setExpanded(!expanded)}>
+        <CompanyHeader onClick={() => setExpandedTop(!expandedTop)}>
           <CompanyAvatar>
             {selectedCompany?.logo ? (
               <CompanyLogo src={selectedCompany.logo} alt={selectedCompany.name} />
@@ -224,11 +229,11 @@ const MobileSidebar = ({
             </CompanyName>
           </CompanyInfo>
           <ChevronIcon text={brandColors.text}>
-            {expanded ? <CgChevronUp size={20} /> : <CgChevronDown size={20} />}
+            {expandedTop ? <CgChevronUp size={20} /> : <CgChevronDown size={20} />}
           </ChevronIcon>
         </CompanyHeader>
 
-        {expanded && (
+        {expandedTop && (
           <CompanyDropdown>
             {companies.map(company => (
               <CompanyOption
@@ -261,108 +266,55 @@ const MobileSidebar = ({
         )}
       </TopSection>
 
-      <BottomSection primary={brandColors.primary} secondary={brandColors.secondary}>
-        <ModulesScroll ref={scrollRef}>
-          <ModulesContainer>
-            {/* Módulos básicos (sempre visíveis) */}
-            {modules
-              .filter(module => isBasicModule(module?.key))
-              .map(module => {
-                const key = module?.key?.toLowerCase();
-                const IconComponent = iconComponents[key];
-                return (
-                  key && IconComponent && (
-                    <CompactModuleItem
-                      key={module?.key}
-                      onClick={() => handleItemClick(module?.key)}
-                      active={true}
-                      title={t(`config.establishmentModules.${module?.key}`)}
-                      style={{
-                        backgroundColor: 'rgba(0,168,255,0.1)',
-                      }}
-                    >
-                      <CompactModuleIcon active={true} text={brandColors.text}>
-                        <IconComponent size={18} />
-                      </CompactModuleIcon>
-                        <CompactModuleLabel text={brandColors.text}>
-                          {t(`config.establishmentModules.${module?.key}`)}
-                        </CompactModuleLabel>
-                    </CompactModuleItem>
-                  )
-                );
-              })}
-            <Tooltip
-              title={tooltipText}
-              open={tooltipOpen}
-              placement="top"
-              arrow
-            >
-              <ExtraModulesToggle onClick={toggleExtrasWithTooltip}>
-                <div style={{ position: 'relative' }}>
-                  <CgExtension color="#fff" size={22} />
-                  {!showExtraModules && modules.filter(module => !isBasicModule(module?.key)).length > 0 && (
-                    <ExtraModulesBadge>
-                      {modules.filter(module => !isBasicModule(module?.key)).length}
-                    </ExtraModulesBadge>
-                  )}
-                </div>
-              </ExtraModulesToggle>
+      <BottomNavContainer sx={{ top: expanded ? '120px' : 'unset' }}>
+        <NavItemsWrapper>
+          {mainNavItems.map(item => (
+            <Tooltip key={item?.key} title={item.label} placement="top" arrow>
+              <NavItem onClick={() => handleItemClick(item?.key)} active={activeItem === item?.key}>
+                <ActiveIndicator active={activeItem === item?.key} />
+                <NavIcon style={{marginBottom:'-5px'}}>{React.createElement(item.icon, { size: 20 })}</NavIcon>
+                <NavLabel>{item.label}</NavLabel>
+              </NavItem>
             </Tooltip>
-            {showExtraModules && modules
-              .filter(module => !isBasicModule(module?.key))
-              .map(module => {
-                const key = module?.key?.toLowerCase();
-                const IconComponent = iconComponents[key];
-                return (
-                  key && IconComponent && (
-                    <CompactModuleItem
-                      key={module?.key}
-                      onClick={() => handleItemClick(module?.key)}
-                      active={activeItem === key}
-                      title={t(`config.establishmentModules.${module?.key}`)}
-                      style={{
-                        backgroundColor: 'rgba(45, 60, 113, 0.5)',
-                        height:'40px'
-                      }}
-                    >
-                      <CompactModuleIcon active={activeItem === key} text={brandColors.text}>
-                        <IconComponent size={18} />
-                      </CompactModuleIcon>
-                      {activeItem === key && (
-                        <CompactModuleLabel text={brandColors.text}>
-                          {t(`config.establishmentModules.${module?.key}`)}
-                        </CompactModuleLabel>
-                      )}
-                    </CompactModuleItem>
-                  )
-                );
-              })}
+          ))}
 
-            <LogoutItem
-              onClick={() => handleItemClick('config')}
-              active={activeItem === 'config'}
-              title={t('configurations')}
+        {extraNavItems.length > 0 && (
+          <Tooltip title={tooltipText} open={tooltipOpen} placement="top" arrow>
+            <NavItem
+              onClick={toggleExtrasWithTooltip}
+              active={showExtraModules}
+              activecolor={brandColors.primary}
             >
-              <CompactModuleIcon active={activeItem === 'config'} text={brandColors.text}>
-                <RiSettingsLine size={18} />
-              </CompactModuleIcon>
-                <CompactModuleLabel text={brandColors.text}>
-                  {t('configurations')}
-                </CompactModuleLabel>
-            </LogoutItem>
+              <div style={{ position: 'relative' }}>
+                <NavIcon style={{marginBottom:'-5px'}}>
+                  <CgExtension size={20} />
+                </NavIcon>
+                {!showExtraModules && (
+                  <ExtraModulesBadge>
+                    {extraNavItems.length}
+                  </ExtraModulesBadge>
+                )}
+              </div>
+              <NavLabel>Extras</NavLabel>
+              <ActiveIndicator active={showExtraModules} activecolor={brandColors.primary} />
+            </NavItem>
+          </Tooltip>
+        )}
 
-            <LogoutItem onClick={() => {
-              localStorage.removeItem('accessToken');
-              window.location.replace('/');
-            }}>
-              <IoMdLogOut size={18} color={brandColors.text} />
-              <LogoutLabel color={brandColors.text}>Logout</LogoutLabel>
-            </LogoutItem>
-          </ModulesContainer>
-        </ModulesScroll>
-      </BottomSection>
-    </SidebarWrapper>
+          {[{ key: 'config', icon: RiSettingsLine, label: t('configurations') }, { key: 'logout', icon: IoMdLogOut, label: t('logout') }].map(item => (
+            <Tooltip key={item?.key} title={item.label} placement="top" arrow>
+              <NavItem onClick={() => handleItemClick(item?.key)} active={activeItem === item?.key}>
+                <ActiveIndicator active={activeItem === item?.key} />
+                <NavIcon style={{marginBottom:'-5px'}}>{React.createElement(item.icon, { size: 20 })}</NavIcon>
+                <NavLabel>{item.label}</NavLabel>
+              </NavItem>
+            </Tooltip>
+          ))}
+        </NavItemsWrapper>
+      </BottomNavContainer>
+      </SidebarWrapper>
+    </>
   );
 };
 
-export default MobileSidebar;
+export default MobileBottomNavigation;
