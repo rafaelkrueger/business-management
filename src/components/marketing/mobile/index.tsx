@@ -42,15 +42,15 @@ import { useTranslation } from "react-i18next";
 import { useSnackbar } from 'notistack';
 import { motion, AnimatePresence } from 'framer-motion';
 import Confetti from 'react-confetti';
-import LeadGeneration from "./create-leads/index.tsx";
-import CapturePages from "../capture-pages/index.tsx";
-import AutomationDashboard from "../automation/index.tsx";
+import AutomationDashboard from '../automation/mobile/index.tsx';
 import SocialMediaDashboard from "../social-media/index.tsx";
-import StyledAIAssistant from "../ai/index.tsx";
-import CRMApp from "../crm/index.tsx";
+import CRMAppMobile from "../crm/mobile/index.tsx";
 import SalesFunnel from "../funnel/index.tsx";
 import UserProgressService from '../../../services/user-progress.service.ts'
 import { RobotOutlined } from "@ant-design/icons";
+import MobileCapturePages from "../capture-pages/mobile/index.tsx";
+import PremiumMarketingAssistantMobile from "../ai/mobile/index.tsx";
+import MarketingService from "../../../services/marketing.service.ts";
 
 const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
   const { t } = useTranslation();
@@ -59,6 +59,7 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
   const { enqueueSnackbar } = useSnackbar();
   const [navValue, setNavValue] = useState('home');
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const [glance, setGlance] = useState(null);
 
     useEffect(() => {
     const fetchProgress = async () => {
@@ -78,12 +79,29 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
     fetchProgress();
   }, [props.activeCompany]);
 
+    useEffect(() => {
+    const fetchGlance = async () => {
+      if (!props.activeCompany) return;
+
+      try {
+        const res = await MarketingService.get(props.activeCompany);
+        if (res?.data) {
+          setGlance(res.data);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar progresso:', error);
+      }
+    };
+
+    fetchGlance();
+  }, [props.activeCompany, module]);
+
 const moduleDependencies = {
   marketingAi: [],
   createLeads: ['marketingAi'],
-  automation: ['marketingAi', 'createLeads', 'leadsForm'],
-  crm: ['marketingAi', 'createLeads', 'leadsForm' ,'automation'],
-  funnel: ['marketingAi', 'createLeads', 'leadsForm' , 'automation', 'crm']
+  automation: ['marketingAi', 'createLeads'],
+  crm: ['marketingAi', 'createLeads' ,'automation'],
+  funnel: ['marketingAi', 'createLeads', 'automation', 'crm']
 };
 
 const isModuleCompleted = (moduleKey) => {
@@ -217,13 +235,7 @@ const PulseDot = styled(Box)(({ theme }) => ({
   const [completedModules, setCompletedModules] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [unlockedBadges, setUnlockedBadges] = useState([]);
-  const [dailyMission, setDailyMission] = useState({
-    task: "📤 Publicar 1 post",
-    completed: false,
-    points: 10
-  });
   const [userPoints, setUserPoints] = useState(0);
-  const [showMission, setShowMission] = useState(true);
   const [liveData, setLiveData] = useState({
     leads: 0,
     views: 0,
@@ -314,7 +326,6 @@ const PulseDot = styled(Box)(({ theme }) => ({
         { variant: 'success', autoHideDuration: 3000 }
       );
 
-      // Adiciona pontos
       setUserPoints(prev => prev + 20);
     }
   };
@@ -328,7 +339,6 @@ const PulseDot = styled(Box)(({ theme }) => ({
     return null;
   };
 
-  // Componentes estilizados
   const GlassCard = styled(Card)(({ theme }) => ({
     background: `linear-gradient(135deg, ${alpha('#578acd', 0.15)} 0%, ${alpha('#fff', 0.2)} 100%)`,
     backdropFilter: 'blur(12px)',
@@ -355,49 +365,6 @@ const PulseDot = styled(Box)(({ theme }) => ({
     }
   }));
 
-  const ProgressCard = styled(GlassCard)(({ theme }) => ({
-    background: `linear-gradient(135deg, ${alpha('#4caf50', 0.1)} 0%, ${alpha('#fff', 0.2)} 100%)`,
-    position: 'relative',
-    overflow: 'hidden',
-    '&::after': {
-      content: '""',
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      height: '100%',
-      width: `${progress}%`,
-      background: alpha('#4caf50', 0.2),
-      transition: 'width 0.5s ease'
-    }
-  }));
-
-  // Dados para gráficos
-  const [lineData] = useState({
-    labels: ["Jan", "Fev", "Mar", "Abr", "Mai"],
-    datasets: [
-      {
-        label: t("marketing.views"),
-        data: [0, 0, 0, 0, 0],
-        borderColor: '#578acd',
-        backgroundColor: alpha('#578acd', 0.2),
-        tension: 0.4,
-        borderWidth: 2,
-        pointBackgroundColor: '#578acd',
-        pointRadius: 3
-      }
-    ]
-  });
-
-  const [barData] = useState({
-    labels: ["Jan", "Fev", "Mar", "Abr", "Mai"],
-    datasets: [{
-      label: t("marketing.conversions"),
-      data: [0, 0, 0, 0, 0],
-      backgroundColor: alpha('#4caf50', 0.7),
-      borderRadius: 4
-    }]
-  });
-
 const cards = [
   {
     icon: <Brain size={24} color={"#9C27B0"} />,
@@ -415,7 +382,8 @@ const cards = [
     module: "createLeads",
     color: theme.palette.secondary.main,
     completed: isModuleCompleted("createLeads"),
-    disabled: !isModuleUnlocked("createLeads"),
+    // disabled: !isModuleUnlocked("createLeads"),
+    disabled:false,
   },
   {
     icon: <Zap size={24} color={theme.palette.primary.main} />,
@@ -423,8 +391,9 @@ const cards = [
     description: t("marketing.automation_desc"),
     module: "automation",
     color: theme.palette.primary.main,
-    completed: isModuleCompleted("automation"),
-    disabled: !isModuleUnlocked("automation"),
+    completed: isModuleCompleted("createLeads"),
+    // disabled: !isModuleUnlocked("createLeads"),
+    disabled:false,
   },
   {
     icon: <Users size={24} color={theme.palette.info.light} />,
@@ -433,7 +402,8 @@ const cards = [
     module: "crm",
     color: theme.palette.info.main,
     completed: isModuleCompleted("crm"),
-    disabled: !isModuleUnlocked("crm"),
+    // disabled: !isModuleUnlocked("crm"),
+    disabled:false,
   },
   {
     icon: <FileText size={24} color={theme.palette.warning.light} />,
@@ -441,7 +411,7 @@ const cards = [
     description: t("marketing.funnels_desc"),
     module: "funnel",
     color: theme.palette.warning.main,
-    completed: isModuleCompleted("funnel"),
+    completed:true,
     disabled: !isModuleUnlocked("funnel"),
   },
   {
@@ -466,17 +436,20 @@ const cards = [
   },
 ];
 
-  // Navegação para módulos
   if (module === 'createLeads') {
-    return <CapturePages activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('createLeads')} />;
+    return <MobileCapturePages
+    activeCompany={props.activeCompany}
+    setModule={setModule}
+    onComplete={() => handleModuleComplete('createLeads')}
+    liveData={liveData} />;
   } else if (module === 'automation') {
     return <AutomationDashboard activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('automation')} />;
   } else if (module === 'social-media') {
     return <SocialMediaDashboard activeCompany={props.activeCompany} />;
   } else if (module === 'marketingAi') {
-    return <StyledAIAssistant activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('marketingAi')} />;
+    return <PremiumMarketingAssistantMobile activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('marketingAi')} />;
   } else if (module === 'crm') {
-    return <CRMApp activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('crm')} />;
+    return <CRMAppMobile activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('crm')} />;
   } else if (module === 'funnel') {
     return <SalesFunnel />;
   }
@@ -533,9 +506,9 @@ const cards = [
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
           {[
-            { value: liveData.views, label: t("marketing.views"), icon: <BarChart2 size={16} />, color: '#578acd' },
-            { value: liveData.leads, label: t("marketing.leads"), icon: <Users size={16} />, color: '#4caf50' },
-            { value: liveData.conversions, label: t("marketing.conversions"), icon: <Zap size={16} />, color: '#ff9800' }
+            { value: glance?.views, label: t("marketing.views"), icon: <BarChart2 size={16} />, color: '#578acd' },
+            { value: glance?.leads, label: t("marketing.leads"), icon: <Users size={16} />, color: '#4caf50' },
+            { value: 0, label: t("marketing.conversions"), icon: <Zap size={16} />, color: '#ff9800' }
           ].map((stat, index) => (
             <Grid item xs={4} key={index}>
               <motion.div
@@ -708,72 +681,6 @@ const cards = [
             </motion.div>
           </Grid>
         ))}
-        </Grid>
-
-        <Grid container spacing={2} sx={{ marginTop:'20px' }}>
-          <Grid item xs={12} sm={6}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <GlassCard>
-                <CardContent sx={{ p: 1.5 }}>
-                  <Box display="flex" alignItems="center" mb={1}>
-                    {completedModules.includes('createLeads') && (
-                      <Chip
-                        label="Ao vivo"
-                        size="small"
-                        sx={{ ml: 1 }}
-                        color="success"
-                        avatar={<Avatar sx={{ bgcolor: alpha('#4caf50', 0.2), width: 20, height: 20 }}><Zap size={12} /></Avatar>}
-                      />
-                    )}
-                  </Box>
-                  <Box sx={{ height: 120 }}>
-                    <Line
-                      data={lineData}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                          x: { grid: { display: false } },
-                          y: { grid: { color: 'rgba(0,0,0,0.05)' } }
-                        }
-                      }}
-                    />
-                  </Box>
-                </CardContent>
-              </GlassCard>
-            </motion.div>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <GlassCard>
-                <CardContent sx={{ p: 1.5 }}>
-                  <Box sx={{ height: 120 }}>
-                    <Bar
-                      data={barData}
-                      options={{
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                          x: { grid: { display: false } },
-                          y: { grid: { color: 'rgba(0,0,0,0.05)' } }
-                        }
-                      }}
-                    />
-                  </Box>
-                </CardContent>
-              </GlassCard>
-            </motion.div>
-          </Grid>
         </Grid>
       </Box>
 

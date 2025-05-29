@@ -6,20 +6,26 @@ export const DashboardContainer = styled.div`
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  @media (max-width: 600px) {
+    flex-direction: column;
+    margin-top:-80px;
+    max-width:100%;
+    margin-left:-10px;
+  }
 `;
 
 export const DashboardContainerShowed = styled.div`
   width: 100%;
   height: 100vh;
   overflow-y: auto;
-  padding-bottom: 100px; /* altura do menu fixo */
+  padding-bottom: 100px;
 
   @media (max-width: 600px) {
     margin-left: 0;
     padding: 15px;
     width: 100%;
-    height: calc(100vh - 80px); // Ajuste para altura da mobile sidebar
-    margin-top: 80px; // Espaço para a mobile sidebar
+    height: calc(100vh - 80px);
+    margin-top: 80px;
   }
 
   &::-webkit-scrollbar {

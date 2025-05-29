@@ -13,8 +13,8 @@
     "signUp": "Registrar",
     "name": "Nome",
     "namePlaceholder": "Digite seu nome",
-    "cellphone": "Celular",
-    "cellphonePlaceholder": "Digite seu celular",
+    "cellphone": "Número",
+    "cellphonePlaceholder": "Digite seu número",
     "birthDate": "Data de Nascimento",
     "gender": "Gênero",
     "select": "Selecione",
@@ -73,8 +73,8 @@
     "payment_failed": "Pagamento falhou: {{error}}",
     "elite_plan": "Plano Elite",
     "pro_plan": "Plano Pro",
-    "elite_price": "R$10/mês",
-    "pro_price": "R$39/mês"
+    "elite_price": "R$29.90/mês",
+    "pro_price": "R$49.90/mês"
   },
   "payment": {
     "success": "Pagamento realizado com sucesso!",
@@ -91,34 +91,36 @@
     "help": "Precisa de ajuda para escolher?",
     "contact": "Fale conosco",
     "trial": {
-      "title": "Teste Gratuito",
-      "duration": "14 dias",
-      "button": "Iniciar Teste Gratuito",
-      "feature1": "IA Vertical",
-      "feature2": "Criação de E-mails e Landing Pages com IA",
-      "feature3": "Assistente de IA com uso limitado",
-      "feature4": "Não requer cartão de crédito"
+      "title": "Plano Gratuito",
+      "price": "R$0",
+      "duration": "",
+      "feature5": "1 Landing Page",
+      "feature1": "3 Formulários de Captura",
+      "feature2": "5 Automações",
+      "feature4": "Limite de leads",
+      "feature3": "10 Conteúdos Gerados por IA"
     },
     "elite": {
       "title": "Plano Elite",
-      "duration": "por mês",
+      "price": "R$24",
+      "duration": "/por mês",
       "button": "Assinar Elite",
-      "feature1": "Todos os recursos do teste gratuito",
-      "feature2": "Acesso total ao assistente de IA",
-      "feature3": "Automação de marketing com fluxos inteligentes",
-      "feature4": "Suporte prioritário e onboarding personalizado",
-      "feature5": "Análises de SEO e redes sociais"
+      "feature1": "30 Landing Pages",
+      "feature5": "30 Formulários de Captura",
+      "feature2": "50 Automações",
+      "feature4": "Sem Limite de leads",
+      "feature3": "100 Conteúdos Gerados por IA"
     },
     "pro": {
       "title": "Plano Pro",
-      "duration": "por mês",
+      "price": "R$49",
+      "duration": "/por mês",
       "button": "Escolher Pro",
-      "feature1": "Todos os recursos do plano Elite",
-      "feature2": "IA Vertical personalizada para sua empresa",
-      "feature3": "Ferramentas avançadas de colaboração em equipe",
-      "feature4": "Suporte dedicado 24/7",
-      "feature5": "Automação ilimitada e CRM inteligente",
-      "feature6": "Acesso completo à API + integrações externas"
+      "feature1": "100 Landing Pages",
+      "feature5": "300 Formulários de Captura",
+      "feature2": "500 Automações",
+      "feature4": "Sem Limite de leads",
+      "feature3": "1000 Conteúdos Gerados por IA"
     }
   },
   "error": {
@@ -681,7 +683,7 @@
       "createLandingPage": "Landing Page",
       "createForm": "Formulário de Captura",
       "landingPagesTab": "Landing Pages",
-      "formsTab": "Formulários de Captura",
+      "formsTab": "Formulários",
       "noLandingPageFound": "Nenhuma landing page encontrada.",
       "tryCreatingOne": "Crie uma nova página.",
       "createPage": "Criar Página",
@@ -838,6 +840,7 @@
     "twitterConnectNeeded": "Você precisa conectar sua conta do Twitter antes de usar este bloco.",
     "linkedinConnectNeeded": "Você precisa conectar sua conta do Linkedin antes de usar este bloco.",
     "facebookConnectNeeded": "Você precisa conectar sua conta do Facebook antes de usar este bloco.",
+    "instagramConnectNeeded": "Você precisa conectar sua conta do Instagram antes de usar este bloco.",
     "twitterConnectionError": "Erro ao verificar a conexão com o Twitter. Por favor, tente novamente.",
     "linkedinPostContent": "Conteúdo do post no LinkedIn",
     "facebookPostContent": "Conteúdo do post no Facebook",
@@ -867,6 +870,7 @@
     "linkedin": "Linkedin",
     "facebook": "Facebook",
     "whatsapp": "Whatsapp",
+    "instagram": "Instagram",
     "youtube": "Youtube",
     "chatgpt": "Texto IA",
     "chatgptImage": "Imagem IA",
@@ -985,5 +989,24 @@
     "errorAuthLink": "Erro ao gerar o link de autenticação.",
     "errorConnecting": "Erro ao conectar ao YouTube. Por favor, tente novamente.",
     "close": "Fechar"
+  },
+    "instagramAuthModal": {
+    "titleConnected": "Instagram Connected",
+    "titleConnect": "Connect Instagram Account",
+    "connectedMessage": "Your Instagram account is successfully connected!",
+    "connectedDescription": "You can now manage your Instagram content and analytics.",
+    "notConnectedMessage": "Connect your Instagram account",
+    "notConnectedDescription": "Authorize access to manage your Instagram content and analytics.",
+    "connectButton": "Connect Instagram",
+    "close": "Close",
+    "errorAuthLink": "Failed to get Instagram authentication link",
+    "errorConnecting": "Error connecting to Instagram"
+  },
+    "instagramNodeEditor": {
+    "caption": "Legenda do Instagram",
+    "chooseMedia": "Selecionar Mídia (Imagem/Video)",
+    "imageOnly": "Apenas imagens e vídeos são permitidos",
+    "imagePreview": "Pré-visualização da Mídia",
+    "videoPreview": "Pré-visualização do Vídeo"
   }
 }

@@ -44,6 +44,7 @@ import SalesFunnel from "./funnel/index.tsx";
 import Confetti from 'react-confetti';
 import UserProgressService from '../../services/user-progress.service.ts'
 import { RobotOutlined } from "@ant-design/icons";
+import MarketingService from "../../services/marketing.service.ts";
 
 const AnimatedCard = styled(Card)(({ theme }) => ({
   transition: 'all 0.3s ease-in-out',
@@ -169,10 +170,10 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
   const { enqueueSnackbar } = useSnackbar();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-  const [progress, setProgress] = useState(0);
   const [completedModules, setCompletedModules] = useState([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [unlockedTheme, setUnlockedTheme] = useState(null);
+  const [glance, setGlance] = useState(null);
 
   useEffect(() => {
   const fetchProgress = async () => {
@@ -191,6 +192,25 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
   fetchProgress();
 }, [props.activeCompany, module]);
 
+
+  useEffect(() => {
+  const fetchGlance = async () => {
+    if (!props.activeCompany) return;
+
+    try {
+      const res = await MarketingService.get(props.activeCompany);
+      if (res?.data) {
+        setGlance(res.data);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar progresso:', error);
+    }
+  };
+
+  fetchGlance();
+}, [props.activeCompany, module]);
+
+
 const getNextStep = () => {
   if (!completedModules.includes('marketingAi')) return 'marketingAi';
   if (!completedModules.includes('createLeads')) return 'createLeads';
@@ -204,9 +224,9 @@ const getNextStep = () => {
 const moduleDependencies = {
   marketingAi: [],
   createLeads: ['marketingAi'],
-  automation: ['marketingAi', 'createLeads', 'leadsForm'],
-  crm: ['marketingAi', 'createLeads', 'leadsForm' ,'automation'],
-  funnel: ['marketingAi', 'createLeads', 'leadsForm' , 'automation', 'crm']
+  automation: ['marketingAi', 'createLeads'],
+  crm: ['marketingAi', 'createLeads' ,'automation'],
+  funnel: ['marketingAi', 'createLeads' , 'automation', 'crm']
 };
 
 
@@ -223,27 +243,6 @@ const isModuleCompleted = (moduleKey) => {
 const isInProgress = (card) => {
   return isModuleUnlocked(card.module) && !card.completed;
 };
-
-
-  const [liveData, setLiveData] = useState({
-    leads: 0,
-    pageViews: 0,
-    conversions: 0
-  });
-
-  useEffect(() => {
-    if (completedModules.length > 0) {
-      const interval = setInterval(() => {
-        setLiveData(prev => ({
-          leads: 0,
-          pageViews: 0,
-          conversions: 0
-        }));
-      }, 3000);
-
-      return () => clearInterval(interval);
-    }
-  }, [completedModules]);
 
   const handleModuleComplete = (moduleName) => {
     if (!completedModules.includes(moduleName)) {
@@ -364,7 +363,8 @@ const cards = [
     module: "createLeads",
     color: theme.palette.secondary.main,
     completed: isModuleCompleted("createLeads"),
-    disabled: !isModuleUnlocked("createLeads"),
+    // disabled: !isModuleUnlocked("createLeads"),
+    disabled:false,
   },
   {
     icon: <Zap size={24} color={theme.palette.primary.main} />,
@@ -372,8 +372,9 @@ const cards = [
     description: t("marketing.automation_desc"),
     module: "automation",
     color: theme.palette.primary.main,
-    completed: isModuleCompleted("automation"),
-    disabled: !isModuleUnlocked("automation"),
+    completed: isModuleCompleted("createLeads"),
+    // disabled: !isModuleUnlocked("createLeads"),
+    disabled:false,
   },
   {
     icon: <Users size={24} color={theme.palette.info.light} />,
@@ -382,7 +383,8 @@ const cards = [
     module: "crm",
     color: theme.palette.info.main,
     completed: isModuleCompleted("crm"),
-    disabled: !isModuleUnlocked("crm"),
+    // disabled: !isModuleUnlocked("crm"),
+    disabled:false,
   },
   {
     icon: <FileText size={24} color={theme.palette.warning.light} />,
@@ -390,7 +392,7 @@ const cards = [
     description: t("marketing.funnels_desc"),
     module: "funnel",
     color: theme.palette.warning.main,
-    completed: isModuleCompleted("funnel"),
+    completed:true,
     disabled: !isModuleUnlocked("funnel"),
   },
   {
@@ -524,13 +526,13 @@ const cards = [
                     </Typography>
                     <Box display="flex">
                       <Chip
-                        label={`${liveData.leads} Leads`}
+                        label={`${glance?.leads} Leads`}
                         size="small"
                         sx={{ mr: 1 }}
                         avatar={<Avatar sx={{ bgcolor: alpha(theme.palette.success.main, 0.2) }}>👥</Avatar>}
                       />
                       <Chip
-                        label={`${liveData.conversions} ${t("marketing.conversions")}`}
+                        label={`${0} ${t("marketing.conversions")}`}
                         size="small"
                         color="success"
                         avatar={<Avatar sx={{ bgcolor: alpha(theme.palette.success.main, 0.2) }}>📈</Avatar>}
@@ -745,7 +747,6 @@ const cards = [
           activeCompany={props.activeCompany}
           setModule={setModule}
           onComplete={() => handleModuleComplete('createLeads')}
-          liveData={liveData}
         />
       ) : module === 'automation' ? (
         <AutomationDashboard

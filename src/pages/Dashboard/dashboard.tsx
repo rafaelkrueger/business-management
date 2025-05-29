@@ -38,12 +38,23 @@ const Dashboard: React.FC = () => {
 
   const { userData, setUserData } = useUser();
 
-  useEffect(() => {
-    if (token) {
-      AllInOneService.getUserByToken(token)
-        .then((res) => setUserData(res.data));
-    }
-  }, [token, hasNoCompanies, newCompany]);
+useEffect(() => {
+  if (!token || userData) return;
+
+  const interval = setInterval(() => {
+    AllInOneService.getUserByToken(token)
+      .then((res) => {
+        if (res?.data) {
+          setUserData(res.data);
+          clearInterval(interval);
+        }
+      })
+      .catch(console.error);
+  }, 2000);
+
+  return () => clearInterval(interval);
+}, [token, userData]);
+
 
   useEffect(() => {
   if (!token) return;
@@ -105,7 +116,6 @@ const Dashboard: React.FC = () => {
       )}
 
       <DashboardContainerShowed id="main-content">
-        {/* <Maintenance /> */}
         {activeModuleName === 'home' && <Home activeCompany={activeCompany} userData={userData} activateModule={activateModule} />}
         {activeModuleName === 'payments' && <Payments activeCompany={activeCompany} />}
         {activeModuleName === 'products' && <Products activeCompany={activeCompany} />}

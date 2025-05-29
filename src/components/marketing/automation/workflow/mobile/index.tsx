@@ -32,48 +32,49 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import { ArrowBackIos, Instagram } from "@mui/icons-material";
+import { ArrowBackIos } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import AutomationService from "../../../../services/automation.service.ts";
+import AutomationService from "../../../../../services/automation.service.ts";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import EmailService from "../../../../services/email.service.ts";
-import EmailConfigurationModal from "../../email-config/index.tsx";
-import EmailTemplateSelector from "../../email-template-selector/index.tsx";
+import EmailService from "../../../../../services/email.service.ts";
+import EmailConfigurationModal from "../../../email-config/index.tsx";
+import EmailTemplateSelector from "../../../email-template-selector/index.tsx";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-import AiService from "../../../../services/ai.service.ts";
+import AiService from "../../../../../services/ai.service.ts";
 import { Brain, CloudUploadIcon, ImageIcon, Radio, SettingsIcon } from "lucide-react";
 import { Drawer } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { FaEnvelope, FaTwitter, FaLinkedin, FaYoutube, FaFacebook, FaWhatsapp, FaBrain, FaClock, FaInstagram, FaTiktok } from 'react-icons/fa';
 
-import TwitterService from '../../../../services/twitter.service.ts';
-import LinkedinService from "../../../../services/linkedin.service.ts";
-import FacebookService from "../../../../services/facebook.service.ts";
-import YoutubeService from "../../../../services/youtube.service.ts";
+import TwitterService from '../../../../../services/twitter.service.ts';
+import LinkedinService from "../../../../../services/linkedin.service.ts";
+import FacebookService from "../../../../../services/facebook.service.ts";
+import YoutubeService from "../../../../../services/youtube.service.ts";
 
-import LinkedInAuthModal from "../../linkedin-create/index.tsx";
-import FacebookAuthModal from "../../facebook-create/index.tsx";
-import WhatsAppAuthModal from "../../whatsapp-create/index.tsx";
-import YouTubeAuthModal from "../../youtube/youtube-create/index.tsx";
-import TwitterAuthModal from "../../twitter/twitter-create/index.tsx";
+import LinkedInAuthModal from "../../../linkedin-create/index.tsx";
+import FacebookAuthModal from "../../../facebook-create/index.tsx";
+import WhatsAppAuthModal from "../../../whatsapp-create/index.tsx";
+import YouTubeAuthModal from "../../../youtube/youtube-create/index.tsx";
+import TwitterAuthModal from "../../../twitter/twitter-create/index.tsx";
 
-import TwitterNodeEditor from "../../twitter/twitter-post/index.tsx";
-import YouTubeNodeEditor from "../../youtube/youtube-post/index.tsx";
-import FacebookNodeEditor from "../../facebook/facebook-post/index.tsx";
+import TwitterNodeEditor from "../../../twitter/twitter-post/index.tsx";
+import YouTubeNodeEditor from "../../../youtube/youtube-post/index.tsx";
+import FacebookNodeEditor from "../../../facebook/facebook-post/index.tsx";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import WhatsappService from "../../../../services/whatsapp.service.ts";
-import ProgressService from "../../../../services/progress.service.ts";
-import PickLeadsForm from "../../create-leads/pick-leads-form/index.tsx";
+import WhatsappService from "../../../../../services/whatsapp.service.ts";
+import ProgressService from "../../../../../services/progress.service.ts";
+import PickLeadsForm from "../../../create-leads/pick-leads-form/index.tsx";
 import { IoIosClose } from "react-icons/io";
-import WhatsappChatbotModal from "../../whatsapp-chatbot/index.tsx";
-import WaitWhatsappModal from "../../whatsapp-chatbot/wait-whatsapp/index.tsx";
-import InstagramAuthModal from "../../instagram-create/index.tsx";
-import InstagramService from "../../../../services/instagram.service.ts";
-import InstagramNodeEditor from "../../instagram/index.tsx";
+import WhatsappChatbotModal from "../../../whatsapp-chatbot/index.tsx";
+import WaitWhatsappModal from "../../../whatsapp-chatbot/wait-whatsapp/index.tsx";
+import InstagramNodeEditor from "../../../instagram/index.tsx";
+import InstagramAuthModal from "../../../instagram-create/index.tsx";
+import InstagramService from "../../../../../services/instagram.service.ts";
+
 
 const CustomNode = ({ data, id, activeCompany }) => {
   const { t } = useTranslation();
@@ -380,11 +381,11 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
   const [openYoutubeAuthModal, setOpenYoutubeAuthModal] = useState(false);
   const [openWhatsappAuthModal, setOpenWhatsappAuthModal] = useState(false);
   const [openFacebookAuthModal, setOpenFacebookAuthModal] = useState(false);
-  const [openInstagramAuthModal, setOpenInstagramAuthModal] = useState(false);
   const [isLoadingAi, setIsLoadingAi] = useState(false);
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [hasTwitterCredentials, setHasTwitterCredentials] = useState(false);
   const [loadingTwitterCheck, setLoadingTwitterCheck] = useState(true);
+  const [openInstagramAuthModal, setOpenInstagramAuthModal] = useState(false);
   const [facebookPages, setFacebookPages] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
   const [startType, setStartType] = useState<'scheduled' | 'event'>(editingAutomation?.type ?? 'event');
@@ -698,14 +699,15 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         setOpenFacebookAuthModal(true);
       }
     } catch (error) {
-      enqueueSnackbar('Connection issue', {
+      console.error("Erro ao verificar credenciais do Twitter:", error);
+      enqueueSnackbar(t("automationFlow.twitterConnectionError"), {
         variant: "error",
       });
       setOpenFacebookAuthModal(true);
     }
   };
 
-    const handleAddInstagramBlock = async () => {
+  const handleAddInstagramBlock = async () => {
     try {
       const response = await InstagramService.checkInstagramStatus(activeCompany);
       if (response) {
@@ -737,7 +739,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       }
     } catch (error) {
       console.error("Erro ao verificar credenciais do Twitter:", error);
-      enqueueSnackbar('Connection issue', {
+      enqueueSnackbar(t("automationFlow.twitterConnectionError"), {
         variant: "error",
       });
       setOpenYoutubeAuthModal(true);
@@ -750,9 +752,9 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       if (response.data.connected) {
         addNode(BLOCK_TYPES.WHATSAPP);
       } else {
-      enqueueSnackbar('Connection issue', {
-        variant: "error",
-      });
+        enqueueSnackbar(t("automationFlow.whatsappConnectNeeded"), {
+          variant: "warning",
+        });
         setOpenWhatsappAuthModal(true);
       }
     } catch (error) {
@@ -1049,22 +1051,45 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
     return acc;
   }, {});
   return (
-    <Box sx={{ height: "100vh", width: "100%" }}>
-      <ArrowBackIos style={{cursor:'pointer'}} onClick={()=>{setIsCreating(false);setEditingAutomation(false)}}/>
-    <IconButton sx={{marginTop:'-45px', marginLeft:'97%'}} onClick={() => setIsDrawerOpen(true)}>
+<Box
+  sx={{
+    height: "100dvh",
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    overflow: "hidden"
+  }}
+>
+  <Box
+    sx={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      p: 1
+    }}
+  >
+    <ArrowBackIos
+      style={{ cursor: "pointer" }}
+      onClick={() => {
+        setIsCreating(false);
+        setEditingAutomation(false);
+      }}
+    />
+    <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
+      {flowName || t("automationFlow.title")}
+    </Typography>
+    <IconButton onClick={() => setIsDrawerOpen(true)}>
       <SettingsIcon />
     </IconButton>
+  </Box>
 
     <Drawer
-      anchor="right"
+      anchor="bottom"
       open={isDrawerOpen}
       onClose={() => setIsDrawerOpen(false)}
-      PaperProps={{ sx: { width: window.outerWidth > 600 ? '35%' : '90%', padding: 3 } }}
+      PaperProps={{ sx: { height: '75%', padding: 3, borderTopLeftRadius:'20px', borderTopRightRadius:'20px' } }}
     >
-      <Box sx={{display:'flex', justifyContent:'space-between'}}>
-      <Typography variant="h5" fontWeight="bold" color="primary" mb={2}>
-        {t("automationFlow.title")}
-      </Typography>
+      <Box sx={{display:'flex', justifyContent:'flex-end', mb: 2}}>
       {window.outerWidth < 600 ? <IoIosClose size={35} onClick={() => setIsDrawerOpen(false)} /> : ''}
       </Box>
 
@@ -1240,7 +1265,6 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                       linkedin: handleAddLinkedinBlock,
                       facebook: handleAddFacebookBlock,
                       whatsapp: handleAddWhatsappBlock,
-                      youtube: handleAddYoutubeBlock,
                       instagram: handleAddInstagramBlock,
                     };
 
@@ -1317,13 +1341,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         isConnectedToChatGPT={isConnectedToChatGPT}
         />
       )}
-        {editingNode.data.blockType === "instagram" && (
+      {editingNode.data.blockType === "instagram" && (
         <InstagramNodeEditor
         editingNode={editingNode}
         setEditingNode={setEditingNode}
         isConnectedToChatGPT={isConnectedToChatGPT}
         />
-      )}
+    )}
       {editingNode.data.blockType === "formSubmitted" && (
       <PickLeadsForm
         editingNode={editingNode}
@@ -1785,6 +1809,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                   : t("automationFlow.testAI")}
               </Button>
 
+              {/* Skeleton enquanto a resposta carrega */}
               {isLoadingAi && (
                 <Box sx={{ marginTop: "15px" }}>
                   <Skeleton variant="text" width="100%" height={20} />
@@ -2209,12 +2234,12 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         companyId={activeCompany}
       />
 
-      <InstagramAuthModal
-        open={openInstagramAuthModal}
-        onClose={() => setOpenInstagramAuthModal(false)}
-        onSave={handleSaveTwitterCredentials}
-        companyId={activeCompany}
-      />
+    <InstagramAuthModal
+      open={openInstagramAuthModal}
+      onClose={() => setOpenInstagramAuthModal(false)}
+      onSave={handleSaveTwitterCredentials}
+      companyId={activeCompany}
+    />
 
       <YouTubeAuthModal
         open={openYoutubeAuthModal}

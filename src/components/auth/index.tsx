@@ -257,9 +257,9 @@ const Auth = () => {
       {
         id: 'trial',
         title: t('plans.trial.title'),
-        price: '0',
+        price:t('plans.trial.price'),
         duration: t('plans.trial.duration'),
-        features: ['plans.trial.feature1', 'plans.trial.feature2', 'plans.trial.feature3'],
+        features: ['plans.trial.feature5', 'plans.trial.feature1', 'plans.trial.feature2', 'plans.trial.feature3', 'plans.trial.feature4'],
         icon: <Star sx={{ fontSize: 40, color: theme.palette.primary.main }} />,
         buttonText: t('plans.trial.button'),
         recommended: false,
@@ -267,9 +267,9 @@ const Auth = () => {
       {
         id: 'elite',
         title: t('plans.elite.title'),
-        price: '10',
+        price: t('plans.elite.price'),
         duration: t('plans.elite.duration'),
-        features: ['plans.elite.feature1', 'plans.elite.feature2', 'plans.elite.feature3', 'plans.elite.feature4'],
+        features: ['plans.elite.feature1', 'plans.elite.feature5','plans.elite.feature2', 'plans.elite.feature3', 'plans.elite.feature4'],
         icon: <RocketLaunch sx={{ fontSize: 40, color: '#fff' }} />,
         buttonText: t('plans.elite.button'),
         recommended: true,
@@ -277,13 +277,14 @@ const Auth = () => {
       {
         id: 'pro',
         title: t('plans.pro.title'),
-        price: '39',
+        price: t('plans.pro.price'),
         duration: t('plans.pro.duration'),
         features: [
           'plans.pro.feature1',
+          'plans.pro.feature5',
           'plans.pro.feature2',
           'plans.pro.feature3',
-          'plans.pro.feature5',
+          'plans.pro.feature4',
         ],
         icon: <Diamond sx={{ fontSize: 40, color: theme.palette.primary.main }} />,
         buttonText: t('plans.pro.button'),
@@ -342,8 +343,8 @@ const Auth = () => {
                     <AuthPlanTitle>{plan.title}</AuthPlanTitle>
 
                     <AuthPlanPrice>
-                      ${plan.price}
-                      <span>/{plan.duration}</span>
+                      {plan.price}
+                      <span>{plan.duration}</span>
                     </AuthPlanPrice>
 
                     <Divider sx={{ my: 3 }} />
@@ -419,9 +420,8 @@ const Auth = () => {
     },
   ];
 
-
   const videoMap = [
-    'https://www.youtube.com/embed/sMshKg8-tO0', // IA de Marketing
+    'https://www.youtube.com/embed/gRK7QVy8FbI', // IA de Marketing
     'https://www.youtube.com/embed/SgU_o7GEyzM', // Automação
     'https://www.youtube.com/embed/sMshKg8-tO0', // Landing Pages
     'https://www.youtube.com/embed/acTuztqvNxI', // CRM

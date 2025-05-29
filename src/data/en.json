@@ -13,8 +13,8 @@
     "signUp": "Sign Up",
     "name": "Name",
     "namePlaceholder": "Enter your name",
-    "cellphone": "Cellphone",
-    "cellphonePlaceholder": "Enter your cellphone",
+    "cellphone": "Phone Number",
+    "cellphonePlaceholder": "Enter your phone number",
     "birthDate": "Birth Date",
     "gender": "Gender",
     "select": "Select",
@@ -87,33 +87,36 @@
   "contact": "Contact us",
   "trial": {
     "title": "Free Trial",
-    "duration": "14 days",
-    "button": "Start Free Trial",
-    "feature1": "Vertical AI",
-    "feature2": "AI Emails and Landing Pages",
-    "feature3": "Limited AI Assistant",
-    "feature4": "No credit card required"
+    "price": "$0",
+    "duration": "",
+    "button": "Free Plan",
+    "feature1": "3 Capture Forms",
+    "feature2": "3 Automations",
+    "feature3": "500 Leads limit",
+    "feature4": "10 AI Content Creation",
+    "feature5": "1 Landing Page"
   },
   "elite": {
     "title": "Elite Plan",
-    "duration": "per month",
+    "price": "$10",
+    "duration": "/per month",
     "button": "Go Elite",
-    "feature1": "All features from 'Free Trial'",
-    "feature2": "Full access to AI assistant",
-    "feature3": "Marketing automation workflows",
-    "feature4": "Priority support & onboarding",
-    "feature5": "SEO & social media analytics"
+    "feature1": "30 Capture Forms",
+    "feature2": "50 Automations",
+    "feature3": "Unlimited Leads",
+    "feature4": "100 AI Content Creation",
+    "feature5": "30 Landing Page"
   },
   "pro": {
     "title": "Pro Plan",
-    "duration": "per month",
+    "price": "$39",
+    "duration": "/per month",
     "button": "Choose Pro",
-    "feature1": "All features from free 'Elite Plan'",
-    "feature2": "Custom-trained Vertical AI for your business",
-    "feature3": "Advanced team collaboration tools",
-    "feature4": "24/7 dedicated support",
-    "feature5": "Unlimited automations & smart CRM",
-    "feature6": "Full API access + external integrations"
+    "feature1": "300 Capture Forms",
+    "feature2": "500 Automations",
+    "feature3": "Unlimited Leads",
+    "feature4": "1000 AI Content Creation",
+    "feature5": "300 Landing Page"
   }
   },
   "gender": {
@@ -864,6 +867,7 @@
     "youtube": "Youtube",
     "chatgpt": "AI Text",
     "formTrigger": "Form Submitted",
+    "instagram": "Instagram",
     "chatgptImage": "AI Image",
     "whatsappTrigger": "Chatbot"
   },
@@ -978,5 +982,24 @@
     "errorAuthLink": "Error generating authentication link.",
     "errorConnecting": "Error connecting to YouTube. Please try again.",
     "close": "Close"
+  },
+  "instagramAuthModal": {
+  "titleConnected": "Instagram Connected",
+  "titleConnect": "Connect Instagram Account",
+  "connectedMessage": "Your Instagram account is successfully connected!",
+  "connectedDescription": "You can now manage your Instagram content and analytics.",
+  "notConnectedMessage": "Connect your Instagram account",
+  "notConnectedDescription": "Authorize access to manage your Instagram content and analytics.",
+  "connectButton": "Connect Instagram",
+  "close": "Close",
+  "errorAuthLink": "Failed to get Instagram authentication link",
+  "errorConnecting": "Error connecting to Instagram"
+  },
+    "instagramNodeEditor": {
+    "caption": "Instagram Caption",
+    "chooseMedia": "Choose Media (Image/Video)",
+    "imageOnly": "Only images and videos are allowed",
+    "imagePreview": "Media Preview",
+    "videoPreview": "Video Preview"
   }
 }

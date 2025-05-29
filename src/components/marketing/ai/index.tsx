@@ -44,7 +44,8 @@ import {
   PersonPinCircleRounded,
   WebStoriesRounded,
   ZoomIn,
-  ZoomOut
+  ZoomOut,
+  Download
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import ChatAiService from '../../../services/chat-ai.service.ts';
@@ -156,7 +157,7 @@ const ImageContainer = styled(Box)(({ theme }) => ({
   '&:hover': {
     transform: 'scale(1.02)',
     boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)',
-    '& .zoom-icon': {
+    '& .image-actions': {
       opacity: 1
     }
   },
@@ -168,16 +169,23 @@ const ImageContainer = styled(Box)(({ theme }) => ({
     display: 'block'
   },
   position: 'relative',
-  '& .zoom-icon': {
+  '& .image-actions': {
     position: 'absolute',
     top: 8,
     right: 8,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    color: '#fff',
-    borderRadius: '50%',
-    padding: '4px',
+    display: 'flex',
+    gap: '4px',
     opacity: 0,
-    transition: 'opacity 0.3s ease'
+    transition: 'opacity 0.3s ease',
+    '& .action-button': {
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      color: '#fff',
+      borderRadius: '50%',
+      padding: '4px',
+      '&:hover': {
+        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+      }
+    }
   }
 }));
 
@@ -376,6 +384,15 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
     }));
   };
 
+  const handleDownloadImage = (src) => {
+    const link = document.createElement('a');
+    link.href = src;
+    link.download = `marketing-assistant-${new Date().toISOString().slice(0, 10)}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
@@ -520,7 +537,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
   const renderMessageContent = (msg) => {
     if(msg.content.includes('data:image/png;base64')){
       return (
-        <ImageContainer onClick={() => openImageModal(msg.content)}>
+        <ImageContainer>
           <img
             src={msg.content}
             alt="Imagem do chat"
@@ -528,9 +545,33 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
               e.currentTarget.onerror = null;
               e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Imagem+não+disponível';
             }}
+            onClick={() => openImageModal(msg.content)}
           />
-          <Box className="zoom-icon">
-            <ZoomIn fontSize="small" />
+          <Box className="image-actions">
+            <Tooltip title="Zoom" arrow>
+              <IconButton
+                className="action-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openImageModal(msg.content);
+                }}
+                size="small"
+              >
+                <ZoomIn fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Download" arrow>
+              <IconButton
+                className="action-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDownloadImage(msg.content);
+                }}
+                size="small"
+              >
+                <Download fontSize="small" />
+              </IconButton>
+            </Tooltip>
           </Box>
         </ImageContainer>
       );
@@ -1028,7 +1069,16 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
               <ZoomIn />
             </IconButton>
           </Tooltip>
-          <Tooltip arrow>
+          <Tooltip title="Download" arrow>
+            <IconButton
+              onClick={() => handleDownloadImage(imageModal.src)}
+              color="inherit"
+              sx={{ color: '#fff' }}
+            >
+              <Download />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Fechar" arrow>
             <IconButton onClick={closeImageModal} color="inherit" sx={{ color: '#fff' }}>
               <Close />
             </IconButton>

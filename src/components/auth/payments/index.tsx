@@ -37,7 +37,7 @@ import { useNavigate } from 'react-router-dom';
 import AllInOneService from '../../../services/all-in-one.service.ts';
 
 //prod -- pk_live_51QqzL1HHmMmwGxT0IJuUJkhH1k05x1MexJpqUXeptyugtbaEQ9PBEtG595YHzRwFes5l56oyPmKKCrSvfxw7um7s00x6IVEyuM
-const stripePromise = loadStripe('pk_test_51QqzL1HHmMmwGxT0sksZdZko2S4drJ1Iwazt43WMSWVGgoaGWT8UeqENQzzPBdN5nn3H0u7m6Ui2FENH79LE2J8I00kGgsbz56');
+const stripePromise = loadStripe('pk_live_51QqzL1HHmMmwGxT0IJuUJkhH1k05x1MexJpqUXeptyugtbaEQ9PBEtG595YHzRwFes5l56oyPmKKCrSvfxw7um7s00x6IVEyuM');
 
 const PaymentCard = styled(Paper)(({ theme, selected }) => ({
   padding: theme.spacing(3),
@@ -82,11 +82,17 @@ const CheckoutForm = ({ selectedPlan, onClose, pendingToken, userEmail }) => {
     if (!stripe || !elements) return;
 
     setIsProcessing(true);
-    //elite -- price_1RJabGHHmMmwGxT0GMKaq7x6
-    //pro -- price_1RJdbbHHmMmwGxT0L86AWVjz
-    const priceId = selectedPlan === 'elite'
-      ? 'price_1RJac2HHmMmwGxT01IAIsZqw'
-      : 'price_1RJdXYHHmMmwGxT0dW8Wk7Hs';
+    //elite  en -- price_1RJabGHHmMmwGxT0GMKaq7x6
+    //pro en -- price_1RJdbbHHmMmwGxT0L86AWVjz
+    const priceId =
+      selectedPlan === 'elite'
+        ? i18n.language.startsWith('pt')
+          ? 'price_1RRc4pHHmMmwGxT0JPlHCZ1D'      // PT
+          : 'price_1RJabGHHmMmwGxT0GMKaq7x6'
+        : i18n.language.startsWith('pt')
+          ? 'price_1RRc4tHHmMmwGxT0pwfcH4oy'      // PT
+          : 'price_1RJdbbHHmMmwGxT0L86AWVjz';
+
 
     try {
       const cardElement = elements.getElement(CardElement);
@@ -149,7 +155,15 @@ const CheckoutForm = ({ selectedPlan, onClose, pendingToken, userEmail }) => {
         disabled={!stripe || isProcessing}
         sx={{ mt: 4 }}
       >
-        {isProcessing ? t('checkout.processing') : t('checkout.pay_amount', { amount: selectedPlan === 'elite' ? '$10' : '$39' })}
+      {isProcessing
+        ? t('checkout.processing')
+        : t('checkout.pay_amount', {
+            amount:
+              selectedPlan === 'elite'
+                ? (i18n.language.startsWith('pt') ? 'R$24' : '$10')
+                : (i18n.language.startsWith('pt') ? 'R$49' : '$39')
+          })
+      }
       </Button>
     </form>
   );

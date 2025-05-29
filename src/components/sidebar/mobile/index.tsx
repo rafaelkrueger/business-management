@@ -212,7 +212,7 @@ const MobileBottomNavigation = ({
   return (
     <>
       <SidebarWrapper>
-      <TopSection primary={brandColors.primary}>
+      {/* <TopSection primary={brandColors.primary}>
         <CompanyHeader onClick={() => setExpandedTop(!expandedTop)}>
           <CompanyAvatar>
             {selectedCompany?.logo ? (
@@ -264,7 +264,7 @@ const MobileBottomNavigation = ({
             ))}
           </CompanyDropdown>
         )}
-      </TopSection>
+      </TopSection> */}
 
       <BottomNavContainer sx={{ top: expanded ? '120px' : 'unset' }}>
         <NavItemsWrapper>
