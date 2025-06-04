@@ -51,6 +51,7 @@ import { RobotOutlined } from "@ant-design/icons";
 import MobileCapturePages from "../capture-pages/mobile/index.tsx";
 import PremiumMarketingAssistantMobile from "../ai/mobile/index.tsx";
 import MarketingService from "../../../services/marketing.service.ts";
+import {ChatbotManager} from "../chatbot/index.tsx";
 
 const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
   const { t } = useTranslation();
@@ -405,6 +406,15 @@ const cards = [
     // disabled: !isModuleUnlocked("crm"),
     disabled:false,
   },
+    {
+    icon: <RobotOutlined size={24} color={theme.palette.text.disabled} />,
+    title: t("marketing.chatbot"),
+    description: t("marketing.chatbot_desc"),
+    module: "chatbot",
+    color: theme.palette.text.disabled,
+    completed: isModuleCompleted("chatbot"),
+    disabled: false,
+  },
   {
     icon: <FileText size={24} color={theme.palette.warning.light} />,
     title: t("marketing.funnels"),
@@ -413,16 +423,6 @@ const cards = [
     color: theme.palette.warning.main,
     completed:true,
     disabled: !isModuleUnlocked("funnel"),
-  },
-  {
-    icon: <RobotOutlined size={24} color={theme.palette.text.disabled} />,
-    title: t("marketing.chatbot"),
-    description: t("marketing.chatbot_desc"),
-    module: "chatbot",
-    color: theme.palette.text.disabled,
-    completed: isModuleCompleted("chatbot"),
-    disabled: true,
-    comingSoon: true
   },
   {
     icon: <Coins size={24} color={theme.palette.text.disabled} />,
@@ -452,6 +452,8 @@ const cards = [
     return <CRMAppMobile activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('crm')} />;
   } else if (module === 'funnel') {
     return <SalesFunnel />;
+  }else if (module === 'chatbot') {
+    return <ChatbotManager activeCompany={props.activeCompany} setModule={setModule} />;
   }
 
   return (

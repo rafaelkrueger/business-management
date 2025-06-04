@@ -100,7 +100,6 @@ const EmailTemplateSelector = ({ templates = [], open, onClose, onSelect, active
         ...selectedTemplate,
         htmlContent: updatedHtml,
       };
-      console.log(updatedTemplate);
       onSelect(updatedTemplate);
       setSelectedTemplate(null);
       setEditInIframe(true);

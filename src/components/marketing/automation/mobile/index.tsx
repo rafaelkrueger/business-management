@@ -30,7 +30,7 @@ import {
   PauseCircleOutline,
   ArrowBackIos
 } from "@mui/icons-material";
-import AutomationFlow from "../workflow/mobile/index.tsx";
+import AutomationFlow from "../workflow/index.tsx";
 import AutomationService from "../../../../services/automation.service.ts";
 import AutomationCalendar from "../automation-calendar/index.tsx";
 import { useSnackbar } from "notistack";

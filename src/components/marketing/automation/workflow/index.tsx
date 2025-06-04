@@ -1,4 +1,6 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useCallback, useEffect, useMemo, useRef } from "react";
+import AllInOneService from "../../../../services/all-in-one.service.ts";
+import SocialMediaTemplateService from "../../../../services/social-media-template.service.ts";
 import ReactFlow, {
   addEdge,
   Controls,
@@ -28,6 +30,9 @@ import {
   FormControlLabel,
   FormLabel,
   RadioGroup,
+  ToggleButton,
+  ToggleButtonGroup,
+  Grid,
 } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -68,12 +73,39 @@ import { ptBR } from "date-fns/locale";
 import WhatsappService from "../../../../services/whatsapp.service.ts";
 import ProgressService from "../../../../services/progress.service.ts";
 import PickLeadsForm from "../../create-leads/pick-leads-form/index.tsx";
-import { IoIosClose } from "react-icons/io";
+import { IoIosArrowBack, IoIosClose } from "react-icons/io";
 import WhatsappChatbotModal from "../../whatsapp-chatbot/index.tsx";
 import WaitWhatsappModal from "../../whatsapp-chatbot/wait-whatsapp/index.tsx";
 import InstagramAuthModal from "../../instagram-create/index.tsx";
 import InstagramService from "../../../../services/instagram.service.ts";
 import InstagramNodeEditor from "../../instagram/index.tsx";
+import { AllInOneApi } from "../../../../Api.ts";
+import { useTheme } from "@emotion/react";
+
+export const uploadImagesToApi = async (file) => {
+  const uploadedImageUrls: string[] = [];
+  const base64Data = file.base64.split(',')[1];
+  const byteCharacters = atob(base64Data);
+  const byteNumbers = new Array(byteCharacters.length).fill(null).map((_, i) => byteCharacters.charCodeAt(i));
+  const byteArray = new Uint8Array(byteNumbers);
+  const blob = new Blob([byteArray], { type: file.type });
+  const convertedFile = new File([blob], file.name, { type: file.type });
+
+  const formDataFile = new FormData();
+  formDataFile.append('path', 'temporary');
+  formDataFile.append('file', convertedFile);
+
+  const response = await AllInOneApi.post('shared/image', formDataFile, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'accept': '*/*',
+    },
+  });
+
+  uploadedImageUrls.push(response.data.url);
+  return uploadedImageUrls;
+};
+
 
 const CustomNode = ({ data, id, activeCompany }) => {
   const { t } = useTranslation();
@@ -381,13 +413,19 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
   const [openWhatsappAuthModal, setOpenWhatsappAuthModal] = useState(false);
   const [openFacebookAuthModal, setOpenFacebookAuthModal] = useState(false);
   const [openInstagramAuthModal, setOpenInstagramAuthModal] = useState(false);
+  const [socialMediaTemplates, setSocialMediaTemplates] = useState([]);
   const [isLoadingAi, setIsLoadingAi] = useState(false);
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [hasTwitterCredentials, setHasTwitterCredentials] = useState(false);
   const [loadingTwitterCheck, setLoadingTwitterCheck] = useState(true);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [facebookPages, setFacebookPages] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
-  const [startType, setStartType] = useState<'scheduled' | 'event'>(editingAutomation?.type ?? 'event');
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [mode, setMode] = useState<"choose" | "ai">("choose");
+  const theme = useTheme();
+  const [startType, setStartType] = useState<'scheduled' | 'event'>(editingAutomation?.type ?? 'scheduled');
   const [selectedEvent, setSelectedEvent] = useState<string>("lead.captured");
   const [blockProgress, setBlockProgress] = useState<Record<string, 'loading' | 'done' | 'error'>>({});
   const nodeTypes = useMemo(() => ({
@@ -407,13 +445,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { recipients: "", subject: "", template: {} },
       purpose:t('automationFlow.purposes.triggers'),
     },
-    WHATSAPP_TRIGGER: {
-      type: "whatsappTrigger",
-      name: t("block.whatsappTrigger"),
-      icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 26 }} />,
-      params: { expectedWhatsappContent: "" },
-      purpose:t('automationFlow.purposes.triggers'),
-    },
+    // WHATSAPP_TRIGGER: {
+    //   type: "whatsappTrigger",
+    //   name: t("block.whatsappTrigger"),
+    //   icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 26 }} />,
+    //   params: { expectedWhatsappContent: "" },
+    //   purpose:t('automationFlow.purposes.triggers'),
+    // },
     CHATGPT: {
       type: "chatgpt",
       name: t("block.chatgpt"),
@@ -444,13 +482,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { waitTime: 1, waitHours: 0 },
       purpose:t('automationFlow.purposes.action'),
     },
-    WAIT_WHATSAPP: {
-      type: "waitWhatsapp",
-      name: t("block.waitWhatsapp"),
-      icon: <FaClock style={{ color: "#000", fontSize: 26 }} />,
-      params: { waitTime: 1, waitHours: 0 },
-      purpose:t('automationFlow.purposes.action'),
-    },
+    // WAIT_WHATSAPP: {
+    //   type: "waitWhatsapp",
+    //   name: t("block.waitWhatsapp"),
+    //   icon: <FaClock style={{ color: "#000", fontSize: 26 }} />,
+    //   params: { waitTime: 1, waitHours: 0 },
+    //   purpose:t('automationFlow.purposes.action'),
+    // },
     EMAIL: {
       type: "email",
       name: t("block.email"),
@@ -765,6 +803,12 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
     // Lógica para salvar credenciais do Twitter
   };
 
+  useEffect(()=>{
+    SocialMediaTemplateService.get().then((response) => {
+      setSocialMediaTemplates(response.data);
+    }).catch((error) => {});
+  },[mode])
+
   useEffect(() => {
     if (editingAutomation) {
       setFlowName(editingAutomation.name);
@@ -849,13 +893,38 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
   };
 
   const handleSaveEdit = () => {
+    let htmlContent = "";
+
+    try {
+      const iframe = document.getElementById(`template-preview-${mode !== 'choose' ? '1' : '2' }`);
+
+      if (iframe && iframe.contentDocument) {
+        htmlContent = iframe.contentDocument.documentElement.outerHTML;
+      } else {
+        console.warn("Iframe não encontrado ou inacessível.");
+      }
+    } catch (error) {
+      console.error("Erro ao acessar conteúdo do iframe:", error);
+    }
+
     setNodes((nds) =>
       nds.map((node) =>
         node.id === editingNode.id
-          ? { ...node, data: { ...editingNode.data } }
+          ? {
+              ...node,
+              data: {
+                ...editingNode.data,
+                params: {
+                  ...editingNode.data.params,
+                  htmlContent: htmlContent,
+                  mode: mode,
+                },
+              },
+            }
           : node
       )
     );
+
     setOpenEditDialog("");
   };
 
@@ -1050,16 +1119,33 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
   }, {});
   return (
     <Box sx={{ height: "100vh", width: "100%" }}>
-      <ArrowBackIos style={{cursor:'pointer'}} onClick={()=>{setIsCreating(false);setEditingAutomation(false)}}/>
-    <IconButton sx={{marginTop:'-45px', marginLeft:'97%'}} onClick={() => setIsDrawerOpen(true)}>
-      <SettingsIcon />
-    </IconButton>
-
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            p: 1
+          }}
+        >
+          <ArrowBackIos
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setIsCreating(false);
+              setEditingAutomation(false);
+            }}
+          />
+          <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
+            {flowName || t("automationFlow.title")}
+          </Typography>
+          <IconButton onClick={() => setIsDrawerOpen(true)}>
+            <SettingsIcon />
+          </IconButton>
+        </Box>
     <Drawer
-      anchor="right"
+      anchor={window.outerWidth > 600 ? "right" : "bottom"}
       open={isDrawerOpen}
       onClose={() => setIsDrawerOpen(false)}
-      PaperProps={{ sx: { width: window.outerWidth > 600 ? '35%' : '90%', padding: 3 } }}
+      PaperProps={{ sx: { width: window.outerWidth > 600 ? '35%' : '90%', height: window.outerWidth > 600 ? '100%' : '75%', padding: 3 } }}
     >
       <Box sx={{display:'flex', justifyContent:'space-between'}}>
       <Typography variant="h5" fontWeight="bold" color="primary" mb={2}>
@@ -1579,8 +1665,31 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
               </DialogActions>
             </Dialog>
           )}
-          {editingNode && editingNode.data.blockType === "chatgptImage" && (
-          <Dialog open={!!openEditDialog} onClose={() => setOpenEditDialog("")} fullWidth>
+{editingNode && editingNode.data.blockType === "chatgptImage" && (
+  <Dialog
+    open={!!openEditDialog}
+    onClose={() => setOpenEditDialog("")}
+    fullWidth
+    maxWidth="sm"
+  >
+    <ToggleButtonGroup
+      value={mode}
+      exclusive
+      onChange={(_, newMode) => {
+        setSelectedTemplate(null);
+        setMode(newMode);
+      }}
+      sx={{ mb: 2 }}
+      fullWidth
+    >
+      <ToggleButton value="ai">{t("marketing.templateDialog.createAiTemplate")}</ToggleButton>
+      <ToggleButton value="choose">{t("marketing.templateDialog.chooseTemplate")}</ToggleButton>
+    </ToggleButtonGroup>
+
+    {mode !== "choose" ? (
+      <>
+        {!selectedTemplate && (
+          <>
             <DialogTitle>{t("automationFlow.configureAI")}</DialogTitle>
             <DialogContent>
               <TextField
@@ -1601,47 +1710,62 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                   })
                 }
               />
+
               <Box
                 sx={{
-                  position: 'relative',
-                  marginTop: '20px',
-                  border: '1px dashed #ccc',
-                  borderRadius: '4px',
-                  padding: '16px',
-                  textAlign: 'center',
-                  transition: 'all 0.3s ease',
-                  minHeight: '150px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  '&:hover': {
-                    borderColor: '#1976d2',
-                    backgroundColor: editingNode.data.params.file ? 'transparent' : 'rgba(25, 118, 210, 0.04)'
-                  }
+                  position: "relative",
+                  marginTop: "20px",
+                  border: "1px dashed #ccc",
+                  borderRadius: "4px",
+                  padding: "16px",
+                  textAlign: "center",
+                  transition: "all 0.3s ease",
+                  minHeight: "150px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  "&:hover": {
+                    borderColor: "#1976d2",
+                    backgroundColor:
+                      editingNode.data.params.files?.length > 0
+                        ? "transparent"
+                        : "rgba(25, 118, 210, 0.04)",
+                  },
                 }}
               >
-              {!editingNode.data.params.file ? (
-                <>
-                  {/* <input
-                    type="file"
-                    accept=".jpg,.png,.jpeg,.pdf"
-                    onChange={async (e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        if (file.size > 20 * 1024 * 1024) {
-                          alert(t("automationFlow.fileSizeError"));
-                          return;
-                        }
+                {!(editingNode.data.params.files?.length > 0) ? (
+                  <>
+                    <input
+                      type="file"
+                      multiple
+                      accept=".jpg,.png,.jpeg,.pdf"
+                      onChange={async (e) => {
+                        const files = Array.from(e.target.files || []);
+                        const validFiles = [];
 
-                        const toBase64 = (file) =>
-                          new Promise<string>((resolve, reject) => {
-                            const reader = new FileReader();
-                            reader.readAsDataURL(file);
-                            reader.onload = () => resolve(reader.result as string);
-                            reader.onerror = (error) => reject(error);
+                        for (const file of files) {
+                          if (file.size > 20 * 1024 * 1024) {
+                            alert(t("automationFlow.fileSizeError"));
+                            continue;
+                          }
+
+                          const toBase64 = (file) =>
+                            new Promise<string>((resolve, reject) => {
+                              const reader = new FileReader();
+                              reader.readAsDataURL(file);
+                              reader.onload = () => resolve(reader.result as string);
+                              reader.onerror = (error) => reject(error);
+                            });
+
+                          const base64 = await toBase64(file);
+
+                          validFiles.push({
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            base64,
                           });
-
-                        const base64 = await toBase64(file);
+                        }
 
                         setEditingNode({
                           ...editingNode,
@@ -1649,99 +1773,120 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                             ...editingNode.data,
                             params: {
                               ...editingNode.data.params,
-                              file: {
-                                name: file.name,
-                                type: file.type,
-                                size: file.size,
-                                base64, // ✅ base64 string goes here
-                              },
+                              files: validFiles,
                             },
                           },
                         });
-                      }
-                    }}
-                    style={{
-                      position: 'absolute',
-                      width: '100%',
-                      height: '100%',
-                      top: 0,
-                      left: 0,
-                      opacity: 0,
-                      cursor: 'pointer',
-                    }}
-                    id="file-upload"
-                  />
-                  <label htmlFor="file-upload">
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <CloudUploadIcon sx={{ color: '#1976d2', fontSize: '40px' }} />
-                      <Typography variant="body1" sx={{ mt: 1 }}>
-                        <strong>{t("automationFlow.clickToUpload")}</strong>
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        {t("automationFlow.acceptedFormats")}: .jpg, .png, .jpeg, .pdf
-                      </Typography>
-                      <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
-                        {t("automationFlow.maxSize")}: 20MB
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: 'text.disabled', mt: 1 }}>
-                        {t("automationFlow.optional")}
-                      </Typography>
-                    </Box>
-                  </label> */}
-                </>
-              ) : (
-                <Box sx={{ width: '100%' }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      {editingNode.data.params.file.type.includes('image/') ? (
-                        <ImageIcon color="primary" />
-                      ) : (
-                        <PictureAsPdfIcon color="primary" />
-                      )}
-                      <Box>
-                        <Typography variant="body1" noWrap sx={{ maxWidth: '300px' }}>
-                          {editingNode.data.params.file.name}
+                      }}
+                      style={{
+                        position: "absolute",
+                        width: "100%",
+                        height: "100%",
+                        top: 0,
+                        left: 0,
+                        opacity: 0,
+                        cursor: "pointer",
+                      }}
+                      id="file-upload"
+                    />
+
+                    <label htmlFor="file-upload">
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                        }}
+                      >
+                        <CloudUploadIcon sx={{ color: "#1976d2", fontSize: "40px" }} />
+                        <Typography variant="body1" sx={{ mt: 1 }}>
+                          <strong>{t("automationFlow.clickToUpload")}</strong>
                         </Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                          {Math.round(editingNode.data.params.file.size / 1024)} KB
+                        <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                          {t("automationFlow.acceptedFormats")}: .jpg, .png, .jpeg, .pdf
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "text.secondary", mt: 1 }}>
+                          {t("automationFlow.maxSize")}: 20MB
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: "text.disabled", mt: 1 }}>
+                          {t("automationFlow.optional")}
                         </Typography>
                       </Box>
-                    </Box>
-                    <IconButton
-                      onClick={() =>
-                        setEditingNode({
-                          ...editingNode,
-                          data: {
-                            ...editingNode.data,
-                            params: {
-                              ...editingNode.data.params,
-                              file: null,
-                            },
-                          },
-                        })
-                      }
-                      color="error"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    </label>
+                  </>
+                ) : (
+                  <Box sx={{ width: "100%" }}>
+                    {editingNode.data.params.files.map((file, index) => (
+                      <Box key={index} sx={{ marginTop: index === 0 ? 0 : 2 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                            {file.type.includes("image/") ? (
+                              <ImageIcon color="primary" />
+                            ) : (
+                              <PictureAsPdfIcon color="primary" />
+                            )}
+                            <Box>
+                              <Typography variant="body1" noWrap sx={{ maxWidth: "300px" }}>
+                                {file.name}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                                {Math.round(file.size / 1024)} KB
+                              </Typography>
+                            </Box>
+                          </Box>
+                          <IconButton
+                            onClick={() => {
+                              const newFiles = [...editingNode.data.params.files];
+                              newFiles.splice(index, 1);
+                              setEditingNode({
+                                ...editingNode,
+                                data: {
+                                  ...editingNode.data,
+                                  params: {
+                                    ...editingNode.data.params,
+                                    files: newFiles,
+                                  },
+                                },
+                              });
+                            }}
+                            color="error"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+
+                        {file.type.includes("image/") && (
+                          <Box
+                            sx={{
+                              mt: 2,
+                              maxHeight: "200px",
+                              overflow: "hidden",
+                              borderRadius: "4px",
+                            }}
+                          >
+                            <img
+                              src={file.base64}
+                              alt="Preview"
+                              style={{
+                                width: "100%",
+                                height: "auto",
+                                objectFit: "contain",
+                              }}
+                            />
+                          </Box>
+                        )}
+                      </Box>
+                    ))}
                   </Box>
-
-                  {/* Preview if it's an image */}
-                  {editingNode.data.params.file.type.includes('image/') && (
-                    <Box sx={{ mt: 2, maxHeight: '200px', overflow: 'hidden', borderRadius: '4px' }}>
-                      <img
-                        src={editingNode.data.params.file.base64} // ✅ Use base64 directly here
-                        alt="Preview"
-                        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
-                      />
-                    </Box>
-                  )}
-                </Box>
-              )}
-
+                )}
               </Box>
 
-              {/* Testar IA */}
               <Button
                 sx={{ marginTop: "15px" }}
                 variant="outlined"
@@ -1749,15 +1894,21 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                   setIsLoadingAi(true);
                   try {
                     const formData = new FormData();
-                    formData.append('companyId', activeCompany);
-                    formData.append('instructions', editingNode.data.params.instructions);
+                    formData.append("companyId", activeCompany);
+                    formData.append("instructions", editingNode.data.params.instructions);
 
-                    if (editingNode.data.params.file) {
-                      formData.append('file', editingNode.data.params.file);
+                    let imagesUrls = [];
+                    if (editingNode.data.params.files?.length) {
+                      for (const file of editingNode.data.params.files) {
+                        const urls = await uploadImagesToApi(file);
+                        imagesUrls.push(...urls);
+                      }
                     }
+                    formData.append("images", JSON.stringify(imagesUrls));
 
                     const response = await AiService.askQuickImage(formData);
                     if (response.data) {
+                      setSelectedTemplate(response.data)
                       setEditingNode({
                         ...editingNode,
                         data: {
@@ -1765,11 +1916,10 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                           params: {
                             ...editingNode.data.params,
                             aiResponse: response.data,
+                            template: false,
                           },
                         },
                       });
-                    } else {
-                      console.error('Erro ao gerar imagem:', response);
                     }
                   } catch (error) {
                     console.error("Erro ao obter resposta da IA:", error);
@@ -1777,7 +1927,6 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                     setIsLoadingAi(false);
                   }
                 }}
-
                 disabled={isLoadingAi || !editingNode.data.params.instructions}
               >
                 {isLoadingAi
@@ -1793,36 +1942,150 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                   <Skeleton variant="text" width="80%" height={20} />
                 </Box>
               )}
-
-              {/* Exibir Resposta da IA */}
-              {!isLoadingAi && editingNode.data.params.aiResponse && (
-                <Box
-                  sx={{
-                    marginTop: "15px",
-                    padding: "10px",
-                    border: "1px solid #ddd",
-                    borderRadius: "5px",
-                  }}
-                >
-                  <img style={{width:'500px', height:'300px'}} src={editingNode.data.params.aiResponse.imageUrl} />
-                </Box>
-              )}
             </DialogContent>
-
-            <DialogActions>
-              <Button onClick={() => setOpenEditDialog("")}>
-                {t("form.cancel")}
-              </Button>
-              <Button
-                onClick={handleSaveEdit}
-                variant="contained"
-                disabled={!editingNode.data.params.aiResponse}
-              >
-                {t("form.save")}
-              </Button>
-            </DialogActions>
-          </Dialog>
+        </>
         )}
+            {!isLoadingAi && editingNode.data.params.aiResponse && selectedTemplate && (
+              <Box
+                sx={{
+                  marginTop: "15px",
+                  padding: "10px",
+                  border: "1px solid #ddd",
+                  borderRadius: "5px",
+                  textAlign: "center",
+                }}
+              >
+                <Box sx={{mt:-5, ml:'-90%'}}>
+                  <IoIosArrowBack color="#6f6f6f" size={30} style={{cursor:'pointer'}}  onClick={()=>{setSelectedTemplate(null)}}/>
+                </Box>
+                <iframe
+                  id="template-preview-1"
+                  style={{
+                    width: "100%",
+                    height: "400px",
+                    border: "none",
+                  }}
+                  srcDoc={editingNode.data.params.aiResponse}
+                  frameBorder="0"
+                />
+              </Box>
+            )}
+          </>
+    ) : (
+        <>
+          <DialogContent>
+            {socialMediaTemplates.length > 0 ? (
+              <>
+              {!selectedTemplate && (
+                <Grid container spacing={2}>
+                  {socialMediaTemplates.map((template) => (
+                    <Grid item xs={12} sm={6} key={template.id}>
+                      <Box
+                        sx={{
+                          borderRadius: 2,
+                          overflow: 'hidden',
+                          transition: 'transform 0.3s, box-shadow 0.3s',
+                          cursor: 'pointer',
+                          border: selectedTemplate === template.id
+                            ? '2px solid #1976d2'
+                            : '1px solid #e0e0e0',
+                          '&:hover': {
+                            transform: 'translateY(-4px)',
+                            boxShadow: 2
+                          }
+                        }}
+                        onClick={() => {
+                          setSelectedTemplate(template.htmlContent);
+                          setEditingNode({
+                            ...editingNode,
+                            data: {
+                              ...editingNode.data,
+                              params: {
+                                ...editingNode.data.params,
+                                aiResponse: template.htmlContent,
+                                template: true,
+                              }
+                            }
+                          });
+                        }}
+                      >
+                        <Box sx={{
+                          position: 'relative',
+                          overflow: 'hidden',
+                          height: '300px',
+                        }}>
+                          <img
+                            src={template.screenshot}
+                            alt={template.name}
+                            style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover'
+                            }}
+                          />
+                        </Box>
+                      </Box>
+                    </Grid>
+                  ))}
+                </Grid>
+
+              )}
+
+                {selectedTemplate && (
+                  <Box sx={{ mt: 3 }}>
+                    <Box sx={{mt:-5}}>
+                      <IoIosArrowBack color="#6f6f6f" size={30} style={{cursor:'pointer'}}  onClick={()=>{setSelectedTemplate('')}}/>
+                    </Box>
+                    <Box
+                      sx={{
+                        border: "1px solid #ddd",
+                        borderRadius: "5px",
+                        textAlign: "center",
+                      }}
+                    >
+                      <iframe
+                        id="template-preview-2"
+                        ref={iframeRef}
+                        style={{
+                          width: "100%",
+                          height: "400px",
+                          border: "none",
+                        }}
+                        onLoad={() => setIframeLoaded(true)}
+                        srcDoc={selectedTemplate}
+                        frameBorder="0"
+                      />
+                    </Box>
+                  </Box>
+                )}
+              </>
+            ) : (
+              <Typography sx={{ p: 2, textAlign: 'center' }}>
+                {t("marketing.templateDialog.noTemplatesAvailable")}
+              </Typography>
+            )}
+          </DialogContent>
+        </>
+      )}
+
+      <DialogActions>
+        <Button onClick={() => setOpenEditDialog("")}>
+          {t("form.cancel")}
+        </Button>
+        <Button
+          onClick={handleSaveEdit}
+          variant="contained"
+          disabled={mode === "choose" ? !selectedTemplate : !editingNode.data.params.aiResponse}
+        >
+          {t("form.save")}
+        </Button>
+      </DialogActions>
+    </Dialog>
+)}
+
           <DialogContent>
             {editingNode.data.blockType === "email" && (
               <>
