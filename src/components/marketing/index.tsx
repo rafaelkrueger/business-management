@@ -448,7 +448,7 @@ const cards = [
     module: "chatbot",
     color: 'rgb(0,0,0.4)',
     completed: isModuleCompleted("crm"),
-    disabled: true,
+    disabled: false,
   },
   {
     icon: <FileText size={24} color={theme.palette.warning.light} />,

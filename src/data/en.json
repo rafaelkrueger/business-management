@@ -1001,5 +1001,34 @@
     "imageOnly": "Only images and videos are allowed",
     "imagePreview": "Media Preview",
     "videoPreview": "Video Preview"
+  },
+    "chatbot": {
+    "create": "Create Chatbot",
+    "update": "Update Chatbot",
+    "settings": "Bot Settings",
+    "name": "Bot Name",
+    "instructions": "Instructions for the Bot",
+    "instructionsPlaceholder": "Ex: You are a sales assistant that helps customers choose products...",
+    "welcomeMessage": "Welcome Message",
+    "profileImage": "Profile Image",
+    "profileImageHint": "Click to upload an image",
+    "knowledgeBase": "Knowledge Base",
+    "uploadPDFs": "Upload PDFs",
+    "generateTemplates": "Generate templates automatically",
+    "generateTemplatesTooltip": "The bot will suggest response templates based on interactions",
+    "teachYourBot": "Teach your bot",
+    "testInstructions": "Type below to test your chatbot's behavior. Responses will be simulated based on your instructions.",
+    "typeTestMessage": "Type a test message...",
+    "myChatbots": "My Chatbots",
+    "active": "Active",
+    "test": "Test",
+    "edit": "Edit",
+    "captureLeads": "Capture leads",
+    "captureLeadsTooltip": "The bot will capture leads automatically",
+    "response": {
+      "product": "Great! Based on your instructions, I've configured the chatbot to help customers with product questions and suggestions.",
+      "course": "Great! I'll explain complex concepts in a simplified way.",
+      "default": "I'll provide accurate and friendly answers."
+    }
   }
 }
