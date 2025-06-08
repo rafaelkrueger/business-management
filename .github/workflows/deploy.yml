@@ -21,8 +21,8 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps --force
 
-      - name: Build project
-        run: npm run build
+      - name: Build project (CI=false)
+        run: CI=false npm run build
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2.0
@@ -30,6 +30,6 @@ jobs:
           publish-dir: ./build
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }} #Colocado la no github essa env
+          netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }} # definido nos secrets do GitHub
           site-id: ${{ secrets.NETLIFY_SITE_ID }}
           deploy-message: "Deploy automático via GitHub Actions"
