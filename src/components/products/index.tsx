@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import DefaultTable from '../table/index.tsx'
-import {TrainContainer, TrainContainerHeader, TrainContainerRecommendTrainerWideCard} from '../customers/styles.ts'
+import {TrainContainer, TrainContainerHeader, TrainContainerRecommendTrainerWideCard} from '../Customers/styles.ts'
 import {
     Dialog,
     DialogTitle,
