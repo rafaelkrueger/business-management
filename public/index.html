@@ -62,4 +62,96 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
   </body>
+<script>
+  (function () {
+    const chatbotFrame = document.createElement('iframe');
+    const isMobile = window.innerWidth <= 600;
+    chatbotFrame.src = "https://roktune.duckdns.org/chatbot/s/roktune-d108fb";
+    chatbotFrame.style.position = "fixed";
+    chatbotFrame.style.bottom = "100px"; // posição inicial no mobile e desktop
+    chatbotFrame.style.right = "90px";
+    chatbotFrame.style.width = "400px";
+    chatbotFrame.style.height = "400px";
+    chatbotFrame.style.border = "none";
+    chatbotFrame.style.borderRadius = "12px";
+    chatbotFrame.style.boxShadow = "0 0 20px rgba(0,0,0,0.2)";
+    chatbotFrame.style.display = "none";
+    chatbotFrame.style.zIndex = "9999";
+    chatbotFrame.style.transition = "all 0.3s ease";
+
+    const chatButton = document.createElement('div');
+    chatButton.innerHTML = `
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff">
+        <path d="M12 3C7.59 3 4 6.14 4 10c0 1.74.9 3.29 2.36 4.43L6 20l4.57-2.03c.43.05.86.07 1.29.07 4.41 0 8-3.14 8-7s-3.59-7-8-7z"/>
+      </svg>
+    `;
+    chatButton.style.position = "fixed";
+    chatButton.style.bottom = isMobile ? "80px" : "20px";
+    chatButton.style.right = "20px";
+    chatButton.style.width = "60px";
+    chatButton.style.height = "60px";
+    chatButton.style.borderRadius = "50%";
+    chatButton.style.backgroundColor = "#578acd";
+    chatButton.style.display = "flex";
+    chatButton.style.alignItems = "center";
+    chatButton.style.justifyContent = "center";
+    chatButton.style.cursor = "pointer";
+    chatButton.style.zIndex = "9999";
+    chatButton.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.3)";
+    chatButton.style.transition = "all 0.3s ease";
+
+    const notificationDot = document.createElement('div');
+    notificationDot.textContent = "1";
+    notificationDot.style.position = "absolute";
+    notificationDot.style.top = "-5px";
+    notificationDot.style.right = "-5px";
+    notificationDot.style.width = "20px";
+    notificationDot.style.height = "20px";
+    notificationDot.style.borderRadius = "50%";
+    notificationDot.style.backgroundColor = "#e63946";
+    notificationDot.style.color = "#fff";
+    notificationDot.style.fontSize = "12px";
+    notificationDot.style.display = "flex";
+    notificationDot.style.alignItems = "center";
+    notificationDot.style.justifyContent = "center";
+    notificationDot.style.fontWeight = "bold";
+    notificationDot.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+    notificationDot.style.zIndex = "10000";
+
+    chatButton.appendChild(notificationDot);
+
+    chatButton.addEventListener('click', () => {
+      const isMobile = window.innerWidth <= 600;
+      const isOpen = chatbotFrame.style.display === 'block';
+
+      chatbotFrame.style.display = isOpen ? 'none' : 'block';
+
+      if (!isOpen) {
+        if (isMobile) {
+          chatbotFrame.style.width = "90vw";
+          chatbotFrame.style.height = "60vh";
+          chatbotFrame.style.bottom = "100px";
+          chatbotFrame.style.left = "5vw";
+          chatbotFrame.style.right = "";
+          chatbotFrame.style.borderRadius = "0";
+        } else {
+          chatbotFrame.style.width = "400px";
+          chatbotFrame.style.height = "400px";
+          chatbotFrame.style.bottom = "100px";
+          chatbotFrame.style.right = "90px";
+          chatbotFrame.style.left = "";
+          chatbotFrame.style.borderRadius = "12px";
+        }
+
+        notificationDot.style.display = 'none';
+      }
+    });
+
+    document.body.appendChild(chatbotFrame);
+    document.body.appendChild(chatButton);
+  })();
+</script>
+
+
+
 </html>

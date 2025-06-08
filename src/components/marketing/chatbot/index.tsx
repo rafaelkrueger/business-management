@@ -35,12 +35,15 @@ import {
 import ChatbotService from '../../../services/chatbot.service.ts';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
+import { ChartGanttIcon, LockIcon } from 'lucide-react';
 
 const initialBotConfig = {
   name: '',
   instruction: '',
-  generateTemplates: true,
-  captureLeads: true,
+  captureLeads: false,
+  createImages: false,
+  createPages: false,
+  createDocuments: false,
   welcomeMessage: '',
   pdfFiles: [],
   profileImage: null
@@ -57,6 +60,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
   const [activeBot, setActiveBot] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -95,25 +99,39 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
     }
   };
 
-  const handleSendChat = () => {
+  const handleSendChat = async () => {
     if (!chatInput.trim()) return;
-    const newMessages = [...chatMessages, { role: 'user', content: chatInput }];
+
+    const userMessage = { role: 'user', content: chatInput + ' ' + '#teach' };
+    const newMessages = [...chatMessages, userMessage];
     setChatMessages(newMessages);
     setChatInput('');
+    setLoadingMessage(true);
 
-    setTimeout(() => {
-      setChatMessages([
-        ...newMessages,
-        {
-          role: 'assistant',
-          content: t('chatbot.response', { context:
-            chatInput.includes('product') ? 'product' :
-            chatInput.includes('course') ? 'course' : 'default'
-          })
-        }
+    try {
+      const res = await ChatbotService.sendMessageToBot({
+        chatId: 'admin',
+        slug: editingBot?.slug,
+        message: chatInput
+      });
+
+      const assistantMessage = {
+        role: 'assistant',
+        content: res?.reply || t('chatbot.defaultError')
+      };
+
+      setChatMessages(prev => [...prev, assistantMessage]);
+    } catch (err) {
+      console.error(err);
+      setChatMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: t('chatbot.defaultError') }
       ]);
-    }, 600);
+    } finally {
+      setLoadingMessage(false);
+    }
   };
+
 
   const handleCreateBot = async () => {
     try {
@@ -123,7 +141,10 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
       formData.append('instruction', botConfig.instruction);
       formData.append('companyId', activeCompany);
       formData.append('welcomeMessage', botConfig.welcomeMessage);
-      formData.append('generateTemplates', botConfig.generateTemplates);
+      formData.append('captureLeads', botConfig.captureLeads);
+      formData.append('createImages', botConfig.createImages);
+      formData.append('createDocuments', botConfig.createDocuments);
+      formData.append('createPages', botConfig.createPages);
 
       if (botConfig.profileImage) {
         const blob = await fetch(botConfig.profileImage).then(r => r.blob());
@@ -152,9 +173,12 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
     setBotConfig({
       name: bot.name,
       instruction: bot.instruction,
-      generateTemplates: true,
       welcomeMessage: bot.welcomeMessage || '',
       pdfFiles: [],
+      captureLeads: bot.captureLeads,
+      createImages: bot.createImages,
+      createDocuments: bot.createDocuments,
+      createPages: bot.createPages,
       profileImage: bot.profileImage || null
     });
     setCreatingBot(true);
@@ -168,7 +192,10 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
       formData.append('name', botConfig.name);
       formData.append('instruction', botConfig.instruction);
       formData.append('welcomeMessage', botConfig.welcomeMessage);
-      formData.append('generateTemplates', botConfig.generateTemplates);
+      formData.append('captureLeads', botConfig.captureLeads);
+      formData.append('createImages', botConfig.createImages);
+      formData.append('createDocuments', botConfig.createDocuments);
+      formData.append('createPages', botConfig.createPages);
 
       if (typeof botConfig.profileImage === 'string' && botConfig.profileImage.startsWith('http')) {
         // Image URL already exists, no need to re-upload
@@ -231,7 +258,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                     marginRight:'15px',
                     marginBottom:'-5px'
                   }}
-                  onClick={()=>{setModule('')}}/>
+                  onClick={()=>{setCreatingBot(false); setEditingBot(false); setChatMessages([])}}/>
               </IconButton>
               <Button
                 variant="contained"
@@ -239,7 +266,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                 startIcon={<CheckCircleIcon />}
                 disabled={loading}
                 sx={{
-                  background: 'linear-gradient(45deg, #10B981 0%, #06B6D4 100%)',
+                  background: 'linear-gradient(45deg, #6695ec 0%, #0f2a5dfd 100%)',
                   borderRadius: 2,
                   px: 3,
                   py: 1,
@@ -263,7 +290,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                 }}>
                   <CardContent>
                     <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, display: 'flex', alignItems: 'center' }}>
-                      <SettingsIcon sx={{ mr: 1, color: '#6366F1' }} /> {t('chatbot.settings')}
+                      <SettingsIcon sx={{ mr: 1, color: '#1c3d91' }} /> {t('chatbot.settings')}
                     </Typography>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
@@ -374,15 +401,27 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                       </Box>
                     </Box> */}
 
-                    <Box display="flex" alignItems="center" mt={2} mb={0}>
+                    <Box display="flex" alignItems="center" mt={0} mb={1}>
                       <Checkbox
-                        checked={botConfig.generateTemplates}
-                        onChange={()=>handleCheckboxChange('generateTemplates')}
+                        checked={botConfig.createImages}
+                        onChange={()=>{handleCheckboxChange('createImages')}}
                         color="primary"
                         sx={{ '& .MuiSvgIcon-root': { fontSize: 24 } }}
                       />
-                      <Typography variant="body2">{t('chatbot.generateTemplates')}</Typography>
-                      <Tooltip title={t('chatbot.generateTemplatesTooltip')}>
+                      <Typography variant="body2">{t('chatbot.createImages')}</Typography>
+                      <Tooltip title={t('chatbot.createImagesTooltip')}>
+                        <HelpIcon sx={{ ml: 1, fontSize: 18, color: '#94A3B8' }} />
+                      </Tooltip>
+                    </Box>
+                    <Box display="flex" alignItems="center" mt={0} mb={1}>
+                      <Checkbox
+                        checked={botConfig.createPages}
+                        onChange={()=>{handleCheckboxChange('createPages')}}
+                        color="primary"
+                        sx={{ '& .MuiSvgIcon-root': { fontSize: 24 } }}
+                      />
+                      <Typography variant="body2">{t('chatbot.createPages')}</Typography>
+                      <Tooltip title={t('chatbot.createPagesTooltip')}>
                         <HelpIcon sx={{ ml: 1, fontSize: 18, color: '#94A3B8' }} />
                       </Tooltip>
                     </Box>
@@ -398,52 +437,74 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                         <HelpIcon sx={{ ml: 1, fontSize: 18, color: '#94A3B8' }} />
                       </Tooltip>
                     </Box>
+                    <Box display="flex" alignItems="center" mt={0} mb={1}>
+                      <Checkbox
+                        checked={botConfig.createDocuments}
+                        onChange={()=>{handleCheckboxChange('createDocuments')}}
+                        color="primary"
+                        sx={{ '& .MuiSvgIcon-root': { fontSize: 24 } }}
+                      />
+                      <Typography variant="body2">{t('chatbot.createDocuments')}</Typography>
+                      <Tooltip title={t('chatbot.createDocumentsTooltip')}>
+                        <HelpIcon sx={{ ml: 1, fontSize: 18, color: '#94A3B8' }} />
+                      </Tooltip>
+                    </Box>
                   </CardContent>
                 </Card>
               </Grid>
+            <Grid item xs={12} md={7.2}>
+              <Card sx={{
+                borderRadius: 4,
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
+                border: '1px solid #F1F5F9',
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
+                overflowY: 'auto',
+                height: '65%',
+                minHeight: '100%',
+              }}>
+                <CardContent sx={{ flex: 1 }}>
+                  <Typography variant="h6" sx={{
+                    mb: 2,
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    position: 'relative',
+                    zIndex: 2,
+                  }}>
+                    <SmartToy sx={{ mr: 1, color: '#23509d' }} /> {t('chatbot.teachYourBot')}
+                  </Typography>
 
-              <Grid item xs={12} md={7.2}>
-                <Card sx={{
-                  borderRadius: 4,
-                  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
-                  border: '1px solid #F1F5F9',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}>
-                  <CardContent sx={{ flex: 1 }}>
-                    <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, display: 'flex', alignItems: 'center' }}>
-                      <SmartToy sx={{ mr: 1, color: '#8B5CF6' }} /> {t('chatbot.teachYourBot')}
-                    </Typography>
-
-                    <Box
-                      sx={{
-                        height: 340,
-                        overflowY: 'auto',
-                        backgroundColor: '#F8FAFC',
-                        borderRadius: 3,
-                        p: 2,
-                        mb: 2,
-                        border: '1px solid #E2E8F0'
-                      }}
-                    >
-                      {chatMessages.length === 0 ? (
-                        <Box sx={{
-                          height: '100%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexDirection: 'column',
-                          textAlign: 'center',
-                          color: '#64748B'
-                        }}>
-                          <BotIcon sx={{ fontSize: 64, mb: 2, color: '#CBD5E1' }} />
-                          <Typography variant="body2">
-                            {t('chatbot.testInstructions')}
-                          </Typography>
-                        </Box>
-                      ) : (
-                        chatMessages.map((msg, i) => (
+                  <Box sx={{
+                    overflowY: 'auto',
+                    backgroundColor: '#F8FAFC',
+                    borderRadius: 3,
+                    p: 2,
+                    mb: 2,
+                    border: '1px solid #E2E8F0',
+                    minHeight: '75%',
+                    position: 'relative'
+                  }}>
+                    {chatMessages.length === 0 ? (
+                      <Box sx={{
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        textAlign: 'center',
+                        color: '#64748B',
+                        marginTop:'150px'
+                      }}>
+                        <BotIcon sx={{ fontSize: 64, mb: 2, color: '#CBD5E1' }} />
+                        <Typography variant="body2" style={{width:'70%'}}>
+                          {t('chatbot.testInstructions')}
+                        </Typography>
+                      </Box>
+                    ) : (
+                      <>
+                        {chatMessages.map((msg, i) => (
                           <Fade in={true} key={i}>
                             <Box
                               sx={{
@@ -463,49 +524,128 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                                 }}
                               >
                                 <Typography variant="body2" sx={{ lineHeight: 1.6 }}>
-                                  {msg.content}
+                                  {msg.content.replace('#teach', '')}
                                 </Typography>
                               </Box>
                             </Box>
                           </Fade>
-                        ))
-                      )}
-                    </Box>
+                        ))}
 
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      <TextField
-                        fullWidth
-                        placeholder={t('chatbot.typeTestMessage')}
-                        value={chatInput}
-                        onChange={(e) => setChatInput(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
-                        variant="outlined"
-                        InputProps={{
-                          sx: {
-                            borderRadius: 3,
-                            backgroundColor: 'white'
-                          }
-                        }}
-                      />
-                      <Button
-                        onClick={handleSendChat}
-                        variant="contained"
-                        sx={{
-                          minWidth: 48,
-                          height: 48,
+                        {loadingMessage && (
+                          <Fade in={true}>
+                            <Box
+                              sx={{
+                                mb: 2,
+                                display: 'flex',
+                                flexDirection: 'row'
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  p: 2,
+                                  borderRadius: 4,
+                                  maxWidth: '80%',
+                                  backgroundColor: '#EDE9FE',
+                                  borderBottomRightRadius: 4,
+                                  borderBottomLeftRadius: 18
+                                }}
+                              >
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    lineHeight: 1.6,
+                                    fontFamily: 'monospace',
+                                    letterSpacing: '1px',
+                                    '&::after': {
+                                      content: '"..."',
+                                      animation: 'dots 1.2s steps(3, end) infinite'
+                                    },
+                                    '@keyframes dots': {
+                                      '0%': { content: '""' },
+                                      '33%': { content: '"."' },
+                                      '66%': { content: '".."' },
+                                      '100%': { content: '""' }
+                                    }
+                                  }}>.</Typography>
+                              </Box>
+                            </Box>
+                          </Fade>
+                        )}
+                      </>
+                    )}
+                    {!editingBot && (
+                      <Box sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backdropFilter: 'blur(4px) saturate(180%)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                        zIndex: 5,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        cursor: 'not-allowed',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        <LockIcon sx={{
+                          fontSize: 64,
+                          color: '#64748B',
+                          opacity: 0.8,
+                          mb: 1.5,
+                          filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+                        }} />
+                        <Typography variant="body1" sx={{
+                          fontWeight: 600,
+                          color: '#334155',
+                          textAlign: 'center',
+                          maxWidth: '80%'
+                        }}>
+                          {t('chatbot.createBotToStartMessage')}
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <TextField
+                      fullWidth
+                      placeholder={!editingBot ? t('chatbot.createBotToStartMessage') : t('chatbot.typeTestMessage')}
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && editingBot && handleSendChat()}
+                      variant="outlined"
+                      disabled={!editingBot}
+                      InputProps={{
+                        sx: {
                           borderRadius: 3,
-                          backgroundColor: '#4F46E5',
-                          '&:hover': {
-                            backgroundColor: '#4338CA'
-                          }
-                        }}
-                      >
-                        <SendIcon />
-                      </Button>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
+                          backgroundColor: 'white',
+                          opacity: !editingBot ? 0.7 : 1
+                        }
+                      }}
+                    />
+                    <Button
+                      onClick={handleSendChat}
+                      variant="contained"
+                      disabled={!editingBot}
+                      sx={{
+                        minWidth: 48,
+                        height: 48,
+                        borderRadius: 3,
+                        backgroundColor: '#4F46E5',
+                        opacity: !editingBot ? 0.7 : 1,
+                        '&:hover': {
+                          backgroundColor: editingBot ? '#4338CA' : '#4F46E5'
+                        }
+                      }}
+                    >
+                      <SendIcon />
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
             </Grid>
           </Box>
         </Box>
@@ -531,13 +671,13 @@ return (
       <Typography variant="h4" sx={{
         fontWeight: 800,
         color: '#0F172A',
-        fontSize: { xs: '1.5rem', md: '2rem' },
+        fontSize: { xs: '1.5rem', md: '1.5rem' },
       }}>
       <IoIosArrowBack color="#6f6f6f" size={30}
         style={{
           cursor:'pointer',
           marginRight:'15px',
-          marginBottom:'-5px'
+          marginBottom:'-5px',
         }}
         onClick={()=>{setModule('')}}/>
         {t('chatbot.myChatbots')}
@@ -545,23 +685,17 @@ return (
 
       <Button
         variant="contained"
-        startIcon={<AddIcon sx={{ fontSize: 20 }} />}
         onClick={() => setCreatingBot(true)}
+        startIcon={<CheckCircleIcon />}
+        disabled={loading}
         sx={{
-          background: 'linear-gradient(45deg, #6366F1 0%, #8B5CF6 100%)',
-          borderRadius: '12px',
-          px: 4,
-          py: 1.5,
+          background: 'linear-gradient(45deg, #6695ec 0%, #0f2a5dfd 100%)',
+          borderRadius: 2,
+          px: 3,
+          py: 1,
           textTransform: 'none',
           fontWeight: 600,
-          fontSize: '1rem',
-          boxShadow: '0 4px 20px rgba(99, 102, 241, 0.4)',
-          transition: 'transform 0.2s, box-shadow 0.2s',
-          '&:hover': {
-            transform: 'translateY(-2px)',
-            boxShadow: '0 6px 25px rgba(99, 102, 241, 0.6)',
-            background: 'linear-gradient(45deg, #5659E5 0%, #7C4DF5 100%)'
-          }
+          boxShadow: '0 4px 14px rgba(16, 185, 129, 0.2)'
         }}
       >
         {t('chatbot.create')}
@@ -570,8 +704,91 @@ return (
 
     {/* Chatbots Grid */}
     {bots.length === 0 ? (
-      <p />
-    ) : (
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '70vh',
+      textAlign: 'center',
+      p: 3,
+      background: 'linear-gradient(135deg, #f9fafb 0%, #f0f4ff 100%)',
+      borderRadius: '24px',
+      border: '1px dashed #d1d5db',
+      mx: 2
+    }}>
+      {/* Animated Illustration */}
+      <Box sx={{
+        position: 'relative',
+        width: 180,
+        height: 180,
+        mb: 4,
+      }}>
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 100,
+          height: 100,
+          background: '#ffffff',
+          borderRadius: '30%',
+          boxShadow: '0 10px 25px -5px rgba(99, 102, 241, 0.25)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <SmartToy sx={{
+            fontSize: 48,
+            color: '#29529cfc',
+            opacity: 0.9
+          }} />
+        </Box>
+      </Box>
+
+      {/* Text Content */}
+      <Typography variant="h5" sx={{
+        fontWeight: 700,
+        color: '#1f2937',
+        mb: 1.5,
+        mt:-7,
+        fontSize: '1.5rem',
+        letterSpacing: '-0.025em'
+      }}>
+        {t('chatbot.emptyTitle')}
+      </Typography>
+
+      <Typography variant="body1" sx={{
+        color: '#4b5563',
+        maxWidth: 500,
+        mb: 4,
+        lineHeight: 1.7,
+        fontSize: '1.05rem'
+      }}>
+        {t('chatbot.emptyDesc')}
+      </Typography>
+
+      {/* CTA Button */}
+      <Button
+        variant="contained"
+        onClick={() => setCreatingBot(true)}
+        startIcon={<CheckCircleIcon />}
+        disabled={loading}
+        sx={{
+          background: 'linear-gradient(45deg, #6695ec 0%, #0f2a5dfd 100%)',
+          borderRadius: 2,
+          px: 3,
+          py: 1,
+          textTransform: 'none',
+          fontWeight: 600,
+          boxShadow: '0 4px 14px rgba(16, 185, 129, 0.2)'
+        }}
+      >
+        {t('chatbot.create')}
+      </Button>
+
+    </Box>
+  ) : (
       <Grid container spacing={3}>
         {bots.map((bot) => (
           <Grid item xs={12} sm={6} lg={4} xl={3} key={bot.id}>
@@ -687,7 +904,7 @@ return (
                     borderRadius: '10px',
                     fontWeight: 600,
                     background: '#F1F5F9',
-                    color: '#6366F1',
+                    color: '#638bf1',
                     flex: 1,
                     py: 1,
                     '&:hover': {

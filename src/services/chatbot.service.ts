@@ -26,6 +26,15 @@ class ChatbotService {
     });
     return response.data;
   }
+
+  static async sendMessageToBot({ chatId, slug, message }: { chatId: string; slug: string; message: string }) {
+    const response = await http.post('/chatbot/message', {
+      chatId,
+      slug,
+      message
+    });
+    return response.data;
+  }
 }
 
 export default ChatbotService;
