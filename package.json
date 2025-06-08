@@ -25,7 +25,7 @@
     "chart.js": "^4.4.7",
     "colorthief": "^2.6.0",
     "cra-template-typescript": "1.2.0",
-    "date-fns": "^3.6.0",
+    "date-fns": "^2.29.3",
     "dayjs": "^1.11.13",
     "dompurify": "^3.2.6",
     "dotenv": "^16.4.5",
