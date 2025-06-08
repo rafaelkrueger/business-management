@@ -13,6 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
       - name: Install dependencies
         run: npm install
 
@@ -22,7 +27,7 @@ jobs:
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2.0
         with:
-          publish-dir: ./dist   # altere se sua pasta de build for diferente (ex: ./build ou ./out)
+          publish-dir: ./build
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
           netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }} #Colocado la no github essa env
