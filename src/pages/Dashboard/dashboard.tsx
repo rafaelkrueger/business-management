@@ -125,7 +125,23 @@ useEffect(() => {
         {activeModuleName === 'orders' && <Command activeCompany={activeCompany} userData={userData} />}
         {activeModuleName === 'online' && <Tracking userData={userData} activeCompany={activeCompany} />}
         {activeModuleName === 'marketing' ? window.outerWidth > 600 ? <MarketingDashboard activeCompany={activeCompany} /> : <MobileMarketingDashboard activeCompany={activeCompany} />  : ''}
-        {activeModuleName === 'config' && activeCompany ? window.outerWidth > 600 ? <Config userData={userData} activeCompany={activeCompany} modulesUpdating={modulesUpdating} setModulesUpdating={setModulesUpdating} /> : <MobileConfig userData={userData} activeCompany={activeCompany} modulesUpdating={modulesUpdating} setModulesUpdating={setModulesUpdating} /> : ''}
+        {activeModuleName === 'config' && activeCompany ? window.outerWidth > 600 ? (
+          <Config
+            userData={userData}
+            activeCompany={activeCompany}
+            modulesUpdating={modulesUpdating}
+            setModulesUpdating={setModulesUpdating}
+          />
+        ) : (
+          <MobileConfig
+            userData={userData}
+            activeCompany={activeCompany}
+            modulesUpdating={modulesUpdating}
+            setModulesUpdating={setModulesUpdating}
+            companies={companies}
+            setActiveCompany={changeActiveCompany}
+          />
+        ) : ''}
         {activeModuleName === 'integration' && <Integrations />}
       </DashboardContainerShowed>
     </DashboardContainer>

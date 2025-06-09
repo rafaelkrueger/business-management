@@ -21,6 +21,7 @@ import {
   styled,
   alpha,
   Select,
+  MenuItem,
   ToggleButton,
   ToggleButtonGroup
 } from "@mui/material";
@@ -49,7 +50,14 @@ const GlassCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
-const MobileConfig: React.FC<{ activeCompany: string; userData: any; modulesUpdating: boolean; setModulesUpdating: (b: boolean) => void }> = ({ activeCompany, userData, modulesUpdating, setModulesUpdating }) => {
+const MobileConfig: React.FC<{
+  activeCompany: string;
+  userData: any;
+  modulesUpdating: boolean;
+  setModulesUpdating: (b: boolean) => void;
+  companies: any[];
+  setActiveCompany: (id: string) => void;
+}> = ({ activeCompany, userData, modulesUpdating, setModulesUpdating, companies = [], setActiveCompany }) => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const { t } = useTranslation();
@@ -229,6 +237,19 @@ const MobileConfig: React.FC<{ activeCompany: string; userData: any; modulesUpda
   );
   const renderCompany = () => (
     <Box sx={{ p:2, overflowY:'auto', flexGrow:1 }}>
+      <Select
+        fullWidth
+        size="small"
+        value={activeCompany || ''}
+        onChange={(e) => setActiveCompany(e.target.value as string)}
+        sx={{ mb:2 }}
+      >
+        {companies.map((comp) => (
+          <MenuItem key={comp.id} value={comp.id}>
+            {comp.name}
+          </MenuItem>
+        ))}
+      </Select>
       <GlassCard>
         <CardContent>
           <Stack direction="row" alignItems="center" spacing={2} sx={{ mb:2 }}>
