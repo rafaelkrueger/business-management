@@ -7,7 +7,7 @@ import Home from '../../components/home/index.tsx';
 import useActiveModule from '../../hooks/moduleHook.ts';
 import dashboardModules from '../../modules/modules.tsx';
 import Sidebar from '../../components/sidebar/index.tsx';
-import Customers from '../../components/Customers/index.tsx';
+import Customers from '../../components/customers/index.tsx';
 import useUser from '../../hooks/useUser.ts';
 import HomeService from '../../services/home.service.ts';
 import useActiveCompanies from '../../hooks/useActiveCompanies.ts';

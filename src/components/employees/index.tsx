@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TrainContainer, TrainContainerRecommendTrainerWideCard } from '../Customers/styles.ts';
+import { TrainContainer, TrainContainerRecommendTrainerWideCard } from '../customers/styles.ts';
 import EmployeeService from '../../services/employee.service.ts';
 import DefaultTable from '../table/index.tsx';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
