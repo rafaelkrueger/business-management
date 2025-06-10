@@ -4,6 +4,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { SearchOutlined, FilterOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import CrmService from '../../../services/crm.service.ts'
+import SegmentationService from '../../../services/segmentation.service.ts'
 import dayjs from 'dayjs';
 import { Box, Typography } from '@mui/material';
 import { ArrowBackIos } from '@mui/icons-material';
@@ -61,8 +62,11 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
     setLoading(true);
 
     try {
-      const response = await CrmService.getCrm(activeCompany);
-      const leads = response.data
+      const [leadRes, segmentRes] = await Promise.all([
+        CrmService.getCrm(activeCompany),
+        SegmentationService.getSegments(activeCompany)
+      ]);
+      const leads = leadRes.data
         ?.map((lead: any) => {
           const parsedSource = typeof lead.source === 'string' ? JSON.parse(lead.source) : lead.source;
           return {
@@ -76,9 +80,8 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
             value: 0
           };
         });
-      console.log(leads);
       setCustomers(leads);
-      setSegments([]);
+      setSegments(segmentRes.data || []);
     } catch (error) {
       console.error('Erro ao buscar leads:', error);
     } finally {
@@ -183,24 +186,27 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
     Modal.confirm({
       title: 'Confirmar exclusão',
       content: 'Tem certeza que deseja excluir este cliente?',
-      onOk: () => {
+      async onOk() {
+        await CrmService.deleteCustomer(id);
         setCustomers(customers.filter(c => c.id !== id));
       },
     });
   };
 
-  const handleSegmentSubmit = (values: any) => {
-    const newSegment: Segment = {
-      id: `seg-${segments.length + 1}`,
-      name: values.name,
-      filterConditions: values.conditions,
-      customerCount: 0,
-    };
-    setSegments([...segments, newSegment]);
-    setIsSegmentModalVisible(false);
+  const handleSegmentSubmit = async (values: any) => {
+    try {
+      const { data } = await SegmentationService.createSegment({
+        ...values,
+        companyId: activeCompany,
+      });
+      setSegments([...segments, data]);
+      setIsSegmentModalVisible(false);
+    } catch (err) {
+      console.error('Erro ao criar segmento:', err);
+    }
   };
 
-  const handleCustomerSubmit = (values: any) => {
+  const handleCustomerSubmit = async (values: any) => {
     const customerData = {
       ...values,
       lastContact: values.lastContact.toDate(),
@@ -208,20 +214,20 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
       tags: values.tags || [],
     };
 
-    if (currentCustomer) {
-      setCustomers(customers.map(c =>
-        c.id === currentCustomer.id ? { ...c, ...customerData, id: currentCustomer.id } : c
-      ));
-    } else {
-      // Cria novo cliente
-      const newCustomer = {
-        ...customerData,
-        id: `cust-${customers.length + 1}`,
-      };
-      setCustomers([...customers, newCustomer]);
+    try {
+      if (currentCustomer) {
+        await CrmService.updateCustomer(currentCustomer.id, customerData);
+        setCustomers(customers.map(c =>
+          c.id === currentCustomer.id ? { ...c, ...customerData, id: currentCustomer.id } : c
+        ));
+      } else {
+        const { data } = await CrmService.createCustomer(activeCompany, customerData);
+        setCustomers([...customers, { ...customerData, id: data.id }]);
+      }
+      setIsCustomerModalVisible(false);
+    } catch (err) {
+      console.error('Erro ao salvar cliente:', err);
     }
-
-    setIsCustomerModalVisible(false);
   };
 
   const calculateMetrics = () => {
@@ -332,30 +338,30 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
           onChange={handleSearch}
         />
 
-        {/* <Select
+        <Select
           placeholder={t('marketing.crm.selectSegment')}
           style={{ width: 250 }}
           value={selectedSegment}
           onChange={handleSegmentChange}
           options={segments.map(s => ({ value: s.id, label: s.name }))}
           allowClear
-        /> */}
+        />
 
-        {/* <Button
+        <Button
           icon={<FilterOutlined />}
           onClick={handleCreateSegment}
         >
-          Criar Segmento
-        </Button> */}
+          {t('marketing.crm.createSegment')}
+        </Button>
 
-        {/* <Button
+        <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={handleCreateCustomer}
           style={{ marginLeft: 'auto' }}
         >
           {t('marketing.crm.createCustomer')}
-        </Button> */}
+        </Button>
       </div>
 
       <Table
