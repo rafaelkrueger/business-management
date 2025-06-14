@@ -17,7 +17,8 @@ import {
   Chip,
   Divider,
   Tooltip,
-  Fade
+  Fade,
+  Skeleton
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -61,6 +62,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState(false);
+  const [loadingBots, setLoadingBots] = useState(true);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -226,8 +228,15 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
 
   useEffect(() => {
     const init = async () => {
-      const response = await ChatbotService.getBotByCompanyId(activeCompany);
-      setBots(response);
+      setLoadingBots(true);
+      try {
+        const response = await ChatbotService.getBotByCompanyId(activeCompany);
+        setBots(response);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoadingBots(false);
+      }
     };
 
     init();
@@ -703,12 +712,37 @@ return (
     </Box>
 
     {/* Chatbots Grid */}
-    {bots.length === 0 ? (
-    <Box sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
+    {loadingBots ? (
+      <Grid container spacing={3}>
+        {Array.from({ length: 4 }).map((_, index) => (
+          <Grid item xs={12} sm={6} lg={4} xl={3} key={index}>
+            <Card sx={{
+              borderRadius: '16px',
+              boxShadow: '0 5px 25px -5px rgba(0, 0, 0, 0.05)',
+              border: '1px solid #F1F5F9',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2.5 }}>
+                  <Skeleton variant="circular" width={48} height={48} sx={{ mr: 2 }} />
+                  <Skeleton variant="text" width="60%" height={24} />
+                </Box>
+                <Skeleton variant="text" width="100%" height={16} sx={{ mb: 1 }} />
+                <Skeleton variant="text" width="100%" height={16} sx={{ mb: 1 }} />
+                <Skeleton variant="text" width="80%" height={16} />
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    ) : bots.length === 0 ? (
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
       minHeight: '70vh',
       textAlign: 'center',
       p: 3,
