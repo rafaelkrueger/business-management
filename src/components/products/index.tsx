@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import DefaultTable from '../table/index.tsx'
-import {TrainContainer, TrainContainerHeader, TrainContainerRecommendTrainerWideCard} from '../customers/styles.ts'
+import { TrainContainer } from './styles.ts';
 import {
     Dialog,
     DialogTitle,
@@ -27,8 +27,37 @@ import { AllInOneApi } from '../../Api.ts';
 import { Brain, FileSpreadsheet, Info } from 'lucide-react';
 import Tippy from '@tippyjs/react';
 import AiAssistantModal from '../ai-assistant-modal/index.tsx';
+import styled from 'styled-components';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const TrainContainerHeader = styled.div`
+    display: flex;
+    @media (max-width:600px) {
+        flex-direction: column;
+        width: 100%;
+    }
+`
+
+const TrainContainerRecommendTrainerWideCard = styled.div`
+    width: 250px;
+    height: 100px;
+    background-color: rgba(255,255,255,0.7);
+    margin-left: 18%;
+    margin-bottom: 15%;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    &:hover{
+        cursor: pointer;
+    }
+    @media (max-width:600px) {
+        margin-left: 1.5%;
+        margin-top: 15%;
+        margin-bottom: -5%;
+        width:95%;
+        height: 150px;
+    }
+`
 
 const NoDataMessage = () =>{
     const { t } = useTranslation();
