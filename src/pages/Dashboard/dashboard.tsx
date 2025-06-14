@@ -7,7 +7,6 @@ import Home from '../../components/home/index.tsx';
 import useActiveModule from '../../hooks/moduleHook.ts';
 import dashboardModules from '../../modules/modules.tsx';
 import Sidebar from '../../components/sidebar/index.tsx';
-import Customers from '../../components/customers/index.tsx';
 import useUser from '../../hooks/useUser.ts';
 import HomeService from '../../services/home.service.ts';
 import useActiveCompanies from '../../hooks/useActiveCompanies.ts';
@@ -119,7 +118,6 @@ useEffect(() => {
         {activeModuleName === 'home' && <Home activeCompany={activeCompany} userData={userData} activateModule={activateModule} />}
         {activeModuleName === 'payments' && <Payments activeCompany={activeCompany} />}
         {activeModuleName === 'products' && <Products activeCompany={activeCompany} />}
-        {activeModuleName === 'customers' && <Customers activeCompany={activeCompany} />}
         {activeModuleName === 'employees' && <Employees activeCompany={activeCompany} />}
         {activeModuleName === 'calendar' && <Calendar activeCompany={activeCompany} userData={userData} />}
         {activeModuleName === 'orders' && <Command activeCompany={activeCompany} userData={userData} />}

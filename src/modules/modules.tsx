@@ -26,11 +26,6 @@ export const dashboardModules = [
   },
   {
     module: '',
-    name: 'Customers',
-    icon: <RiAdminLine size={26} />,
-  },
-  {
-    module: '',
     name: 'Employees',
     icon: <TiBusinessCard size={26} />,
   },

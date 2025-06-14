@@ -415,7 +415,6 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         </Card>
       </div>
 
-      {/* Customers Table */}
       <Table
         columns={generateDynamicColumns()}
         dataSource={filteredCustomers}
