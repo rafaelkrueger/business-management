@@ -27,8 +27,8 @@ export const EventContainer = styled.div<{ status: string }>`
   padding-right: 20px;
   margin: 10px 0;
   background-color: ${({ status }) => (status === "canceled" ? "#f8d7da" : "#f1f1f16b")};
-  border-left: 5px solid ${({ status }) => (status === "canceled" ? "#e74c3c" : "#5a86b5")};
-  border-radius: 4px;
+  border-left: 5px solid ${({ status }) => (status === "canceled" ? "#e74c3c" : "#578acd")};
+  border-radius: 8px;
   justify-content: space-between;
   cursor:pointer;
 `
@@ -52,7 +52,7 @@ export const EventDetails = styled.div`
 export const EventTitle = styled.h4`
   margin: 0;
   font-size: 16px;
-  color: ${({ status }) => (status === "canceled" ? "#e74c3c" : "#007bff")};
+  color: ${({ status }) => (status === "canceled" ? "#e74c3c" : "#578acd")};
 `;
 
 export const EventDescription = styled.p`
@@ -105,20 +105,20 @@ export const FormInput = styled.input`
 
   &:focus {
     outline: none; // Remove default outline
-    border-color: #5a86b5; // Change border color on focus
+    border-color: #578acd;
   }
 `;
 
 export const FormButton = styled.button`
-  background-color: #4CAF50; // Green background
-  color: white; // White text
-  border: none; // No border
-  padding: 10px; // Padding
-  border-radius: 5px; // Rounded corners
-  cursor: pointer; // Pointer cursor on hover
-  font-size: 16px; // Font size
-  transition: background-color 0.3s; // Transition effect
+  background-color: #578acd;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
   &:hover {
-    background-color: #45a049; // Darker green on hover
+    background-color: #38639a;
   }
 `;

@@ -3,12 +3,13 @@ import styled from "styled-components";
 export const SidebarContainer = styled.div`
     display: flex;
     flex-direction: column;
-    background: linear-gradient(180deg, #001f3f, #003366); /* Degradê azul marinho */
-    color: white;
+    background: linear-gradient(180deg, #578acd, #38639a);
+    color: #fff;
     width: 220px;
     min-width: 300px;
-    height: 100vh; /* Ocupa toda a altura da tela */
+    height: 100vh;
     overflow: hidden;
+    border-radius: 12px;
     @media (max-width: 600px) {
         width: 100%;
         height: 100%;
@@ -73,7 +74,7 @@ export const SidebarContainerHeaderProfile = styled.img`
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    border: 2px solid #00a8ff; /* Borda azul clara */
+    border: 2px solid #578acd;
 `;
 
 export const SidebarContainerHeaderProfileName = styled.p`
@@ -101,17 +102,17 @@ export const SidebarContainerBodyElementContainer = styled.div`
 
 export const SidebarContainerBodyElementIcon = styled.div`
     margin-right: 10px;
-    color: #00a8ff; /* Azul claro */
+    color: #fff;
 `;
 
 export const SidebarContainerBodyElement = styled.p`
     margin: 0;
     font-size: 1em;
-    color: white;
+    color: #fff;
     transition: color 0.3s ease;
     &:hover {
         cursor: pointer;
-        color: #00a8ff; /* Azul claro no hover */
+        color: #578acd;
     }
 `;
 
@@ -127,14 +128,14 @@ export const SupportModuleLabel = styled.div`
 
 export const MainModuleIndicator = styled.span`
   font-size: 0.8em;
-  color: #00a8ff;
+  color: #fff;
   margin-left: 5px;
 `;
 
 export const ActiveModuleIndicator = styled.div`
   width: 8px;
   height: 8px;
-  background-color: #00a8ff;
+  background-color: #fff;
   border-radius: 50%;
   display: inline-block;
   margin-left: 8px;

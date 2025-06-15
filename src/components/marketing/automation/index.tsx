@@ -29,6 +29,10 @@ import { EmptyStateContainer, EmptyStateTitle, EmptyStateDescription } from "../
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import Skeleton from '@mui/material/Skeleton';
 
+const primaryColor = '#578acd';
+const textColor = '#fff';
+const rounded = 8;
+
 const AutomationDashboard = ({ activeCompany, setModule }) => {
   const [automations, setAutomations] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
@@ -120,11 +124,11 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
       </EmptyStateDescription>
       <Button
         variant="contained"
-        color="primary"
         onClick={() => setIsCreating(true)}
         size={isMobile ? "small" : "medium"}
         fullWidth={isMobile}
-        sx={{ mt: 2 }}
+        sx={{ mt: 2, backgroundColor: primaryColor, color: textColor, borderRadius: rounded,
+            '&:hover': { backgroundColor: '#4c7fb5' } }}
       >
         {t('marketing.automationTable.createAutomation')}
       </Button>
@@ -132,7 +136,7 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
   );
 
   const renderLoadingSkeleton = () => (
-    <Card sx={{ mt: 3 }}>
+    <Card sx={{ mt: 3, borderRadius: rounded }}>
       <CardContent>
         <TableContainer>
           <Table>
@@ -201,7 +205,7 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
   );
 
   const renderTable = () => (
-    <Card sx={{ mt: 3, overflowX: 'auto' }}>
+    <Card sx={{ mt: 3, overflowX: 'auto', borderRadius: rounded }}>
       <CardContent>
         <TableContainer component={Paper} elevation={0}>
           <Table size={isMobile ? "small" : "medium"} stickyHeader>
@@ -255,10 +259,10 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
         <Button
           variant="contained"
           startIcon={<Add />}
-          color="primary"
           onClick={() => setIsCreating(true)}
           size={isMobile ? "small" : "medium"}
-          sx={{ ml: isMobile ? 1 : 3 }}
+          sx={{ ml: isMobile ? 1 : 3, backgroundColor: primaryColor, color: textColor, borderRadius: rounded,
+            '&:hover': { backgroundColor: '#4c7fb5' } }}
           fullWidth={isMobile}
         >
           {t("marketing.automationTable.newAutomation")}

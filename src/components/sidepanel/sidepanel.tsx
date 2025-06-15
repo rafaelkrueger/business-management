@@ -195,13 +195,13 @@ const SidePanel = forwardRef<HTMLDivElement, SidePanelProps>(
         >
           <button
             style={{
-              backgroundColor: "#5a86b5",
-              color: "white",
+              backgroundColor: "#578acd",
+              color: "#fff",
               border: "none",
               padding: "10px 20px",
               textAlign: "center",
               fontSize: "16px",
-              borderRadius: "5px",
+              borderRadius: "8px",
               cursor: "pointer",
               width: "130px",
               marginLeft: window.innerWidth > 600 ? "-30%" : "-4%",

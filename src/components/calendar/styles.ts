@@ -31,16 +31,16 @@ export const Header = styled.div`
   }
 
   button {
-    background-color: #4caf50;
-    color: white;
+    background-color: #578acd;
+    color: #fff;
     border: none;
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 
     &:hover {
-      background-color: #45a049;
+      background-color: #38639a;
     }
   }
 
@@ -109,16 +109,16 @@ export const ViewSwitcher = styled.div`
   margin-bottom: 20px;
 
   button {
-    background-color: #2196f3;
-    color: white;
+    background-color: #578acd;
+    color: #fff;
     border: none;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     margin-right: 10px;
 
     &:hover {
-      background-color: #1976d2;
+      background-color: #38639a;
     }
   }
 
@@ -134,12 +134,12 @@ export const ViewSwitcher = styled.div`
 `;
 
 export const Event = styled.div`
-  background-color: #5a86b5;
+  background-color: #578acd;
   padding: 2px 5px;
   margin-top: 5px;
-  border-radius: 3px;
+  border-radius: 8px;
   font-size: 0.75em;
-  color: white;
+  color: #fff;
   font-weight: 500;
 
   @media (max-width: 768px) {

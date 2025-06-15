@@ -9,6 +9,10 @@ import dayjs from 'dayjs';
 import { Box, Typography } from '@mui/material';
 import { ArrowBackIos } from '@mui/icons-material';
 
+const primaryColor = '#578acd';
+const textColor = '#fff';
+const rounded = 12;
+
 // Tipos de dados
 interface Customer {
   id: string;
@@ -314,16 +318,16 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
         </Typography>
       </Box>
       <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
-        <Card title={t('marketing.crm.totalCustomers')} style={{ flex: 1 }}>
+        <Card title={t('marketing.crm.totalCustomers')} style={{ flex: 1, borderRadius: rounded, backgroundColor: primaryColor, color: textColor }}>
           <h2>{metrics.totalCustomers}</h2>
         </Card>
-        <Card title={t('marketing.crm.activeCustomers')} style={{ flex: 1 }}>
+        <Card title={t('marketing.crm.activeCustomers')} style={{ flex: 1, borderRadius: rounded, backgroundColor: primaryColor, color: textColor }}>
           <h2>{metrics.activeCustomers}</h2>
         </Card>
-        <Card title={t('marketing.crm.totalValue')} style={{ flex: 1 }}>
+        <Card title={t('marketing.crm.totalValue')} style={{ flex: 1, borderRadius: rounded, backgroundColor: primaryColor, color: textColor }}>
           <h2>$ {metrics.totalValue.toLocaleString('pt-BR')}</h2>
         </Card>
-        <Card title={t('marketing.crm.averageValue')} style={{ flex: 1 }}>
+        <Card title={t('marketing.crm.averageValue')} style={{ flex: 1, borderRadius: rounded, backgroundColor: primaryColor, color: textColor }}>
           <h2>$ {metrics.avgValue.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}</h2>
         </Card>
       </div>
@@ -350,6 +354,7 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
         <Button
           icon={<FilterOutlined />}
           onClick={handleCreateSegment}
+          style={{ backgroundColor: primaryColor, color: textColor, borderRadius: rounded, borderColor: primaryColor }}
         >
           {t('marketing.crm.createSegment')}
         </Button>
@@ -358,7 +363,7 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
           type="primary"
           icon={<PlusOutlined />}
           onClick={handleCreateCustomer}
-          style={{ marginLeft: 'auto' }}
+          style={{ marginLeft: 'auto', backgroundColor: primaryColor, color: textColor, borderRadius: rounded, borderColor: primaryColor }}
         >
           {t('marketing.crm.createCustomer')}
         </Button>
@@ -456,7 +461,7 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
           </Form.List>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" style={{ backgroundColor: primaryColor, color: textColor, borderRadius: rounded, borderColor: primaryColor }}>
               Salvar Segmento
             </Button>
           </Form.Item>
@@ -561,7 +566,7 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
           )}
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" style={{ backgroundColor: primaryColor, color: textColor, borderRadius: rounded, borderColor: primaryColor }}>
               {currentCustomer ? 'Atualizar Cliente' : 'Adicionar Cliente'}
             </Button>
           </Form.Item>

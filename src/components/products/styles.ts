@@ -38,7 +38,7 @@ export const Input = styled.input`
     font-size: 16px;
     width: 88%;
     &:focus {
-        border-color: #007bff;
+        border-color: #578acd;
         outline: none;
     }
 `;
@@ -50,7 +50,7 @@ export const TextArea = styled.textarea`
     font-size: 16px;
     resize: none;
     &:focus {
-        border-color: #007bff;
+        border-color: #578acd;
         outline: none;
     }
 `;
@@ -61,7 +61,7 @@ export const Select = styled.select`
     border: 1px solid #ddd;
     font-size: 16px;
     &:focus {
-        border-color: #007bff;
+        border-color: #578acd;
         outline: none;
     }
 `;
@@ -70,7 +70,7 @@ export const Button = styled.button`
     padding: 10px;
     border-radius: 5px;
     border: none;
-    background-color: #007bff;
+    background-color: #578acd;
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -78,7 +78,7 @@ export const Button = styled.button`
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: #0056b3;
+        background-color: #38639a;
     }
 `;
 
@@ -90,19 +90,19 @@ export const CancelButton = styled(Button)`
 `;
 
 export const FormButton = styled.button`
-  background-color: #4CAF50; // Green background
-  color: white; // White text
-  border: none; // No border
-  padding: 10px; // Padding
-  border-radius: 5px; // Rounded corners
-  cursor: pointer; // Pointer cursor on hover
-  font-size: 16px; // Font size
-  transition: background-color 0.3s; // Transition effect
+  background-color: #578acd;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
   width: 92%;
   margin-top:30px;
   margin-bottom:30px;
   &:hover {
-    background-color: #45a049; // Darker green on hover
+    background-color: #38639a;
   }
 `;
 
@@ -145,10 +145,10 @@ export const RemoveButton = styled.button`
 
 export const UploadButton = styled.label`
   display: inline-block;
-  background-color: #4CAF50;
-  color: white;
+  background-color: #578acd;
+  color: #fff;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   margin-top: 10px;
 `;
@@ -271,7 +271,7 @@ export const EmptyStateButton = styled.button`
     justify-content: center;
     padding: 10px 20px;
     margin: 10px 0;
-    background-color: #007bff;
+    background-color: #578acd;
     color: white;
     border: none;
     border-radius: 5px;
@@ -280,7 +280,7 @@ export const EmptyStateButton = styled.button`
     transition: background-color 0.3s ease;
 
     &:hover {
-        background-color: #0056b3;
+        background-color: #38639a;
     }
 
     @media (max-width: 768px) {

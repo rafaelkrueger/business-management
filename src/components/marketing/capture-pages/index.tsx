@@ -30,6 +30,10 @@ import LeadsService from "../../../services/leads.service.ts";
 import { useSnackbar } from "notistack";
 import ProgressService from "../../../services/progress.service.ts";
 
+const primaryColor = '#578acd';
+const textColor = '#fff';
+const rounded = 12;
+
 // Importações para o Chart.js
 import { Bar } from "react-chartjs-2";
 import {
@@ -330,7 +334,7 @@ const LandingPageCard: React.FC<{
   const { t } = useTranslation();
   return (
     <Grid item xs={12} sm={6} md={4} key={page.id}>
-      <Card>
+      <Card sx={{ borderRadius: rounded }}>
         {page.screenshotUrl ? (
           <img
             src={page.screenshotUrl}
@@ -376,13 +380,13 @@ const LandingPageCard: React.FC<{
           </Typography>
         </CardContent>
         <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start", margin: "8px" }}>
-          <Button size="small" onClick={() => onViewDetails(page)}>
+          <Button size="small" onClick={() => onViewDetails(page)} sx={{ backgroundColor: primaryColor, color: textColor, borderRadius: rounded, '&:hover': { backgroundColor: '#4c7fb5' } }}>
             {t("marketing.capturePages.viewDetails")}
           </Button>
-          <Button sx={{marginLeft:'-12px'}} size="small" onClick={() => onEdit(page)}>
+          <Button sx={{marginLeft:'-12px', backgroundColor: primaryColor, color: textColor, borderRadius: rounded, '&:hover': { backgroundColor: '#4c7fb5' } }} size="small" onClick={() => onEdit(page)}>
             {t("marketing.capturePages.editPage")} Landing Page
           </Button>
-          <Button size="small" onClick={() => onViewWebsite(page)}>
+          <Button size="small" onClick={() => onViewWebsite(page)} sx={{ backgroundColor: primaryColor, color: textColor, borderRadius: rounded, '&:hover': { backgroundColor: '#4c7fb5' } }}>
             {t("marketing.capturePages.viewLandingPage")}
           </Button>
         </Box>
@@ -399,7 +403,7 @@ const FormCard: React.FC<{
   const { t } = useTranslation();
   return (
     <Grid item xs={12} sm={6} md={4} key={form.id}>
-      <Card>
+      <Card sx={{ borderRadius: rounded }}>
         <CardContent>
           <Typography variant="h6">{form.title}</Typography>
           <Typography variant="body2" color="textSecondary">
@@ -411,10 +415,10 @@ const FormCard: React.FC<{
           <FormSubmissionsChart submissions={form.formlead} />
         </CardContent>
         <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start", margin: "8px" }}>
-          <Button size="small" onClick={() => onViewDetails(form)}>
+          <Button size="small" onClick={() => onViewDetails(form)} sx={{ backgroundColor: primaryColor, color: textColor, borderRadius: rounded, '&:hover': { backgroundColor: '#4c7fb5' } }}>
             {t("marketing.capturePages.viewDetails")}
           </Button>
-          <Button size="small" onClick={() => onViewWebsite(form)}>
+          <Button size="small" onClick={() => onViewWebsite(form)} sx={{ backgroundColor: primaryColor, color: textColor, borderRadius: rounded, '&:hover': { backgroundColor: '#4c7fb5' } }}>
             {t("marketing.capturePages.viewForm")}
           </Button>
         </Box>
@@ -812,8 +816,8 @@ const TemplateDialog: React.FC<{
                     />
                     <Button
                       variant="contained"
-                      color="primary"
-                      sx={{ height: '55px', borderTopLeftRadius:'0px', borderBottomLeftRadius:'0px', whiteSpace: 'nowrap', mt: '4px', marginLeft:'-8px' }}
+                      sx={{ height: '55px', borderTopLeftRadius:'0px', borderBottomLeftRadius:'0px', whiteSpace: 'nowrap', mt: '4px', marginLeft:'-8px', backgroundColor: primaryColor, color: textColor,
+                        '&:hover': { backgroundColor: '#4c7fb5' } }}
                       onClick={handleAddCustomSection}
                     >
                       <PlusCircle size={30}/>
@@ -826,11 +830,11 @@ const TemplateDialog: React.FC<{
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>{t("common.cancel")}</Button>
+        <Button onClick={onClose} sx={{ color: primaryColor }}>{t("common.cancel")}</Button>
         <Button
           variant="contained"
-          color="primary"
           disabled={newPage.title === "" || (mode === "choose" && !selectedTemplate) || generating}
+          sx={{ backgroundColor: primaryColor, color: textColor, '&:hover': { backgroundColor: '#4c7fb5' } }}
           onClick={async () => {
             if (mode === "choose") {
               setPreviewUrl(`https://roktune.duckdns.org/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
@@ -920,6 +924,7 @@ const PreviewDialog: React.FC<{
         disabled={creatingLandingpage}
         variant="contained"
         startIcon={creatingLandingpage ? <CircularProgress size={20} /> : null}
+        sx={{ backgroundColor: primaryColor, color: textColor, '&:hover': { backgroundColor: '#4c7fb5' } }}
       >
         {creatingLandingpage ? '' : t("marketing.previewDialog.createLandingPage")}
       </Button>
@@ -951,7 +956,7 @@ const DetailsDialog: React.FC<{
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>{t("common.close")}</Button>
+        <Button onClick={onClose} sx={{ color: primaryColor }}>{t("common.close")}</Button>
       </DialogActions>
     </Dialog>
   );
@@ -986,7 +991,7 @@ const EditDialog: React.FC<{
             {t("marketing.capturePages.deletePage")}
           </Button>
         )}
-        <Button onClick={onClose}>{t("common.close")}</Button>
+        <Button onClick={onClose} sx={{ color: primaryColor }}>{t("common.close")}</Button>
       </DialogActions>
     </Dialog>
   );

@@ -145,8 +145,8 @@ const Sidebar: React.FC<{
               props.activateModule(mainModule.key);
             }}
             style={{
-              backgroundColor: 'rgba(0, 168, 255, 0.1)',
-              borderLeft: '4px solid #00a8ff'
+              backgroundColor: 'rgba(87, 138, 205, 0.1)',
+              borderLeft: '4px solid #578acd'
             }}
           >
             <Box sx={{marginRight:'10px'}}>
