@@ -173,11 +173,11 @@ const MobileAuth = () => {
       .then((res) => {
         if (res.data) {
           if(action === AllInOneService.create){
-            setPendingToken(res.data);
+            setPendingToken(res.data?.accessToken || res.data);
             setShowPlanSelection(true);
             return;
           }
-          setToken(res.data)
+          setToken(res.data?.accessToken || res.data)
         }
         setLoading(false);
       })
@@ -208,7 +208,7 @@ const MobileAuth = () => {
           })
             .then((data) => {
               if (data.data) {
-                setToken(data.data);
+                setToken(data.data?.accessToken || data.data);
               }
             })
             .catch((err) => {
@@ -219,7 +219,7 @@ const MobileAuth = () => {
           AllInOneService.get({ email, password: sub })
             .then((data) => {
               if (data.data) {
-                setToken(data.data);
+                setToken(data.data?.accessToken || data.data);
               }
             })
             .catch((err) => {
