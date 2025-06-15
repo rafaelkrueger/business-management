@@ -41,7 +41,7 @@ useEffect(() => {
   if (!token || userData) return;
 
   const interval = setInterval(() => {
-    AllInOneService.getUserByToken(token)
+    AllInOneService.getUserByToken(token?.accessToken || token)
       .then((res) => {
         if (res?.data) {
           setUserData(res.data);
@@ -57,7 +57,7 @@ useEffect(() => {
 
   useEffect(() => {
   if (!token) return;
-  AllInOneService.getUserByToken(token)
+  AllInOneService.getUserByToken(token?.accessToken || token)
     .then(async ({ data: user }) => {
       setUserData(user);
       if (hasNoCompanies) {

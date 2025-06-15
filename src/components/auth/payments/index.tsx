@@ -73,7 +73,8 @@ const CheckoutForm = ({ selectedPlan, onClose, pendingToken, userEmail }) => {
   }, [token, navigate]);
 
   useEffect(()=>{
-    AllInOneService.getUserByToken(pendingToken)
+    const tokenValue = pendingToken?.accessToken || pendingToken;
+    AllInOneService.getUserByToken(tokenValue)
       .then((res) => setUserId(res.data._id))
   },[pendingToken])
 

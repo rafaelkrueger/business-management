@@ -12,13 +12,17 @@ const axiosInstance = axios.create({
 
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
-	(config: any) => {
-		const accessToken = getStorageValue('accessToken', null);
-		if (accessToken) {
-			if (config.headers)
-				config.headers.Authorization = `Bearer ${accessToken}`;
-		}
-		return config;
+        (config: any) => {
+                const stored = getStorageValue('accessToken', null);
+                let accessToken = stored;
+                if (stored && typeof stored === 'object' && stored.accessToken) {
+                        accessToken = stored.accessToken;
+                }
+                if (accessToken) {
+                        if (config.headers)
+                                config.headers.Authorization = `Bearer ${accessToken}`;
+                }
+                return config;
 	},
 	(error) => Promise.reject(error)
 );
