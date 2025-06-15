@@ -212,6 +212,43 @@ const FormSubmissionsChart: React.FC<{ submissions: FormSubmission[] }> = ({ sub
   return <Bar data={data} options={options} />;
 };
 
+const EditDialog: React.FC<{
+  open: boolean;
+  landingPage: LandingPage | null;
+  onClose: () => void;
+  onDelete: (id: string) => void;
+}> = ({ open, landingPage, onClose, onDelete }) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="lg" fullScreen={isMobile} fullWidth>
+      <DialogTitle>{landingPage?.title}</DialogTitle>
+      <DialogContent>
+        {landingPage ? (
+          <iframe
+            src={`https://roktune.duckdns.org/landing-pages/edit/${landingPage.id}`}
+            width="100%"
+            height={isMobile ? '100%' : '500px'}
+            style={{ border: 'none' }}
+            title={landingPage.title}
+          />
+        ) : (
+          <Typography variant="body2">{t('common.loading')}</Typography>
+        )}
+      </DialogContent>
+      <DialogActions>
+        {landingPage && (
+          <Button color="error" onClick={() => onDelete(landingPage.id)}>
+            {t('marketing.capturePages.deletePage')}
+          </Button>
+        )}
+        <Button onClick={onClose}>{t('common.close')}</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 // Componente Principal
 const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ activeCompany, setModule }) => {
   const { t } = useTranslation();
@@ -235,6 +272,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
   const [newPage, setNewPage] = useState({ title: "", description: "" });
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [creatingLandingPage, setCreatingLandingPage] = useState(false);
+  const [editingPage, setEditingPage] = useState<LandingPage | null>(null);
   const [useAI, setUseAI] = useState(false);
   const [generatingAI, setGeneratingAI] = useState(false);
   const [progress, setProgress] = useState<{ [key: string]: 'loading' | 'done' | 'error' }>({});
@@ -304,6 +342,23 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
 
   const handleViewFormWebsite = (form: FormLead) => {
     window.open(`https://roktune.duckdns.org/landing-pages//leads/form?apiKey=${form.apiKey}`, "_blank");
+  };
+
+  const handleEditPage = (page: LandingPage) => {
+    setEditingPage(page);
+  };
+
+  const handleDeletePage = async (id: string) => {
+    try {
+      await LandingPageService.delete(id);
+      setLandingPages((prev) => prev.filter((p) => p.id !== id));
+      enqueueSnackbar(t("marketing.capturePages.pageDeleted"), { variant: "success" });
+    } catch (error) {
+      console.error("Erro ao deletar landing page:", error);
+      enqueueSnackbar(t("marketing.capturePages.deleteError"), { variant: "error" });
+    } finally {
+      setEditingPage(null);
+    }
   };
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>, index: number) => {
@@ -553,6 +608,18 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                     p: 1,
                     borderTop: `1px solid ${alpha('#578acd', 0.1)}`
                   }}>
+                    <Button
+                      size="small"
+                      onClick={() => handleEditPage(page)}
+                      sx={{
+                        fontSize: '0.65rem',
+                        color: '#578acd',
+                        textTransform: 'none',
+                        flex: 1
+                      }}
+                    >
+                      {t('marketing.capturePages.editPage')}
+                    </Button>
                     <Button
                       size="small"
                       onClick={() => handleViewWebsite(page)}
@@ -1249,6 +1316,13 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
     </DialogActions>
   </Dialog>
     )}
+
+    <EditDialog
+      open={Boolean(editingPage)}
+      landingPage={editingPage}
+      onClose={() => setEditingPage(null)}
+      onDelete={handleDeletePage}
+    />
     </Box>
   );
 };
