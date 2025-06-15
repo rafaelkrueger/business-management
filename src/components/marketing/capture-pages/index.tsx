@@ -379,8 +379,8 @@ const LandingPageCard: React.FC<{
           <Button size="small" onClick={() => onViewDetails(page)}>
             {t("marketing.capturePages.viewDetails")}
           </Button>
-          <Button size="small" onClick={() => onEdit(page)}>
-            {t("marketing.capturePages.editPage")}
+          <Button sx={{marginLeft:'-12px'}} size="small" onClick={() => onEdit(page)}>
+            {t("marketing.capturePages.editPage")} Landing Page
           </Button>
           <Button size="small" onClick={() => onViewWebsite(page)}>
             {t("marketing.capturePages.viewLandingPage")}
@@ -929,56 +929,6 @@ const PreviewDialog: React.FC<{
                   </div>
                 )}
               </div>
-            </Grid>
-            <Grid item xs={4}>
-              {showComponents ? (
-                <div>
-                  <Typography variant="h6" gutterBottom>
-                    {t("marketing.previewDialog.componentsTitle")}
-                  </Typography>
-                  {loadingComponents ? (
-                    <Typography variant="body2">{t("common.loading")}</Typography>
-                  ) : components.length > 0 ? (
-                    <Grid container spacing={2} style={{ marginTop: "10px", maxHeight: "450px", overflowY: "auto" }}>
-                      {components.map((comp) => (
-                        <Grid item xs={12} key={comp.id}>
-                          <Card>
-                            <CardContent>
-                              <Typography variant="h6">{comp.name}</Typography>
-                              {comp.componentScreenshotUrl ? (
-                                <img
-                                  src={comp.componentScreenshotUrl}
-                                  alt={comp.name}
-                                  width="100%"
-                                  style={{ borderRadius: "5px", marginTop: "10px" }}
-                                />
-                              ) : (
-                                <Typography variant="body2">{t("marketing.previewDialog.noImage")}</Typography>
-                              )}
-                              <Typography variant="body2">{comp.description}</Typography>
-                            </CardContent>
-                          </Card>
-                        </Grid>
-                      ))}
-                    </Grid>
-                  ) : (
-                    <Typography variant="body2">{t("marketing.previewDialog.noComponents")}</Typography>
-                  )}
-                </div>
-              ) : (
-                <div>
-                  <Typography variant="subtitle1" gutterBottom>{t("marketing.previewDialog.instructionsTitle")}</Typography>
-                  <Typography variant="body2" gutterBottom>
-                    • {t("marketing.previewDialog.instructionText6")}
-                  </Typography>
-                  <Typography variant="body2" gutterBottom>
-                    • {t("marketing.previewDialog.instructionText3")}
-                  </Typography>
-                  <Typography variant="body2" gutterBottom>
-                    • {t("marketing.previewDialog.instructionText4")}
-                  </Typography>
-                </div>
-              )}
             </Grid>
           </Grid>
         ) : (
