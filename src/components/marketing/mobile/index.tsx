@@ -35,7 +35,8 @@ import {
   Star,
   Bell,
   Trophy,
-  Coins
+  Coins,
+  MessageSquare
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -406,7 +407,7 @@ const cards = [
     disabled:false,
   },
     {
-    icon: <RobotOutlined size={24} color={theme.palette.primary.main} />,
+    icon: <MessageSquare size={24} color={theme.palette.primary.main} />,
     title: t("marketing.chatbot"),
     description: t("marketing.chatbot_desc"),
     module: "chatbot",
