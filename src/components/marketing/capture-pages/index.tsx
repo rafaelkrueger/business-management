@@ -898,7 +898,6 @@ const PreviewDialog: React.FC<{
   const { t } = useTranslation();
   return (
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
-      <DialogTitle>{t("marketing.previewDialog.title")}</DialogTitle>
       <DialogContent style={{ position: "relative" }}>
         {previewHtml ? (
           <Grid container spacing={2}>
