@@ -894,12 +894,11 @@ const PreviewDialog: React.FC<{
   const { t } = useTranslation();
   return (
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
-      <DialogTitle>{t("marketing.previewDialog.title")}</DialogTitle>
-      <DialogContent style={{ position: "relative" }}>
+      <DialogContent>
         {previewUrl ? (
-          <Grid container spacing={2}>
-            <Grid item xs={8}>
-              <div style={{ position: "relative" }}>
+          <Grid style={{ width:'100%'}}>
+            <Grid style={{ width:'100%'}} item xs={12} sm={6}>
+              <div style={{ width:'100%'}}>
                 <iframe
                   id="previewIframe"
                   src={previewUrl}
@@ -908,26 +907,6 @@ const PreviewDialog: React.FC<{
                   style={{ border: "none" }}
                   title={t("marketing.previewDialog.title")}
                 />
-                {showSavingOverlay && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      backgroundColor: "rgba(0, 0, 0, 0.5)",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      zIndex: 20000,
-                    }}
-                  >
-                    <span style={{ color: "white", fontSize: "24px" }}>
-                      {t("marketing.previewDialog.saving")}
-                    </span>
-                  </div>
-                )}
               </div>
             </Grid>
           </Grid>
