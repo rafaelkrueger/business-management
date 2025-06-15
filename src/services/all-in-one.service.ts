@@ -8,8 +8,9 @@ class AllInOneService {
 		return http.post('https://all-in-one-system-cfe0c681a225.herokuapp.com/user/sign-up', data);
 	}
     static getUserByToken(data: any) {
-		return http.get(`https://all-in-one-system-cfe0c681a225.herokuapp.com/user/token/${data}`);
-	}
+                const tokenValue = data?.accessToken || data;
+                return http.get(`https://all-in-one-system-cfe0c681a225.herokuapp.com/user/token/${tokenValue}`);
+        }
 	static delete(data: any) {
 		return http.delete(`//${data}`);
 	}
