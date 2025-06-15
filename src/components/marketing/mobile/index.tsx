@@ -341,7 +341,6 @@ const PulseDot = styled(Box)(({ theme }) => ({
   };
 
   const GlassCard = styled(Card)(({ theme }) => ({
-    background: `linear-gradient(135deg, ${alpha('#578acd', 0.15)} 0%, ${alpha('#fff', 0.2)} 100%)`,
     backdropFilter: 'blur(12px)',
     borderRadius: '16px',
     border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -368,20 +367,20 @@ const PulseDot = styled(Box)(({ theme }) => ({
 
 const cards = [
   {
-    icon: <Brain size={24} color={"#9C27B0"} />,
+    icon: <Brain size={24} color={theme.palette.primary.main} />,
     title: t("marketing.ai"),
     description: t("marketing.aiDescription"),
     module: "marketingAi",
-    color: "#9C27B0",
+    color: theme.palette.primary.main,
     completed: isModuleCompleted("marketingAi"),
     disabled: false
   },
   {
-    icon: <Layout size={24} color={theme.palette.error.light} />,
+    icon: <Layout size={24} color={theme.palette.primary.main} />,
     title: t("marketing.landing_pages"),
     description: t("marketing.landing_pages_desc"),
     module: "createLeads",
-    color: theme.palette.secondary.main,
+    color: theme.palette.primary.main,
     completed: isModuleCompleted("createLeads"),
     // disabled: !isModuleUnlocked("createLeads"),
     disabled:false,
@@ -397,35 +396,38 @@ const cards = [
     disabled:false,
   },
   {
-    icon: <Users size={24} color={theme.palette.info.light} />,
+    icon: <Users size={24} color={theme.palette.primary.main} />,
     title: t("marketing.crmTitle"),
     description: t("marketing.crm_desc"),
     module: "crm",
-    color: theme.palette.info.main,
+    color: theme.palette.primary.main,
     completed: isModuleCompleted("crm"),
     // disabled: !isModuleUnlocked("crm"),
     disabled:false,
   },
     {
-    icon: <RobotOutlined size={24} color={theme.palette.text.disabled} />,
+    icon: <RobotOutlined size={24} color={theme.palette.primary.main} />,
     title: t("marketing.chatbot"),
     description: t("marketing.chatbot_desc"),
     module: "chatbot",
-    color: theme.palette.text.disabled,
-    completed: isModuleCompleted("chatbot"),
+    color: theme.palette.primary.main,
+    completed: isModuleCompleted("crm"),
     disabled: false,
   },
   {
-    icon: <FileText size={24} color={theme.palette.warning.light} />,
+    icon: <FileText size={24} color={theme.palette.primary.main} />,
     title: t("marketing.funnels"),
     description: t("marketing.funnels_desc"),
     module: "funnel",
     color: theme.palette.warning.main,
     completed:true,
-    disabled: !isModuleUnlocked("funnel"),
+    // disabled: !isModuleUnlocked("funnel"),
+    disabled: true,
+    comingSoon: true
+
   },
   {
-    icon: <Coins size={24} color={theme.palette.text.disabled} />,
+    icon: <Coins size={24} color={theme.palette.primary.main} />,
     title: t("marketing.sales_page"),
     description: t("marketing.sales_page_desc"),
     module: "salesPage",
@@ -509,8 +511,8 @@ const cards = [
         <Grid container spacing={2} sx={{ mb: 2 }}>
           {[
             { value: glance?.views, label: t("marketing.views"), icon: <BarChart2 size={16} />, color: '#578acd' },
-            { value: glance?.leads, label: t("marketing.leads"), icon: <Users size={16} />, color: '#4caf50' },
-            { value: 0, label: t("marketing.conversions"), icon: <Zap size={16} />, color: '#ff9800' }
+            { value: glance?.leads, label: t("marketing.leads"), icon: <Users size={16} />, color: '#578acd' },
+            { value: 0, label: t("marketing.conversions"), icon: <Zap size={16} />, color: '#578acd' }
           ].map((stat, index) => (
             <Grid item xs={4} key={index}>
               <motion.div
@@ -617,7 +619,7 @@ const cards = [
                 <GlassCard
                   sx={{
                     borderTop: isModuleCompleted(card.module)
-                      ? `5px solid ${theme.palette.success.main}`
+                      ? `5px solid #578acd`
                       : isModuleUnlocked(card.module)
                         ? `5px solid ${theme.palette.primary.main}`
                         : '5px solid transparent'

@@ -355,68 +355,22 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
     }
   }));
 
-  const [lineData] = useState({
-    labels: ["Jan", "Fev", "Mar", "Abr", "Mai"],
-    datasets: [
-      {
-        label: "Views",
-        data: [0, 0, 0, 0, 0],
-        borderColor: '#728cdf',
-        backgroundColor: alpha('#728cdf', 0.1),
-        tension: 0.4,
-        fill: true,
-        borderWidth: 3,
-        pointBackgroundColor: '#728cdf',
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2
-      },
-      {
-        label: "Clicks",
-        data: [0, 0, 0, 0, 0],
-        borderColor: '#0072ff',
-        backgroundColor: alpha('#0072ff', 0.1),
-        tension: 0.4,
-        fill: true,
-        borderWidth: 3,
-        pointBackgroundColor: '#0072ff',
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2
-      }
-    ]
-  });
-
-  const [barData] = useState({
-    labels: ["Jan", "Fev", "Mar", "Abr", "Mai"],
-    datasets: [{
-      label: t("marketing.conversions"),
-      data: [0, 0, 0, 0, 0],
-      backgroundColor: alpha('#728cdf', 0.7),
-      borderRadius: 6,
-      borderWidth: 0,
-      hoverBackgroundColor: '#728cdf'
-    }]
-  });
-
 const cards = [
   {
-    icon: <Brain size={24} color={"#9C27B0"} />,
+    icon: <Brain size={24} color={theme.palette.primary.main} />,
     title: t("marketing.ai"),
     description: t("marketing.aiDescription"),
     module: "marketingAi",
-    color: "#9C27B0",
+    color: theme.palette.primary.main,
     completed: isModuleCompleted("marketingAi"),
     disabled: false
   },
   {
-    icon: <Layout size={24} color={theme.palette.error.light} />,
+    icon: <Layout size={24} color={theme.palette.primary.main} />,
     title: t("marketing.landing_pages"),
     description: t("marketing.landing_pages_desc"),
     module: "createLeads",
-    color: theme.palette.secondary.main,
+    color: theme.palette.primary.main,
     completed: isModuleCompleted("createLeads"),
     // disabled: !isModuleUnlocked("createLeads"),
     disabled:false,
@@ -432,35 +386,38 @@ const cards = [
     disabled:false,
   },
   {
-    icon: <Users size={24} color={theme.palette.info.light} />,
+    icon: <Users size={24} color={theme.palette.primary.main} />,
     title: t("marketing.crmTitle"),
     description: t("marketing.crm_desc"),
     module: "crm",
-    color: theme.palette.info.main,
+    color: theme.palette.primary.main,
     completed: isModuleCompleted("crm"),
     // disabled: !isModuleUnlocked("crm"),
     disabled:false,
   },
     {
-    icon: <RobotOutlined size={24} color={'rgba(0,223,113)'} />,
+    icon: <RobotOutlined size={24} color={theme.palette.primary.main} />,
     title: t("marketing.chatbot"),
     description: t("marketing.chatbot_desc"),
     module: "chatbot",
-    color: 'rgb(0,0,0.4)',
+    color: theme.palette.primary.main,
     completed: isModuleCompleted("crm"),
     disabled: false,
   },
   {
-    icon: <FileText size={24} color={theme.palette.warning.light} />,
+    icon: <FileText size={24} color={theme.palette.primary.main} />,
     title: t("marketing.funnels"),
     description: t("marketing.funnels_desc"),
     module: "funnel",
     color: theme.palette.warning.main,
     completed:true,
-    disabled: !isModuleUnlocked("funnel"),
+    // disabled: !isModuleUnlocked("funnel"),
+    disabled: true,
+    comingSoon: true
+
   },
   {
-    icon: <Coins size={24} color={theme.palette.text.disabled} />,
+    icon: <Coins size={24} color={theme.palette.primary.main} />,
     title: t("marketing.sales_page"),
     description: t("marketing.sales_page_desc"),
     module: "salesPage",
@@ -787,7 +744,6 @@ const cards = [
                             position: 'relative',
                             overflow: 'hidden',
                             ...(card.completed && {
-                              background: cardGradients.completed,
                               '&::before': {
                                 background: 'radial-gradient(circle at top right, rgba(56, 189, 248, 0.1), transparent 70%)',
                               }
@@ -816,7 +772,7 @@ const cards = [
                               '& .MuiBadge-badge': {
                                 backgroundColor: alpha('#0072ff', 0.1),
                                 border: `1px solid ${alpha('#0072ff', 0.3)}`,
-                                color: '#8b5cf6',
+                                color: '#578acd',
                                 right: 70,
                                 top: 30,
                                 fontWeight: 'bold',
@@ -826,13 +782,13 @@ const cards = [
                                 animation: 'pulse 2s infinite',
                                 '@keyframes pulse': {
                                   '0%': {
-                                    boxShadow: `0 0 0 0 ${alpha('#8b5cf6', 0.3)}`
+                                    boxShadow: `0 0 0 0 ${alpha('#578acd', 0.3)}`
                                   },
                                   '70%': {
-                                    boxShadow: `0 0 0 10px ${alpha('#8b5cf6', 0)}`
+                                    boxShadow: `0 0 0 10px ${alpha('#578acd', 0)}`
                                   },
                                   '100%': {
-                                    boxShadow: `0 0 0 0 ${alpha('#8b5cf6', 0)}`
+                                    boxShadow: `0 0 0 0 ${alpha('#578acd', 0)}`
                                   }
                                 }
                               }
