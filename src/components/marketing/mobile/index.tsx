@@ -167,7 +167,7 @@ const isModuleUnlocked = (moduleKey) => {
       alignItems: 'center',
       justifyContent: 'center',
       background: completed
-        ? theme.palette.success.main
+        ? '#578acd'
         : active
           ? theme.palette.primary.main
           : alpha(theme.palette.text.disabled, 0.2),
@@ -180,7 +180,7 @@ const isModuleUnlocked = (moduleKey) => {
       fontSize: 12,
       fontWeight: completed || active ? 600 : 400,
       color: completed
-        ? theme.palette.success.main
+        ? '#578acd'
         : active
           ? theme.palette.primary.main
           : theme.palette.text.disabled
@@ -488,7 +488,7 @@ const cards = [
           </Box>
         </NextStepIndicator>
       )}
-      <ModuleTimeline>
+      {/* <ModuleTimeline>
         {modulesTimeline.map((step, index) => {
           const isCompleted = completedModules.includes(step.id);
           const isUnlocked = isModuleUnlocked(step.id);
@@ -506,7 +506,7 @@ const cards = [
             </ModuleStep>
           );
         })}
-      </ModuleTimeline>
+      </ModuleTimeline> */}
 
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
