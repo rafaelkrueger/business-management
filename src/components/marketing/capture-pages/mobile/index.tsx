@@ -233,7 +233,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
   const [loadingTemplates, setLoadingTemplates] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [newPage, setNewPage] = useState({ title: "", description: "" });
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const [creatingLandingPage, setCreatingLandingPage] = useState(false);
   const [useAI, setUseAI] = useState(false);
   const [generatingAI, setGeneratingAI] = useState(false);
@@ -1148,11 +1148,12 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
               companyId: activeCompany,
             });
 
-            setPreviewUrl(
-              `https://roktune.duckdns.org/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${encodeURIComponent(
+            const url = `https://roktune.duckdns.org/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${encodeURIComponent(
                 newPage.title
-              )}`
-            );
+              )}`;
+            const resp = await fetch(url);
+            const html = await resp.text();
+            setPreviewHtml(html);
           } catch (err) {
             enqueueSnackbar("Erro ao gerar template com IA", {
               variant: "error",
@@ -1163,11 +1164,12 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
 
         } else {
           setOpenForm(false);
-          setPreviewUrl(
-            `https://roktune.duckdns.org/landing-pages/preview?type=${selectedTemplate?.type}&companyId=${activeCompany}&title=${encodeURIComponent(
+          const url = `https://roktune.duckdns.org/landing-pages/preview?type=${selectedTemplate?.type}&companyId=${activeCompany}&title=${encodeURIComponent(
               newPage.title
-            )}`
-          );
+            )}`;
+          const r = await fetch(url);
+          const html = await r.text();
+          setPreviewHtml(html);
         }
       }}
       sx={{ backgroundColor: "#578acd" }}
@@ -1183,20 +1185,20 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
 </Dialog>
 
 {/* Preview Dialog */}
-{previewUrl && (
-  <Dialog open={true} fullScreen={isMobile} onClose={() => setPreviewUrl(null)}>
+{previewHtml && (
+  <Dialog open={true} fullScreen={isMobile} onClose={() => setPreviewHtml(null)}>
     <DialogTitle>{t("marketing.previewDialog.title")}</DialogTitle>
     <DialogContent>
       <iframe
         id="previewIframe"
-        src={previewUrl}
+        srcDoc={previewHtml}
         width="100%"
         height={isMobile ? "100%" : "600px"}
         style={{ border: "none" }}
       />
     </DialogContent>
     <DialogActions>
-      <Button onClick={() => setPreviewUrl(null)}>
+      <Button onClick={() => setPreviewHtml(null)}>
         {t("common.cancel")}
       </Button>
       <Button
@@ -1206,37 +1208,42 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
           setCreatingLandingPage(true);
 
           const iframe = document.getElementById("previewIframe") as HTMLIFrameElement;
-          const saveButton = iframe?.contentDocument?.getElementById("saveButton") as HTMLButtonElement;
-
-          if (saveButton) saveButton.click();
-
-          await new Promise((res) => setTimeout(res, 10000));
-
-          try {
-            await LandingPageService.post({
-              companyId: activeCompany,
-              title: newPage.title,
-              description: newPage.description,
-              aiPrompt: aiPrompt,
-              sections,
-            });
-
-            enqueueSnackbar(t("marketing.capturePages.pageCreated"), {
-              variant: "success",
-            });
-
-            setPreviewUrl(null);
-            setOpenForm(false);
-            setNewPage({ title: "", description: "" });
-            setSelectedTemplate(null);
-
-            const updated = await LandingPageService.getlandingPages(activeCompany);
-            setLandingPages(updated.data);
-          } catch (error) {
-            enqueueSnackbar("Erro ao criar página", { variant: "error" });
-          } finally {
+          if (!iframe?.contentDocument) {
+            enqueueSnackbar("Erro ao acessar o iframe", { variant: "error" });
             setCreatingLandingPage(false);
+            return;
           }
+
+          const htmlContent = iframe.contentDocument.documentElement.outerHTML;
+
+          fetch('https://roktune.duckdns.org/landing-pages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              html: htmlContent,
+              title: newPage.title,
+              companyId: activeCompany
+            })
+          })
+            .then(async () => {
+              window.parent.postMessage({ type: 'SAVE_SUCCESS' }, '*');
+              enqueueSnackbar(t("marketing.capturePages.pageCreated"), { variant: 'success' });
+              setPreviewHtml(null);
+              setOpenForm(false);
+              setNewPage({ title: "", description: "" });
+              setSelectedTemplate(null);
+
+              const updated = await LandingPageService.getlandingPages(activeCompany);
+              setLandingPages(updated.data);
+            })
+            .catch((error) => {
+              console.error('Erro ao salvar HTML:', error);
+              window.parent.postMessage({ type: 'SAVE_FAILURE' }, '*');
+              enqueueSnackbar("Erro ao criar página", { variant: 'error' });
+            })
+            .finally(() => {
+              setCreatingLandingPage(false);
+            });
         }}
       >
         {creatingLandingPage ? (

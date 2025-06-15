@@ -437,7 +437,7 @@ const TemplateDialog: React.FC<{
   newPage: { title: string; description: string; aiPrompt?: string };
   setNewPage: React.Dispatch<React.SetStateAction<{ title: string; description: string; aiPrompt?: string }>>;
   activeCompany: any;
-  setPreviewUrl: (url: string) => void;
+  setPreviewUrl: (html: string) => void;
 }> = ({
   open,
   onClose,
@@ -833,7 +833,10 @@ const TemplateDialog: React.FC<{
           disabled={newPage.title === "" || (mode === "choose" && !selectedTemplate) || generating}
           onClick={async () => {
             if (mode === "choose") {
-              setPreviewUrl(`https://roktune.duckdns.org/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
+              const url = `https://roktune.duckdns.org/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`;
+              const res = await fetch(url);
+              const html = await res.text();
+              setPreviewHtml(html);
             } else {
               const orderedSections = sections.filter((s) => s.trim() !== "");
               setGenerating(true);
@@ -844,10 +847,13 @@ const TemplateDialog: React.FC<{
                 aiPrompt: newPage.aiPrompt,
                 sections: orderedSections,
                 companyId: activeCompany,
-              }).then((res)=>{
+              }).then(async (res)=>{
                 setGenerating(false);
                 setProgress({});
-                setPreviewUrl(`https://roktune.duckdns.org/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
+                const url = `https://roktune.duckdns.org/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`;
+                const response = await fetch(url);
+                const html = await response.text();
+                setPreviewHtml(html);
               })
               .catch((err)=>{console.log(err)});
 
@@ -870,9 +876,8 @@ const TemplateDialog: React.FC<{
 
 const PreviewDialog: React.FC<{
   open: boolean;
-  previewUrl: string | null;
+  previewHtml: string | null;
   onClose: () => void;
-  showSavingOverlay: boolean;
   showComponents: boolean;
   loadingComponents: boolean;
   components: Template[];
@@ -881,9 +886,8 @@ const PreviewDialog: React.FC<{
   creatingLandingpage: boolean;
 }> = ({
   open,
-  previewUrl,
+  previewHtml,
   onClose,
-  showSavingOverlay,
   showComponents,
   loadingComponents,
   components,
@@ -896,38 +900,18 @@ const PreviewDialog: React.FC<{
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
       <DialogTitle>{t("marketing.previewDialog.title")}</DialogTitle>
       <DialogContent style={{ position: "relative" }}>
-        {previewUrl ? (
+        {previewHtml ? (
           <Grid container spacing={2}>
             <Grid item xs={8}>
               <div style={{ position: "relative" }}>
                 <iframe
                   id="previewIframe"
-                  src={previewUrl}
+                  srcDoc={previewHtml}
                   width="100%"
                   height="500px"
                   style={{ border: "none" }}
                   title={t("marketing.previewDialog.title")}
                 />
-                {showSavingOverlay && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      backgroundColor: "rgba(0, 0, 0, 0.5)",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      zIndex: 20000,
-                    }}
-                  >
-                    <span style={{ color: "white", fontSize: "24px" }}>
-                      {t("marketing.previewDialog.saving")}
-                    </span>
-                  </div>
-                )}
               </div>
             </Grid>
           </Grid>
@@ -985,17 +969,30 @@ const EditDialog: React.FC<{
   onDelete: (id: string) => void;
 }> = ({ open, landingPage, onClose, onDelete }) => {
   const { t } = useTranslation();
+  const [html, setHtml] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchHtml = async () => {
+      if (landingPage) {
+        const res = await fetch(`https://roktune.duckdns.org/landing-pages/edit/${landingPage.id}`);
+        const text = await res.text();
+        setHtml(text);
+      }
+    };
+    fetchHtml();
+  }, [landingPage]);
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
       <DialogTitle>{landingPage?.title}</DialogTitle>
       <DialogContent>
-        {landingPage ? (
+        {html ? (
           <iframe
-            src={`https://roktune.duckdns.org/landing-pages/edit/${landingPage.id}`}
+            srcDoc={html}
             width="100%"
             height="500px"
             style={{ border: "none" }}
-            title={landingPage.title}
+            title={landingPage?.title}
           />
         ) : (
           <Typography variant="body2">{t("common.loading")}</Typography>
@@ -1030,14 +1027,12 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   const [openForm, setOpenForm] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [newPage, setNewPage] = useState({ title: "", description: "" });
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [showSavingOverlay, setShowSavingOverlay] = useState(false);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const [leadGenerationEnabled, setLeadGenerationEnabled] = useState(false);
   const [viewFormDetails, setViewFormDetails] = useState("");
   const [forms, setForms] = useState<FormLead[]>([]);
   const [loadingForms, setLoadingForms] = useState(true);
   const [creatingLandingpage, setCreatingLandingPage] = useState(false);
-  const [saveButton, setSaveButton] = useState(false);
   const [selectedLandingPage, setSelectedLandingPage] = useState<LandingPage | null>(null);
   const [editingPage, setEditingPage] = useState<LandingPage | null>(null);
 
@@ -1141,38 +1136,42 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   };
 
   const saveLandingPageAsActive = async () => {
-    if(!saveButton){
-      enqueueSnackbar('Click on save button before creating a new landing page', {variant:'info'})
-      setSaveButton(true)
-    }
     const iframe = document.getElementById("previewIframe") as HTMLIFrameElement;
-    console.log(iframe.contentDocument)
-    if (iframe?.contentWindow && iframe.contentDocument) {
-      const saveButton = iframe.contentDocument.getElementById("saveButton") as HTMLButtonElement;
-      if (saveButton) {
-        saveButton.click();
-      } else {
-        console.error("Botão saveButton não encontrado dentro do iframe.");
-      }
-    } else {
+    if (!iframe?.contentDocument) {
       console.error("Iframe não encontrado ou inacessível.");
+      return;
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 10000));
+    const htmlContent = iframe.contentDocument.documentElement.outerHTML;
 
-    LandingPageService.post({ companyId: activeCompany, title: newPage.title })
-      .then((res) => {
+    setCreatingLandingPage(true);
+
+    fetch(`https://roktune.duckdns.org/landing-pages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        html: htmlContent,
+        title: newPage.title,
+        companyId: activeCompany
+      })
+    })
+      .then(() => {
+        window.parent.postMessage({ type: 'SAVE_SUCCESS' }, '*');
         enqueueSnackbar(t("marketing.capturePages.pageCreated"), {
           variant: "success",
         });
-        setPreviewUrl(null);
+        setPreviewHtml(null);
         setOpenForm(false);
         fetchLandingPages();
       })
-      .catch((error) => {
-        console.error("Erro ao criar landing page:", error);
-      }).finally(()=>{
-        setCreatingLandingPage(false)
+      .catch((err) => {
+        console.error('Erro ao salvar HTML:', err);
+        window.parent.postMessage({ type: 'SAVE_FAILURE' }, '*');
+      })
+      .finally(() => {
+        setCreatingLandingPage(false);
       });
   };
 
@@ -1349,14 +1348,13 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
         newPage={newPage}
         setNewPage={setNewPage}
         activeCompany={activeCompany}
-        setPreviewUrl={setPreviewUrl}
+        setPreviewUrl={setPreviewHtml}
       />
 
       <PreviewDialog
-        open={Boolean(previewUrl)}
-        previewUrl={previewUrl}
-        onClose={() => setPreviewUrl(null)}
-        showSavingOverlay={showSavingOverlay}
+        open={Boolean(previewHtml)}
+        previewHtml={previewHtml}
+        onClose={() => setPreviewHtml(null)}
         showComponents={false}
         loadingComponents={false}
         components={[]}
