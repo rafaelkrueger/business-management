@@ -379,7 +379,7 @@ const LandingPageCard: React.FC<{
           <Button size="small" onClick={() => onViewDetails(page)}>
             {t("marketing.capturePages.viewDetails")}
           </Button>
-          <Button sx={{marginLeft:'-12px'}} size="small" onClick={() => onEdit(page)}>
+          <Button sx={{marginLeft:'-5px'}} size="small" onClick={() => onEdit(page)}>
             {t("marketing.capturePages.editPage")} Landing Page
           </Button>
           <Button size="small" onClick={() => onViewWebsite(page)}>
