@@ -106,11 +106,12 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
     let result = [...customers];
 
     // Aplica filtro de segmento
-    if (selectedSegment) {
-      const segment = segments.find(s => s.id === selectedSegment);
-      if (segment) {
-        result = result.filter(customer => {
-          return segment.filterConditions.every(condition => {
+      if (selectedSegment) {
+        const segment = segments.find(s => s.id === selectedSegment);
+        if (segment) {
+          const conditions = segment.filterConditions || [];
+          result = result.filter(customer => {
+            return conditions.every(condition => {
             const field = condition.field as string;
 
             // Busca o valor: pode estar no customer ou no jsonData
