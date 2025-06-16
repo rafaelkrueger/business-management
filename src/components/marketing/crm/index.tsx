@@ -319,24 +319,40 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
   };
 
   const extractAllFields = (data: any[]): string[] => {
-    const base = ['name', 'email', 'phone', 'status', 'value', 'tags', 'source', 'createdAt', 'lastContact'];
+    const base = ['name', 'email', 'phone', 'status', 'value', 'tags', 'source', 'createdAt'];
     const dynamic = extractJsonFields(data);
     return Array.from(new Set([...base, ...dynamic]));
   };
 
-  const jsonFieldColumns: ColumnsType<any> = extractJsonFields(customers).map(field => ({
-    title: fieldLabels[field] || field,
+  const normalizeField = (field: string) => field.trim().toLowerCase();
+
+  const jsonFields = extractJsonFields(customers).map(normalizeField);
+  const uniqueJsonFields = Array.from(new Set(jsonFields));
+
+  const jsonFieldColumns: ColumnsType<any> = uniqueJsonFields.map(field => ({
+    title: (fieldLabels[field] || field).length > 14
+      ? (fieldLabels[field] || field).slice(0, 14) + '...'
+      : (fieldLabels[field] || field),
     dataIndex: ['jsonData', field],
     key: field,
-    render: (value: any) =>
-      typeof value === 'string' || typeof value === 'number'
+    render: (_: any, record: any) => {
+      const matchingKeys = Object.keys(record.jsonData || {}).filter(
+        key => normalizeField(key) === field
+      );
+      const value = matchingKeys.map(k => record.jsonData[k]).find(v => v !== undefined && v !== null && v !== '');
+      return typeof value === 'string' || typeof value === 'number'
         ? value
-        : JSON.stringify(value),
+        : JSON.stringify(value);
+    },
   }));
-
   const getFieldName = (col: any) => Array.isArray(col.dataIndex) ? col.dataIndex[1] : col.dataIndex;
+  const fixedFieldNames = fixedColumns.map(col => normalizeField(getFieldName(col)));
 
-  const tableColumns = [...jsonFieldColumns, ...fixedColumns].filter(col =>
+  const filteredJsonFieldColumns = jsonFieldColumns.filter(
+    col => !fixedFieldNames.includes(normalizeField(getFieldName(col)))
+  );
+
+  const tableColumns = [...filteredJsonFieldColumns, ...fixedColumns].filter(col =>
     visibleColumns.includes(getFieldName(col))
   );
 
