@@ -39,3 +39,30 @@ export const TableWrapperCustomer = styled.div`
   height: 100px;
   margin-top: 2%;
 `;
+
+export const CardContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 16px 0;
+`;
+
+export const DataCard = styled.div`
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  min-width: 260px;
+  cursor: pointer;
+  flex: 1;
+`;
+
+export const CardField = styled.div`
+  margin-bottom: 8px;
+  word-wrap: break-word;
+`;
+
+export const CardLabel = styled.span`
+  font-weight: 600;
+  margin-right: 6px;
+`;

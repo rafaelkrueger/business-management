@@ -383,6 +383,7 @@ const Customers: React.FC<CustomersProps> = ({ activeCompany }) => {
       >
         {tableData && tableData.length > 0 ? (
           <DefaultTable
+            asCards
             data={tableData}
             columns={columns}
             handleRow={(rowData: any) => {

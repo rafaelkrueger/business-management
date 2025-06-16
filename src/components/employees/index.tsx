@@ -243,7 +243,7 @@ const Employees: React.FC<{ activeCompany }> = ({ ...props }) => {
           renderEmptyState(setIsOpen)
         ) : (
             <div style={{maxWidth: window.innerWidth < 600 ? '100%' : 'unset', overflowX: window.innerWidth < 600 ? 'scroll' : 'unset'}}>
-                <DefaultTable columns={columns} data={tableData} handleRow={handleRow} />
+                <DefaultTable asCards columns={columns} data={tableData} handleRow={handleRow} />
             </div>
         )}
       </div>

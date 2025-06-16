@@ -288,7 +288,7 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
                 renderEmptyState()
             ) : (
                 <div style={{maxWidth: window.innerWidth < 600 ? '90%' : 'unset', overflowX: window.innerWidth < 600 ? 'scroll' : 'unset'}}>
-                    <DefaultTable columns={columns} data={tableData} handleRow={handleRow} />
+                    <DefaultTable asCards columns={columns} data={tableData} handleRow={handleRow} />
                 </div>
             )}
 

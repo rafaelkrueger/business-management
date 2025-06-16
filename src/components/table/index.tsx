@@ -1,5 +1,14 @@
 import React from 'react';
-import { TableCustomer, TrCustomer, ThCustomer, TdCustomer } from './styles.ts';
+import {
+  TableCustomer,
+  TrCustomer,
+  ThCustomer,
+  TdCustomer,
+  CardContainer,
+  DataCard,
+  CardField,
+  CardLabel,
+} from './styles.ts';
 
 interface Column {
   header: string;
@@ -9,10 +18,32 @@ interface Column {
 interface DefaultTableProps {
   columns: Column[];
   data: any[];
-  handleRow?: any;
+  handleRow?: (row: any) => void;
+  asCards?: boolean;
 }
 
-const DefaultTable: React.FC<DefaultTableProps> = ({ columns, data, handleRow }) => {
+const DefaultTable: React.FC<DefaultTableProps> = ({ columns, data, handleRow, asCards }) => {
+  if (asCards) {
+    return (
+      <CardContainer>
+        {data && data.length > 0 ? (
+          data.map((row, rowIndex) => (
+            <DataCard key={rowIndex} onClick={() => handleRow && handleRow(row)}>
+              {columns.map((col, colIndex) => (
+                <CardField key={colIndex}>
+                  <CardLabel>{col.header}:</CardLabel>
+                  {row[col.accessor]}
+                </CardField>
+              ))}
+            </DataCard>
+          ))
+        ) : (
+          <p>No data available</p>
+        )}
+      </CardContainer>
+    );
+  }
+
   return (
     <TableCustomer>
       <thead>
