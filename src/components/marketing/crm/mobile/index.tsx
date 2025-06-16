@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import { Box, Typography } from '@mui/material';
 import { ArrowBackIos } from '@mui/icons-material';
 import CrmService from '../../../../services/crm.service.ts';
+import SegmentationService from '../../../../services/segmentation.service.ts';
 
 interface Customer {
   id: string;
@@ -28,9 +29,14 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
+  const [segments, setSegments] = useState<any[]>([]);
+  const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
+  const [isSegmentModalVisible, setIsSegmentModalVisible] = useState(false);
   const [isCustomerModalVisible, setIsCustomerModalVisible] = useState(false);
   const [currentCustomer, setCurrentCustomer] = useState<Customer | null>(null);
   const [form] = Form.useForm();
+  const [segmentForm] = Form.useForm();
+  const [availableFields, setAvailableFields] = useState<string[]>([]);
 
   // Cores do tema
   const primaryColor = '#578acd';
@@ -44,13 +50,20 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
 
   useEffect(() => {
     filterCustomers();
-  }, [searchText, customers]);
+  }, [searchText, selectedSegment, customers]);
+
+  useEffect(() => {
+    setAvailableFields(extractAllFields(customers));
+  }, [customers]);
 
   const fetchInitialData = async () => {
     setLoading(true);
     try {
-      const response = await CrmService.getCrm(activeCompany);
-      const leads = response.data?.map((lead: any) => {
+      const [leadRes, segmentRes] = await Promise.all([
+        CrmService.getCrm(activeCompany),
+        SegmentationService.getSegments(activeCompany)
+      ]);
+      const leads = leadRes.data?.map((lead: any) => {
         const parsedSource = typeof lead.source === 'string' ? JSON.parse(lead.source) : lead.source;
         return {
           id: lead.id,
@@ -67,6 +80,8 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         };
       });
       setCustomers(leads || []);
+      setSegments(segmentRes.data || []);
+      setAvailableFields(extractAllFields(leads || []));
     } catch (error) {
       console.error('Erro ao buscar leads:', error);
     } finally {
@@ -86,6 +101,12 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
       }
     });
     return Array.from(fields);
+  };
+
+  const extractAllFields = (data: Customer[]): string[] => {
+    const base = ['name', 'email', 'phone', 'status', 'value', 'tags', 'source', 'createdAt', 'lastContact'];
+    const dynamic = extractJsonFields(data);
+    return Array.from(new Set([...base, ...dynamic]));
   };
 
   const generateDynamicColumns = (): ColumnsType<Customer> => {
@@ -161,6 +182,37 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
   const filterCustomers = () => {
     let result = [...customers];
 
+    if (selectedSegment) {
+      const segment = segments.find(s => s.id === selectedSegment);
+      if (segment) {
+        result = result.filter(customer =>
+          segment.filterConditions.every((condition: any) => {
+            const field = condition.field as string;
+            const customerValue =
+              (customer as any)[field] !== undefined
+                ? (customer as any)[field]
+                : customer.jsonData?.[field] ?? '';
+            switch (condition.operator) {
+              case 'eq':
+                return customerValue === condition.value;
+              case 'neq':
+                return customerValue !== condition.value;
+              case 'gt':
+                return customerValue > condition.value;
+              case 'lt':
+                return customerValue < condition.value;
+              case 'contains':
+                return typeof customerValue === 'string' && customerValue.toLowerCase().includes(String(condition.value).toLowerCase());
+              case 'startsWith':
+                return typeof customerValue === 'string' && customerValue.toLowerCase().startsWith(String(condition.value).toLowerCase());
+              default:
+                return true;
+            }
+          })
+        );
+      }
+    }
+
     if (searchText) {
       const searchLower = searchText.toLowerCase();
       result = result.filter((customer) => {
@@ -210,6 +262,15 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
     setSearchText(e.target.value);
   };
 
+  const handleSegmentChange = (segmentId: string) => {
+    setSelectedSegment(segmentId);
+  };
+
+  const handleCreateSegment = () => {
+    segmentForm.resetFields();
+    setIsSegmentModalVisible(true);
+  };
+
   const handleCreateCustomer = () => {
     form.resetFields();
     setCurrentCustomer(null);
@@ -239,6 +300,19 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         }
       },
     });
+  };
+
+  const handleSegmentSubmit = async (values: any) => {
+    try {
+      const { data } = await SegmentationService.createSegment({
+        ...values,
+        companyId: activeCompany,
+      });
+      setSegments([...segments, data]);
+      setIsSegmentModalVisible(false);
+    } catch (err) {
+      console.error('Erro ao criar segmento:', err);
+    }
   };
 
   const handleCustomerSubmit = async (values: any) => {
@@ -328,8 +402,8 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         />
       </div>
 
-      {/* Search Bar */}
-      <div style={{ marginBottom: '16px' }}>
+      {/* Search & Segment */}
+      <div style={{ display:'flex', gap:'8px', marginBottom: '16px' }}>
         <Input
           placeholder={t('marketing.crm.searchPlaceholder')}
           prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
@@ -342,6 +416,15 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
             padding: '8px 16px'
           }}
         />
+        <Select
+          placeholder={t('marketing.crm.selectSegment')}
+          style={{ flex: 1 }}
+          value={selectedSegment ?? undefined}
+          onChange={handleSegmentChange}
+          options={segments.map(s => ({ value: s.id, label: s.name }))}
+          allowClear
+        />
+        <Button type="dashed" onClick={handleCreateSegment} icon={<PlusOutlined />} />
       </div>
 
       {/* Metrics Cards - Horizontal Scroll */}
@@ -436,6 +519,79 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
           onClick: () => handleEditCustomer(record),
         })}
       />
+
+      {/* Segment Modal */}
+      <Modal
+        title="Novo Segmento"
+        open={isSegmentModalVisible}
+        onCancel={() => setIsSegmentModalVisible(false)}
+        footer={null}
+        bodyStyle={{ padding: '16px' }}
+        width="90%"
+        style={{ maxWidth: '400px' }}
+      >
+        <Form form={segmentForm} onFinish={handleSegmentSubmit} layout="vertical">
+          <Form.Item name="name" label="Nome" rules={[{ required: true, message: 'Nome' }]}> 
+            <Input />
+          </Form.Item>
+          <Form.List name="conditions">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, ...restField }) => (
+                  <div key={key} style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'field']}
+                      style={{ flex: 1 }}
+                      rules={[{ required: true, message: 'Campo' }]}
+                    >
+                      <Select
+                        showSearch
+                        options={availableFields.map(f => ({ label: f, value: f }))}
+                        filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'operator']}
+                      style={{ flex: 1 }}
+                      rules={[{ required: true, message: 'Operador' }]}
+                    >
+                      <Select>
+                        <Select.Option value="eq">Igual a</Select.Option>
+                        <Select.Option value="neq">Diferente de</Select.Option>
+                        <Select.Option value="gt">Maior que</Select.Option>
+                        <Select.Option value="lt">Menor que</Select.Option>
+                        <Select.Option value="contains">Contém</Select.Option>
+                        <Select.Option value="startsWith">Começa com</Select.Option>
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'value']}
+                      style={{ flex: 2 }}
+                      rules={[{ required: true, message: 'Valor' }]}
+                    >
+                      <Input placeholder="Valor" />
+                    </Form.Item>
+                    <Button type="text" danger icon={<DeleteOutlined />} onClick={() => remove(name)} />
+                  </div>
+                ))}
+                <Form.Item>
+                  <Button type="dashed" onClick={() => add()} block>
+                    Adicionar Condição
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              Salvar Segmento
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
 
       {/* Customer Modal */}
       <Modal
