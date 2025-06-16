@@ -657,7 +657,10 @@
       "source": "Source",
       "createdAt": "Created At",
       "selectColumns": "Select Columns",
-      "columns": "Columns"
+      "columns": "Columns",
+      "addField": "Add Field",
+      "fieldName": "Field Name",
+      "fieldValue": "Field Value"
     },
     "automationTable": {
       "emptyStateTitle": "No automation found",
