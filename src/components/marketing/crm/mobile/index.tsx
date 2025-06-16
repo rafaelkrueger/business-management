@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Input, Button, Select, Tag, Card, Form, Modal, Checkbox, Space } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Input, Button, Select, Tag, Card, Form, Modal, Checkbox, Space } from 'antd';
 import { SearchOutlined, PlusOutlined, DeleteOutlined, SettingOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
@@ -109,79 +108,25 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
     return Array.from(fields);
   };
 
+  const dedupeFields = (fields: string[]): string[] => {
+    const seen = new Set<string>();
+    return fields.filter(f => {
+      const key = f.trim().toLowerCase();
+      if (key === 'companyid' || key === 'jsondata') return false;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
+
   const extractAllFields = (data: Customer[]): string[] => {
     const base = ['name', 'email', 'phone', 'status', 'value', 'tags', 'source', 'createdAt', 'lastContact'];
     const dynamic = extractJsonFields(data);
-    return Array.from(new Set([...base, ...dynamic]));
+    return dedupeFields([...base, ...dynamic]);
   };
 
-  const generateDynamicColumns = (): ColumnsType<Customer> => {
-    const normalizeField = (field: string) => field.trim().toLowerCase();
+  const formatFieldLabel = (label: string) => label.replace(/\s*\(.*?\)\s*/g, '').trim();
 
-    const jsonFields = extractJsonFields(customers).map(normalizeField);
-    const uniqueJsonFields = Array.from(new Set(jsonFields));
-
-    const jsonFieldColumns: ColumnsType<Customer> = uniqueJsonFields.map(field => ({
-      title: fieldLabels[field] || field,
-      dataIndex: ['jsonData', field],
-      key: field,
-      render: (value: any) => {
-        if (value === null || value === undefined) return null;
-        if (typeof value === 'string' || typeof value === 'number') {
-          return (
-            <div style={{ fontSize: '12px', color: '#666' }}>
-              {value.toString().length > 15 ? `${value.toString().substring(0, 15)}...` : value}
-            </div>
-          );
-        }
-        return (
-          <div style={{ fontSize: '12px', color: '#666' }}>
-            {JSON.stringify(value).length > 15 ? `${JSON.stringify(value).substring(0, 15)}...` : JSON.stringify(value)}
-          </div>
-        );
-      },
-    }));
-
-    const fixedColumns: ColumnsType<Customer> = [
-      {
-        title: t('marketing.crm.status'),
-        dataIndex: 'status',
-        key: 'status',
-        render: renderStatusTag,
-      },
-      {
-        title: t('marketing.crm.source'),
-        dataIndex: 'source',
-        key: 'source',
-      },
-      {
-        title: t('marketing.crm.tags'),
-        dataIndex: 'tags',
-        key: 'tags',
-        render: (tags: string[]) => (
-          <>
-            {tags?.map(tag => (
-              <Tag key={tag}>{tag}</Tag>
-            ))}
-          </>
-        ),
-      },
-      {
-        title: t('marketing.crm.createdAt'),
-        dataIndex: 'createdAt',
-        key: 'createdAt',
-        render: (date: Date) => dayjs(date).format('DD/MM/YYYY'),
-      },
-    ];
-
-    const getFieldName = (col: any) => Array.isArray(col.dataIndex) ? col.dataIndex[1] : col.dataIndex;
-    const fixedFieldNames = fixedColumns.map(col => normalizeField(getFieldName(col)));
-    const filteredJsonFieldColumns = jsonFieldColumns.filter(
-      col => !fixedFieldNames.includes(normalizeField(getFieldName(col)))
-    );
-
-    return [...filteredJsonFieldColumns, ...fixedColumns].filter(col => visibleColumns.includes(getFieldName(col)));
-  };
 
   const filterCustomers = () => {
     let result = [...customers];
@@ -531,24 +476,30 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         </Card>
       </div>
 
-      <Table
-        columns={generateDynamicColumns()}
-        dataSource={filteredCustomers}
-        rowKey="id"
-        loading={loading}
-        pagination={{
-          pageSize: 10,
-          showSizeChanger: false,
-          simple: true
-        }}
-        style={{
-          borderRadius: '12px',
-          overflow: 'hidden'
-        }}
-        onRow={(record) => ({
-          onClick: () => handleEditCustomer(record),
-        })}
-      />
+      <div>
+        {filteredCustomers.map((customer) => (
+          <Card
+            key={customer.id}
+            style={{ marginBottom: '12px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
+            bodyStyle={{ padding: '12px' }}
+            onClick={() => handleEditCustomer(customer)}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <div style={{ fontWeight: 600 }}>{customer.name || customer.email || customer.phone}</div>
+              {renderStatusTag(customer.status)}
+            </div>
+            {visibleColumns.map((field) => {
+              const value = (customer as any)[field] !== undefined ? (customer as any)[field] : customer.jsonData?.[field];
+              if (value === undefined || value === null || value === '') return null;
+              return (
+                <div key={field} style={{ fontSize: '12px', marginBottom: 4 }}>
+                  <strong>{formatFieldLabel(fieldLabels[field] || field)}:</strong> {typeof value === 'string' || typeof value === 'number' ? value : JSON.stringify(value)}
+                </div>
+              );
+            })}
+          </Card>
+        ))}
+      </div>
 
       <Modal
         title={t('marketing.crm.selectColumns')}
@@ -566,7 +517,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {availableFields.map((field) => (
               <Checkbox key={field} value={field} style={{ width: '45%' }}>
-                {fieldLabels[field] || field}
+                {formatFieldLabel(fieldLabels[field] || field)}
               </Checkbox>
             ))}
           </div>
@@ -600,7 +551,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
                     >
                       <Select
                         showSearch
-                        options={availableFields.map(f => ({ label: f, value: f }))}
+                        options={availableFields.map(f => ({ label: formatFieldLabel(f), value: f }))}
                         filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
                       />
                     </Form.Item>

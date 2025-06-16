@@ -326,11 +326,24 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
     return Array.from(fields);
   };
 
+  const dedupeFields = (fields: string[]): string[] => {
+    const seen = new Set<string>();
+    return fields.filter(f => {
+      const key = f.trim().toLowerCase();
+      if (key === 'companyid' || key === 'jsondata') return false;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
+
   const extractAllFields = (data: any[]): string[] => {
     const base = ['name', 'email', 'phone', 'status', 'value', 'tags', 'source', 'createdAt'];
     const dynamic = extractJsonFields(data);
-    return Array.from(new Set([...base, ...dynamic]));
+    return dedupeFields([...base, ...dynamic]);
   };
+
+  const formatFieldLabel = (label: string) => label.replace(/\s*\(.*?\)\s*/g, '').trim();
 
   const normalizeField = (field: string) => field.trim().toLowerCase();
 
@@ -451,7 +464,7 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {availableFields.map((field) => (
               <Checkbox key={field} value={field} style={{ width: '30%' }}>
-                {fieldLabels[field] || field}
+                {formatFieldLabel(fieldLabels[field] || field)}
               </Checkbox>
             ))}
           </div>
@@ -489,7 +502,7 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
                       <Select
                         placeholder="Campo"
                         showSearch
-                        options={availableFields.map(f => ({ label: f, value: f }))}
+                        options={availableFields.map(f => ({ label: formatFieldLabel(f), value: f }))}
                         filterOption={(input, option) =>
                           (option?.value ?? '').toLowerCase().includes(input.toLowerCase())
                         }
