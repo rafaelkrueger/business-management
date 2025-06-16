@@ -1145,7 +1145,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       anchor={window.outerWidth > 600 ? "right" : "bottom"}
       open={isDrawerOpen}
       onClose={() => setIsDrawerOpen(false)}
-      PaperProps={{ sx: { width: window.outerWidth > 600 ? '35%' : '90%', height: window.outerWidth > 600 ? '100%' : '75%', padding: 3 } }}
+      PaperProps={{ sx: { width: window.outerWidth > 600 ? '35%' : '90%', height: window.outerWidth > 600 ? '100%' : '75%', padding: 3, borderTopLeftRadius: window.outerWidth > 600 ? '0px' : '30px', borderTopRightRadius: window.outerWidth > 600 ? '0px' : '30px', } }}
     >
       <Box sx={{display:'flex', justifyContent:'space-between'}}>
       <Typography variant="h5" fontWeight="bold" color="primary" mb={2}>

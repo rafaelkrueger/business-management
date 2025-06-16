@@ -22,7 +22,7 @@ import {
   CircularProgress,
   LinearProgress,
 } from "@mui/material";
-import { AlertCircle, Check, CheckCircle, Clock, PlusCircle } from "lucide-react";
+import { AlertCircle, Check, CheckCircle, Clock, ExternalLink, Eye, Pencil, PlusCircle } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import LandingPageService from "../../../services/landing-page.service.ts";
@@ -375,17 +375,40 @@ const LandingPageCard: React.FC<{
             {t("marketing.capturePages.createdAt")}: {new Date(page.createdAt).toLocaleDateString()}
           </Typography>
         </CardContent>
-        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start", margin: "8px" }}>
-          <Button size="small" onClick={() => onViewDetails(page)}>
-            {t("marketing.capturePages.viewDetails")}
-          </Button>
-          <Button sx={{marginLeft:'-5px'}} size="small" onClick={() => onEdit(page)}>
-            {t("marketing.capturePages.editPage")} Landing Page
-          </Button>
-          <Button size="small" onClick={() => onViewWebsite(page)}>
-            {t("marketing.capturePages.viewLandingPage")}
-          </Button>
-        </Box>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        margin: "8px"
+      }}
+    >
+      <Button
+        size="small"
+        onClick={() => onViewDetails(page)}
+        startIcon={<Eye size={16} color="#578acd" />}
+      >
+        {t("marketing.capturePages.viewDetails")}
+      </Button>
+
+      <Button
+        size="small"
+        onClick={() => onEdit(page)}
+        startIcon={<Pencil size={16} color="#578acd" />}
+        sx={{ marginLeft: '0px' }}
+      >
+        {t("marketing.capturePages.editPage")} Landing Page
+      </Button>
+
+      <Button
+        size="small"
+        onClick={() => onViewWebsite(page)}
+        startIcon={<ExternalLink size={16} color="#578acd" />}
+      >
+        {t("marketing.capturePages.viewLandingPage")}
+      </Button>
+    </Box>
       </Card>
     </Grid>
   );

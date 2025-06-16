@@ -1007,7 +1007,7 @@
     "videoPreview": "Video Preview"
   },
     "chatbot": {
-    "create": "Create Chatbot",
+    "create": "Create",
     "update": "Update Chatbot",
     "settings": "Bot Settings",
     "name": "Bot Name",
@@ -1024,7 +1024,7 @@
     "testInstructions": "Type below to test your chatbot's behavior. Responses will be simulated based on your instructions.",
     "typeTestMessage": "Type a test message...",
     "createBotToStartMessage": "Create your bot to unlock the live testing",
-    "myChatbots": "My Chatbots",
+    "myChatbots": "Chatbots",
     "active": "Active",
     "test": "Test",
     "edit": "Edit",
@@ -1037,7 +1037,7 @@
     "createDocuments": "Create Documents",
     "createDocumentsTooltip": "The bot will create documents",
     "emptyTitle":"You don't have chatbots",
-    "emptyDesc":"Create your first chatbot to interact with your customers.",
+    "emptyDesc":"Create your first chatbot.",
     "response": {
       "product": "Great! Based on your instructions, I've configured the chatbot to help customers with product questions and suggestions.",
       "course": "Great! I'll explain complex concepts in a simplified way.",

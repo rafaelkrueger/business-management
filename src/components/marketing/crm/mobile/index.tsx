@@ -302,7 +302,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
           style={{
             cursor: 'pointer',
             marginRight: '16px',
-            color: primaryColor
+            color: '#474747'
           }}
           onClick={() => setModule('')}
         />
@@ -313,15 +313,18 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         }}>
           {t("marketing.crmTitle")}
         </Typography>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleCreateCustomer}
+        <PlusOutlined
           style={{
-            backgroundColor: primaryColor,
-            borderColor: primaryColor
+            fontSize: '19px',
+            color: 'white',
+            cursor: 'pointer',
+            transition: 'color 0.3s ease',
+            marginRight: '5px',
+            background:'#578acd',
+            padding: '6px',
+            borderRadius: '5px',
           }}
-          size="small"
+          onClick={handleCreateCustomer}
         />
       </div>
 

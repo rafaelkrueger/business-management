@@ -46,6 +46,7 @@ import LeadGeneration from "../../create-leads/index.tsx";
 import LandingPageService from "../../../../services/landing-page.service.ts";
 import LeadsService from "../../../../services/leads.service.ts";
 import ProgressService from "../../../../services/progress.service.ts";
+import { PlusOutlined } from "@ant-design/icons";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -449,42 +450,41 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
         top: 0,
         backgroundColor: '#578acd0',
         zIndex: 10,
-        pt: 3,
+        pt: 4,
         pb: 1,
         pl:1,
         pr:2
       }}>
-        <IconButton onClick={() => setModule('')} sx={{ color: '#578acd', mr: 1, mt:'-50px' }}>
+        <IconButton onClick={() => setModule('')} sx={{ color: '#525252', mr: 1, mt:'-50px' }}>
           <ArrowBackIos />
         </IconButton>
-        <Box sx={{ ml: 'auto', display: 'flex', gap: 1 }}>
-          <IconButton
-            size="small"
+        <Box sx={{ ml: 'auto', display: 'flex', gap: 1, marginTop:'-50px' }}>
+          <PlusOutlined
+            style={{
+              fontSize: '13px',
+              color: 'white',
+              cursor: 'pointer',
+              transition: 'color 0.3s ease',
+              marginRight: '5px',
+              background:'#578acd',
+              padding: '6px',
+              borderRadius: '5px',
+            }}
             onClick={() => setOpenForm(true)}
-            sx={{
-              backgroundColor: '#578acd',
-              color: '#ffffff',
-              mt:'-30px',
-              mb:2,
-              '&:hover': { backgroundColor: alpha('#578acd', 0.8) }
+          />
+          <FormatListBulletedOutlined
+            style={{
+              fontSize: '13px',
+              color: 'white',
+              cursor: 'pointer',
+              transition: 'color 0.3s ease',
+              marginRight: '5px',
+              background:'#578acd',
+              padding: '6px',
+              borderRadius: '5px',
             }}
-          >
-            <PlusCircle size={18} />
-          </IconButton>
-
-          <IconButton
-            size="small"
             onClick={() => setLeadGenerationEnabled(true)}
-            sx={{
-              backgroundColor: '#578acd',
-              color: '#ffffff',
-              mt:'-30px',
-              mb:2,
-              '&:hover': { backgroundColor: alpha('#578acd', 0.8) }
-            }}
-          >
-            <FormatListBulletedOutlined fontSize="small" />
-          </IconButton>
+          />
         </Box>
       </Box>
 

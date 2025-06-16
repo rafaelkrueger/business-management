@@ -38,6 +38,7 @@ import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
+import { PlusOutlined } from "@ant-design/icons";
 
 const AutomationDashboard = ({ activeCompany, setModule }) => {
   const [automations, setAutomations] = useState([]);
@@ -348,7 +349,6 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          background: '#578acd',
           px: 2,
           pt: 2.9,
           pb: 1.5,
@@ -356,42 +356,35 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton
-            onClick={() => setModule("")}
-            size="medium"
-            sx={{
-              color: '#ffffff',
-                mr: 1,
-                mt:-1.7,
-                '&:hover': {
-                    backgroundColor: 'rgba(42, 67, 101, 0.1)'
-                }
-            }}
-          >
-            <ArrowBackIos fontSize="small" />
-          </IconButton>
-          <Typography variant="h6" sx={{ fontWeight: 200,  color: '#ffffff', mt:-1.7 }}>
+        <ArrowBackIos
+          style={{
+            cursor: 'pointer',
+            marginRight: '16px',
+            color: '#474747'
+          }}
+          onClick={() => setModule('')}
+        />
+        <Typography variant="h5" style={{
+          color: '#333333',
+          fontWeight: '600',
+          flex: 1
+        }}>
             {t("marketing.automation")}
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setIsCreating(true)}
-          size="small"
-          sx={{
-            borderRadius: 3,
-            px: 2,
-            py: 1,
-            mt:-2,
-            boxShadow: "none",
-            height:'30px',
-            marginRight:'5px',
-            "&:hover": { boxShadow: "none" }
-          }}
-        >
-            <Add sx={{fontSize:'1.7rem'}} />
-        </Button>
+      <PlusOutlined
+        style={{
+          fontSize: '19px',
+          color: 'white',
+          cursor: 'pointer',
+          transition: 'color 0.3s ease',
+          marginRight: '5px',
+          background:'#578acd',
+          padding: '6px',
+          borderRadius: '5px',
+        }}
+        onClick={() => setIsCreating(true)}
+        />
       </Box>
 
       {loading ? (

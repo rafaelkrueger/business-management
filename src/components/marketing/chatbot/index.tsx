@@ -36,7 +36,8 @@ import {
 import ChatbotService from '../../../services/chatbot.service.ts';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
-import { ChartGanttIcon, LockIcon } from 'lucide-react';
+import { ChartGanttIcon, LockIcon, PlusCircle, PlusCircleIcon } from 'lucide-react';
+import { PlusOutlined } from '@ant-design/icons';
 
 const initialBotConfig = {
   name: '',
@@ -269,23 +270,6 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                   }}
                   onClick={()=>{setCreatingBot(false); setEditingBot(false); setChatMessages([])}}/>
               </IconButton>
-              <Button
-                variant="contained"
-                onClick={editingBot ? handleUpdateBot : handleCreateBot}
-                startIcon={<CheckCircleIcon />}
-                disabled={loading}
-                sx={{
-                  background: 'linear-gradient(45deg, #6695ec 0%, #0f2a5dfd 100%)',
-                  borderRadius: 2,
-                  px: 3,
-                  py: 1,
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.2)'
-                }}
-              >
-                {editingBot ? t('chatbot.update') : t('chatbot.create')}
-              </Button>
             </Toolbar>
           </AppBar>
 
@@ -459,7 +443,28 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                       </Tooltip>
                     </Box>
                   </CardContent>
+                <Button
+                variant="contained"
+                onClick={editingBot ? handleUpdateBot : handleCreateBot}
+                startIcon={<CheckCircleIcon />}
+                disabled={loading}
+                sx={{
+                  background: '#578acd',
+                  borderRadius: 2,
+                  width:'90%',
+                  px: 3,
+                  py: 1,
+                  margin:2,
+                  marginTop:'0px',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.2)'
+                }}
+              >
+                {editingBot ? t('chatbot.update') : t('chatbot.create')}
+              </Button>
                 </Card>
+
               </Grid>
             <Grid item xs={12} md={7.2}>
               <Card sx={{
@@ -692,23 +697,19 @@ return (
         {t('chatbot.myChatbots')}
       </Typography>
 
-      <Button
-        variant="contained"
-        onClick={() => setCreatingBot(true)}
-        startIcon={<CheckCircleIcon />}
-        disabled={loading}
-        sx={{
-          background: 'linear-gradient(45deg, #6695ec 0%, #0f2a5dfd 100%)',
-          borderRadius: 2,
-          px: 3,
-          py: 1,
-          textTransform: 'none',
-          fontWeight: 600,
-          boxShadow: '0 4px 14px rgba(16, 185, 129, 0.2)'
+      <PlusOutlined
+        style={{
+          fontSize: '19px',
+          color: 'white',
+          cursor: 'pointer',
+          transition: 'color 0.3s ease',
+          marginRight: '5px',
+          background:'#578acd',
+          padding: '6px',
+          borderRadius: '5px',
         }}
-      >
-        {t('chatbot.create')}
-      </Button>
+         onClick={() => setCreatingBot(true)}
+      />
     </Box>
 
     {/* Chatbots Grid */}
@@ -774,7 +775,7 @@ return (
         }}>
           <SmartToy sx={{
             fontSize: 48,
-            color: '#29529cfc',
+            color: '#578acd',
             opacity: 0.9
           }} />
         </Box>
@@ -809,10 +810,13 @@ return (
         startIcon={<CheckCircleIcon />}
         disabled={loading}
         sx={{
-          background: 'linear-gradient(45deg, #6695ec 0%, #0f2a5dfd 100%)',
+          background: '#578acd',
           borderRadius: 2,
+          width:'90%',
           px: 3,
           py: 1,
+          margin:2,
+          marginTop:'0px',
           textTransform: 'none',
           fontWeight: 600,
           boxShadow: '0 4px 14px rgba(16, 185, 129, 0.2)'
