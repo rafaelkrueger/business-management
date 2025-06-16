@@ -10,6 +10,8 @@ import {
   SidebarContainerHeader,
   SidebarContainerHeaderProfile,
   SidebarContainerHeaderProfileName,
+  SidebarCompanyLogo,
+  CollapseButton,
   SupportModuleLabel,
   MainModuleIndicator
 } from './styles.ts';
@@ -29,6 +31,7 @@ import Select from 'react-select';
 import ModulesService from '../../services/modules.service.ts';
 import { Box, IconButton, Tooltip } from '@mui/material';
 import { HelpCircleIcon } from 'lucide-react';
+import { IoChevronForward, IoChevronBack } from 'react-icons/io5';
 
 const icons = {
   IoIosHome: IoIosHome,
@@ -57,6 +60,7 @@ const Sidebar: React.FC<{
   const { t } = useTranslation();
   const [mainModule, setMainModule] = useState(null);
   const [supportModules, setSupportModules] = useState([]);
+  const [collapsed, setCollapsed] = useState(false);
 
   const options = props.companies.map((company) => ({
     value: company.id,
@@ -98,7 +102,7 @@ const Sidebar: React.FC<{
     }
   }, [props.activeCompany, props.companies, props.modulesUpdating]);
 
-  function SidebarContainerBodyElementIcon({ icon }) {
+  function RenderIcon({ icon }) {
     if (!icon) return null;
 
     const iconName = icon.match(/<(\w+)/)?.[1];
@@ -109,27 +113,37 @@ const Sidebar: React.FC<{
     return <IconComponent style={{ marginTop: '4%', marginRight: '5%', marginLeft: window.outerWidth > 600 ? '3%' : '13%' }} size={26} />;
   }
 
+  const activeCompanyData = props.companies.find(c => c.id === props.activeCompany);
+
   return (
-    <SidebarContainer>
+    <SidebarContainer collapsed={collapsed}>
       <SidebarContainerHeader>
-        <SidebarContainerHeaderProfile src={UserNoImage} />
-        <SidebarContainerHeaderProfileName>{props.userData.name}</SidebarContainerHeaderProfileName>
-        <Select
-          value={options.find(option => option.value === props.activeCompany)}
-          onChange={(selectedOption) => props.setActiveCompany(selectedOption.value)}
-          options={options}
-          isSearchable={false}
-          styles={{
-            container: (provided) => ({
-              ...provided,
-              width: '100%',
-            }),
-            control: (provided) => ({
-              ...provided,
-              width: '100%',
-            }),
-          }}
-        />
+        {collapsed ? (
+          activeCompanyData?.logo && (
+            <SidebarCompanyLogo src={activeCompanyData.logo} alt={activeCompanyData.name} />
+          )
+        ) : (
+          <>
+            <SidebarContainerHeaderProfile src={UserNoImage} />
+            <SidebarContainerHeaderProfileName>{props.userData.name}</SidebarContainerHeaderProfileName>
+            <Select
+              value={options.find(option => option.value === props.activeCompany)}
+              onChange={(selectedOption) => props.setActiveCompany(selectedOption.value)}
+              options={options}
+              isSearchable={false}
+              styles={{
+                container: (provided) => ({
+                  ...provided,
+                  width: '100%',
+                }),
+                control: (provided) => ({
+                  ...provided,
+                  width: '100%',
+                }),
+              }}
+            />
+          </>
+        )}
       </SidebarContainerHeader>
       <SidebarContainerBody>
           <SupportModuleLabel>
@@ -149,10 +163,12 @@ const Sidebar: React.FC<{
               borderLeft: '4px solid #00a8ff'
             }}
           >
-            <Box sx={{marginRight:'10px'}}>
-              <SidebarContainerBodyElementIcon icon={`<${mainModule.icon} size={26} />`} />
+            <Box sx={{marginRight: collapsed ? 0 : '10px'}}>
+              <SidebarContainerBodyElementIcon collapsed={collapsed}>
+                <RenderIcon icon={`<${mainModule.icon} size={26} />`} />
+              </SidebarContainerBodyElementIcon>
             </Box>
-            <SidebarContainerBodyElement>
+            <SidebarContainerBodyElement collapsed={collapsed}>
               {t(`config.establishmentModules.${mainModule.key}`)}
               <MainModuleIndicator>{t('mainModuleTag')}</MainModuleIndicator>
             </SidebarContainerBodyElement>
@@ -180,20 +196,22 @@ const Sidebar: React.FC<{
               props.activateModule(module.key);
             }}
           >
-            <SidebarContainerBodyElementIcon icon={`<${module.icon} size={26} />`} />
-            <SidebarContainerBodyElement>
+            <SidebarContainerBodyElementIcon collapsed={collapsed}>
+              <RenderIcon icon={`<${module.icon} size={26} />`} />
+            </SidebarContainerBodyElementIcon>
+            <SidebarContainerBodyElement collapsed={collapsed}>
               {t(`config.establishmentModules.${module.key}`)}
             </SidebarContainerBodyElement>
           </SidebarContainerBodyElementContainer>
         ))}
       </SidebarContainerBody>
       <SidebarContainerFooter>
-        <SidebarContainerBodyElement
+        <SidebarContainerBodyElement collapsed={collapsed}
           style={{ marginLeft: '6%', marginBottom:'17px', fontSize:'13pt' }}
         >
           {t(`notifications`)}
         </SidebarContainerBodyElement>
-        <SidebarContainerBodyElement
+        <SidebarContainerBodyElement collapsed={collapsed}
           onClick={() => {
             if (window.outerWidth < 600) {
               props.setIsMenuActive(!props.isMenuActive);
@@ -204,7 +222,7 @@ const Sidebar: React.FC<{
         >
           {t(`configurations`)}
         </SidebarContainerBodyElement>
-        <SidebarContainerBodyElement
+        <SidebarContainerBodyElement collapsed={collapsed}
           onClick={() => {
             localStorage.removeItem('accessToken');
             window.location.replace('/');
@@ -213,6 +231,9 @@ const Sidebar: React.FC<{
         >
           Logout
         </SidebarContainerBodyElement>
+        <CollapseButton onClick={() => setCollapsed(!collapsed)}>
+          {collapsed ? <IoChevronForward size={20} /> : <IoChevronBack size={20} />}
+        </CollapseButton>
       </SidebarContainerFooter>
     </SidebarContainer>
   );

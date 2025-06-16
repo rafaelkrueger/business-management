@@ -1,12 +1,13 @@
 import styled from "styled-components";
 
-export const SidebarContainer = styled.div`
+export const SidebarContainer = styled.div<{ collapsed?: boolean }>`
     display: flex;
     flex-direction: column;
     background: linear-gradient(180deg, #001f3f, #003366); /* Degradê azul marinho */
     color: white;
-    width: 220px;
-    min-width: 300px;
+    width: \${({ collapsed }) => (collapsed ? '60px' : '220px')};
+    min-width: \${({ collapsed }) => (collapsed ? '60px' : '300px')};
+    transition: width 0.3s ease;
     height: 100vh; /* Ocupa toda a altura da tela */
     overflow: hidden;
     @media (max-width: 600px) {
@@ -69,6 +70,13 @@ export const SidebarContainerHeader = styled.div`
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 `;
 
+export const SidebarCompanyLogo = styled.img`
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+`;
+
 export const SidebarContainerHeaderProfile = styled.img`
     width: 80px;
     height: 80px;
@@ -99,16 +107,20 @@ export const SidebarContainerBodyElementContainer = styled.div`
     }
 `;
 
-export const SidebarContainerBodyElementIcon = styled.div`
-    margin-right: 10px;
+export const SidebarContainerBodyElementIcon = styled.div<{ collapsed?: boolean }>`
+    margin-right: \${({ collapsed }) => (collapsed ? '0' : '10px')};
     color: #00a8ff; /* Azul claro */
+    display: flex;
+    justify-content: center;
+    width: 100%;
 `;
 
-export const SidebarContainerBodyElement = styled.p`
+export const SidebarContainerBodyElement = styled.p<{ collapsed?: boolean }>`
     margin: 0;
     font-size: 1em;
     color: white;
     transition: color 0.3s ease;
+    display: \${({ collapsed }) => (collapsed ? 'none' : 'block')};
     &:hover {
         cursor: pointer;
         color: #00a8ff; /* Azul claro no hover */
@@ -139,4 +151,16 @@ export const ActiveModuleIndicator = styled.div`
   display: inline-block;
   margin-left: 8px;
   vertical-align: middle;
+`;
+
+export const CollapseButton = styled.button`
+  background: transparent;
+  border: none;
+  color: white;
+  margin-top: auto;
+  margin-bottom: 10px;
+  cursor: pointer;
+  &:hover {
+    color: #00a8ff;
+  }
 `;

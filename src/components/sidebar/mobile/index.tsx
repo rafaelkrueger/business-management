@@ -16,7 +16,7 @@ import ModulesService from '../../../services/modules.service.ts';
 import HomeService from '../../../services/home.service.ts';
 import { SidebarWrapper, TopSection, CompanyHeader, CompanyAvatar, CompanyLogo, CompanyPlaceholder, CompanyInfo, CompanyName, ChevronIcon, CompanyDropdown, CompanyOption, CompanyLogoWrapper, CompanyOptionInfo, CompanyOptionName, SelectedIndicator, GlowingDot, BottomSection, ModulesScroll, ModulesContainer, CompactModuleItem, CompactModuleIcon, CompactModuleLabel, LogoutItem, LogoutLabel } from './styles.ts';
 
-const BottomNavContainer = styled(Box)`
+const BottomNavContainer = styled(Box)<{ collapsed?: boolean }>`
   display: flex;
   position: fixed;
   bottom: 0;
@@ -25,7 +25,7 @@ const BottomNavContainer = styled(Box)`
   background-color: #4A75AE;
   box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2);
   z-index: 1200;
-  height: 60px;
+  height: \${({ collapsed }) => (collapsed ? '40px' : '60px')};
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
@@ -65,9 +65,10 @@ const NavIcon = styled.div`
   margin-bottom: 4px;
 `;
 
-const NavLabel = styled.span`
+const NavLabel = styled.span<{ collapsed?: boolean }>`
   font-size: 0.7rem;
   white-space: nowrap;
+  display: \${({ collapsed }) => (collapsed ? 'none' : 'block')};
 `;
 
 const ActiveIndicator = styled.div`
@@ -95,6 +96,21 @@ const ExtraModulesBadge = styled.div`
   font-weight: bold;
 `;
 
+const CollapseButton = styled.div`
+  position: absolute;
+  right: 10px;
+  top: -20px;
+  background: #4A75AE;
+  width: 30px;
+  height: 20px;
+  border-radius: 0 0 4px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+`;
+
 const MobileBottomNavigation = ({
   activateModule,
   userData,
@@ -114,6 +130,7 @@ const MobileBottomNavigation = ({
   const [tooltipText, setTooltipText] = useState('');
   const [expandedTop, setExpandedTop] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const colorThief = new ColorThief();
 
   useEffect(() => {
@@ -266,14 +283,17 @@ const MobileBottomNavigation = ({
         )}
       </TopSection> */}
 
-      <BottomNavContainer sx={{ top: expanded ? '120px' : 'unset' }}>
+      <BottomNavContainer collapsed={collapsed} sx={{ top: expanded ? '120px' : 'unset' }}>
+        <CollapseButton onClick={() => setCollapsed(!collapsed)}>
+          {collapsed ? <CgChevronUp size={16} /> : <CgChevronDown size={16} />}
+        </CollapseButton>
         <NavItemsWrapper>
           {mainNavItems.map(item => (
             <Tooltip key={item?.key} title={item.label} placement="top" arrow>
               <NavItem onClick={() => handleItemClick(item?.key)} active={activeItem === item?.key}>
                 <ActiveIndicator active={activeItem === item?.key} />
                 <NavIcon style={{marginBottom:'-5px'}}>{React.createElement(item.icon, { size: 20 })}</NavIcon>
-                <NavLabel>{item.label}</NavLabel>
+                <NavLabel collapsed={collapsed}>{item.label}</NavLabel>
               </NavItem>
             </Tooltip>
           ))}
@@ -295,7 +315,7 @@ const MobileBottomNavigation = ({
                   </ExtraModulesBadge>
                 )}
               </div>
-              <NavLabel>Extras</NavLabel>
+              <NavLabel collapsed={collapsed}>Extras</NavLabel>
               <ActiveIndicator active={showExtraModules} activecolor={brandColors.primary} />
             </NavItem>
           </Tooltip>
@@ -306,7 +326,7 @@ const MobileBottomNavigation = ({
               <NavItem onClick={() => handleItemClick(item?.key)} active={activeItem === item?.key}>
                 <ActiveIndicator active={activeItem === item?.key} />
                 <NavIcon style={{marginBottom:'-5px'}}>{React.createElement(item.icon, { size: 20 })}</NavIcon>
-                <NavLabel>{item.label}</NavLabel>
+              <NavLabel collapsed={collapsed}>{item.label}</NavLabel>
               </NavItem>
             </Tooltip>
           ))}
