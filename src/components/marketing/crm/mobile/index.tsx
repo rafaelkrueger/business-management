@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Input, Button, Select, Tag, Card, Form, Modal, DatePicker } from 'antd';
+import { Table, Input, Button, Select, Tag, Card, Form, Modal, DatePicker, Checkbox } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { Box, Typography } from '@mui/material';
@@ -37,6 +37,8 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
   const [form] = Form.useForm();
   const [segmentForm] = Form.useForm();
   const [availableFields, setAvailableFields] = useState<string[]>([]);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>([]);
+  const [isColumnsModalVisible, setIsColumnsModalVisible] = useState(false);
 
   // Cores do tema
   const primaryColor = '#578acd';
@@ -53,7 +55,9 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
   }, [searchText, selectedSegment, customers]);
 
   useEffect(() => {
-    setAvailableFields(extractAllFields(customers));
+    const fields = extractAllFields(customers);
+    setAvailableFields(fields);
+    setVisibleColumns(fields);
   }, [customers]);
 
   const fetchInitialData = async () => {
@@ -81,7 +85,9 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
       });
       setCustomers(leads || []);
       setSegments(segmentRes.data || []);
-      setAvailableFields(extractAllFields(leads || []));
+      const fields = extractAllFields(leads || []);
+      setAvailableFields(fields);
+      setVisibleColumns(fields);
     } catch (error) {
       console.error('Erro ao buscar leads:', error);
     } finally {
@@ -113,11 +119,11 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
     const jsonFields = extractJsonFields(customers);
 
     const jsonFieldColumns: ColumnsType<Customer> = jsonFields.map(field => ({
-      title: field.split('_').map(word =>
+      title: fieldLabels[field] || field.split('_').map(word =>
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(' '),
       dataIndex: ['jsonData', field],
-      key: `jsonData-${field}`,
+      key: field,
       render: (value: any) => {
         if (value === null || value === undefined) return null;
 
@@ -140,43 +146,19 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
       },
     }));
 
-    const fixedColumns: ColumnsType<Customer> = [
-        ...jsonFieldColumns.slice(1),
-        {
-          title: 'Status',
-          dataIndex: 'status',
-          key: 'status',
-          render: renderStatusTag,
-        },
-      // {
-      //   title: 'Ações',
-      //   key: 'actions',
-      //   render: (_, record) => (
-      //     <div style={{ display: 'flex', gap: 8 }}>
-      //       <Button
-      //         type="text"
-      //         icon={<EditOutlined />}
-      //         onClick={(e) => {
-      //           e.stopPropagation();
-      //           handleEditCustomer(record);
-      //         }}
-      //         style={{ color: primaryColor }}
-      //       />
-      //       <Button
-      //         type="text"
-      //         icon={<DeleteOutlined />}
-      //         onClick={(e) => {
-      //           e.stopPropagation();
-      //           handleDeleteCustomer(record.id);
-      //         }}
-      //         style={{ color: '#ff4d4f' }}
-      //       />
-      //     </div>
-      //   ),
-      // },
+    const baseColumns: ColumnsType<Customer> = [
+      ...jsonFieldColumns,
+      {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+        render: renderStatusTag,
+      },
     ];
 
-    return fixedColumns;
+    const getFieldName = (col: any) => Array.isArray(col.dataIndex) ? col.dataIndex[1] : col.dataIndex;
+
+    return baseColumns.filter(col => visibleColumns.includes(getFieldName(col)));
   };
 
   const filterCustomers = () => {
@@ -357,6 +339,18 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
 
   const metrics = calculateMetrics();
 
+  const fieldLabels: Record<string, string> = {
+    name: t('marketing.crm.name'),
+    email: t('marketing.crm.email'),
+    phone: t('marketing.crm.phone'),
+    status: t('marketing.crm.status'),
+    value: t('marketing.crm.value'),
+    tags: t('marketing.crm.tags'),
+    source: t('marketing.crm.source'),
+    createdAt: t('marketing.crm.createdAt'),
+    lastContact: t('marketing.crm.lastContact'),
+  };
+
   return (
     <div style={{
       backgroundColor: backgroundColor,
@@ -399,6 +393,18 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
             borderRadius: '5px',
           }}
           onClick={handleCreateCustomer}
+        />
+        <SettingOutlined
+          style={{
+            fontSize: '19px',
+            color: 'white',
+            cursor: 'pointer',
+            background:'#578acd',
+            padding: '6px',
+            borderRadius: '5px',
+            marginLeft: '8px'
+          }}
+          onClick={() => setIsColumnsModalVisible(true)}
         />
       </div>
 
@@ -519,6 +525,29 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
           onClick: () => handleEditCustomer(record),
         })}
       />
+
+      <Modal
+        title={t('marketing.crm.selectColumns')}
+        open={isColumnsModalVisible}
+        onOk={() => setIsColumnsModalVisible(false)}
+        onCancel={() => setIsColumnsModalVisible(false)}
+        bodyStyle={{ padding: '16px' }}
+        width="90%"
+        style={{ maxWidth: '400px' }}
+      >
+        <Checkbox.Group
+          value={visibleColumns}
+          onChange={(vals) => setVisibleColumns(vals as string[])}
+        >
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {availableFields.map((field) => (
+              <Checkbox key={field} value={field} style={{ width: '45%' }}>
+                {fieldLabels[field] || field}
+              </Checkbox>
+            ))}
+          </div>
+        </Checkbox.Group>
+      </Modal>
 
       {/* Segment Modal */}
       <Modal

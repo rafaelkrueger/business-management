@@ -655,7 +655,9 @@
       "lastContact": "Last Contact",
       "tags": "Tags",
       "source": "Source",
-      "createdAt": "Created At"
+      "createdAt": "Created At",
+      "selectColumns": "Select Columns",
+      "columns": "Columns"
     },
     "automationTable": {
       "emptyStateTitle": "No automation found",
