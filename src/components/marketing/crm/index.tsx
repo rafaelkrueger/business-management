@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Input, Button, Select, Tag, Card, Form, Modal, DatePicker, Checkbox } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { SearchOutlined, FilterOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { SearchOutlined, FilterOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import CrmService from '../../../services/crm.service.ts'
 import SegmentationService from '../../../services/segmentation.service.ts'
@@ -48,6 +48,8 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
   const [isCustomerModalVisible, setIsCustomerModalVisible] = useState(false);
   const [currentCustomer, setCurrentCustomer] = useState<Customer | null>(null);
   const [availableFields, setAvailableFields] = useState<string[]>([]);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>([]);
+  const [isColumnsModalVisible, setIsColumnsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [segmentForm] = Form.useForm();
 
@@ -60,7 +62,9 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
   }, [searchText, selectedSegment, customers]);
 
   useEffect(() => {
-    setAvailableFields(extractAllFields(customers));
+    const fields = extractAllFields(customers);
+    setAvailableFields(fields);
+    setVisibleColumns(fields);
   }, [customers]);
 
   const fetchInitialData = async () => {
@@ -247,11 +251,23 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
 
   const metrics = calculateMetrics();
 
+  const fieldLabels: Record<string, string> = {
+    name: t('marketing.crm.name'),
+    email: t('marketing.crm.email'),
+    phone: t('marketing.crm.phone'),
+    status: t('marketing.crm.status'),
+    value: t('marketing.crm.value'),
+    tags: t('marketing.crm.tags'),
+    source: t('marketing.crm.source'),
+    createdAt: t('marketing.crm.createdAt'),
+    lastContact: t('marketing.crm.lastContact'),
+  };
+
   const fixedColumns: ColumnsType<any> = [
     {
       title: t('marketing.crm.status'),
-      dataIndex: t('marketing.crm.status'),
-      key: t('marketing.crm.status').toLowerCase(),
+      dataIndex: 'status',
+      key: 'status',
       render: (status: string) => {
         const color = {
           lead: 'blue',
@@ -264,13 +280,13 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
     },
     {
       title: t('marketing.crm.source'),
-      dataIndex: t('marketing.crm.source'),
-      key: t('marketing.crm.source').toLowerCase(),
+      dataIndex: 'source',
+      key: 'source',
     },
     {
       title: t('marketing.crm.tags'),
-      dataIndex: t('marketing.crm.tags'),
-      key: t('marketing.crm.tags').toLowerCase(),
+      dataIndex: 'tags',
+      key: 'tags',
       render: (tags: string[]) => (
         <>
           {tags?.map(tag => (
@@ -281,7 +297,7 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
     },
     {
       title: t('marketing.crm.createdAt'),
-      dataIndex: t('marketing.crm.createdAt'),
+      dataIndex: 'createdAt',
       key: 'createdAt',
       render: (date: Date) => dayjs(date).format('DD/MM/YYYY'),
     },
@@ -308,14 +324,20 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
   };
 
   const jsonFieldColumns: ColumnsType<any> = extractJsonFields(customers).map(field => ({
-    title: field,
+    title: fieldLabels[field] || field,
     dataIndex: ['jsonData', field],
-    key: `jsonData-${field}`,
+    key: field,
     render: (value: any) =>
       typeof value === 'string' || typeof value === 'number'
         ? value
         : JSON.stringify(value),
   }));
+
+  const getFieldName = (col: any) => Array.isArray(col.dataIndex) ? col.dataIndex[1] : col.dataIndex;
+
+  const tableColumns = [...jsonFieldColumns, ...fixedColumns].filter(col =>
+    visibleColumns.includes(getFieldName(col))
+  );
 
   return (
     <div style={{ padding: 24 }}>
@@ -367,6 +389,13 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
         </Button>
 
         <Button
+          icon={<SettingOutlined />}
+          onClick={() => setIsColumnsModalVisible(true)}
+        >
+          {t('marketing.crm.columns')}
+        </Button>
+
+        <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={handleCreateCustomer}
@@ -377,12 +406,32 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
       </div>
 
       <Table
-        columns={[...jsonFieldColumns, ...fixedColumns]}
+        columns={tableColumns}
         dataSource={filteredCustomers}
         rowKey="id"
         loading={loading}
         scroll={{ x: true }}
       />
+
+      <Modal
+        title={t('marketing.crm.selectColumns')}
+        open={isColumnsModalVisible}
+        onOk={() => setIsColumnsModalVisible(false)}
+        onCancel={() => setIsColumnsModalVisible(false)}
+      >
+        <Checkbox.Group
+          value={visibleColumns}
+          onChange={(vals) => setVisibleColumns(vals as string[])}
+        >
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {availableFields.map((field) => (
+              <Checkbox key={field} value={field} style={{ width: '30%' }}>
+                {fieldLabels[field] || field}
+              </Checkbox>
+            ))}
+          </div>
+        </Checkbox.Group>
+      </Modal>
 
       {/* Modal de Segmento */}
       <Modal

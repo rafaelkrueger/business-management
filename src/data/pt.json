@@ -661,7 +661,9 @@
       "lastContact": "Último Contato",
       "tags": "Tags",
       "source": "Origem",
-      "createdAt": "Data de Criação"
+      "createdAt": "Data de Criação",
+      "selectColumns": "Selecionar Colunas",
+      "columns": "Colunas"
     },
     "automationTable": {
       "emptyStateTitle": "Nenhuma automação encontrada",
