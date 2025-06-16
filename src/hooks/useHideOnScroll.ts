@@ -5,9 +5,15 @@ export default function useHideOnScroll(threshold: number = 10) {
   const lastY = useRef(0);
 
   useEffect(() => {
+    const container = document.getElementById('main-content');
+    const target: HTMLElement | Window = container || window;
+
+    const getScrollY = () =>
+      target === window ? window.scrollY : (target as HTMLElement).scrollTop;
+
     const handleScroll = () => {
       if (window.innerWidth > 600) return;
-      const currentY = window.scrollY;
+      const currentY = getScrollY();
       if (currentY > lastY.current && currentY - lastY.current > threshold) {
         setHidden(true);
       } else if (
@@ -19,8 +25,8 @@ export default function useHideOnScroll(threshold: number = 10) {
       lastY.current = currentY;
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    target.addEventListener('scroll', handleScroll, { passive: true });
+    return () => target.removeEventListener('scroll', handleScroll);
   }, [threshold]);
 
   return hidden;
