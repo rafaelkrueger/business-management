@@ -663,7 +663,10 @@
       "source": "Origem",
       "createdAt": "Data de Criação",
       "selectColumns": "Selecionar Colunas",
-      "columns": "Colunas"
+      "columns": "Colunas",
+      "addField": "Adicionar Campo",
+      "fieldName": "Nome do Campo",
+      "fieldValue": "Valor do Campo"
     },
     "automationTable": {
       "emptyStateTitle": "Nenhuma automação encontrada",

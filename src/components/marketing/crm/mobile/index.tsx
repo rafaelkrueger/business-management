@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Input, Button, Select, Tag, Card, Form, Modal, DatePicker, Checkbox } from 'antd';
+import { Table, Input, Button, Select, Tag, Card, Form, Modal, Checkbox, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { SearchOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SettingOutlined } from '@ant-design/icons';
+import { SearchOutlined, PlusOutlined, DeleteOutlined, SettingOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { Box, Typography } from '@mui/material';
@@ -116,49 +116,71 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
   };
 
   const generateDynamicColumns = (): ColumnsType<Customer> => {
-    const jsonFields = extractJsonFields(customers);
+    const normalizeField = (field: string) => field.trim().toLowerCase();
 
-    const jsonFieldColumns: ColumnsType<Customer> = jsonFields.map(field => ({
-      title: fieldLabels[field] || field.split('_').map(word =>
-        word.charAt(0).toUpperCase() + word.slice(1)
-      ).join(' '),
+    const jsonFields = extractJsonFields(customers).map(normalizeField);
+    const uniqueJsonFields = Array.from(new Set(jsonFields));
+
+    const jsonFieldColumns: ColumnsType<Customer> = uniqueJsonFields.map(field => ({
+      title: fieldLabels[field] || field,
       dataIndex: ['jsonData', field],
       key: field,
       render: (value: any) => {
         if (value === null || value === undefined) return null;
-
         if (typeof value === 'string' || typeof value === 'number') {
           return (
             <div style={{ fontSize: '12px', color: '#666' }}>
-              {value.toString().length > 15
-                ? `${value.toString().substring(0, 15)}...`
-                : value}
+              {value.toString().length > 15 ? `${value.toString().substring(0, 15)}...` : value}
             </div>
           );
         }
         return (
           <div style={{ fontSize: '12px', color: '#666' }}>
-            {JSON.stringify(value).length > 15
-              ? `${JSON.stringify(value).substring(0, 15)}...`
-              : JSON.stringify(value)}
+            {JSON.stringify(value).length > 15 ? `${JSON.stringify(value).substring(0, 15)}...` : JSON.stringify(value)}
           </div>
         );
       },
     }));
 
-    const baseColumns: ColumnsType<Customer> = [
-      ...jsonFieldColumns,
+    const fixedColumns: ColumnsType<Customer> = [
       {
-        title: 'Status',
+        title: t('marketing.crm.status'),
         dataIndex: 'status',
         key: 'status',
         render: renderStatusTag,
       },
+      {
+        title: t('marketing.crm.source'),
+        dataIndex: 'source',
+        key: 'source',
+      },
+      {
+        title: t('marketing.crm.tags'),
+        dataIndex: 'tags',
+        key: 'tags',
+        render: (tags: string[]) => (
+          <>
+            {tags?.map(tag => (
+              <Tag key={tag}>{tag}</Tag>
+            ))}
+          </>
+        ),
+      },
+      {
+        title: t('marketing.crm.createdAt'),
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+        render: (date: Date) => dayjs(date).format('DD/MM/YYYY'),
+      },
     ];
 
     const getFieldName = (col: any) => Array.isArray(col.dataIndex) ? col.dataIndex[1] : col.dataIndex;
+    const fixedFieldNames = fixedColumns.map(col => normalizeField(getFieldName(col)));
+    const filteredJsonFieldColumns = jsonFieldColumns.filter(
+      col => !fixedFieldNames.includes(normalizeField(getFieldName(col)))
+    );
 
-    return baseColumns.filter(col => visibleColumns.includes(getFieldName(col)));
+    return [...filteredJsonFieldColumns, ...fixedColumns].filter(col => visibleColumns.includes(getFieldName(col)));
   };
 
   const filterCustomers = () => {
@@ -299,17 +321,18 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
   };
 
   const handleCustomerSubmit = async (values: any) => {
+    const dynamicData = (values.fields || []).reduce((acc: any, cur: any) => {
+      if (cur && cur.key) acc[cur.key] = cur.value;
+      return acc;
+    }, {} as Record<string, any>);
+
     const customerData = {
-      ...values,
-      lastContact: values.lastContact.toDate(),
-      createdAt: values.createdAt?.toDate() || new Date(),
+      status: values.status,
       tags: values.tags || [],
+      source: values.source,
       jsonData: {
         ...(currentCustomer?.jsonData || {}),
-        name: values.name,
-        email: values.email,
-        phone: values.phone,
-        value: values.value
+        ...dynamicData,
       },
     };
 
@@ -625,7 +648,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
 
       {/* Customer Modal */}
       <Modal
-        title={currentCustomer ? 'Editar Cliente' : 'Novo Cliente'}
+        title={currentCustomer ? t('marketing.crm.editCustomer') : t('marketing.crm.addCustomer')}
         open={isCustomerModalVisible}
         onCancel={() => setIsCustomerModalVisible(false)}
         footer={null}
@@ -634,32 +657,38 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         style={{ maxWidth: '400px' }}
       >
         <Form form={form} onFinish={handleCustomerSubmit} layout="vertical">
-          <Form.Item
-            name="name"
-            label="Nome"
-            rules={[{ required: true, message: 'Por favor insira o nome' }]}
-          >
-            <Input size="large" />
-          </Form.Item>
-
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              { required: true, message: 'Por favor insira o email' },
-              { type: 'email', message: 'Email inválido' },
-            ]}
-          >
-            <Input size="large" />
-          </Form.Item>
-
-          <Form.Item
-            name="phone"
-            label="Telefone"
-            rules={[{ required: true, message: 'Por favor insira o telefone' }]}
-          >
-            <Input size="large" />
-          </Form.Item>
+          <Form.List name="fields">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, ...restField }) => (
+                  <Space key={key} align="baseline" style={{ display: 'flex', marginBottom: 8 }}>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'key']}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1 }}
+                    >
+                      <Input placeholder={t('marketing.crm.fieldName')} size="large" />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'value']}
+                      rules={[{ required: true }]}
+                      style={{ flex: 1 }}
+                    >
+                      <Input placeholder={t('marketing.crm.fieldValue')} size="large" />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}> 
+                    {t('marketing.crm.addField')}
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
 
           <Form.Item
             name="status"
@@ -674,13 +703,6 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name="value"
-            label="Valor (R$)"
-            rules={[{ required: true, message: 'Por favor insira o valor' }]}
-          >
-            <Input type="number" size="large" />
-          </Form.Item>
 
           <Form.Item
             name="tags"

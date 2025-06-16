@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Input, Button, Select, Tag, Card, Form, Modal, DatePicker, Checkbox } from 'antd';
+import { Table, Input, Button, Select, Tag, Card, Form, Modal, DatePicker, Checkbox, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { SearchOutlined, FilterOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SettingOutlined } from '@ant-design/icons';
+import { SearchOutlined, FilterOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SettingOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import CrmService from '../../../services/crm.service.ts'
 import SegmentationService from '../../../services/segmentation.service.ts'
@@ -218,11 +218,19 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
   };
 
   const handleCustomerSubmit = async (values: any) => {
+    const dynamicData = (values.fields || []).reduce((acc: any, cur: any) => {
+      if (cur && cur.key) acc[cur.key] = cur.value;
+      return acc;
+    }, {} as Record<string, any>);
+
     const customerData = {
-      ...values,
-      lastContact: values.lastContact.toDate(),
-      createdAt: values.createdAt?.toDate() || new Date(),
+      status: values.status,
       tags: values.tags || [],
+      source: values.source,
+      jsonData: {
+        ...(currentCustomer?.jsonData || {}),
+        ...dynamicData,
+      },
     };
 
     try {
@@ -541,39 +549,43 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
 
       {/* Modal de Cliente */}
       <Modal
-        title={currentCustomer ? 'Editar Cliente' : 'Adicionar Novo Cliente'}
+        title={currentCustomer ? t('marketing.crm.editCustomer') : t('marketing.crm.addCustomer')}
         open={isCustomerModalVisible}
         onCancel={() => setIsCustomerModalVisible(false)}
         footer={null}
         width={600}
       >
         <Form form={form} onFinish={handleCustomerSubmit} layout="vertical">
-          <Form.Item
-            name="name"
-            label="Nome"
-            rules={[{ required: true, message: 'Por favor insira o nome do cliente' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              { required: true, message: 'Por favor insira o email do cliente' },
-              { type: 'email', message: 'Por favor insira um email válido' },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="phone"
-            label="Telefone"
-            rules={[{ required: true, message: 'Por favor insira o telefone do cliente' }]}
-          >
-            <Input />
-          </Form.Item>
+          <Form.List name="fields">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, ...restField }) => (
+                  <Space key={key} align="baseline" style={{ display: 'flex', marginBottom: 8 }}>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'key']}
+                      rules={[{ required: true }]}
+                    >
+                      <Input placeholder={t('marketing.crm.fieldName')} />
+                    </Form.Item>
+                    <Form.Item
+                      {...restField}
+                      name={[name, 'value']}
+                      rules={[{ required: true }]}
+                    >
+                      <Input placeholder={t('marketing.crm.fieldValue')} />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(name)} />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                    {t('marketing.crm.addField')}
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
 
           <Form.Item
             name="status"
@@ -586,22 +598,6 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
               <Select.Option value="customer">Customer</Select.Option>
               <Select.Option value="churned">Churned</Select.Option>
             </Select>
-          </Form.Item>
-
-          <Form.Item
-            name="value"
-            label="Valor"
-            rules={[{ required: true, message: 'Por favor insira o valor' }]}
-          >
-            <Input type="number" />
-          </Form.Item>
-
-          <Form.Item
-            name="lastContact"
-            label="Último Contato"
-            rules={[{ required: true, message: 'Por favor selecione a data do último contato' }]}
-          >
-            <DatePicker style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
