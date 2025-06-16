@@ -164,11 +164,12 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
   const filterCustomers = () => {
     let result = [...customers];
 
-    if (selectedSegment) {
-      const segment = segments.find(s => s.id === selectedSegment);
-      if (segment) {
-        result = result.filter(customer =>
-          segment.filterConditions.every((condition: any) => {
+      if (selectedSegment) {
+        const segment = segments.find(s => s.id === selectedSegment);
+        if (segment) {
+          const conditions = segment.filterConditions || [];
+          result = result.filter(customer =>
+            conditions.every((condition: any) => {
             const field = condition.field as string;
             const customerValue =
               (customer as any)[field] !== undefined
