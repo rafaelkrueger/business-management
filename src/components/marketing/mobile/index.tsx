@@ -18,6 +18,7 @@ import {
   Collapse
 } from "@mui/material";
 import { Line, Bar } from "react-chartjs-2";
+import useHideOnScroll from "../../../hooks/useHideOnScroll.ts";
 import {
   Brain,
   FileText,
@@ -62,6 +63,7 @@ const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => 
   const [navValue, setNavValue] = useState('home');
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [glance, setGlance] = useState(null);
+  const hideNav = useHideOnScroll();
 
     useEffect(() => {
     const fetchProgress = async () => {
@@ -700,7 +702,9 @@ const cards = [
           right: 0,
           bgcolor: '#fff',
           boxShadow: '0 -2px 10px rgba(0,0,0,0.05)',
-          borderTop: '1px solid rgba(0,0,0,0.05)'
+          borderTop: '1px solid rgba(0,0,0,0.05)',
+          transform: hideNav ? 'translateY(100%)' : 'translateY(0)',
+          transition: 'transform 0.3s'
         }}
       >
         <BottomNavigationAction

@@ -15,6 +15,7 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import ModulesService from '../../../services/modules.service.ts';
 import HomeService from '../../../services/home.service.ts';
 import { SidebarWrapper, TopSection, CompanyHeader, CompanyAvatar, CompanyLogo, CompanyPlaceholder, CompanyInfo, CompanyName, ChevronIcon, CompanyDropdown, CompanyOption, CompanyLogoWrapper, CompanyOptionInfo, CompanyOptionName, SelectedIndicator, GlowingDot, BottomSection, ModulesScroll, ModulesContainer, CompactModuleItem, CompactModuleIcon, CompactModuleLabel, LogoutItem, LogoutLabel } from './styles.ts';
+import useHideOnScroll from '../../../hooks/useHideOnScroll.ts';
 
 const BottomNavContainer = styled(Box)`
   display: flex;
@@ -115,6 +116,7 @@ const MobileBottomNavigation = ({
   const [expandedTop, setExpandedTop] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const colorThief = new ColorThief();
+  const hideNav = useHideOnScroll();
 
   useEffect(() => {
     if (userData._id) {
@@ -266,7 +268,13 @@ const MobileBottomNavigation = ({
         )}
       </TopSection> */}
 
-      <BottomNavContainer sx={{ top: expanded ? '120px' : 'unset' }}>
+      <BottomNavContainer
+        sx={{
+          top: expanded ? '120px' : 'unset',
+          transform: hideNav ? 'translateY(100%)' : 'translateY(0)',
+          transition: 'transform 0.3s'
+        }}
+      >
         <NavItemsWrapper>
           {mainNavItems.map(item => (
             <Tooltip key={item?.key} title={item.label} placement="top" arrow>

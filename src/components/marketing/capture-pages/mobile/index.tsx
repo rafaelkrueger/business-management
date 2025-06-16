@@ -394,16 +394,62 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
       backgroundColor: '#ffffff',
       minHeight: '100vh',
     }}>
+      {/* Tabs */}
+        <Box sx={{
+          borderColor: 'divider',
+          mb: 2,
+          position: 'sticky',
+          background: 'linear-gradient(to bottom, #578acd 10%, #6192d4 40%, #669ee7 100%)',
+          zIndex: 9,
+          pt: 1,
+          color:'white',
+        }}>
+        <Tabs
+          value={currentTab}
+          onChange={(e, newValue) => setCurrentTab(newValue)}
+          variant="fullWidth"
+          sx={{
+            '& .MuiTabs-indicator': {
+              backgroundColor: '#ffffff',
+              height: 3
+            }
+          }}
+        >
+          <Tab
+            label={t("marketing.capturePages.landingPagesTab")}
+            sx={{
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              textTransform: 'none',
+              minWidth: 0,
+              color:'#fbfbfb',
+              mt:-0.8,
+              '&.Mui-selected': { color: '#ffffff' }
+            }}
+          />
+          <Tab
+            label={t("marketing.capturePages.formsTab")}
+            sx={{
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              textTransform: 'none',
+              minWidth: 0,
+              color:'#fbfbfb',
+              mt:-0.8,
+              '&.Mui-selected': { color: '#ffffff' }
+            }}
+          />
+        </Tabs>
+      </Box>
       {/* Header */}
       <Box sx={{
         display: 'flex',
         alignItems: 'center',
-        mb: -1.7,
         position: 'sticky',
         top: 0,
         backgroundColor: '#578acd0',
         zIndex: 10,
-        pt: 2,
+        pt: 3,
         pb: 1,
         pl:1,
         pr:2
@@ -440,55 +486,6 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
             <FormatListBulletedOutlined fontSize="small" />
           </IconButton>
         </Box>
-      </Box>
-
-      {/* Tabs */}
-        <Box sx={{
-          borderBottom: 1,
-          borderColor: 'divider',
-          mb: 2,
-          position: 'sticky',
-          background: 'linear-gradient(to bottom, #578acd 10%, #6192d4 40%, #669ee7 100%)',
-          zIndex: 9,
-          pt: 1,
-          color:'white',
-        }}>
-        <Tabs
-          value={currentTab}
-          onChange={(e, newValue) => setCurrentTab(newValue)}
-          variant="fullWidth"
-          sx={{
-            '& .MuiTabs-indicator': {
-              backgroundColor: '#ffffff',
-              height: 3
-            }
-          }}
-        >
-          <Tab
-            label={t("marketing.capturePages.landingPagesTab")}
-            sx={{
-              fontSize: '0.8rem',
-              fontWeight: 600,
-              textTransform: 'none',
-              minWidth: 0,
-              color:'#cbcbcb',
-              mt:-0.8,
-              '&.Mui-selected': { color: '#ffffff' }
-            }}
-          />
-          <Tab
-            label={t("marketing.capturePages.formsTab")}
-            sx={{
-              fontSize: '0.8rem',
-              fontWeight: 600,
-              textTransform: 'none',
-              minWidth: 0,
-              color:'#c2c2c2',
-              mt:-0.8,
-              '&.Mui-selected': { color: '#ffffff' }
-            }}
-          />
-        </Tabs>
       </Box>
 
       {/* Content */}
