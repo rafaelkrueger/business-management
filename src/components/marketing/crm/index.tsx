@@ -107,7 +107,7 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
 
     // Aplica filtro de segmento
       if (selectedSegment) {
-        const segment = segments.find(s => s.id === selectedSegment);
+        const segment = segments.find(s => String(s.id) === selectedSegment);
         if (segment) {
           const conditions = segment.filterConditions || [];
           result = result.filter(customer => {
@@ -168,8 +168,8 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
     setSearchText(e.target.value);
   };
 
-  const handleSegmentChange = (segmentId: string) => {
-    setSelectedSegment(segmentId);
+  const handleSegmentChange = (segmentId: string | number | null) => {
+    setSelectedSegment(segmentId !== null && segmentId !== undefined ? String(segmentId) : null);
   };
 
   const handleCreateSegment = () => {

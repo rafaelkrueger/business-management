@@ -51,4 +51,4 @@ export const dashboardModules = [
   },
 ];
 
-export default dashboardModules
+export default dashboardModules;
