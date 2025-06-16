@@ -47,6 +47,7 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
   const [isSegmentModalVisible, setIsSegmentModalVisible] = useState(false);
   const [isCustomerModalVisible, setIsCustomerModalVisible] = useState(false);
   const [currentCustomer, setCurrentCustomer] = useState<Customer | null>(null);
+  const [availableFields, setAvailableFields] = useState<string[]>([]);
   const [form] = Form.useForm();
   const [segmentForm] = Form.useForm();
 
@@ -57,6 +58,10 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
   useEffect(() => {
     filterCustomers();
   }, [searchText, selectedSegment, customers]);
+
+  useEffect(() => {
+    setAvailableFields(extractAllFields(customers));
+  }, [customers]);
 
   const fetchInitialData = async () => {
     setLoading(true);
@@ -82,6 +87,7 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
         });
       setCustomers(leads);
       setSegments(segmentRes.data || []);
+      setAvailableFields(extractAllFields(leads));
     } catch (error) {
       console.error('Erro ao buscar leads:', error);
     } finally {
@@ -295,6 +301,12 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
     return Array.from(fields);
   };
 
+  const extractAllFields = (data: any[]): string[] => {
+    const base = ['name', 'email', 'phone', 'status', 'value', 'tags', 'source', 'createdAt', 'lastContact'];
+    const dynamic = extractJsonFields(data);
+    return Array.from(new Set([...base, ...dynamic]));
+  };
+
   const jsonFieldColumns: ColumnsType<any> = extractJsonFields(customers).map(field => ({
     title: field,
     dataIndex: ['jsonData', field],
@@ -400,16 +412,14 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
                       style={{ flex: 1 }}
                       rules={[{ required: true, message: 'Campo obrigatório' }]}
                     >
-                      <Select placeholder="Campo">
-                        <Select.Option value="name">Nome</Select.Option>
-                        <Select.Option value="email">Email</Select.Option>
-                        <Select.Option value="status">Status</Select.Option>
-                        <Select.Option value="value">Valor</Select.Option>
-                        <Select.Option value="tags">Tags</Select.Option>
-                        <Select.Option value="source">Origem</Select.Option>
-                        <Select.Option value="createdAt">Data de Criação</Select.Option>
-                        <Select.Option value="lastContact">Último Contato</Select.Option>
-                      </Select>
+                      <Select
+                        placeholder="Campo"
+                        showSearch
+                        options={availableFields.map(f => ({ label: f, value: f }))}
+                        filterOption={(input, option) =>
+                          (option?.value ?? '').toLowerCase().includes(input.toLowerCase())
+                        }
+                      />
                     </Form.Item>
 
                     <Form.Item
