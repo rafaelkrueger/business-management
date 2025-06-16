@@ -18,6 +18,7 @@ import {
   Avatar,
   Stack
 } from "@mui/material";
+import useHideOnScroll from "../../../../hooks/useHideOnScroll.ts";
 import {
   Add,
   Edit,
@@ -47,6 +48,7 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
+  const hideNav = useHideOnScroll();
 
   const fetchAutomations = useCallback(async () => {
     if (!activeCompany) return;
@@ -410,12 +412,13 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
           position: "fixed",
           bottom: 16,
           left: "50%",
-          transform: "translateX(-50%)",
+          transform: `translateX(-50%) ${hideNav ? 'translateY(100%)' : 'translateY(0)'}`,
           width: "calc(100% - 32px)",
           maxWidth: 400,
           borderRadius: 3,
           zIndex: 1,
-          border: "1px solid rgba(0,0,0,0.05)"
+          border: "1px solid rgba(0,0,0,0.05)",
+          transition: "transform 0.3s"
         }}
       >
         <BottomNavigation
