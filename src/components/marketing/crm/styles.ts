@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Grid,
@@ -28,6 +29,7 @@ const stages = ['Novo', 'Qualificado', 'Proposta', 'Fechado'];
 
 export default function CRMDashboard() {
   const [leads, setLeads] = useState(mockLeads);
+  const { t } = useTranslation();
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
@@ -41,19 +43,19 @@ export default function CRMDashboard() {
   return (
     <Box p={4}>
       <Typography variant="h4" gutterBottom>
-        CRM + Segmentação
+        {t('marketing.crmTitle')}
       </Typography>
 
       <Grid container spacing={4}>
         {/* Segmentação e Filtros */}
         <Grid item xs={12} md={3}>
           <Paper elevation={3} sx={{ p: 2 }}>
-            <Typography variant="h6">Filtros</Typography>
-            <TextField fullWidth label="Buscar por nome" margin="normal" />
-            <TextField fullWidth label="Região" margin="normal" />
-            <TextField fullWidth label="Ticket mínimo" margin="normal" type="number" />
+            <Typography variant="h6">{t('crmPipeline.filters')}</Typography>
+            <TextField fullWidth label={t('crmPipeline.searchByName')} margin="normal" />
+            <TextField fullWidth label={t('crmPipeline.region')} margin="normal" />
+            <TextField fullWidth label={t('crmPipeline.minimumTicket')} margin="normal" type="number" />
             <Button fullWidth variant="contained" sx={{ mt: 2 }}>
-              Filtrar
+              {t('crmPipeline.filter')}
             </Button>
           </Paper>
         </Grid>
@@ -61,7 +63,7 @@ export default function CRMDashboard() {
         {/* Pipeline (Funil) */}
         <Grid item xs={12} md={9}>
           <Typography variant="h6" gutterBottom>
-            Pipeline de Vendas
+            {t('crmPipeline.salesPipeline')}
           </Typography>
           <DragDropContext onDragEnd={handleDragEnd}>
             <Grid container spacing={2}>
@@ -109,18 +111,18 @@ export default function CRMDashboard() {
         {/* Relatórios Simples */}
         <Grid item xs={12}>
           <Paper elevation={3} sx={{ p: 2 }}>
-            <Typography variant="h6">Resumo de Vendas</Typography>
+            <Typography variant="h6">{t('crmPipeline.salesSummary')}</Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={3}>
-                <Typography variant="body1">Taxa de Conversão:</Typography>
+                <Typography variant="body1">{t('crmPipeline.conversionRate')}:</Typography>
                 <Typography variant="h6">25%</Typography>
               </Grid>
               <Grid item xs={12} sm={3}>
-                <Typography variant="body1">Total no Funil:</Typography>
+                <Typography variant="body1">{t('crmPipeline.totalInFunnel')}:</Typography>
                 <Typography variant="h6">R$ 9.200</Typography>
               </Grid>
               <Grid item xs={12} sm={3}>
-                <Typography variant="body1">Tempo médio no funil:</Typography>
+                <Typography variant="body1">{t('crmPipeline.averageTimeInFunnel')}:</Typography>
                 <Typography variant="h6">5 dias</Typography>
               </Grid>
             </Grid>

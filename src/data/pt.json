@@ -695,8 +695,20 @@
       "statusLead": "Lead",
       "statusProspect": "Prospect",
       "statusCustomer": "Cliente",
-      "statusChurned": "Perdido"
-    },
+    "statusChurned": "Perdido"
+  },
+  "crmPipeline": {
+    "filters": "Filtros",
+    "searchByName": "Buscar por nome",
+    "region": "Região",
+    "minimumTicket": "Ticket mínimo",
+    "filter": "Filtrar",
+    "salesPipeline": "Pipeline de Vendas",
+    "salesSummary": "Resumo de Vendas",
+    "conversionRate": "Taxa de Conversão",
+    "totalInFunnel": "Total no Funil",
+    "averageTimeInFunnel": "Tempo médio no funil"
+  },
     "salesFunnel": {
       "title": "Funil de Vendas",
       "searchPlaceholder": "Buscar leads...",
