@@ -691,6 +691,10 @@
       "statusCustomer": "Customer",
       "statusChurned": "Churned"
     },
+    "funnel": {
+      "title": "Sales Funnel",
+      "select": "Select Funnel"
+    },
     "automationTable": {
       "emptyStateTitle": "No automation found",
       "emptyStateDescription": "Create your first automation to optimize your processes.",

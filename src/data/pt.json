@@ -697,6 +697,10 @@
       "statusCustomer": "Cliente",
       "statusChurned": "Perdido"
     },
+    "funnel": {
+      "title": "Funil de Vendas",
+      "select": "Selecione o Funil"
+    },
     "automationTable": {
       "emptyStateTitle": "Nenhuma automação encontrada",
       "emptyStateDescription": "Crie sua primeira automação para otimizar seus processos.",
