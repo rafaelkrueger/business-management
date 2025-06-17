@@ -173,6 +173,20 @@ const AddCardButton = styled.button`
   }
 `;
 
+const AddStageColumn = styled.div`
+  min-width: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8fafc;
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  color: #475569;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 16px;
+`;
+
 const DropdownMenu = styled.div`
   position: absolute;
   right: 0;
@@ -466,19 +480,20 @@ const KanbanCardComponent = ({ card, index }) => {
   );
 };
 
-const KanbanColumnComponent = ({ column, onAddCard, index, onEditStage, onDeleteStage }) => {
+const KanbanColumnComponent = ({ column, onAddCard, onEditStage, onDeleteStage, innerRef, dragHandleProps, draggableProps }) => {
   const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-    <Droppable droppableId={column.id} type="card">
-      {(provided, snapshot) => (
-        <KanbanColumn
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-          isDraggingOver={snapshot.isDraggingOver}
-        >
-          <ColumnHeader>
+    <div ref={innerRef} {...draggableProps}>
+      <Droppable droppableId={column.id} type="card">
+        {(provided, snapshot) => (
+          <KanbanColumn
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            isDraggingOver={snapshot.isDraggingOver}
+          >
+          <ColumnHeader {...dragHandleProps}>
             <ColumnTitle>
               <h3>{column.title}</h3>
               <Badge>{column.cards.length}</Badge>
@@ -513,9 +528,10 @@ const KanbanColumnComponent = ({ column, onAddCard, index, onEditStage, onDelete
             )}
             {provided.placeholder}
           </CardsContainer>
-        </KanbanColumn>
-      )}
-    </Droppable>
+          </KanbanColumn>
+        )}
+      </Droppable>
+    </div>
   );
 };
 
@@ -657,13 +673,31 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
     setColumns(newColumns);
   };
 
-  const onDragEnd = (result: any) => {
-    const { destination, source, draggableId } = result;
+  const onDragEnd = async (result: any) => {
+    const { destination, source, draggableId, type } = result;
     if (!destination) return;
     if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
+    if (type === 'column') {
+      const newColumns = Array.from(columns);
+      const [moved] = newColumns.splice(source.index, 1);
+      newColumns.splice(destination.index, 0, moved);
+      setColumns(newColumns);
+      const newStages = newColumns.map(c => c.id);
+      setStages(newStages);
+      if (selectedFunnelId) {
+        try {
+          await FunnelService.updateStages(selectedFunnelId, newStages);
+        } catch (err) {
+          console.error('Erro ao reordenar etapas:', err);
+        }
+      }
+      return;
+    }
+
     const sourceColumn = columns.find(col => col.id === source.droppableId);
     const destColumn = columns.find(col => col.id === destination.droppableId);
+    if (!sourceColumn || !destColumn) return;
     const sourceCards = [...sourceColumn.cards];
     const [removed] = sourceCards.splice(source.index, 1);
 
@@ -744,25 +778,34 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
               <Plus size={16} />
               {t('salesFunnel.createFunnel')}
             </FilterButton>
-            <FilterButton onClick={handleAddStage} style={{ backgroundColor: '#578acd', color: 'white' }}>
-              <Plus size={16} />
-              {t('salesFunnel.addStage')}
-            </FilterButton>
           </Controls>
         </KanbanHeader>
 
-        <ColumnsContainer>
-          {columns.map((column, index) => (
-            <KanbanColumnComponent
-              key={column.id}
-              column={column}
-              index={index}
-              onAddCard={() => {}}
-              onEditStage={handleEditStage}
-              onDeleteStage={handleDeleteStage}
-            />
-          ))}
-        </ColumnsContainer>
+        <Droppable droppableId="all-columns" direction="horizontal" type="column">
+          {provided => (
+            <ColumnsContainer ref={provided.innerRef} {...provided.droppableProps}>
+              {columns.map((column, index) => (
+                <Draggable key={column.id} draggableId={column.id} index={index}>
+                  {providedCol => (
+                    <KanbanColumnComponent
+                      column={column}
+                      onAddCard={() => {}}
+                      onEditStage={handleEditStage}
+                      onDeleteStage={handleDeleteStage}
+                      innerRef={providedCol.innerRef}
+                      draggableProps={providedCol.draggableProps}
+                      dragHandleProps={providedCol.dragHandleProps}
+                    />
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+              <AddStageColumn onClick={handleAddStage}>
+                <Plus size={18} /> {t('salesFunnel.addStage')}
+              </AddStageColumn>
+            </ColumnsContainer>
+          )}
+        </Droppable>
       </KanbanContainer>
       <Dialog open={funnelModalOpen} onClose={() => setFunnelModalOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{t('salesFunnel.createFunnel')}</DialogTitle>
