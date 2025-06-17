@@ -131,35 +131,46 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
   const filterCustomers = () => {
     let result = [...customers];
 
-      if (selectedSegment) {
-        const segment = segments.find(s => String(s.id) === selectedSegment);
-        if (segment) {
-          const conditions = segment.filterConditions || [];
-          result = result.filter(customer =>
-            conditions.every((condition: any) => {
-            const field = condition.field as string;
-            const customerValue =
-              (customer as any)[field] !== undefined
-                ? (customer as any)[field]
-                : customer.jsonData?.[field] ?? '';
+    if (selectedSegment) {
+      const segment = segments.find(s => String(s.id) === selectedSegment);
+      if (segment) {
+        const conditions = segment.conditions || [];
+        result = result.filter(customer => {
+          return conditions.every((condition: any) => {
+            const field = condition.field;
+            let customerValue = customer[field as keyof Customer];
+
+            if (customerValue === undefined && customer.jsonData) {
+              customerValue = customer.jsonData[field];
+            }
+
+            if (customerValue === undefined || customerValue === null) {
+              return false;
+            }
+
+            const conditionValue = String(condition.value);
+            const customerValueStr = String(customerValue).toLowerCase();
+
             switch (condition.operator) {
               case 'eq':
-                return customerValue === condition.value;
+                return customerValueStr === conditionValue.toLowerCase();
               case 'neq':
-                return customerValue !== condition.value;
+                return customerValueStr !== conditionValue.toLowerCase();
               case 'gt':
-                return customerValue > condition.value;
+                return !isNaN(Number(customerValue)) && !isNaN(Number(conditionValue)) &&
+                  Number(customerValue) > Number(conditionValue);
               case 'lt':
-                return customerValue < condition.value;
+                return !isNaN(Number(customerValue)) && !isNaN(Number(conditionValue)) &&
+                  Number(customerValue) < Number(conditionValue);
               case 'contains':
-                return typeof customerValue === 'string' && customerValue.toLowerCase().includes(String(condition.value).toLowerCase());
+                return customerValueStr.includes(conditionValue.toLowerCase());
               case 'startsWith':
-                return typeof customerValue === 'string' && customerValue.toLowerCase().startsWith(String(condition.value).toLowerCase());
+                return customerValueStr.startsWith(conditionValue.toLowerCase());
               default:
                 return true;
             }
-          })
-        );
+          });
+        });
       }
     }
 
@@ -473,27 +484,117 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         </Card>
       </div>
 
-      <div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {filteredCustomers.map((customer) => (
           <Card
             key={customer.id}
-            style={{ marginBottom: '12px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}
-            bodyStyle={{ padding: '12px' }}
+            style={{
+              borderRadius: '16px',
+              border: 'none',
+              backgroundColor: '#ffffff',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              cursor: 'pointer',
+            }}
+            bodyStyle={{ padding: '16px' }}
             onClick={() => handleEditCustomer(customer)}
+            hoverable
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-              <div style={{ fontWeight: 600 }}>{customer.name || customer.email || customer.phone}</div>
-              {renderStatusTag(customer.status)}
-            </div>
-            {visibleColumns.map((field) => {
-              const value = (customer as any)[field] !== undefined ? (customer as any)[field] : customer.jsonData?.[field];
-              if (value === undefined || value === null || value === '') return null;
-              return (
-                <div key={field} style={{ fontSize: '12px', marginBottom: 4 }}>
-                  <strong>{formatFieldLabel(fieldLabels[field] || field)}:</strong> {typeof value === 'string' || typeof value === 'number' ? value : JSON.stringify(value)}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              {/* Avatar Circle with Initials */}
+              <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                backgroundColor: primaryColor,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontSize: '16px',
+                fontWeight: '500',
+                flexShrink: 0,
+              }}>
+                {customer.name ? customer.name.charAt(0).toUpperCase() : '#'}
+              </div>
+
+              <div style={{ flex: 1 }}>
+                {/* Header with Name and Status */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: '8px'
+                }}>
+                  <div style={{
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#2c3e50'
+                  }}>
+                    {customer.name || customer.email || customer.phone || 'No Name'}
+                  </div>
+                  {renderStatusTag(customer.status)}
                 </div>
-              );
-            })}
+
+                {/* Main Content */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {visibleColumns.map((field) => {
+                    const value = (customer as any)[field] !== undefined
+                      ? (customer as any)[field]
+                      : customer.jsonData?.[field];
+
+                    if (value === undefined || value === null || value === '' ||
+                        field === 'name' || field === 'status') return null;
+
+                    return (
+                      <div
+                        key={field}
+                        style={{
+                          fontSize: '13px',
+                          backgroundColor: '#f8f9fa',
+                          padding: '4px 8px',
+                          borderRadius: '6px',
+                          color: '#596574',
+                        }}
+                      >
+                        <span style={{ fontWeight: '500', color: '#455466' }}>
+                          {formatFieldLabel(fieldLabels[field] || field)}:
+                        </span>{' '}
+                        <span>
+                          {typeof value === 'object' ? JSON.stringify(value) : value}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Tags Section */}
+                {customer.tags && customer.tags.length > 0 && (
+                  <div style={{
+                    marginTop: '12px',
+                    display: 'flex',
+                    gap: '6px',
+                    flexWrap: 'wrap'
+                  }}>
+                    {customer.tags.map((tag, index) => (
+                      <Tag
+                        key={index}
+                        style={{
+                          borderRadius: '12px',
+                          backgroundColor: 'rgba(87, 138, 205, 0.1)',
+                          color: primaryColor,
+                          border: 'none',
+                          padding: '2px 8px',
+                          margin: 0
+                        }}
+                      >
+                        {tag}
+                      </Tag>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           </Card>
         ))}
       </div>
@@ -532,7 +633,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         style={{ maxWidth: '400px' }}
       >
         <Form form={segmentForm} onFinish={handleSegmentSubmit} layout="vertical">
-          <Form.Item name="name" label={t('marketing.crm.name')} rules={[{ required: true, message: t('marketing.crm.requiredField') }]}> 
+          <Form.Item name="name" label={t('marketing.crm.name')} rules={[{ required: true, message: t('marketing.crm.requiredField') }]}>
             <Input />
           </Form.Item>
           <Form.List name="conditions">
