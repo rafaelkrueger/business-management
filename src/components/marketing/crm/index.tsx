@@ -21,17 +21,18 @@ interface Customer {
   tags: string[];
   source: string;
   createdAt: Date;
+  jsonData: Record<string, any>;
 }
 
 interface Segment {
   id: string;
   name: string;
-  filterConditions: FilterCondition[];
+  conditions: FilterCondition[];
   customerCount: number;
 }
 
 interface FilterCondition {
-  field: keyof Customer;
+  field: string;
   operator: 'eq' | 'neq' | 'gt' | 'lt' | 'contains' | 'startsWith';
   value: any;
 }
@@ -105,36 +106,41 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
   const filterCustomers = () => {
     let result = [...customers];
 
-    // Aplica filtro de segmento
-      if (selectedSegment) {
-        const segment = segments.find(s => String(s.id) === selectedSegment);
-        if (segment) {
-          const conditions = segment.filterConditions || [];
-          result = result.filter(customer => {
-            return conditions.every(condition => {
-            const field = condition.field as string;
+    if (selectedSegment) {
+      const segment = segments.find(s => String(s.id) === selectedSegment);
+      if (segment) {
+        const conditions = segment.conditions || [];
+        result = result.filter(customer => {
+          return conditions.every((condition: any) => {
+            const field = condition.field;
+            let customerValue = (customer as any)[field];
 
-            // Busca o valor: pode estar no customer ou no jsonData
-            const customerValue =
-              customer[field] !== undefined
-                ? customer[field]
-                : customer.jsonData?.[field] ?? '';
+            if (customerValue === undefined && customer.jsonData) {
+              customerValue = customer.jsonData[field];
+            }
+
+            if (customerValue === undefined || customerValue === null) {
+              return false;
+            }
+
+            const conditionValue = String(condition.value);
+            const customerValueStr = String(customerValue).toLowerCase();
 
             switch (condition.operator) {
               case 'eq':
-                return customerValue === condition.value;
+                return customerValueStr === conditionValue.toLowerCase();
               case 'neq':
-                return customerValue !== condition.value;
+                return customerValueStr !== conditionValue.toLowerCase();
               case 'gt':
-                return customerValue > condition.value;
+                return !isNaN(Number(customerValue)) && !isNaN(Number(conditionValue)) &&
+                  Number(customerValue) > Number(conditionValue);
               case 'lt':
-                return customerValue < condition.value;
+                return !isNaN(Number(customerValue)) && !isNaN(Number(conditionValue)) &&
+                  Number(customerValue) < Number(conditionValue);
               case 'contains':
-                return typeof customerValue === 'string' &&
-                  customerValue.toLowerCase().includes(condition.value.toLowerCase());
+                return customerValueStr.includes(conditionValue.toLowerCase());
               case 'startsWith':
-                return typeof customerValue === 'string' &&
-                  customerValue.toLowerCase().startsWith(condition.value.toLowerCase());
+                return customerValueStr.startsWith(conditionValue.toLowerCase());
               default:
                 return true;
             }
@@ -145,14 +151,14 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
 
     if (searchText) {
       const searchLower = searchText.toLowerCase();
-
       result = result.filter((customer) => {
         const textMatches =
+          (customer.name && customer.name.toLowerCase().includes(searchLower)) ||
+          (customer.email && customer.email.toLowerCase().includes(searchLower)) ||
           (customer.status && customer.status.toLowerCase().includes(searchLower)) ||
-          (customer.source && customer.source.toLowerCase().includes(searchLower)) ||
           (customer.tags?.some(tag => tag.toLowerCase().includes(searchLower))) ||
-          Object.values(customer?.jsonData || {}).some(value =>
-            typeof value === 'string' && value.toLowerCase().includes(searchLower)
+          Object.values(customer.jsonData || {}).some(value =>
+            value && typeof value === 'string' && value.toLowerCase().includes(searchLower)
           );
 
         return textMatches;
