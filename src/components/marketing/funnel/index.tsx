@@ -75,8 +75,11 @@ const SalesFunnelKanban: React.FC<SalesFunnelProps> = ({ activeCompany }) => {
   // State
   const [leads, setLeads] = useState<Lead[]>([]);
   const [stages, setStages] = useState<Stage[]>([]);
+  const [funnels, setFunnels] = useState<{ id: string; name: string }[]>([]);
   const [newLeadModalOpen, setNewLeadModalOpen] = useState(false);
   const [newStageModalOpen, setNewStageModalOpen] = useState(false);
+  const [newFunnelModalOpen, setNewFunnelModalOpen] = useState(false);
+  const [newFunnelName, setNewFunnelName] = useState('');
   const [editStageModalOpen, setEditStageModalOpen] = useState(false);
   const [currentStageEdit, setCurrentStageEdit] = useState<Stage | null>(null);
   const [newLead, setNewLead] = useState<Partial<Lead>>({
@@ -100,39 +103,53 @@ const SalesFunnelKanban: React.FC<SalesFunnelProps> = ({ activeCompany }) => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [currentFunnelId, setCurrentFunnelId] = useState<string>('');
 
+  const loadFunnelDetail = async (id: string) => {
+    try {
+      const detailRes = await FunnelService.detail(id);
+      const detail = detailRes.data || {};
+      const st: Stage[] = (detail.stages || []).map((s: any) => ({
+        id: s.stage.id,
+        name: s.stage.name,
+        color: '#1976d2',
+        order: s.stage.position
+      }));
+      const ld: Lead[] = [];
+      (detail.stages || []).forEach((s: any) => {
+        (s.leads || []).forEach((l: any) => {
+          ld.push({
+            id: l.id,
+            name: l.leadId,
+            company: '',
+            stageId: l.stageId,
+            value: 0,
+            createdAt: new Date(l.createdAt),
+            updatedAt: new Date(l.updatedAt)
+          });
+        });
+      });
+      setStages(st);
+      setLeads(ld);
+      const tags = Array.from(new Set(ld.flatMap(lead => lead.tags || [])));
+      setAvailableTags(tags);
+      setCurrentFunnelId(id);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Load data from API
   useEffect(() => {
     const load = async () => {
       try {
         const { data } = await FunnelService.list(activeCompany);
-        if (data && data.length > 0) {
-          setCurrentFunnelId(data[0].id);
-          const detailRes = await FunnelService.detail(data[0].id);
-          const detail = detailRes.data || {};
-          const st: Stage[] = (detail.stages || []).map((s: any) => ({
-            id: s.stage.id,
-            name: s.stage.name,
-            color: '#1976d2',
-            order: s.stage.position
-          }));
-          const ld: Lead[] = [];
-          (detail.stages || []).forEach((s: any) => {
-            (s.leads || []).forEach((l: any) => {
-              ld.push({
-                id: l.id,
-                name: l.leadId,
-                company: '',
-                stageId: l.stageId,
-                value: 0,
-                createdAt: new Date(l.createdAt),
-                updatedAt: new Date(l.updatedAt)
-              });
-            });
-          });
-          setStages(st);
-          setLeads(ld);
-          const tags = Array.from(new Set(ld.flatMap(lead => lead.tags || [])));
-          setAvailableTags(tags);
+        const all = data || [];
+        setFunnels(all);
+        if (all.length > 0) {
+          await loadFunnelDetail(all[0].id);
+        } else {
+          setStages([]);
+          setLeads([]);
+          setCurrentFunnelId('');
         }
       } catch (err) {
         console.error(err);
@@ -155,6 +172,10 @@ const SalesFunnelKanban: React.FC<SalesFunnelProps> = ({ activeCompany }) => {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const handleFunnelChange = (id: string) => {
+    loadFunnelDetail(id);
   };
 
   const handleAddLead = async () => {
@@ -222,6 +243,23 @@ const SalesFunnelKanban: React.FC<SalesFunnelProps> = ({ activeCompany }) => {
       order: 0
     });
     setNewStageModalOpen(false);
+  };
+
+  const handleCreateFunnel = async () => {
+    if (!newFunnelName) return;
+    try {
+      const res = await FunnelService.create({
+        companyId: activeCompany,
+        name: newFunnelName,
+      });
+      const funnel = res.data;
+      setFunnels([...funnels, funnel]);
+      setNewFunnelModalOpen(false);
+      setNewFunnelName('');
+      await loadFunnelDetail(funnel.id);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleUpdateStage = async () => {
@@ -313,9 +351,33 @@ const SalesFunnelKanban: React.FC<SalesFunnelProps> = ({ activeCompany }) => {
     <Box sx={{ p: 2 }}>
       {/* Header with controls */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          {t('salesFunnel.title')}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Typography variant="h4" gutterBottom>
+            {t('salesFunnel.title')}
+          </Typography>
+          <FormControl size="small" sx={{ minWidth: 160 }}>
+            <InputLabel>{t('salesFunnel.selectFunnel')}</InputLabel>
+            <Select
+              value={currentFunnelId}
+              label={t('salesFunnel.selectFunnel')}
+              onChange={(e) => handleFunnelChange(e.target.value as string)}
+            >
+              {funnels.map((f) => (
+                <MenuItem key={f.id} value={f.id}>
+                  {f.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<Add />}
+            onClick={() => setNewFunnelModalOpen(true)}
+          >
+            {t('salesFunnel.addFunnel')}
+          </Button>
+        </Box>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <TextField
             size="small"
@@ -493,6 +555,25 @@ const SalesFunnelKanban: React.FC<SalesFunnelProps> = ({ activeCompany }) => {
         <DialogActions>
           <Button onClick={() => setNewLeadModalOpen(false)}>{t('salesFunnel.cancel')}</Button>
           <Button onClick={handleAddLead} variant="contained">{t('salesFunnel.addLead')}</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Add Funnel Modal */}
+      <Dialog open={newFunnelModalOpen} onClose={() => setNewFunnelModalOpen(false)}>
+        <DialogTitle>{t('salesFunnel.newFunnel')}</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+            <TextField
+              label={t('salesFunnel.funnelName')}
+              fullWidth
+              value={newFunnelName}
+              onChange={(e) => setNewFunnelName(e.target.value)}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNewFunnelModalOpen(false)}>{t('salesFunnel.cancel')}</Button>
+          <Button onClick={handleCreateFunnel} variant="contained">{t('salesFunnel.addFunnel')}</Button>
         </DialogActions>
       </Dialog>
 
