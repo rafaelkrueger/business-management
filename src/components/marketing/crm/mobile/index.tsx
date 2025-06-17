@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Select, Tag, Card, Form, Modal, Checkbox, Space } from 'antd';
+import { Input, InputNumber, DatePicker, Button, Select, Tag, Card, Form, Modal, Checkbox, Space } from 'antd';
 import { SearchOutlined, PlusOutlined, DeleteOutlined, SettingOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { Box, Typography } from '@mui/material';
-import { ArrowBackIos } from '@mui/icons-material';
+import { ArrowBackIos, BorderLeft } from '@mui/icons-material';
 import CrmService from '../../../../services/crm.service.ts';
 import SegmentationService from '../../../../services/segmentation.service.ts';
 
@@ -283,6 +283,11 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
     }, {} as Record<string, any>);
 
     const customerData = {
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
+      value: values.value,
+      lastContact: values.lastContact?.toDate?.() || values.lastContact,
       status: values.status,
       tags: values.tags || [],
       source: values.source,
@@ -404,13 +409,13 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         />
         <Select
           placeholder={t('marketing.crm.selectSegment')}
-          style={{ flex: 1 }}
+          style={{ flex: 1, borderTopRightRadius: 0,borderBottomRightRadius: 0, borderRight:'none', minWidth: '200px', maxWidth: '200px' }}
           value={selectedSegment ?? undefined}
           onChange={handleSegmentChange}
           options={segments.map(s => ({ value: s.id, label: s.name }))}
           allowClear
         />
-        <Button type="dashed" onClick={handleCreateSegment} icon={<PlusOutlined />} />
+        <Button style={{marginLeft:'-10px', borderTopLeftRadius: 0,borderBottomLeftRadius: 0, width:'100px'}} onClick={handleCreateSegment} icon={<PlusOutlined />} />
       </div>
 
       {/* Metrics Cards - Horizontal Scroll */}
@@ -465,7 +470,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
 
         <Card
           style={{
-            minWidth: '120px',
+            minWidth: '110px',
             borderRadius: '12px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
             backgroundColor: cardBackground,
@@ -497,7 +502,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
               cursor: 'pointer',
             }}
             bodyStyle={{ padding: '16px' }}
-            onClick={() => handleEditCustomer(customer)}
+            // onClick={() => handleEditCustomer(customer)}
             hoverable
           >
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
@@ -524,7 +529,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  marginBottom: '8px'
+                  marginBottom: '30px'
                 }}>
                   <div style={{
                     fontSize: '16px',
@@ -537,7 +542,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
                 </div>
 
                 {/* Main Content */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginLeft:'-45px' }}>
                   {visibleColumns.map((field) => {
                     const value = (customer as any)[field] !== undefined
                       ? (customer as any)[field]
@@ -574,16 +579,17 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
                     marginTop: '12px',
                     display: 'flex',
                     gap: '6px',
-                    flexWrap: 'wrap'
+                    flexWrap: 'wrap',
+                    marginLeft:' -45px',
                   }}>
                     {customer.tags.map((tag, index) => (
                       <Tag
                         key={index}
                         style={{
-                          borderRadius: '12px',
+                          borderRadius: '6px',
+                          border: `1px ${primaryColor} solid`,
                           backgroundColor: 'rgba(87, 138, 205, 0.1)',
                           color: primaryColor,
-                          border: 'none',
                           padding: '2px 8px',
                           margin: 0
                         }}
@@ -707,6 +713,21 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         style={{ maxWidth: '400px' }}
       >
         <Form form={form} onFinish={handleCustomerSubmit} layout="vertical">
+          <Form.Item name="name" label={t('marketing.crm.name')}>
+            <Input size="large" />
+          </Form.Item>
+          <Form.Item name="email" label={t('marketing.crm.email')}>
+            <Input size="large" />
+          </Form.Item>
+          <Form.Item name="phone" label={t('marketing.crm.phone')}>
+            <Input size="large" />
+          </Form.Item>
+          <Form.Item name="value" label={t('marketing.crm.value')}>
+            <InputNumber style={{ width: '100%' }} size="large" />
+          </Form.Item>
+          <Form.Item name="lastContact" label={t('marketing.crm.lastContact')}>
+            <DatePicker style={{ width: '100%' }} size="large" />
+          </Form.Item>
           <Form.List name="fields">
             {(fields, { add, remove }) => (
               <>
