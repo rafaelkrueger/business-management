@@ -725,19 +725,9 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
                 <option key={f.id} value={f.id}>{f.name}</option>
               ))}
             </SegmentSelect>
-            <SegmentSelect value={selectedSegment || ''} onChange={(e) => setSelectedSegment(e.target.value || null)}>
-              <option value="">{t('marketing.crm.selectSegment')}</option>
-              {segments.map(s => (
-                <option key={s.id} value={s.id}>{s.name}</option>
-              ))}
-            </SegmentSelect>
             <FilterButton onClick={handleAddStage} style={{ backgroundColor: '#578acd', color: 'white' }}>
               <Plus size={16} />
               {t('salesFunnel.addStage')}
-            </FilterButton>
-            <FilterButton style={{ backgroundColor: '#578acd', color: 'white' }}>
-              <UserPlus size={16} />
-              {t('kanban.addLead')}
             </FilterButton>
           </Controls>
         </KanbanHeader>
