@@ -184,10 +184,10 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
 
   const renderStatusTag = (status: string) => {
     const statusMap: Record<string, { color: string; text: string }> = {
-      lead: { color: '#578acd', text: 'LEAD' },
-      prospect: { color: '#ffa940', text: 'PROSPECT' },
-      customer: { color: '#52c41a', text: 'CLIENTE' },
-      churned: { color: '#f5222d', text: 'PERDIDO' },
+      lead: { color: '#578acd', text: t('marketing.crm.statusLead') },
+      prospect: { color: '#ffa940', text: t('marketing.crm.statusProspect') },
+      customer: { color: '#52c41a', text: t('marketing.crm.statusCustomer') },
+      churned: { color: '#f5222d', text: t('marketing.crm.statusChurned') },
     };
 
     const statusLower = status.toLowerCase();
@@ -239,8 +239,8 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
 
   const handleDeleteCustomer = async (id: string) => {
     Modal.confirm({
-      title: 'Confirmar exclusão',
-      content: 'Tem certeza que deseja excluir este cliente?',
+      title: t('marketing.crm.confirmDeleteTitle'),
+      content: t('marketing.crm.confirmDeleteMessage'),
       async onOk() {
         try {
           await CrmService.deleteCustomer(id);
@@ -421,7 +421,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
           }}
           bodyStyle={{ padding: '12px' }}
         >
-          <div style={{ color: '#666', fontSize: '12px' }}>Total</div>
+          <div style={{ color: '#666', fontSize: '12px' }}>{t('marketing.crm.metricsTotal')}</div>
           <div style={{
             fontSize: '20px',
             fontWeight: '600',
@@ -441,7 +441,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
           }}
           bodyStyle={{ padding: '12px' }}
         >
-          <div style={{ color: '#666', fontSize: '12px' }}>Ativos</div>
+          <div style={{ color: '#666', fontSize: '12px' }}>{t('marketing.crm.metricsActive')}</div>
           <div style={{
             fontSize: '20px',
             fontWeight: '600',
@@ -462,7 +462,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
           }}
           bodyStyle={{ padding: '12px' }}
         >
-          <div style={{ color: '#666', fontSize: '12px' }}>Valor Total</div>
+          <div style={{ color: '#666', fontSize: '12px' }}>{t('marketing.crm.metricsTotalValue')}</div>
           <div style={{
             fontSize: '20px',
             fontWeight: '600',
@@ -532,7 +532,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         style={{ maxWidth: '400px' }}
       >
         <Form form={segmentForm} onFinish={handleSegmentSubmit} layout="vertical">
-          <Form.Item name="name" label="Nome" rules={[{ required: true, message: 'Nome' }]}>
+          <Form.Item name="name" label={t('marketing.crm.name')} rules={[{ required: true, message: t('marketing.crm.requiredField') }]}> 
             <Input />
           </Form.Item>
           <Form.List name="conditions">
@@ -544,9 +544,10 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
                       {...restField}
                       name={[name, 'field']}
                       style={{ flex: 1 }}
-                      rules={[{ required: true, message: 'Campo' }]}
+                      rules={[{ required: true, message: t('marketing.crm.requiredField') }]}
                     >
                       <Select
+                        placeholder={t('marketing.crm.field')}
                         showSearch
                         options={availableFields.map(f => ({ label: formatFieldLabel(f), value: f }))}
                         filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
@@ -556,31 +557,31 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
                       {...restField}
                       name={[name, 'operator']}
                       style={{ flex: 1 }}
-                      rules={[{ required: true, message: 'Operador' }]}
+                      rules={[{ required: true, message: t('marketing.crm.requiredField') }]}
                     >
-                      <Select>
-                        <Select.Option value="eq">Igual a</Select.Option>
-                        <Select.Option value="neq">Diferente de</Select.Option>
-                        <Select.Option value="gt">Maior que</Select.Option>
-                        <Select.Option value="lt">Menor que</Select.Option>
-                        <Select.Option value="contains">Contém</Select.Option>
-                        <Select.Option value="startsWith">Começa com</Select.Option>
+                      <Select placeholder={t('marketing.crm.operator')}>
+                        <Select.Option value="eq">{t('marketing.crm.equals')}</Select.Option>
+                        <Select.Option value="neq">{t('marketing.crm.notEquals')}</Select.Option>
+                        <Select.Option value="gt">{t('marketing.crm.greaterThan')}</Select.Option>
+                        <Select.Option value="lt">{t('marketing.crm.lessThan')}</Select.Option>
+                        <Select.Option value="contains">{t('marketing.crm.contains')}</Select.Option>
+                        <Select.Option value="startsWith">{t('marketing.crm.startsWith')}</Select.Option>
                       </Select>
                     </Form.Item>
                     <Form.Item
                       {...restField}
                       name={[name, 'value']}
                       style={{ flex: 2 }}
-                      rules={[{ required: true, message: 'Valor' }]}
+                      rules={[{ required: true, message: t('marketing.crm.requiredField') }]}
                     >
-                      <Input placeholder="Valor" />
+                      <Input placeholder={t('marketing.crm.valuePlaceholder')} />
                     </Form.Item>
                     <Button type="text" danger icon={<DeleteOutlined />} onClick={() => remove(name)} />
                   </div>
                 ))}
                 <Form.Item>
                   <Button type="dashed" onClick={() => add()} block>
-                    Adicionar Condição
+                    {t('marketing.crm.addCondition')}
                   </Button>
                 </Form.Item>
               </>
@@ -588,7 +589,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
           </Form.List>
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
-              Salvar Segmento
+              {t('marketing.crm.saveSegment')}
             </Button>
           </Form.Item>
         </Form>
@@ -640,23 +641,23 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
 
           <Form.Item
             name="status"
-            label="Status"
-            rules={[{ required: true, message: 'Por favor selecione o status' }]}
+            label={t('marketing.crm.status')}
+            rules={[{ required: true, message: t('marketing.crm.pleaseSelectStatus') }]}
           >
             <Select size="large">
-              <Select.Option value="LEAD">Lead</Select.Option>
-              <Select.Option value="PROSPECT">Prospect</Select.Option>
-              <Select.Option value="CUSTOMER">Cliente</Select.Option>
-              <Select.Option value="CHURNED">Perdido</Select.Option>
+              <Select.Option value="LEAD">{t('marketing.crm.statusLead')}</Select.Option>
+              <Select.Option value="PROSPECT">{t('marketing.crm.statusProspect')}</Select.Option>
+              <Select.Option value="CUSTOMER">{t('marketing.crm.statusCustomer')}</Select.Option>
+              <Select.Option value="CHURNED">{t('marketing.crm.statusChurned')}</Select.Option>
             </Select>
           </Form.Item>
 
 
           <Form.Item
             name="tags"
-            label="Tags"
+            label={t('marketing.crm.tags')}
           >
-            <Select mode="tags" size="large" placeholder="Adicione tags">
+            <Select mode="tags" size="large" placeholder={t('marketing.crm.addTags')}>
               {['VIP', 'Promoção', 'Recorrente', 'Novo', 'Grande Conta', 'Potencial'].map(tag => (
                 <Select.Option key={tag} value={tag}>{tag}</Select.Option>
               ))}
@@ -665,13 +666,13 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
 
           <Form.Item
             name="source"
-            label="Origem"
+            label={t('marketing.crm.source')}
           >
             <Select size="large">
-              <Select.Option value="website">Website</Select.Option>
-              <Select.Option value="social">Social Media</Select.Option>
-              <Select.Option value="referral">Indicação</Select.Option>
-              <Select.Option value="event">Evento</Select.Option>
+              <Select.Option value="website">{t('marketing.crm.website')}</Select.Option>
+              <Select.Option value="social">{t('marketing.crm.socialMedia')}</Select.Option>
+              <Select.Option value="referral">{t('marketing.crm.referral')}</Select.Option>
+              <Select.Option value="event">{t('marketing.crm.event')}</Select.Option>
             </Select>
           </Form.Item>
 
@@ -689,7 +690,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
                 fontWeight: '500'
               }}
             >
-              {currentCustomer ? 'Atualizar' : 'Adicionar'}
+              {currentCustomer ? t('marketing.crm.update') : t('marketing.crm.add')}
             </Button>
           </Form.Item>
         </Form>
