@@ -2,35 +2,35 @@ import http from './http-business.ts';
 
 class FunnelService {
   static list(companyId: string) {
-    return http.get(`/crm/funnels/${companyId}`);
+    return http.get(`/funnels/${companyId}`);
   }
 
   static create(data: any) {
-    return http.post('/crm/funnels', data);
+    return http.post('/funnels', data);
   }
 
   static update(id: string, data: any) {
-    return http.patch(`/crm/funnels/${id}`, data);
+    return http.patch(`/funnels/${id}`, data);
   }
 
   static detail(id: string) {
-    return http.get(`/crm/funnels/detail/${id}`);
+    return http.get(`/funnels/detail/${id}`);
   }
 
   static createStage(funnelId: string, data: any) {
-    return http.post(`/crm/funnels/${funnelId}/stages`, data);
+    return http.post(`/funnels/${funnelId}/stages`, data);
   }
 
   static updateStage(id: string, data: any) {
-    return http.patch(`/crm/funnels/stages/${id}`, data);
+    return http.patch(`/funnels/stages/${id}`, data);
   }
 
   static addLead(stageId: string, leadId: string) {
-    return http.post(`/crm/funnels/stages/${stageId}/leads`, { leadId });
+    return http.post(`/funnels/stages/${stageId}/leads`, { leadId });
   }
 
   static moveLead(entryId: string, toStageId: string) {
-    return http.patch(`/crm/funnels/leads/${entryId}/move`, { toStageId });
+    return http.patch(`/funnels/leads/${entryId}/move`, { toStageId });
   }
 }
 
