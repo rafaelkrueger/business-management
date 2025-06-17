@@ -689,8 +689,20 @@
       "statusLead": "Lead",
       "statusProspect": "Prospect",
       "statusCustomer": "Customer",
-      "statusChurned": "Churned"
-    },
+    "statusChurned": "Churned"
+  },
+  "crmPipeline": {
+    "filters": "Filters",
+    "searchByName": "Search by name",
+    "region": "Region",
+    "minimumTicket": "Minimum ticket",
+    "filter": "Filter",
+    "salesPipeline": "Sales Pipeline",
+    "salesSummary": "Sales Summary",
+    "conversionRate": "Conversion Rate",
+    "totalInFunnel": "Total in Funnel",
+    "averageTimeInFunnel": "Average time in funnel"
+  },
     "salesFunnel": {
       "title": "Sales Funnel",
       "searchPlaceholder": "Search leads...",
