@@ -484,9 +484,6 @@ const KanbanColumnComponent = ({ column, onAddCard, index, onEditStage, onDelete
               <Badge>{column.cards.length}</Badge>
             </ColumnTitle>
             <ColumnActions>
-              <AddCardButton onClick={onAddCard}>
-                <Plus size={16} />
-              </AddCardButton>
               <DropdownContainer>
                 <MenuButton onClick={() => setShowMenu(!showMenu)}>
                   <MoreVertical size={16} />
