@@ -33,7 +33,6 @@ import FunnelService from '../../../services/funnel.service.ts';
 const KanbanContainer = styled.div`
   font-family: 'Segoe UI', system-ui, sans-serif;
   background-color: #f8fafc;
-  min-height: 100vh;
   padding: 24px;
 `;
 
@@ -111,6 +110,7 @@ const ColumnsContainer = styled.div`
   gap: 24px;
   overflow-x: auto;
   padding-bottom: 24px;
+
 `;
 
 const KanbanColumn = styled.div`
@@ -121,12 +121,19 @@ const KanbanColumn = styled.div`
   padding: 16px;
   display: flex;
   flex-direction: column;
+  max-height: 550px;
+  overflow-y: auto;
 `;
 
 const ColumnHeader = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 16px;
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 2;
+  padding-bottom: 8px;
 `;
 
 const ColumnTitle = styled.div`
