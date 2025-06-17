@@ -2,6 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
+} from '@mui/material';
+import { useSnackbar } from 'notistack';
+import {
   Plus, MoreVertical, Search, Filter,
   CircleEllipsis, Trash2, FileEdit, GripVertical,
   User, ChevronDown, Check, Phone, Mail, Calendar, DollarSign, UserPlus
@@ -10,6 +23,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import dayjs from 'dayjs';
 import CrmService from '../../../services/crm.service.ts';
 import SegmentationService from '../../../services/segmentation.service.ts';
+import FunnelService from '../../../services/funnel.service.ts';
 
 // ======================
 // Estilos com Styled Components
@@ -510,11 +524,16 @@ const KanbanColumnComponent = ({ column, onAddCard, index }) => {
 
 const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) => {
   const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [segments, setSegments] = useState<Segment[]>([]);
   const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
   const [searchText, setSearchText] = useState('');
   const [columns, setColumns] = useState<any[]>([]);
+  const [funnelModalOpen, setFunnelModalOpen] = useState(false);
+  const [funnelName, setFunnelName] = useState('');
+  const [funnelDescription, setFunnelDescription] = useState('');
+  const [funnelSegment, setFunnelSegment] = useState('');
 
   useEffect(() => {
     if (!activeCompany) return;
@@ -674,6 +693,10 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
               <UserPlus size={16} />
               {t('kanban.addLead')}
             </FilterButton>
+            <FilterButton onClick={() => setFunnelModalOpen(true)}>
+              <Plus size={16} />
+              {t('salesFunnel.createFunnel')}
+            </FilterButton>
           </Controls>
         </KanbanHeader>
 
@@ -688,6 +711,63 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
           ))}
         </ColumnsContainer>
       </KanbanContainer>
+      <Dialog open={funnelModalOpen} onClose={() => setFunnelModalOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>{t('salesFunnel.createFunnel')}</DialogTitle>
+        <DialogContent dividers>
+          <TextField
+            fullWidth
+            label={t('salesFunnel.funnelName')}
+            value={funnelName}
+            onChange={(e) => setFunnelName(e.target.value)}
+            margin="normal"
+          />
+          <TextField
+            fullWidth
+            label={t('salesFunnel.funnelDescription')}
+            value={funnelDescription}
+            onChange={(e) => setFunnelDescription(e.target.value)}
+            margin="normal"
+            multiline
+            rows={3}
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel>{t('salesFunnel.segmentation')}</InputLabel>
+            <Select
+              value={funnelSegment}
+              label={t('salesFunnel.segmentation')}
+              onChange={(e) => setFunnelSegment(e.target.value as string)}
+            >
+              <MenuItem value="">
+                {t('salesFunnel.selectSegmentation')}
+              </MenuItem>
+              {segments.map((s) => (
+                <MenuItem key={s.id} value={s.id}>{s.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setFunnelModalOpen(false)}>{t('salesFunnel.cancel')}</Button>
+          <Button variant="contained" onClick={async () => {
+            try {
+              await FunnelService.create({
+                name: funnelName,
+                description: funnelDescription,
+                companyId: activeCompany,
+                segmentationId: funnelSegment
+              });
+              enqueueSnackbar(t('salesFunnel.newFunnel'), { variant: 'success' });
+              setFunnelModalOpen(false);
+              setFunnelName('');
+              setFunnelDescription('');
+              setFunnelSegment('');
+            } catch (err) {
+              console.error('Erro ao criar funil', err);
+              enqueueSnackbar('Erro ao criar funil', { variant: 'error' });
+            }
+          }}>{t('salesFunnel.save')}</Button>
+        </DialogActions>
+      </Dialog>
     </DragDropContext>
   );
 

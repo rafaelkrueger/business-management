@@ -726,7 +726,11 @@
       "selectFunnel": "Select Funnel",
       "addFunnel": "Add Funnel",
       "newFunnel": "New Funnel",
-      "funnelName": "Funnel Name"
+      "funnelName": "Funnel Name",
+      "createFunnel": "Create Funnel",
+      "funnelDescription": "Funnel Description",
+      "segmentation": "Segmentation",
+      "selectSegmentation": "Select a segmentation"
     },
     "automationTable": {
       "emptyStateTitle": "No automation found",

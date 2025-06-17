@@ -732,7 +732,11 @@
       "selectFunnel": "Selecionar Funil",
       "addFunnel": "Adicionar Funil",
       "newFunnel": "Novo Funil",
-      "funnelName": "Nome do Funil"
+      "funnelName": "Nome do Funil",
+      "createFunnel": "Criar Fúnil",
+      "funnelDescription": "Descrição do Funil",
+      "segmentation": "Segmentação",
+      "selectSegmentation": "Selecione uma segmentação"
     },
     "automationTable": {
       "emptyStateTitle": "Nenhuma automação encontrada",
