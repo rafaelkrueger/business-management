@@ -22,7 +22,7 @@ class FunnelService {
   }
 
   static updateStages(funnelId: string, stages: string[]) {
-    return http.patch(`/funnel/${funnelId}`, { stages });
+    return http.patch(`/funnels/${funnelId}`, { stages });
   }
 
   static addLead(stageId: string, leadId: string) {
