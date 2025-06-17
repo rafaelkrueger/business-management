@@ -195,8 +195,8 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
 
   const handleDeleteCustomer = (id: string) => {
     Modal.confirm({
-      title: 'Confirmar exclusão',
-      content: 'Tem certeza que deseja excluir este cliente?',
+      title: t('marketing.crm.confirmDeleteTitle'),
+      content: t('marketing.crm.confirmDeleteMessage'),
       async onOk() {
         await CrmService.deleteCustomer(id);
         setCustomers(customers.filter(c => c.id !== id));
@@ -497,10 +497,10 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
                       {...restField}
                       name={[name, 'field']}
                       style={{ flex: 1 }}
-                      rules={[{ required: true, message: 'Campo obrigatório' }]}
+                      rules={[{ required: true, message: t('marketing.crm.requiredField') }]}
                     >
                       <Select
-                        placeholder="Campo"
+                        placeholder={t('marketing.crm.field')}
                         showSearch
                         options={availableFields.map(f => ({ label: formatFieldLabel(f), value: f }))}
                         filterOption={(input, option) =>
@@ -513,15 +513,15 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
                       {...restField}
                       name={[name, 'operator']}
                       style={{ flex: 1 }}
-                      rules={[{ required: true, message: 'Campo obrigatório' }]}
+                      rules={[{ required: true, message: t('marketing.crm.requiredField') }]}
                     >
-                      <Select placeholder="Operador">
-                        <Select.Option value="eq">Igual a</Select.Option>
-                        <Select.Option value="neq">Diferente de</Select.Option>
-                        <Select.Option value="gt">Maior que</Select.Option>
-                        <Select.Option value="lt">Menor que</Select.Option>
-                        <Select.Option value="contains">Contém</Select.Option>
-                        <Select.Option value="startsWith">Começa com</Select.Option>
+                      <Select placeholder={t('marketing.crm.operator')}>
+                        <Select.Option value="eq">{t('marketing.crm.equals')}</Select.Option>
+                        <Select.Option value="neq">{t('marketing.crm.notEquals')}</Select.Option>
+                        <Select.Option value="gt">{t('marketing.crm.greaterThan')}</Select.Option>
+                        <Select.Option value="lt">{t('marketing.crm.lessThan')}</Select.Option>
+                        <Select.Option value="contains">{t('marketing.crm.contains')}</Select.Option>
+                        <Select.Option value="startsWith">{t('marketing.crm.startsWith')}</Select.Option>
                       </Select>
                     </Form.Item>
 
@@ -529,9 +529,9 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
                       {...restField}
                       name={[name, 'value']}
                       style={{ flex: 2 }}
-                      rules={[{ required: true, message: 'Campo obrigatório' }]}
+                      rules={[{ required: true, message: t('marketing.crm.requiredField') }]}
                     >
-                      <Input placeholder="Valor" />
+                      <Input placeholder={t('marketing.crm.valuePlaceholder')} />
                     </Form.Item>
 
                     <Button
@@ -545,7 +545,7 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
 
                 <Form.Item>
                   <Button type="dashed" onClick={() => add()} block>
-                    Adicionar Condição
+                    {t('marketing.crm.addCondition')}
                   </Button>
                 </Form.Item>
               </>
@@ -554,7 +554,7 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Salvar Segmento
+              {t('marketing.crm.saveSegment')}
             </Button>
           </Form.Item>
         </Form>
@@ -602,22 +602,22 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
 
           <Form.Item
             name="status"
-            label="Status"
-            rules={[{ required: true, message: 'Por favor selecione o status' }]}
+            label={t('marketing.crm.status')}
+            rules={[{ required: true, message: t('marketing.crm.pleaseSelectStatus') }]}
           >
             <Select>
-              <Select.Option value="lead">Lead</Select.Option>
-              <Select.Option value="prospect">Prospect</Select.Option>
-              <Select.Option value="customer">Customer</Select.Option>
-              <Select.Option value="churned">Churned</Select.Option>
+              <Select.Option value="lead">{t('marketing.crm.statusLead')}</Select.Option>
+              <Select.Option value="prospect">{t('marketing.crm.statusProspect')}</Select.Option>
+              <Select.Option value="customer">{t('marketing.crm.statusCustomer')}</Select.Option>
+              <Select.Option value="churned">{t('marketing.crm.statusChurned')}</Select.Option>
             </Select>
           </Form.Item>
 
           <Form.Item
             name="tags"
-            label="Tags"
+            label={t('marketing.crm.tags')}
           >
-            <Select mode="tags" placeholder="Adicione tags">
+            <Select mode="tags" placeholder={t('marketing.crm.addTags')}>
               {['VIP', 'Promoção', 'Recorrente', 'Novo'].map(tag => (
                 <Select.Option key={tag} value={tag}>{tag}</Select.Option>
               ))}
@@ -626,30 +626,30 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
 
           <Form.Item
             name="source"
-            label="Origem"
+            label={t('marketing.crm.source')}
           >
             <Select>
-              <Select.Option value="website">Website</Select.Option>
-              <Select.Option value="social">Social Media</Select.Option>
-              <Select.Option value="referral">Indicação</Select.Option>
-              <Select.Option value="event">Evento</Select.Option>
+              <Select.Option value="website">{t('marketing.crm.website')}</Select.Option>
+              <Select.Option value="social">{t('marketing.crm.socialMedia')}</Select.Option>
+              <Select.Option value="referral">{t('marketing.crm.referral')}</Select.Option>
+              <Select.Option value="event">{t('marketing.crm.event')}</Select.Option>
             </Select>
           </Form.Item>
 
           {currentCustomer && (
-            <Form.Item
-              name="createdAt"
-              label="Data de Criação"
-            >
-              <DatePicker disabled style={{ width: '100%' }} />
-            </Form.Item>
-          )}
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              {currentCustomer ? 'Atualizar Cliente' : 'Adicionar Cliente'}
-            </Button>
+          <Form.Item
+            name="createdAt"
+            label={t('marketing.crm.createdAt')}
+          >
+            <DatePicker disabled style={{ width: '100%' }} />
           </Form.Item>
+        )}
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            {currentCustomer ? t('marketing.crm.updateCustomer') : t('marketing.crm.createCustomer')}
+          </Button>
+        </Form.Item>
         </Form>
       </Modal>
     </div>
