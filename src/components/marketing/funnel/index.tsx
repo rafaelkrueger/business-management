@@ -11,7 +11,8 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  Typography
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import {
@@ -550,6 +551,11 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
   const [funnels, setFunnels] = useState<any[]>([]);
   const [selectedFunnelId, setSelectedFunnelId] = useState<string>('');
   const [stages, setStages] = useState<string[]>([]);
+  const [stageDialogOpen, setStageDialogOpen] = useState(false);
+  const [stageDialogMode, setStageDialogMode] = useState<'add' | 'edit'>('add');
+  const [stageDialogName, setStageDialogName] = useState('');
+  const [editingStage, setEditingStage] = useState<string | null>(null);
+  const [deleteStage, setDeleteStage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!activeCompany) return;
@@ -716,41 +722,62 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
     }
   };
 
-  const handleAddStage = async () => {
+  const handleAddStage = () => {
+    setStageDialogMode('add');
+    setStageDialogName('');
+    setEditingStage(null);
+    setStageDialogOpen(true);
+  };
+
+  const handleEditStage = (stage: string) => {
+    setStageDialogMode('edit');
+    setStageDialogName(stage);
+    setEditingStage(stage);
+    setStageDialogOpen(true);
+  };
+
+  const handleDeleteStage = (stage: string) => {
+    setDeleteStage(stage);
+  };
+
+  const saveStageDialog = async () => {
     if (!selectedFunnelId) return;
-    const name = window.prompt(t('salesFunnel.newStage') || 'New Stage');
+    const name = stageDialogName.trim();
     if (!name) return;
-    try {
-      await FunnelService.createStage(selectedFunnelId, { name });
-      setStages(prev => [...prev, name]);
-    } catch (err) {
-      console.error('Erro ao adicionar etapa:', err);
+    if (stageDialogMode === 'add') {
+      try {
+        await FunnelService.createStage(selectedFunnelId, { name });
+        setStages(prev => [...prev, name]);
+      } catch (err) {
+        console.error('Erro ao adicionar etapa:', err);
+      }
+    } else if (editingStage) {
+      const updated = stages.map(s => (s === editingStage ? name : s));
+      try {
+        await FunnelService.updateStages(selectedFunnelId, updated);
+        setStages(updated);
+      } catch (err) {
+        console.error('Erro ao editar etapa:', err);
+      }
     }
+    setStageDialogOpen(false);
+    setStageDialogName('');
+    setEditingStage(null);
   };
 
-  const handleEditStage = async (stage: string) => {
-    if (!selectedFunnelId) return;
-    const newName = window.prompt(t('salesFunnel.editStage') || 'Edit Stage', stage);
-    if (!newName) return;
-    const updated = stages.map(s => (s === stage ? newName : s));
-    try {
-      await FunnelService.updateStages(selectedFunnelId, updated);
-      setStages(updated);
-    } catch (err) {
-      console.error('Erro ao editar etapa:', err);
+  const confirmDeleteStage = async () => {
+    if (!selectedFunnelId || !deleteStage) {
+      setDeleteStage(null);
+      return;
     }
-  };
-
-  const handleDeleteStage = async (stage: string) => {
-    if (!selectedFunnelId) return;
-    if (!window.confirm(t('salesFunnel.deleteStage') || 'Delete Stage?')) return;
-    const updated = stages.filter(s => s !== stage);
+    const updated = stages.filter(s => s !== deleteStage);
     try {
       await FunnelService.updateStages(selectedFunnelId, updated);
       setStages(updated);
     } catch (err) {
       console.error('Erro ao remover etapa:', err);
     }
+    setDeleteStage(null);
   };
 
   return (
@@ -862,6 +889,34 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
               enqueueSnackbar('Erro ao criar funil', { variant: 'error' });
             }
           }}>{t('salesFunnel.save')}</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={stageDialogOpen} onClose={() => setStageDialogOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>
+          {stageDialogMode === 'add' ? t('salesFunnel.newStage') : t('salesFunnel.editStage')}
+        </DialogTitle>
+        <DialogContent dividers>
+          <TextField
+            fullWidth
+            label={t('salesFunnel.stageName')}
+            value={stageDialogName}
+            onChange={(e) => setStageDialogName(e.target.value)}
+            margin="normal"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setStageDialogOpen(false)}>{t('salesFunnel.cancel')}</Button>
+          <Button variant="contained" onClick={saveStageDialog}>{t('salesFunnel.save')}</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={!!deleteStage} onClose={() => setDeleteStage(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>{t('salesFunnel.confirmDeleteStageTitle')}</DialogTitle>
+        <DialogContent dividers>
+          <Typography>{t('salesFunnel.confirmDeleteStageMessage')}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteStage(null)}>{t('salesFunnel.cancel')}</Button>
+          <Button color="error" variant="contained" onClick={confirmDeleteStage}>{t('salesFunnel.delete')}</Button>
         </DialogActions>
       </Dialog>
     </DragDropContext>

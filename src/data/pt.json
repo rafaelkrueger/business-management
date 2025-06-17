@@ -736,7 +736,10 @@
       "createFunnel": "Criar Fúnil",
       "funnelDescription": "Descrição do Funil",
       "segmentation": "Segmentação",
-      "selectSegmentation": "Selecione uma segmentação"
+      "selectSegmentation": "Selecione uma segmentação",
+      "stageName": "Nome da Etapa",
+      "confirmDeleteStageTitle": "Confirmar exclusão",
+      "confirmDeleteStageMessage": "Tem certeza que deseja excluir esta etapa?"
     },
     "automationTable": {
       "emptyStateTitle": "Nenhuma automação encontrada",

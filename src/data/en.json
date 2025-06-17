@@ -730,7 +730,10 @@
       "createFunnel": "Create Funnel",
       "funnelDescription": "Funnel Description",
       "segmentation": "Segmentation",
-      "selectSegmentation": "Select a segmentation"
+      "selectSegmentation": "Select a segmentation",
+      "stageName": "Stage Name",
+      "confirmDeleteStageTitle": "Confirm deletion",
+      "confirmDeleteStageMessage": "Are you sure you want to delete this stage?"
     },
     "automationTable": {
       "emptyStateTitle": "No automation found",
