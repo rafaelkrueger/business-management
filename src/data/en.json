@@ -691,6 +691,27 @@
       "statusCustomer": "Customer",
       "statusChurned": "Churned"
     },
+    "salesFunnel": {
+      "title": "Sales Funnel",
+      "searchPlaceholder": "Search leads...",
+      "addLead": "Add Lead",
+      "addStage": "Add Stage",
+      "editStage": "Edit Stage",
+      "deleteStage": "Delete Stage",
+      "newLead": "Add New Lead",
+      "newStage": "Add New Stage",
+      "name": "Name",
+      "company": "Company",
+      "stage": "Stage",
+      "value": "Value",
+      "color": "Color",
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel",
+      "noLeads": "No leads in this stage",
+      "settings": "Kanban Settings",
+      "reorderStages": "Reorder Stages"
+    },
     "automationTable": {
       "emptyStateTitle": "No automation found",
       "emptyStateDescription": "Create your first automation to optimize your processes.",

@@ -40,6 +40,8 @@ import {
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { v4 as uuidv4 } from 'uuid';
+import { useTranslation } from 'react-i18next';
+import FunnelService from '../../../services/funnel.service.ts';
 import { format } from 'date-fns';
 
 interface Lead {
@@ -64,7 +66,12 @@ interface Stage {
   order: number;
 }
 
-const SalesFunnelKanban: React.FC = () => {
+interface SalesFunnelProps {
+  activeCompany: string;
+}
+
+const SalesFunnelKanban: React.FC<SalesFunnelProps> = ({ activeCompany }) => {
+  const { t } = useTranslation();
   // State
   const [leads, setLeads] = useState<Lead[]>([]);
   const [stages, setStages] = useState<Stage[]>([]);
@@ -91,71 +98,51 @@ const SalesFunnelKanban: React.FC = () => {
   const [filterTags, setFilterTags] = useState<string[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [currentFunnelId, setCurrentFunnelId] = useState<string>('');
 
-  // Initialize with sample data
+  // Load data from API
   useEffect(() => {
-    const initialStages: Stage[] = [
-      { id: 'new', name: 'Novo', color: '#4caf50', order: 0 },
-      { id: 'qualified', name: 'Qualificado', color: '#2196f3', order: 1 },
-      { id: 'proposal', name: 'Proposta', color: '#ff9800', order: 2 },
-      { id: 'won', name: 'Fechado', color: '#9c27b0', order: 3 },
-      { id: 'lost', name: 'Perdido', color: '#f44336', order: 4 },
-    ];
-
-    const initialLeads: Lead[] = [
-      {
-        id: '1',
-        name: 'João Silva',
-        company: 'TechCorp',
-        stageId: 'new',
-        value: 5000,
-        email: 'joao@techcorp.com',
-        phone: '(11) 99999-9999',
-        notes: 'Interessado em nossa solução empresarial',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        probability: 20,
-        tags: ['empresarial']
-      },
-      {
-        id: '2',
-        name: 'Maria Oliveira',
-        company: 'Inova Ltda',
-        stageId: 'qualified',
-        value: 12000,
-        email: 'maria@inova.com',
-        phone: '(21) 98888-8888',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        probability: 50,
-        tags: ['pequena-empresa']
-      },
-      {
-        id: '3',
-        name: 'Carlos Souza',
-        company: 'Startup X',
-        stageId: 'proposal',
-        value: 8000,
-        email: 'carlos@startupx.com',
-        phone: '(31) 97777-7777',
-        notes: 'Aguardando aprovação do conselho',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        probability: 75,
-        tags: ['startup', 'tecnologia']
-      },
-    ];
-
-    setStages(initialStages);
-    setLeads(initialLeads);
-
-    // Extract unique tags
-    const tags = Array.from(new Set(initialLeads.flatMap(lead => lead.tags || [])));
-    setAvailableTags(tags);
-  }, []);
+    const load = async () => {
+      try {
+        const { data } = await FunnelService.list(activeCompany);
+        if (data && data.length > 0) {
+          setCurrentFunnelId(data[0].id);
+          const detailRes = await FunnelService.detail(data[0].id);
+          const detail = detailRes.data || {};
+          const st: Stage[] = (detail.stages || []).map((s: any) => ({
+            id: s.stage.id,
+            name: s.stage.name,
+            color: '#1976d2',
+            order: s.stage.position
+          }));
+          const ld: Lead[] = [];
+          (detail.stages || []).forEach((s: any) => {
+            (s.leads || []).forEach((l: any) => {
+              ld.push({
+                id: l.id,
+                name: l.leadId,
+                company: '',
+                stageId: l.stageId,
+                value: 0,
+                createdAt: new Date(l.createdAt),
+                updatedAt: new Date(l.updatedAt)
+              });
+            });
+          });
+          setStages(st);
+          setLeads(ld);
+          const tags = Array.from(new Set(ld.flatMap(lead => lead.tags || [])));
+          setAvailableTags(tags);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    load();
+  }, [activeCompany]);
 
   // Handlers
-  const handleDrop = (leadId: string, targetStage: string) => {
+  const handleDrop = async (leadId: string, targetStage: string) => {
     setLeads(prev =>
       prev.map(lead =>
         lead.id === leadId
@@ -163,9 +150,14 @@ const SalesFunnelKanban: React.FC = () => {
           : lead
       )
     );
+    try {
+      await FunnelService.moveLead(leadId, targetStage);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const handleAddLead = () => {
+  const handleAddLead = async () => {
     if (!newLead.name || !newLead.company || !newLead.stageId) return;
 
     const lead: Lead = {
@@ -184,6 +176,11 @@ const SalesFunnelKanban: React.FC = () => {
     };
 
     setLeads([...leads, lead]);
+    try {
+      await FunnelService.addLead(lead.stageId, lead.id);
+    } catch (e) {
+      console.error(e);
+    }
     setNewLead({
       name: '',
       company: '',
@@ -203,7 +200,7 @@ const SalesFunnelKanban: React.FC = () => {
     }
   };
 
-  const handleAddStage = () => {
+  const handleAddStage = async () => {
     if (!newStage.name) return;
 
     const stage: Stage = {
@@ -214,6 +211,11 @@ const SalesFunnelKanban: React.FC = () => {
     };
 
     setStages([...stages, stage]);
+    try {
+      await FunnelService.createStage(currentFunnelId, { name: stage.name, position: stage.order });
+    } catch (e) {
+      console.error(e);
+    }
     setNewStage({
       name: '',
       color: '#1976d2',
@@ -222,12 +224,20 @@ const SalesFunnelKanban: React.FC = () => {
     setNewStageModalOpen(false);
   };
 
-  const handleUpdateStage = () => {
+  const handleUpdateStage = async () => {
     if (!currentStageEdit) return;
 
     setStages(stages.map(stage =>
       stage.id === currentStageEdit.id ? currentStageEdit : stage
     ));
+    try {
+      await FunnelService.updateStage(currentStageEdit.id, {
+        name: currentStageEdit.name,
+        position: currentStageEdit.order,
+      });
+    } catch (e) {
+      console.error(e);
+    }
     setEditStageModalOpen(false);
     setCurrentStageEdit(null);
   };
@@ -304,12 +314,12 @@ const SalesFunnelKanban: React.FC = () => {
       {/* Header with controls */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Sales Funnel
+          {t('salesFunnel.title')}
         </Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <TextField
             size="small"
-            placeholder="Search leads..."
+            placeholder={t('salesFunnel.searchPlaceholder')}
             InputProps={{
               startAdornment: <Search sx={{ mr: 1 }} />
             }}
@@ -342,16 +352,16 @@ const SalesFunnelKanban: React.FC = () => {
             startIcon={<Add />}
             onClick={() => setNewLeadModalOpen(true)}
           >
-            Add Lead
+            {t('salesFunnel.addLead')}
           </Button>
           <Button
             variant="outlined"
             startIcon={<Add />}
             onClick={() => setNewStageModalOpen(true)}
           >
-            Add Stage
+            {t('salesFunnel.addStage')}
           </Button>
-          <Tooltip title="Settings">
+          <Tooltip title={t('salesFunnel.settings')}>
             <IconButton onClick={() => setSettingsOpen(true)}>
               <Settings />
             </IconButton>
@@ -390,7 +400,7 @@ const SalesFunnelKanban: React.FC = () => {
         onClose={handleCloseContextMenu}
       >
         <MenuItem onClick={handleEditStage}>
-          <Edit sx={{ mr: 1 }} /> Edit Stage
+          <Edit sx={{ mr: 1 }} /> {t('salesFunnel.editStage')}
         </MenuItem>
         <MenuItem onClick={() => {
           if (!contextMenuStage) return;
@@ -398,32 +408,32 @@ const SalesFunnelKanban: React.FC = () => {
           handleCloseContextMenu();
           handleDeleteStage(contextMenuStage.id);
         }}>
-          <Delete sx={{ mr: 1 }} /> Delete Stage
+          <Delete sx={{ mr: 1 }} /> {t('salesFunnel.deleteStage')}
         </MenuItem>
       </Menu>
 
       {/* Add Lead Modal */}
       <Dialog open={newLeadModalOpen} onClose={() => setNewLeadModalOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle>Add New Lead</DialogTitle>
+        <DialogTitle>{t('salesFunnel.newLead')}</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <TextField
-              label="Name"
+              label={t('salesFunnel.name')}
               fullWidth
               value={newLead.name}
               onChange={(e) => setNewLead({ ...newLead, name: e.target.value })}
             />
             <TextField
-              label="Company"
+              label={t('salesFunnel.company')}
               fullWidth
               value={newLead.company}
               onChange={(e) => setNewLead({ ...newLead, company: e.target.value })}
             />
             <FormControl fullWidth>
-              <InputLabel>Stage</InputLabel>
+              <InputLabel>{t('salesFunnel.stage')}</InputLabel>
               <Select
                 value={newLead.stageId}
-                label="Stage"
+                label={t('salesFunnel.stage')}
                 onChange={(e) => setNewLead({ ...newLead, stageId: e.target.value as string })}
               >
                 {stages.map(stage => (
@@ -432,7 +442,7 @@ const SalesFunnelKanban: React.FC = () => {
               </Select>
             </FormControl>
             <TextField
-              label="Value"
+              label={t('salesFunnel.value')}
               type="number"
               fullWidth
               InputProps={{
@@ -481,24 +491,24 @@ const SalesFunnelKanban: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setNewLeadModalOpen(false)}>Cancel</Button>
-          <Button onClick={handleAddLead} variant="contained">Add Lead</Button>
+          <Button onClick={() => setNewLeadModalOpen(false)}>{t('salesFunnel.cancel')}</Button>
+          <Button onClick={handleAddLead} variant="contained">{t('salesFunnel.addLead')}</Button>
         </DialogActions>
       </Dialog>
 
       {/* Add Stage Modal */}
       <Dialog open={newStageModalOpen} onClose={() => setNewStageModalOpen(false)}>
-        <DialogTitle>Add New Stage</DialogTitle>
+        <DialogTitle>{t('salesFunnel.newStage')}</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <TextField
-              label="Stage Name"
+              label={t('salesFunnel.name')}
               fullWidth
               value={newStage.name}
               onChange={(e) => setNewStage({ ...newStage, name: e.target.value })}
             />
             <TextField
-              label="Color"
+              label={t('salesFunnel.color')}
               type="color"
               fullWidth
               value={newStage.color}
@@ -507,24 +517,24 @@ const SalesFunnelKanban: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setNewStageModalOpen(false)}>Cancel</Button>
-          <Button onClick={handleAddStage} variant="contained">Add Stage</Button>
+          <Button onClick={() => setNewStageModalOpen(false)}>{t('salesFunnel.cancel')}</Button>
+          <Button onClick={handleAddStage} variant="contained">{t('salesFunnel.addStage')}</Button>
         </DialogActions>
       </Dialog>
 
       {/* Edit Stage Modal */}
       <Dialog open={editStageModalOpen} onClose={() => setEditStageModalOpen(false)}>
-        <DialogTitle>Edit Stage</DialogTitle>
+        <DialogTitle>{t('salesFunnel.editStage')}</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <TextField
-              label="Stage Name"
+              label={t('salesFunnel.name')}
               fullWidth
               value={currentStageEdit?.name || ''}
               onChange={(e) => currentStageEdit && setCurrentStageEdit({ ...currentStageEdit, name: e.target.value })}
             />
             <TextField
-              label="Color"
+              label={t('salesFunnel.color')}
               type="color"
               fullWidth
               value={currentStageEdit?.color || '#1976d2'}
@@ -537,18 +547,18 @@ const SalesFunnelKanban: React.FC = () => {
             onClick={() => currentStageEdit && handleDeleteStage(currentStageEdit.id)}
             color="error"
           >
-            Delete
+            {t('salesFunnel.delete')}
           </Button>
-          <Button onClick={() => setEditStageModalOpen(false)}>Cancel</Button>
-          <Button onClick={handleUpdateStage} variant="contained">Save</Button>
+          <Button onClick={() => setEditStageModalOpen(false)}>{t('salesFunnel.cancel')}</Button>
+          <Button onClick={handleUpdateStage} variant="contained">{t('salesFunnel.save')}</Button>
         </DialogActions>
       </Dialog>
 
       {/* Settings Modal */}
       <Dialog open={settingsOpen} onClose={() => setSettingsOpen(false)} fullWidth maxWidth="md">
-        <DialogTitle>Kanban Settings</DialogTitle>
+        <DialogTitle>{t('salesFunnel.settings')}</DialogTitle>
         <DialogContent>
-          <Typography variant="h6" gutterBottom>Reorder Stages</Typography>
+          <Typography variant="h6" gutterBottom>{t('salesFunnel.reorderStages')}</Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {sortedStages.map(stage => (
               <Paper key={stage.id} sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
@@ -564,7 +574,7 @@ const SalesFunnelKanban: React.FC = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setSettingsOpen(false)}>Close</Button>
+          <Button onClick={() => setSettingsOpen(false)}>{t('common.close')}</Button>
         </DialogActions>
       </Dialog>
     </Box>
@@ -604,7 +614,7 @@ const StageColumn: React.FC<StageColumnProps> = ({ stage, leads, onDrop, onAddLe
       <Box sx={{ flex: 1, overflowY: 'auto', mb: 2 }}>
         {leads.length === 0 ? (
           <Paper sx={{ p: 2, textAlign: 'center', color: 'text.secondary' }}>
-            No leads in this stage
+            {t('salesFunnel.noLeads')}
           </Paper>
         ) : (
           leads.map((lead) => (
@@ -684,7 +694,7 @@ const LeadCard: React.FC<LeadCardProps> = ({ lead, onDrop, onDelete }) => {
           onDelete();
           handleClose();
         }}>
-          <Delete sx={{ mr: 1 }} /> Delete
+          <Delete sx={{ mr: 1 }} /> {t('salesFunnel.delete')}
         </MenuItem>
       </Menu>
 
