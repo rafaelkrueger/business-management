@@ -460,6 +460,10 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
         rowKey="id"
         loading={loading}
         scroll={{ x: true }}
+        // onRow={(record) => ({
+        //   onClick: () => handleEditCustomer(record),
+        //   style: { cursor: 'pointer' },
+        // })}
       />
 
       <Modal
