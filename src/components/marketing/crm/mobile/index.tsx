@@ -405,19 +405,15 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
       {/* Metrics Cards - Horizontal Scroll */}
       <div style={{
         display: 'flex',
-        overflowX: 'auto',
         gap: '12px',
         marginBottom: '20px',
         paddingBottom: '8px',
         scrollbarWidth: 'none',
         msOverflowStyle: 'none',
-        '&::-webkit-scrollbar': {
-          display: 'none'
-        }
       }}>
         <Card
           style={{
-            minWidth: '140px',
+            minWidth: '110px',
             borderRadius: '12px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
             backgroundColor: cardBackground,
@@ -437,7 +433,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
 
         <Card
           style={{
-            minWidth: '140px',
+            minWidth: '110px',
             borderRadius: '12px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
             backgroundColor: cardBackground,
@@ -449,15 +445,16 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
           <div style={{
             fontSize: '20px',
             fontWeight: '600',
-            color: '#52c41a'
+            color: primaryColor
           }}>
-            {metrics.activeCustomers}
+            {/* {metrics.activeCustomers} */}
+            {metrics.totalCustomers}
           </div>
         </Card>
 
         <Card
           style={{
-            minWidth: '140px',
+            minWidth: '120px',
             borderRadius: '12px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
             backgroundColor: cardBackground,
@@ -471,7 +468,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
             fontWeight: '600',
             color: primaryColor
           }}>
-            ${metrics.totalValue.toLocaleString('pt-BR')}
+          ${String(metrics.totalValue).slice(0, 4)}
           </div>
         </Card>
       </div>
@@ -535,7 +532,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
         style={{ maxWidth: '400px' }}
       >
         <Form form={segmentForm} onFinish={handleSegmentSubmit} layout="vertical">
-          <Form.Item name="name" label="Nome" rules={[{ required: true, message: 'Nome' }]}> 
+          <Form.Item name="name" label="Nome" rules={[{ required: true, message: 'Nome' }]}>
             <Input />
           </Form.Item>
           <Form.List name="conditions">
@@ -633,7 +630,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
                   </Space>
                 ))}
                 <Form.Item>
-                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}> 
+                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                     {t('marketing.crm.addField')}
                   </Button>
                 </Form.Item>
