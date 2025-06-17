@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Input, Button, Select, Tag, Card, Form, Modal, DatePicker, Checkbox, Space } from 'antd';
+import { Table, Input, InputNumber, Button, Select, Tag, Card, Form, Modal, DatePicker, Checkbox, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { SearchOutlined, FilterOutlined, PlusOutlined, EditOutlined, DeleteOutlined, SettingOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
@@ -230,6 +230,11 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
     }, {} as Record<string, any>);
 
     const customerData = {
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
+      value: values.value,
+      lastContact: values.lastContact?.toDate?.() || values.lastContact,
       status: values.status,
       tags: values.tags || [],
       source: values.source,
@@ -575,6 +580,21 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
         width={600}
       >
         <Form form={form} onFinish={handleCustomerSubmit} layout="vertical">
+          <Form.Item name="name" label={t('marketing.crm.name')}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="email" label={t('marketing.crm.email')}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="phone" label={t('marketing.crm.phone')}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="value" label={t('marketing.crm.value')}>
+            <InputNumber style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item name="lastContact" label={t('marketing.crm.lastContact')}>
+            <DatePicker style={{ width: '100%' }} />
+          </Form.Item>
           <Form.List name="fields">
             {(fields, { add, remove }) => (
               <>
