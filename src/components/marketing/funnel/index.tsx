@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import {
-  Plus, MoreVertical, Search, Filter,
-  CircleEllipsis, Trash2, FileEdit, GripVertical,
-  User, ChevronDown, Check, Phone, Mail, Calendar, DollarSign, UserPlus
+  Plus, MoreVertical, Search,
+  Trash2, FileEdit, GripVertical,
+  User, Phone, Mail, Calendar, DollarSign, UserPlus
 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import dayjs from 'dayjs';
 import CrmService from '../../../services/crm.service.ts';
 import SegmentationService from '../../../services/segmentation.service.ts';
+import FunnelService from '../../../services/funnel.service.ts';
 
 // ======================
 // Estilos com Styled Components
@@ -452,7 +453,7 @@ const KanbanCardComponent = ({ card, index }) => {
   );
 };
 
-const KanbanColumnComponent = ({ column, onAddCard, index }) => {
+const KanbanColumnComponent = ({ column, onAddCard, index, onEditStage, onDeleteStage }) => {
   const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
 
@@ -479,11 +480,11 @@ const KanbanColumnComponent = ({ column, onAddCard, index }) => {
                 </MenuButton>
                 {showMenu && (
                   <DropdownMenu>
-                    <DropdownItem>
-                      <FileEdit size={14} /> {t('kanban.edit')}
+                    <DropdownItem onClick={() => onEditStage(column.title)}>
+                      <FileEdit size={14} /> {t('salesFunnel.editStage')}
                     </DropdownItem>
-                    <DropdownItem>
-                      <Trash2 size={14} /> {t('kanban.delete')}
+                    <DropdownItem onClick={() => onDeleteStage(column.title)}>
+                      <Trash2 size={14} /> {t('salesFunnel.deleteStage')}
                     </DropdownItem>
                   </DropdownMenu>
                 )}
@@ -515,17 +516,30 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
   const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
   const [searchText, setSearchText] = useState('');
   const [columns, setColumns] = useState<any[]>([]);
+  const [funnels, setFunnels] = useState<any[]>([]);
+  const [selectedFunnelId, setSelectedFunnelId] = useState<string>('');
+  const [stages, setStages] = useState<string[]>([]);
 
   useEffect(() => {
     if (!activeCompany) return;
     fetchInitialData();
   }, [activeCompany]);
 
+  useEffect(() => {
+    const funnel = funnels.find(f => String(f.id) === String(selectedFunnelId));
+    if (funnel) {
+      setStages(funnel.stages || []);
+    } else {
+      setStages([]);
+    }
+  }, [selectedFunnelId, funnels]);
+
   const fetchInitialData = async () => {
     try {
-      const [leadRes, segmentRes] = await Promise.all([
+      const [leadRes, segmentRes, funnelRes] = await Promise.all([
         CrmService.getCrm(activeCompany),
-        SegmentationService.getSegments(activeCompany)
+        SegmentationService.getSegments(activeCompany),
+        FunnelService.list(activeCompany)
       ]);
       const mapped = leadRes.data?.map((lead: any) => {
         const parsedSource = typeof lead.source === 'string' ? JSON.parse(lead.source) : lead.source;
@@ -543,6 +557,10 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
       }) || [];
       setLeads(mapped);
       setSegments(segmentRes.data || []);
+      setFunnels(funnelRes.data || []);
+      if ((funnelRes.data || []).length && !selectedFunnelId) {
+        setSelectedFunnelId(String(funnelRes.data[0].id));
+      }
     } catch (err) {
       console.error('Erro ao buscar leads:', err);
     }
@@ -550,7 +568,7 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
 
   useEffect(() => {
     updateColumns();
-  }, [leads, selectedSegment, searchText]);
+  }, [leads, selectedSegment, searchText, stages]);
 
   const filterLeads = () => {
     let result = [...leads];
@@ -606,11 +624,11 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
 
   const updateColumns = () => {
     const filtered = filterLeads();
-    const statuses = ['lead', 'prospect', 'customer', 'churned'];
-    const newColumns = statuses.map(status => ({
+    const stageList = stages.length ? stages : ['lead', 'prospect', 'customer', 'churned'];
+    const newColumns = stageList.map(status => ({
       id: status,
-      title: status.charAt(0).toUpperCase() + status.slice(1),
-      cards: filtered.filter(l => (l.status || 'lead').toLowerCase() === status).map(l => ({
+      title: status,
+      cards: filtered.filter(l => (l.status || 'lead').toLowerCase() === status.toLowerCase()).map(l => ({
         id: l.id,
         title: l.name || 'Lead',
         email: l.email,
@@ -649,6 +667,43 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
     }
   };
 
+  const handleAddStage = async () => {
+    if (!selectedFunnelId) return;
+    const name = window.prompt(t('salesFunnel.newStage') || 'New Stage');
+    if (!name) return;
+    try {
+      await FunnelService.createStage(selectedFunnelId, { name });
+      setStages(prev => [...prev, name]);
+    } catch (err) {
+      console.error('Erro ao adicionar etapa:', err);
+    }
+  };
+
+  const handleEditStage = async (stage: string) => {
+    if (!selectedFunnelId) return;
+    const newName = window.prompt(t('salesFunnel.editStage') || 'Edit Stage', stage);
+    if (!newName) return;
+    const updated = stages.map(s => (s === stage ? newName : s));
+    try {
+      await FunnelService.updateStages(selectedFunnelId, updated);
+      setStages(updated);
+    } catch (err) {
+      console.error('Erro ao editar etapa:', err);
+    }
+  };
+
+  const handleDeleteStage = async (stage: string) => {
+    if (!selectedFunnelId) return;
+    if (!window.confirm(t('salesFunnel.deleteStage') || 'Delete Stage?')) return;
+    const updated = stages.filter(s => s !== stage);
+    try {
+      await FunnelService.updateStages(selectedFunnelId, updated);
+      setStages(updated);
+    } catch (err) {
+      console.error('Erro ao remover etapa:', err);
+    }
+  };
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <KanbanContainer>
@@ -664,15 +719,15 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
                 onChange={(e) => setSearchText(e.target.value)}
               />
             </SearchBox>
-            <SegmentSelect value={selectedSegment || ''} onChange={(e) => setSelectedSegment(e.target.value || null)}>
-              <option value="">{t('marketing.crm.selectSegment')}</option>
-              {segments.map(s => (
-                <option key={s.id} value={s.id}>{s.name}</option>
+            <SegmentSelect value={selectedFunnelId} onChange={(e) => setSelectedFunnelId(e.target.value)}>
+              <option value="">{t('salesFunnel.selectFunnel')}</option>
+              {funnels.map(f => (
+                <option key={f.id} value={f.id}>{f.name}</option>
               ))}
             </SegmentSelect>
-            <FilterButton style={{ backgroundColor: '#578acd', color: 'white' }}>
-              <UserPlus size={16} />
-              {t('kanban.addLead')}
+            <FilterButton onClick={handleAddStage} style={{ backgroundColor: '#578acd', color: 'white' }}>
+              <Plus size={16} />
+              {t('salesFunnel.addStage')}
             </FilterButton>
           </Controls>
         </KanbanHeader>
@@ -684,6 +739,8 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
               column={column}
               index={index}
               onAddCard={() => {}}
+              onEditStage={handleEditStage}
+              onDeleteStage={handleDeleteStage}
             />
           ))}
         </ColumnsContainer>
