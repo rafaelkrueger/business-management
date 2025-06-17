@@ -415,6 +415,7 @@ const cards = [
     completed:true,
     // disabled: !isModuleUnlocked("funnel"),
     disabled: false,
+    comingSoon: true
   },
   {
     icon: <Coins size={24} color={theme.palette.primary.main} />,
