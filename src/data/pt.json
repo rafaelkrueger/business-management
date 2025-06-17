@@ -716,7 +716,11 @@
       "cancel": "Cancelar",
       "noLeads": "Nenhum lead nesta etapa",
       "settings": "Configurações do Kanban",
-      "reorderStages": "Reordenar Etapas"
+      "reorderStages": "Reordenar Etapas",
+      "selectFunnel": "Selecionar Funil",
+      "addFunnel": "Adicionar Funil",
+      "newFunnel": "Novo Funil",
+      "funnelName": "Nome do Funil"
     },
     "automationTable": {
       "emptyStateTitle": "Nenhuma automação encontrada",

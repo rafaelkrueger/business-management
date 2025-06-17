@@ -710,7 +710,11 @@
       "cancel": "Cancel",
       "noLeads": "No leads in this stage",
       "settings": "Kanban Settings",
-      "reorderStages": "Reorder Stages"
+      "reorderStages": "Reorder Stages",
+      "selectFunnel": "Select Funnel",
+      "addFunnel": "Add Funnel",
+      "newFunnel": "New Funnel",
+      "funnelName": "Funnel Name"
     },
     "automationTable": {
       "emptyStateTitle": "No automation found",
