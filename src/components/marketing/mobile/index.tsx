@@ -422,11 +422,10 @@ const cards = [
     title: t("marketing.funnels"),
     description: t("marketing.funnels_desc"),
     module: "funnel",
-    color: theme.palette.warning.main,
+    color: theme.palette.primary.main,
     completed:true,
     // disabled: !isModuleUnlocked("funnel"),
-    disabled: true,
-    comingSoon: true
+    disabled: false,
 
   },
   {
