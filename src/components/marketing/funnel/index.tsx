@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import {
@@ -7,6 +7,9 @@ import {
   User, ChevronDown, Check, Phone, Mail, Calendar, DollarSign, UserPlus
 } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import dayjs from 'dayjs';
+import CrmService from '../../../services/crm.service.ts';
+import SegmentationService from '../../../services/segmentation.service.ts';
 
 // ======================
 // Estilos com Styled Components
@@ -77,6 +80,15 @@ const FilterButton = styled.button`
   &:hover {
     background-color: #f1f5f9;
   }
+`;
+
+const SegmentSelect = styled.select`
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #64748b;
 `;
 
 const ColumnsContainer = styled.div`
@@ -358,6 +370,30 @@ const SourceTag = styled.span`
   margin-left: 8px;
 `;
 
+interface Lead {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  status: string;
+  lastContact: Date;
+  value: number;
+  source: string;
+  jsonData: Record<string, any>;
+}
+
+interface FilterCondition {
+  field: string;
+  operator: 'eq' | 'neq' | 'gt' | 'lt' | 'contains' | 'startsWith';
+  value: any;
+}
+
+interface Segment {
+  id: string;
+  name: string;
+  conditions: FilterCondition[];
+}
+
 // ======================
 // Componentes React
 // ======================
@@ -472,158 +508,144 @@ const KanbanColumnComponent = ({ column, onAddCard, index }) => {
   );
 };
 
-const SalesFunnel = () => {
+const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) => {
   const { t } = useTranslation();
-  const [columns, setColumns] = useState([
-    {
-      id: 'new',
-      title: t('kanban.newLeads'),
-      cards: [
-        {
-          id: '1',
-          title: t('kanban.card1'),
-          email: 'marcos@empresa.com',
-          phone: '(11) 99999-8888',
-          lastContact: t('kanban.today'),
-          priority: 'hot',
-          value: t('kanban.value1'),
-          source: t('kanban.source1')
-        },
-        {
-          id: '2',
-          title: t('kanban.card2'),
-          email: 'ana@startup.com',
-          phone: '(21) 98888-7777',
-          lastContact: t('kanban.yesterday'),
-          priority: 'warm',
-          value: t('kanban.value2'),
-          source: t('kanban.source2')
-        }
-      ]
-    },
-    {
-      id: 'contacted',
-      title: t('kanban.contacted'),
-      cards: [
-        {
-          id: '3',
-          title: t('kanban.card3'),
-          email: 'carlos@tech.com',
-          phone: '(31) 97777-6666',
-          lastContact: t('kanban.today'),
-          priority: 'hot',
-          value: t('kanban.value3'),
-          source: t('kanban.source3')
-        }
-      ]
-    },
-    {
-      id: 'proposal',
-      title: t('kanban.proposalSent'),
-      cards: [
-        {
-          id: '4',
-          title: t('kanban.card4'),
-          email: 'juliana@consulting.com',
-          phone: '(41) 96666-5555',
-          lastContact: t('kanban.twoDaysAgo'),
-          priority: 'cold',
-          value: t('kanban.value4'),
-          source: t('kanban.source1')
-        }
-      ]
-    },
-    {
-      id: 'closed',
-      title: t('kanban.closed'),
-      cards: [
-        {
-          id: '5',
-          title: t('kanban.card5'),
-          email: 'roberto@industria.com',
-          phone: '(51) 95555-4444',
-          lastContact: t('kanban.lastWeek'),
-          priority: 'cold',
-          value: t('kanban.value5'),
-          source: t('kanban.source4')
-        }
-      ]
-    }
-  ]);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [segments, setSegments] = useState<Segment[]>([]);
+  const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState('');
+  const [columns, setColumns] = useState<any[]>([]);
 
-  const addCard = (columnId) => {
-    setColumns(prev => prev.map(col =>
-      col.id === columnId
-        ? {
-            ...col,
-            cards: [...col.cards, {
-              id: Date.now().toString(),
-              title: t('kanban.newCard'),
-              email: 'novo@lead.com',
-              phone: '(00) 00000-0000',
-              lastContact: t('kanban.today'),
-              priority: ['hot', 'warm', 'cold'][Math.floor(Math.random() * 3)],
-              value: t('kanban.newValue'),
-              source: t('kanban.newSource')
-            }]
-          }
-        : col
-    ));
+  useEffect(() => {
+    if (!activeCompany) return;
+    fetchInitialData();
+  }, [activeCompany]);
+
+  const fetchInitialData = async () => {
+    try {
+      const [leadRes, segmentRes] = await Promise.all([
+        CrmService.getCrm(activeCompany),
+        SegmentationService.getSegments(activeCompany)
+      ]);
+      const mapped = leadRes.data?.map((lead: any) => {
+        const parsedSource = typeof lead.source === 'string' ? JSON.parse(lead.source) : lead.source;
+        return {
+          id: lead.id,
+          name: lead.jsonData?.nome || lead.jsonData?.name || '',
+          email: lead.jsonData?.email || '',
+          phone: lead.jsonData?.telefone || lead.jsonData?.phone || '',
+          status: (lead.status || 'lead').toLowerCase(),
+          lastContact: new Date(lead.updatedAt),
+          value: lead.jsonData?.valor || lead.jsonData?.value || 0,
+          source: parsedSource?.source || '',
+          jsonData: lead.jsonData || {}
+        } as Lead;
+      }) || [];
+      setLeads(mapped);
+      setSegments(segmentRes.data || []);
+    } catch (err) {
+      console.error('Erro ao buscar leads:', err);
+    }
   };
 
-  const onDragEnd = (result) => {
+  useEffect(() => {
+    updateColumns();
+  }, [leads, selectedSegment, searchText]);
+
+  const filterLeads = () => {
+    let result = [...leads];
+    if (selectedSegment) {
+      const segment = segments.find(s => String(s.id) === selectedSegment);
+      if (segment) {
+        const conditions = segment.conditions || [];
+        result = result.filter(lead => {
+          return conditions.every((condition: any) => {
+            const field = condition.field;
+            let value = (lead as any)[field];
+            if (value === undefined && lead.jsonData) {
+              value = lead.jsonData[field];
+            }
+            if (value === undefined || value === null) return false;
+            const conditionValue = String(condition.value);
+            const leadValueStr = String(value).toLowerCase();
+            switch (condition.operator) {
+              case 'eq':
+                return leadValueStr === conditionValue.toLowerCase();
+              case 'neq':
+                return leadValueStr !== conditionValue.toLowerCase();
+              case 'gt':
+                return !isNaN(Number(value)) && !isNaN(Number(conditionValue)) && Number(value) > Number(conditionValue);
+              case 'lt':
+                return !isNaN(Number(value)) && !isNaN(Number(conditionValue)) && Number(value) < Number(conditionValue);
+              case 'contains':
+                return leadValueStr.includes(conditionValue.toLowerCase());
+              case 'startsWith':
+                return leadValueStr.startsWith(conditionValue.toLowerCase());
+              default:
+                return true;
+            }
+          });
+        });
+      }
+    }
+
+    if (searchText) {
+      const searchLower = searchText.toLowerCase();
+      result = result.filter((lead) => {
+        return (
+          (lead.name && lead.name.toLowerCase().includes(searchLower)) ||
+          (lead.email && lead.email.toLowerCase().includes(searchLower)) ||
+          (lead.status && lead.status.toLowerCase().includes(searchLower)) ||
+          Object.values(lead.jsonData || {}).some(val => typeof val === 'string' && val.toLowerCase().includes(searchLower))
+        );
+      });
+    }
+
+    return result;
+  };
+
+  const updateColumns = () => {
+    const filtered = filterLeads();
+    const statuses = ['lead', 'prospect', 'customer', 'churned'];
+    const newColumns = statuses.map(status => ({
+      id: status,
+      title: status.charAt(0).toUpperCase() + status.slice(1),
+      cards: filtered.filter(l => (l.status || 'lead').toLowerCase() === status).map(l => ({
+        id: l.id,
+        title: l.name || 'Lead',
+        email: l.email,
+        phone: l.phone,
+        lastContact: dayjs(l.lastContact).format('DD/MM/YYYY'),
+        priority: 'hot',
+        value: l.value,
+        source: l.source
+      }))
+    }));
+    setColumns(newColumns);
+  };
+
+  const onDragEnd = (result: any) => {
     const { destination, source, draggableId } = result;
+    if (!destination) return;
+    if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
-    // Se não tiver destino válido (soltar fora de uma área droppable)
-    if (!destination) {
-      return;
-    }
-
-    // Se o card foi solto no mesmo lugar
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
-
-    // Encontrar a coluna de origem
     const sourceColumn = columns.find(col => col.id === source.droppableId);
-    // Encontrar a coluna de destino
     const destColumn = columns.find(col => col.id === destination.droppableId);
+    const sourceCards = [...sourceColumn.cards];
+    const [removed] = sourceCards.splice(source.index, 1);
 
-    // Se for a mesma coluna, reordenar
     if (sourceColumn.id === destColumn.id) {
-      const newCards = [...sourceColumn.cards];
-      // Remover o card da posição de origem
-      const [removed] = newCards.splice(source.index, 1);
-      // Inserir na posição de destino
-      newCards.splice(destination.index, 0, removed);
-
-      // Atualizar a coluna
-      setColumns(prev => prev.map(col =>
-        col.id === sourceColumn.id ? { ...col, cards: newCards } : col
-      ));
+      sourceCards.splice(destination.index, 0, removed);
+      setColumns(prev => prev.map(col => col.id === sourceColumn.id ? { ...col, cards: sourceCards } : col));
     } else {
-      // Movendo entre colunas
-
-      // Remover da coluna de origem
-      const sourceCards = [...sourceColumn.cards];
-      const [removed] = sourceCards.splice(source.index, 1);
-
-      // Adicionar na coluna de destino
       const destCards = [...destColumn.cards];
       destCards.splice(destination.index, 0, removed);
-
       setColumns(prev => prev.map(col => {
-        if (col.id === sourceColumn.id) {
-          return { ...col, cards: sourceCards };
-        } else if (col.id === destColumn.id) {
-          return { ...col, cards: destCards };
-        } else {
-          return col;
-        }
+        if (col.id === sourceColumn.id) return { ...col, cards: sourceCards };
+        if (col.id === destColumn.id) return { ...col, cards: destCards };
+        return col;
       }));
+      setLeads(prev => prev.map(l => l.id === draggableId ? { ...l, status: destColumn.id } : l));
     }
   };
 
@@ -635,13 +657,19 @@ const SalesFunnel = () => {
           <Controls>
             <SearchBox>
               <Search size={18} color="#94a3b8" />
-              <input type="text" placeholder={t('kanban.search')} />
+              <input
+                type="text"
+                placeholder={t('salesFunnel.searchPlaceholder') || t('kanban.search')}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+              />
             </SearchBox>
-            <FilterButton>
-              <Filter size={18} color="#64748b" />
-              {t('kanban.filter')}
-              <ChevronDown size={16} color="#64748b" />
-            </FilterButton>
+            <SegmentSelect value={selectedSegment || ''} onChange={(e) => setSelectedSegment(e.target.value || null)}>
+              <option value="">{t('marketing.crm.selectSegment')}</option>
+              {segments.map(s => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </SegmentSelect>
             <FilterButton style={{ backgroundColor: '#578acd', color: 'white' }}>
               <UserPlus size={16} />
               {t('kanban.addLead')}
@@ -655,13 +683,15 @@ const SalesFunnel = () => {
               key={column.id}
               column={column}
               index={index}
-              onAddCard={() => addCard(column.id)}
+              onAddCard={() => {}}
             />
           ))}
         </ColumnsContainer>
       </KanbanContainer>
     </DragDropContext>
   );
+
 };
 
 export default SalesFunnel;
+
