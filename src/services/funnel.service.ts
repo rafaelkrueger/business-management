@@ -18,11 +18,11 @@ class FunnelService {
   }
 
   static createStage(funnelId: string, data: any) {
-    return http.post(`/funnels/${funnelId}/stages`, data);
+    return http.post(`/funnel/${funnelId}/stages`, data);
   }
 
-  static updateStage(id: string, data: any) {
-    return http.patch(`/funnels/stages/${id}`, data);
+  static updateStages(funnelId: string, stages: string[]) {
+    return http.patch(`/funnel/${funnelId}`, { stages });
   }
 
   static addLead(stageId: string, leadId: string) {
