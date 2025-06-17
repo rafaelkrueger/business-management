@@ -1121,5 +1121,30 @@
       "course": "Ótimo! Vou explicar conceitos complexos de forma simplificada.",
       "default": "Fornecerei respostas precisas e amigáveis."
     }
+  },
+  "kanban": {
+    "title": "Quadro de Projetos",
+    "todo": "A Fazer",
+    "inProgress": "Em Progresso",
+    "review": "Revisão",
+    "done": "Concluído",
+    "search": "Buscar tarefas...",
+    "filter": "Filtrar",
+    "addTask": "Adicionar Tarefa",
+    "newCard": "Nova Tarefa",
+    "newDesc": "Descrição da tarefa",
+    "edit": "Editar Coluna",
+    "delete": "Excluir Coluna",
+    "addFirstCard": "Adicionar o primeiro card",
+    "card1": "Design da Página Inicial",
+    "desc1": "Criar wireframes e mockups",
+    "card2": "Integração com API",
+    "desc2": "Conectar aos serviços do backend",
+    "card3": "Teste de Usuário",
+    "desc3": "Realizar sessões de usabilidade",
+    "card4": "Revisão de Código",
+    "desc4": "Revisar PR #245",
+    "card5": "Preparação para Lançamento",
+    "desc5": "Checklist final de deploy"
   }
 }

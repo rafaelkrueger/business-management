@@ -1,858 +1,667 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  Paper,
-  Chip,
-  IconButton,
-  TextField,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Menu,
-  MenuItem,
-  Tooltip,
-  Avatar,
-  Badge,
-  Select,
-  FormControl,
-  InputLabel
-} from '@mui/material';
-import {
-  Add,
-  Delete,
-  Edit,
-  MoreVert,
-  Person,
-  Business,
-  AttachMoney,
-  DateRange,
-  Notes,
-  Close,
-  Check,
-  FilterList,
-  Search,
-  ViewColumn,
-  Settings
-} from '@mui/icons-material';
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { v4 as uuidv4 } from 'uuid';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import FunnelService from '../../../services/funnel.service.ts';
-import { format } from 'date-fns';
+import styled from 'styled-components';
+import {
+  Plus, MoreVertical, Search, Filter,
+  CircleEllipsis, Trash2, FileEdit, GripVertical,
+  User, ChevronDown, Check, Phone, Mail, Calendar, DollarSign, UserPlus
+} from 'lucide-react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-interface Lead {
-  id: string;
-  name: string;
-  company: string;
-  stageId: string;
-  value: number;
-  email?: string;
-  phone?: string;
-  notes?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  probability?: number;
-  tags?: string[];
-}
+// ======================
+// Estilos com Styled Components
+// ======================
 
-interface Stage {
-  id: string;
-  name: string;
-  color?: string;
-  order: number;
-}
+const KanbanContainer = styled.div`
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  padding: 24px;
+`;
 
-interface SalesFunnelProps {
-  activeCompany: string;
-}
+const KanbanHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
 
-const SalesFunnelKanban: React.FC<SalesFunnelProps> = ({ activeCompany }) => {
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+  }
+`;
+
+const Controls = styled.div`
+  display: flex;
+  gap: 12px;
+`;
+
+const SearchBox = styled.div`
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 6px;
+  padding: 8px 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  width: 240px;
+
+  input {
+    border: none;
+    margin-left: 8px;
+    outline: none;
+    font-size: 14px;
+    width: 100%;
+    color: #64748b;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+`;
+
+const FilterButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #f1f5f9;
+  }
+`;
+
+const ColumnsContainer = styled.div`
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 24px;
+`;
+
+const KanbanColumn = styled.div`
+  min-width: 300px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.05);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ColumnHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+`;
+
+const ColumnTitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #334155;
+    margin: 0;
+  }
+`;
+
+const Badge = styled.span`
+  background-color: #e2e8f0;
+  color: #475569;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 20px;
+`;
+
+const ColumnActions = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+
+const AddCardButton = styled.button`
+  background-color: #578acd;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover {
+    background-color: #3a6db7;
+  }
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 8px;
+  z-index: 10;
+  min-width: 120px;
+`;
+
+const DropdownItem = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 13px;
+  color: #475569;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f1f5f9;
+  }
+`;
+
+const CardsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-grow: 1;
+  min-height: 100px;
+`;
+
+const KanbanCard = styled.div`
+  background: white;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border: 1px solid ${props => props.isDragging ? '#578acd' : '#f1f5f9'};
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  background-color: ${props => props.isDragging ? '#f0f7ff' : 'white'};
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    border-color: #e2e8f0;
+  }
+`;
+
+const CardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+  }
+`;
+
+const DragHandle = styled.button`
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+`;
+
+const CardFooter = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+`;
+
+const Avatars = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const Avatar = styled.div`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #64748b;
+`;
+
+const AddUserButton = styled.button`
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: -8px;
+  color: #578acd;
+  cursor: pointer;
+`;
+
+const MenuButton = styled.button`
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+`;
+
+const PriorityTag = styled.span`
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 10px;
+
+  &.hot {
+    background-color: #fee2e2;
+    color: #dc2626;
+  }
+
+  &.warm {
+    background-color: #fef3c7;
+    color: #d97706;
+  }
+
+  &.cold {
+    background-color: #dbeafe;
+    color: #2563eb;
+  }
+`;
+
+const DropdownContainer = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 20px;
+  color: #94a3b8;
+  font-size: 14px;
+  border: 1px dashed #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f1f5f9;
+  }
+`;
+
+const LeadInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+`;
+
+const LeadDetail = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #64748b;
+
+  svg {
+    flex-shrink: 0;
+  }
+`;
+
+const ValueTag = styled.span`
+  background-color: #dcfce7;
+  color: #16a34a;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+const SourceTag = styled.span`
+  background-color: #ede9fe;
+  color: #7c3aed;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-left: 8px;
+`;
+
+// ======================
+// Componentes React
+// ======================
+
+const KanbanCardComponent = ({ card, index }) => {
+  return (
+    <Draggable draggableId={card.id} index={index}>
+      {(provided, snapshot) => (
+        <KanbanCard
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          isDragging={snapshot.isDragging}
+        >
+          <PriorityTag className={card.priority}>{card.priority}</PriorityTag>
+          <CardHeader>
+            <h4>{card.title}</h4>
+            <DragHandle>
+              <GripVertical size={14} />
+            </DragHandle>
+          </CardHeader>
+
+          <LeadInfo>
+            <LeadDetail>
+              <Phone size={12} />
+              <span>{card.phone}</span>
+            </LeadDetail>
+            <LeadDetail>
+              <Mail size={12} />
+              <span>{card.email}</span>
+            </LeadDetail>
+            <LeadDetail>
+              <Calendar size={12} />
+              <span>{card.lastContact}</span>
+            </LeadDetail>
+          </LeadInfo>
+
+          <CardFooter>
+            <Avatars>
+              <Avatar><User size={12} /></Avatar>
+              <AddUserButton>
+                <Plus size={12} />
+              </AddUserButton>
+            </Avatars>
+            <div>
+              <ValueTag>
+                <DollarSign size={12} />
+                {card.value}
+              </ValueTag>
+              <SourceTag>{card.source}</SourceTag>
+            </div>
+          </CardFooter>
+        </KanbanCard>
+      )}
+    </Draggable>
+  );
+};
+
+const KanbanColumnComponent = ({ column, onAddCard, index }) => {
   const { t } = useTranslation();
-  // State
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [stages, setStages] = useState<Stage[]>([]);
-  const [funnels, setFunnels] = useState<{ id: string; name: string }[]>([]);
-  const [newLeadModalOpen, setNewLeadModalOpen] = useState(false);
-  const [newStageModalOpen, setNewStageModalOpen] = useState(false);
-  const [newFunnelModalOpen, setNewFunnelModalOpen] = useState(false);
-  const [newFunnelName, setNewFunnelName] = useState('');
-  const [editStageModalOpen, setEditStageModalOpen] = useState(false);
-  const [currentStageEdit, setCurrentStageEdit] = useState<Stage | null>(null);
-  const [newLead, setNewLead] = useState<Partial<Lead>>({
-    name: '',
-    company: '',
-    value: 0,
-    stageId: '',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  });
-  const [newStage, setNewStage] = useState<Partial<Stage>>({
-    name: '',
-    color: '#1976d2',
-    order: 0
-  });
-  const [searchTerm, setSearchTerm] = useState('');
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [contextMenuStage, setContextMenuStage] = useState<Stage | null>(null);
-  const [filterTags, setFilterTags] = useState<string[]>([]);
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [currentFunnelId, setCurrentFunnelId] = useState<string>('');
+  const [showMenu, setShowMenu] = useState(false);
 
-  const loadFunnelDetail = async (id: string) => {
-    try {
-      const detailRes = await FunnelService.detail(id);
-      const detail = detailRes.data || {};
-      const st: Stage[] = (detail.stages || []).map((s: any) => ({
-        id: s.stage.id,
-        name: s.stage.name,
-        color: '#1976d2',
-        order: s.stage.position
-      }));
-      const ld: Lead[] = [];
-      (detail.stages || []).forEach((s: any) => {
-        (s.leads || []).forEach((l: any) => {
-          ld.push({
-            id: l.id,
-            name: l.leadId,
-            company: '',
-            stageId: l.stageId,
-            value: 0,
-            createdAt: new Date(l.createdAt),
-            updatedAt: new Date(l.updatedAt)
-          });
-        });
-      });
-      setStages(st);
-      setLeads(ld);
-      const tags = Array.from(new Set(ld.flatMap(lead => lead.tags || [])));
-      setAvailableTags(tags);
-      setCurrentFunnelId(id);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  return (
+    <Droppable droppableId={column.id} type="card">
+      {(provided, snapshot) => (
+        <KanbanColumn
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          isDraggingOver={snapshot.isDraggingOver}
+        >
+          <ColumnHeader>
+            <ColumnTitle>
+              <h3>{column.title}</h3>
+              <Badge>{column.cards.length}</Badge>
+            </ColumnTitle>
+            <ColumnActions>
+              <AddCardButton onClick={onAddCard}>
+                <Plus size={16} />
+              </AddCardButton>
+              <DropdownContainer>
+                <MenuButton onClick={() => setShowMenu(!showMenu)}>
+                  <MoreVertical size={16} />
+                </MenuButton>
+                {showMenu && (
+                  <DropdownMenu>
+                    <DropdownItem>
+                      <FileEdit size={14} /> {t('kanban.edit')}
+                    </DropdownItem>
+                    <DropdownItem>
+                      <Trash2 size={14} /> {t('kanban.delete')}
+                    </DropdownItem>
+                  </DropdownMenu>
+                )}
+              </DropdownContainer>
+            </ColumnActions>
+          </ColumnHeader>
+          <CardsContainer>
+            {column.cards.length > 0 ? (
+              column.cards.map((card, index) => (
+                <KanbanCardComponent key={card.id} card={card} index={index} />
+              ))
+            ) : (
+              <EmptyState onClick={onAddCard}>
+                <Plus size={18} /> {t('kanban.addFirstCard')}
+              </EmptyState>
+            )}
+            {provided.placeholder}
+          </CardsContainer>
+        </KanbanColumn>
+      )}
+    </Droppable>
+  );
+};
 
-  // Load data from API
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const { data } = await FunnelService.list(activeCompany);
-        const all = data || [];
-        setFunnels(all);
-        if (all.length > 0) {
-          await loadFunnelDetail(all[0].id);
-        } else {
-          setStages([]);
-          setLeads([]);
-          setCurrentFunnelId('');
+const SalesFunnel = () => {
+  const { t } = useTranslation();
+  const [columns, setColumns] = useState([
+    {
+      id: 'new',
+      title: t('kanban.newLeads'),
+      cards: [
+        {
+          id: '1',
+          title: t('kanban.card1'),
+          email: 'marcos@empresa.com',
+          phone: '(11) 99999-8888',
+          lastContact: t('kanban.today'),
+          priority: 'hot',
+          value: t('kanban.value1'),
+          source: t('kanban.source1')
+        },
+        {
+          id: '2',
+          title: t('kanban.card2'),
+          email: 'ana@startup.com',
+          phone: '(21) 98888-7777',
+          lastContact: t('kanban.yesterday'),
+          priority: 'warm',
+          value: t('kanban.value2'),
+          source: t('kanban.source2')
         }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    load();
-  }, [activeCompany]);
-
-  // Handlers
-  const handleDrop = async (leadId: string, targetStage: string) => {
-    setLeads(prev =>
-      prev.map(lead =>
-        lead.id === leadId
-          ? { ...lead, stageId: targetStage, updatedAt: new Date() }
-          : lead
-      )
-    );
-    try {
-      await FunnelService.moveLead(leadId, targetStage);
-    } catch (e) {
-      console.error(e);
+      ]
+    },
+    {
+      id: 'contacted',
+      title: t('kanban.contacted'),
+      cards: [
+        {
+          id: '3',
+          title: t('kanban.card3'),
+          email: 'carlos@tech.com',
+          phone: '(31) 97777-6666',
+          lastContact: t('kanban.today'),
+          priority: 'hot',
+          value: t('kanban.value3'),
+          source: t('kanban.source3')
+        }
+      ]
+    },
+    {
+      id: 'proposal',
+      title: t('kanban.proposalSent'),
+      cards: [
+        {
+          id: '4',
+          title: t('kanban.card4'),
+          email: 'juliana@consulting.com',
+          phone: '(41) 96666-5555',
+          lastContact: t('kanban.twoDaysAgo'),
+          priority: 'cold',
+          value: t('kanban.value4'),
+          source: t('kanban.source1')
+        }
+      ]
+    },
+    {
+      id: 'closed',
+      title: t('kanban.closed'),
+      cards: [
+        {
+          id: '5',
+          title: t('kanban.card5'),
+          email: 'roberto@industria.com',
+          phone: '(51) 95555-4444',
+          lastContact: t('kanban.lastWeek'),
+          priority: 'cold',
+          value: t('kanban.value5'),
+          source: t('kanban.source4')
+        }
+      ]
     }
-  };
+  ]);
 
-  const handleFunnelChange = (id: string) => {
-    loadFunnelDetail(id);
-  };
-
-  const handleAddLead = async () => {
-    if (!newLead.name || !newLead.company || !newLead.stageId) return;
-
-    const lead: Lead = {
-      id: uuidv4(),
-      name: newLead.name,
-      company: newLead.company,
-      stageId: newLead.stageId!,
-      value: newLead.value || 0,
-      email: newLead.email,
-      phone: newLead.phone,
-      notes: newLead.notes,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      probability: newLead.probability,
-      tags: newLead.tags
-    };
-
-    setLeads([...leads, lead]);
-    try {
-      await FunnelService.addLead(lead.stageId, lead.id);
-    } catch (e) {
-      console.error(e);
-    }
-    setNewLead({
-      name: '',
-      company: '',
-      value: 0,
-      stageId: '',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    });
-    setNewLeadModalOpen(false);
-
-    // Update available tags if new ones were added
-    if (lead.tags) {
-      const newTags = lead.tags.filter(tag => !availableTags.includes(tag));
-      if (newTags.length > 0) {
-        setAvailableTags([...availableTags, ...newTags]);
-      }
-    }
-  };
-
-  const handleAddStage = async () => {
-    if (!newStage.name) return;
-
-    const stage: Stage = {
-      id: uuidv4(),
-      name: newStage.name!,
-      color: newStage.color || '#1976d2',
-      order: stages.length
-    };
-
-    setStages([...stages, stage]);
-    try {
-      await FunnelService.createStage(currentFunnelId, { name: stage.name, position: stage.order });
-    } catch (e) {
-      console.error(e);
-    }
-    setNewStage({
-      name: '',
-      color: '#1976d2',
-      order: 0
-    });
-    setNewStageModalOpen(false);
-  };
-
-  const handleCreateFunnel = async () => {
-    if (!newFunnelName) return;
-    try {
-      const res = await FunnelService.create({
-        companyId: activeCompany,
-        name: newFunnelName,
-      });
-      const funnel = res.data;
-      setFunnels([...funnels, funnel]);
-      setNewFunnelModalOpen(false);
-      setNewFunnelName('');
-      await loadFunnelDetail(funnel.id);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const handleUpdateStage = async () => {
-    if (!currentStageEdit) return;
-
-    setStages(stages.map(stage =>
-      stage.id === currentStageEdit.id ? currentStageEdit : stage
+  const addCard = (columnId) => {
+    setColumns(prev => prev.map(col =>
+      col.id === columnId
+        ? {
+            ...col,
+            cards: [...col.cards, {
+              id: Date.now().toString(),
+              title: t('kanban.newCard'),
+              email: 'novo@lead.com',
+              phone: '(00) 00000-0000',
+              lastContact: t('kanban.today'),
+              priority: ['hot', 'warm', 'cold'][Math.floor(Math.random() * 3)],
+              value: t('kanban.newValue'),
+              source: t('kanban.newSource')
+            }]
+          }
+        : col
     ));
-    try {
-      await FunnelService.updateStage(currentStageEdit.id, {
-        name: currentStageEdit.name,
-        position: currentStageEdit.order,
-      });
-    } catch (e) {
-      console.error(e);
-    }
-    setEditStageModalOpen(false);
-    setCurrentStageEdit(null);
   };
 
-  const handleDeleteStage = (stageId: string) => {
-    // Move all leads from this stage to the first available stage
-    const newStageId = stages.find(s => s.id !== stageId)?.id;
-    if (newStageId) {
-      setLeads(leads.map(lead =>
-        lead.stageId === stageId ? { ...lead, stageId: newStageId } : lead
+  const onDragEnd = (result) => {
+    const { destination, source, draggableId } = result;
+
+    // Se não tiver destino válido (soltar fora de uma área droppable)
+    if (!destination) {
+      return;
+    }
+
+    // Se o card foi solto no mesmo lugar
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    // Encontrar a coluna de origem
+    const sourceColumn = columns.find(col => col.id === source.droppableId);
+    // Encontrar a coluna de destino
+    const destColumn = columns.find(col => col.id === destination.droppableId);
+
+    // Se for a mesma coluna, reordenar
+    if (sourceColumn.id === destColumn.id) {
+      const newCards = [...sourceColumn.cards];
+      // Remover o card da posição de origem
+      const [removed] = newCards.splice(source.index, 1);
+      // Inserir na posição de destino
+      newCards.splice(destination.index, 0, removed);
+
+      // Atualizar a coluna
+      setColumns(prev => prev.map(col =>
+        col.id === sourceColumn.id ? { ...col, cards: newCards } : col
       ));
+    } else {
+      // Movendo entre colunas
+
+      // Remover da coluna de origem
+      const sourceCards = [...sourceColumn.cards];
+      const [removed] = sourceCards.splice(source.index, 1);
+
+      // Adicionar na coluna de destino
+      const destCards = [...destColumn.cards];
+      destCards.splice(destination.index, 0, removed);
+
+      setColumns(prev => prev.map(col => {
+        if (col.id === sourceColumn.id) {
+          return { ...col, cards: sourceCards };
+        } else if (col.id === destColumn.id) {
+          return { ...col, cards: destCards };
+        } else {
+          return col;
+        }
+      }));
     }
-
-    setStages(stages.filter(stage => stage.id !== stageId));
-    setEditStageModalOpen(false);
-    setCurrentStageEdit(null);
   };
-
-  const handleDeleteLead = (leadId: string) => {
-    setLeads(leads.filter(lead => lead.id !== leadId));
-  };
-
-  const handleContextMenu = (event: React.MouseEvent<HTMLElement>, stage: Stage) => {
-    event.preventDefault();
-    setAnchorEl(event.currentTarget);
-    setContextMenuStage(stage);
-  };
-
-  const handleCloseContextMenu = () => {
-    setAnchorEl(null);
-    setContextMenuStage(null);
-  };
-
-  const handleEditStage = () => {
-    if (!contextMenuStage) return;
-    setCurrentStageEdit(contextMenuStage);
-    setEditStageModalOpen(true);
-    handleCloseContextMenu();
-  };
-
-  const handleStageColorChange = (color: string) => {
-    if (!currentStageEdit) return;
-    setCurrentStageEdit({ ...currentStageEdit, color });
-  };
-
-  const filteredLeads = leads.filter(lead => {
-    const matchesSearch =
-      lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      lead.phone?.includes(searchTerm);
-
-    const matchesTags =
-      filterTags.length === 0 ||
-      (lead.tags && filterTags.every(tag => lead.tags!.includes(tag)));
-
-    return matchesSearch && matchesTags;
-  });
-
-  const calculateStageValue = (stageId: string) => {
-    return filteredLeads
-      .filter(lead => lead.stageId === stageId)
-      .reduce((sum, lead) => sum + lead.value, 0);
-  };
-
-  const calculateTotalValue = () => {
-    return filteredLeads.reduce((sum, lead) => sum + lead.value, 0);
-  };
-
-  const sortedStages = [...stages].sort((a, b) => a.order - b.order);
 
   return (
-    <Box sx={{ p: 2 }}>
-      {/* Header with controls */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Typography variant="h4" gutterBottom>
-            {t('salesFunnel.title')}
-          </Typography>
-          <FormControl size="small" sx={{ minWidth: 160 }}>
-            <InputLabel>{t('salesFunnel.selectFunnel')}</InputLabel>
-            <Select
-              value={currentFunnelId}
-              label={t('salesFunnel.selectFunnel')}
-              onChange={(e) => handleFunnelChange(e.target.value as string)}
-            >
-              {funnels.map((f) => (
-                <MenuItem key={f.id} value={f.id}>
-                  {f.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<Add />}
-            onClick={() => setNewFunnelModalOpen(true)}
-          >
-            {t('salesFunnel.addFunnel')}
-          </Button>
-        </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <TextField
-            size="small"
-            placeholder={t('salesFunnel.searchPlaceholder')}
-            InputProps={{
-              startAdornment: <Search sx={{ mr: 1 }} />
-            }}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <Tooltip title="Filter by tags">
-            <Select
-              multiple
-              size="small"
-              value={filterTags}
-              onChange={(e) => setFilterTags(e.target.value as string[])}
-              renderValue={(selected) => (
-                <Box sx={{ display: 'flex', gap: 0.5 }}>
-                  <FilterList />
-                  {selected.length > 0 && <Chip label={selected.length} size="small" />}
-                </Box>
-              )}
-              sx={{ width: 120 }}
-            >
-              {availableTags.map((tag) => (
-                <MenuItem key={tag} value={tag}>
-                  {tag}
-                </MenuItem>
-              ))}
-            </Select>
-          </Tooltip>
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => setNewLeadModalOpen(true)}
-          >
-            {t('salesFunnel.addLead')}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<Add />}
-            onClick={() => setNewStageModalOpen(true)}
-          >
-            {t('salesFunnel.addStage')}
-          </Button>
-          <Tooltip title={t('salesFunnel.settings')}>
-            <IconButton onClick={() => setSettingsOpen(true)}>
-              <Settings />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      </Box>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <KanbanContainer>
+        <KanbanHeader>
+          <h1>{t('kanban.title')}</h1>
+          <Controls>
+            <SearchBox>
+              <Search size={18} color="#94a3b8" />
+              <input type="text" placeholder={t('kanban.search')} />
+            </SearchBox>
+            <FilterButton>
+              <Filter size={18} color="#64748b" />
+              {t('kanban.filter')}
+              <ChevronDown size={16} color="#64748b" />
+            </FilterButton>
+            <FilterButton style={{ backgroundColor: '#578acd', color: 'white' }}>
+              <UserPlus size={16} />
+              {t('kanban.addLead')}
+            </FilterButton>
+          </Controls>
+        </KanbanHeader>
 
-      {/* Kanban board */}
-      <DndProvider backend={HTML5Backend}>
-        <Box sx={{ display: 'flex', gap: 2, overflowX: 'auto', p: 2 }}>
-          {sortedStages.map((stage) => (
-            <Box
-              key={stage.id}
-              onContextMenu={(e) => handleContextMenu(e, stage)}
-              sx={{ minWidth: 300 }}
-            >
-              <StageColumn
-                stage={stage}
-                leads={filteredLeads.filter((lead) => lead.stageId === stage.id)}
-                onDrop={handleDrop}
-                onAddLead={() => {
-                  setNewLead({ ...newLead, stageId: stage.id });
-                  setNewLeadModalOpen(true);
-                }}
-                onDeleteLead={handleDeleteLead}
-              />
-            </Box>
+        <ColumnsContainer>
+          {columns.map((column, index) => (
+            <KanbanColumnComponent
+              key={column.id}
+              column={column}
+              index={index}
+              onAddCard={() => addCard(column.id)}
+            />
           ))}
-        </Box>
-      </DndProvider>
-
-      {/* Context menu for stages */}
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleCloseContextMenu}
-      >
-        <MenuItem onClick={handleEditStage}>
-          <Edit sx={{ mr: 1 }} /> {t('salesFunnel.editStage')}
-        </MenuItem>
-        <MenuItem onClick={() => {
-          if (!contextMenuStage) return;
-          setCurrentStageEdit(contextMenuStage);
-          handleCloseContextMenu();
-          handleDeleteStage(contextMenuStage.id);
-        }}>
-          <Delete sx={{ mr: 1 }} /> {t('salesFunnel.deleteStage')}
-        </MenuItem>
-      </Menu>
-
-      {/* Add Lead Modal */}
-      <Dialog open={newLeadModalOpen} onClose={() => setNewLeadModalOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle>{t('salesFunnel.newLead')}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            <TextField
-              label={t('salesFunnel.name')}
-              fullWidth
-              value={newLead.name}
-              onChange={(e) => setNewLead({ ...newLead, name: e.target.value })}
-            />
-            <TextField
-              label={t('salesFunnel.company')}
-              fullWidth
-              value={newLead.company}
-              onChange={(e) => setNewLead({ ...newLead, company: e.target.value })}
-            />
-            <FormControl fullWidth>
-              <InputLabel>{t('salesFunnel.stage')}</InputLabel>
-              <Select
-                value={newLead.stageId}
-                label={t('salesFunnel.stage')}
-                onChange={(e) => setNewLead({ ...newLead, stageId: e.target.value as string })}
-              >
-                {stages.map(stage => (
-                  <MenuItem key={stage.id} value={stage.id}>{stage.name}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <TextField
-              label={t('salesFunnel.value')}
-              type="number"
-              fullWidth
-              InputProps={{
-                startAdornment: <AttachMoney sx={{ mr: 1 }} />
-              }}
-              value={newLead.value}
-              onChange={(e) => setNewLead({ ...newLead, value: Number(e.target.value) })}
-            />
-            <TextField
-              label="Email"
-              fullWidth
-              value={newLead.email || ''}
-              onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
-            />
-            <TextField
-              label="Phone"
-              fullWidth
-              value={newLead.phone || ''}
-              onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
-            />
-            <TextField
-              label="Probability (%)"
-              type="number"
-              fullWidth
-              value={newLead.probability || 0}
-              onChange={(e) => setNewLead({ ...newLead, probability: Number(e.target.value) })}
-              inputProps={{ min: 0, max: 100 }}
-            />
-            <TextField
-              label="Tags (comma separated)"
-              fullWidth
-              value={newLead.tags?.join(', ') || ''}
-              onChange={(e) => setNewLead({
-                ...newLead,
-                tags: e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag)
-              })}
-            />
-            <TextField
-              label="Notes"
-              fullWidth
-              multiline
-              rows={3}
-              value={newLead.notes || ''}
-              onChange={(e) => setNewLead({ ...newLead, notes: e.target.value })}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setNewLeadModalOpen(false)}>{t('salesFunnel.cancel')}</Button>
-          <Button onClick={handleAddLead} variant="contained">{t('salesFunnel.addLead')}</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Add Funnel Modal */}
-      <Dialog open={newFunnelModalOpen} onClose={() => setNewFunnelModalOpen(false)}>
-        <DialogTitle>{t('salesFunnel.newFunnel')}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            <TextField
-              label={t('salesFunnel.funnelName')}
-              fullWidth
-              value={newFunnelName}
-              onChange={(e) => setNewFunnelName(e.target.value)}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setNewFunnelModalOpen(false)}>{t('salesFunnel.cancel')}</Button>
-          <Button onClick={handleCreateFunnel} variant="contained">{t('salesFunnel.addFunnel')}</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Add Stage Modal */}
-      <Dialog open={newStageModalOpen} onClose={() => setNewStageModalOpen(false)}>
-        <DialogTitle>{t('salesFunnel.newStage')}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            <TextField
-              label={t('salesFunnel.name')}
-              fullWidth
-              value={newStage.name}
-              onChange={(e) => setNewStage({ ...newStage, name: e.target.value })}
-            />
-            <TextField
-              label={t('salesFunnel.color')}
-              type="color"
-              fullWidth
-              value={newStage.color}
-              onChange={(e) => setNewStage({ ...newStage, color: e.target.value })}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setNewStageModalOpen(false)}>{t('salesFunnel.cancel')}</Button>
-          <Button onClick={handleAddStage} variant="contained">{t('salesFunnel.addStage')}</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Edit Stage Modal */}
-      <Dialog open={editStageModalOpen} onClose={() => setEditStageModalOpen(false)}>
-        <DialogTitle>{t('salesFunnel.editStage')}</DialogTitle>
-        <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            <TextField
-              label={t('salesFunnel.name')}
-              fullWidth
-              value={currentStageEdit?.name || ''}
-              onChange={(e) => currentStageEdit && setCurrentStageEdit({ ...currentStageEdit, name: e.target.value })}
-            />
-            <TextField
-              label={t('salesFunnel.color')}
-              type="color"
-              fullWidth
-              value={currentStageEdit?.color || '#1976d2'}
-              onChange={(e) => currentStageEdit && setCurrentStageEdit({ ...currentStageEdit, color: e.target.value })}
-            />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => currentStageEdit && handleDeleteStage(currentStageEdit.id)}
-            color="error"
-          >
-            {t('salesFunnel.delete')}
-          </Button>
-          <Button onClick={() => setEditStageModalOpen(false)}>{t('salesFunnel.cancel')}</Button>
-          <Button onClick={handleUpdateStage} variant="contained">{t('salesFunnel.save')}</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Settings Modal */}
-      <Dialog open={settingsOpen} onClose={() => setSettingsOpen(false)} fullWidth maxWidth="md">
-        <DialogTitle>{t('salesFunnel.settings')}</DialogTitle>
-        <DialogContent>
-          <Typography variant="h6" gutterBottom>{t('salesFunnel.reorderStages')}</Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {sortedStages.map(stage => (
-              <Paper key={stage.id} sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
-                <IconButton sx={{ cursor: 'grab' }}>
-                  <ViewColumn />
-                </IconButton>
-                <Box sx={{ flex: 1, ml: 2 }}>
-                  <Typography>{stage.name}</Typography>
-                </Box>
-                <Box sx={{ width: 20, height: 20, backgroundColor: stage.color, borderRadius: '50%' }} />
-              </Paper>
-            ))}
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setSettingsOpen(false)}>{t('common.close')}</Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+        </ColumnsContainer>
+      </KanbanContainer>
+    </DragDropContext>
   );
 };
 
-interface StageColumnProps {
-  stage: Stage;
-  leads: Lead[];
-  onDrop: (leadId: string, targetStage: string) => void;
-  onAddLead: () => void;
-  onDeleteLead: (leadId: string) => void;
-}
-
-const StageColumn: React.FC<StageColumnProps> = ({ stage, leads, onDrop, onAddLead, onDeleteLead }) => {
-  const [, drop] = useDrop(() => ({
-    accept: 'LEAD',
-    drop: (item: { id: string }) => onDrop(item.id, stage.id),
-  }), [stage]);
-
-  return (
-    <Box ref={drop} sx={{
-      width: '100%',
-      minHeight: 500,
-      bgcolor: '#f9f9f9',
-      p: 2,
-      borderRadius: 2,
-      borderTop: `4px solid ${stage.color}`,
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>{stage.name}</Typography>
-        <Badge badgeContent={leads.length} color="primary" />
-      </Box>
-
-      <Box sx={{ flex: 1, overflowY: 'auto', mb: 2 }}>
-        {leads.length === 0 ? (
-          <Paper sx={{ p: 2, textAlign: 'center', color: 'text.secondary' }}>
-            {t('salesFunnel.noLeads')}
-          </Paper>
-        ) : (
-          leads.map((lead) => (
-            <LeadCard
-              key={lead.id}
-              lead={lead}
-              onDrop={onDrop}
-              onDelete={() => onDeleteLead(lead.id)}
-            />
-          ))
-        )}
-      </Box>
-    </Box>
-  );
-};
-
-interface LeadCardProps {
-  lead: Lead;
-  onDrop: (leadId: string, targetStage: string) => void;
-  onDelete: () => void;
-}
-
-const LeadCard: React.FC<LeadCardProps> = ({ lead, onDrop, onDelete }) => {
-  const [expanded, setExpanded] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'LEAD',
-    item: { id: lead.id },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }), [lead]);
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  return (
-    <Paper
-      ref={drag}
-      elevation={3}
-      sx={{
-        p: 2,
-        mb: 2,
-        opacity: isDragging ? 0.5 : 1,
-        cursor: 'grab',
-        position: 'relative'
-      }}
-      onClick={() => setExpanded(!expanded)}
-    >
-      <IconButton
-        sx={{
-          position: 'absolute',
-          top: 4,
-          right: 4,
-          zIndex: 1
-        }}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleClick(e);
-        }}
-      >
-        <MoreVert fontSize="small" />
-      </IconButton>
-
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <MenuItem onClick={() => {
-          onDelete();
-          handleClose();
-        }}>
-          <Delete sx={{ mr: 1 }} /> {t('salesFunnel.delete')}
-        </MenuItem>
-      </Menu>
-
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-        <Avatar sx={{ bgcolor: 'primary.main', width: 32, height: 32, mr: 1 }}>
-          <Person fontSize="small" />
-        </Avatar>
-        <Typography fontWeight={600}>{lead.name}</Typography>
-      </Box>
-
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-        <Business fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
-        <Typography variant="body2" color="text.secondary">{lead.company}</Typography>
-      </Box>
-
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-        <AttachMoney fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
-        <Typography variant="body2">
-          R$ {lead.value.toLocaleString()}
-        </Typography>
-      </Box>
-
-      {lead.probability && (
-        <Box sx={{ mb: 1 }}>
-          <Typography variant="caption">Probability: {lead.probability}%</Typography>
-          <Box sx={{ width: '100%', height: 4, bgcolor: 'divider', borderRadius: 2, mt: 0.5 }}>
-            <Box sx={{
-              width: `${lead.probability}%`,
-              height: '100%',
-              bgcolor: 'primary.main',
-              borderRadius: 2
-            }} />
-          </Box>
-        </Box>
-      )}
-
-      {expanded && (
-        <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
-          {lead.email && (
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              <strong>Email:</strong> {lead.email}
-            </Typography>
-          )}
-          {lead.phone && (
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              <strong>Phone:</strong> {lead.phone}
-            </Typography>
-          )}
-          {lead.tags && lead.tags.length > 0 && (
-            <Box sx={{ mb: 1 }}>
-              <Typography variant="body2" component="span" sx={{ mr: 1 }}>
-                <strong>Tags:</strong>
-              </Typography>
-              {lead.tags.map(tag => (
-                <Chip key={tag} label={tag} size="small" sx={{ mr: 0.5, mb: 0.5 }} />
-              ))}
-            </Box>
-          )}
-          {lead.notes && (
-            <Box sx={{ mb: 1 }}>
-              <Typography variant="body2">
-                <strong>Notes:</strong> {lead.notes}
-              </Typography>
-            </Box>
-          )}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="caption" color="text.secondary">
-              Created: {format(new Date(lead.createdAt), 'MMM d, yyyy')}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              Updated: {format(new Date(lead.updatedAt), 'MMM d, yyyy')}
-            </Typography>
-          </Box>
-        </Box>
-      )}
-    </Paper>
-  );
-};
-
-export default SalesFunnelKanban;
+export default SalesFunnel;

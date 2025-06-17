@@ -1114,5 +1114,30 @@
       "course": "Great! I'll explain complex concepts in a simplified way.",
       "default": "I'll provide accurate and friendly answers."
     }
+  },
+  "kanban": {
+    "title": "Project Board",
+    "todo": "To Do",
+    "inProgress": "In Progress",
+    "review": "Review",
+    "done": "Done",
+    "search": "Search tasks...",
+    "filter": "Filter",
+    "addTask": "Add Task",
+    "newCard": "New Task",
+    "newDesc": "Task description",
+    "edit": "Edit Column",
+    "delete": "Delete Column",
+    "addFirstCard": "Add first card",
+    "card1": "Design Homepage",
+    "desc1": "Create wireframes and mockups",
+    "card2": "API Integration",
+    "desc2": "Connect to backend services",
+    "card3": "User Testing",
+    "desc3": "Conduct usability sessions",
+    "card4": "Code Review",
+    "desc4": "Review PR #245",
+    "card5": "Launch Prep",
+    "desc5": "Final deployment checklist"
   }
 }
