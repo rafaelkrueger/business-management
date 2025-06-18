@@ -26,6 +26,7 @@ import SegmentationService from '../../../../services/segmentation.service.ts';
 import FunnelService from '../../../../services/funnel.service.ts';
 import { ArrowBackIos } from '@mui/icons-material';
 import { PlusOutlined } from '@ant-design/icons';
+import LeadDetailsModal from '../lead-details-modal';
 
 // ======================
 // Estilos com Styled Components para Mobile
@@ -396,12 +397,12 @@ interface Segment {
 // Componentes React para Mobile
 // ======================
 
-const KanbanCardMobile = ({ card, onMove }) => {
+const KanbanCardMobile = ({ card, onMove, onClick }) => {
   const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
 
   return (
-    <KanbanCardMobileContainer>
+    <KanbanCardMobileContainer onClick={onClick}>
       <PriorityTagMobile className={card.priority}>{card.priority}</PriorityTagMobile>
       <CardHeaderMobile>
         <h4>{card.title}</h4>
@@ -457,7 +458,8 @@ const StageAccordionComponent = ({
   onEditStage,
   onDeleteStage,
   onAddCard,
-  onMoveLead
+  onMoveLead,
+  onViewLead
 }) => {
   const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
@@ -516,7 +518,12 @@ const StageAccordionComponent = ({
         <CardsContainerMobile>
         {column.cards.length > 0 ? (
         column.cards.map((card) => (
-            <KanbanCardMobile key={card.id} card={card} onMove={() => onMoveLead(card.id)} />
+            <KanbanCardMobile
+              key={card.id}
+              card={card}
+              onMove={() => onMoveLead(card.id)}
+              onClick={() => onViewLead(card.id)}
+            />
         ))
         ) : (
         <EmptyStateMobile onClick={onAddCard}>
@@ -554,6 +561,7 @@ const SalesFunnelMobile: React.FC<{ activeCompany?: string, setModule: any }> = 
   const [moveLeadModalOpen, setMoveLeadModalOpen] = useState(false);
   const [selectedLeadId, setSelectedLeadId] = useState<string>('');
   const [selectedStageId, setSelectedStageId] = useState<string>('');
+  const [viewLead, setViewLead] = useState<Lead | null>(null);
 
   useEffect(() => {
     if (!activeCompany) return;
@@ -743,6 +751,11 @@ const SalesFunnelMobile: React.FC<{ activeCompany?: string, setModule: any }> = 
   const handleMoveLead = (leadId: string) => {
     setSelectedLeadId(leadId);
     setMoveLeadModalOpen(true);
+  };
+
+  const handleViewLead = (leadId: string) => {
+    const lead = leads.find(l => l.id === leadId);
+    if (lead) setViewLead(lead);
   };
 
   const confirmMoveLead = async () => {
@@ -948,6 +961,7 @@ const SalesFunnelMobile: React.FC<{ activeCompany?: string, setModule: any }> = 
             onDeleteStage={handleDeleteStage}
             onAddCard={() => {}}
             onMoveLead={handleMoveLead}
+            onViewLead={handleViewLead}
           />
         ))}
 
@@ -1076,6 +1090,11 @@ const SalesFunnelMobile: React.FC<{ activeCompany?: string, setModule: any }> = 
           </Button>
         </DialogActions>
       </Dialog>
+      <LeadDetailsModal
+        open={!!viewLead}
+        lead={viewLead}
+        onClose={() => setViewLead(null)}
+      />
     </MobileContainer>
   );
 };

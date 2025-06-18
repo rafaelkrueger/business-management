@@ -26,6 +26,7 @@ import CrmService from '../../../services/crm.service.ts';
 import SegmentationService from '../../../services/segmentation.service.ts';
 import FunnelService from '../../../services/funnel.service.ts';
 import { ArrowBackIos } from '@mui/icons-material';
+import LeadDetailsModal from './lead-details-modal';
 
 // ======================
 // Estilos com Styled Components
@@ -435,7 +436,7 @@ interface Segment {
 // Componentes React
 // ======================
 
-const KanbanCardComponent = ({ card, index }) => {
+const KanbanCardComponent = ({ card, index, onClick }) => {
   return (
     <Draggable draggableId={card.id} index={index}>
       {(provided, snapshot) => (
@@ -444,6 +445,7 @@ const KanbanCardComponent = ({ card, index }) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           isDragging={snapshot.isDragging}
+          onClick={onClick}
         >
           <PriorityTag className={card.priority}>{card.priority}</PriorityTag>
           <CardHeader>
@@ -489,7 +491,7 @@ const KanbanCardComponent = ({ card, index }) => {
   );
 };
 
-const KanbanColumnComponent = ({ column, onAddCard, onEditStage, onDeleteStage, innerRef, dragHandleProps, draggableProps }) => {
+const KanbanColumnComponent = ({ column, onAddCard, onEditStage, onDeleteStage, onViewLead, innerRef, dragHandleProps, draggableProps }) => {
   const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
 
@@ -528,7 +530,12 @@ const KanbanColumnComponent = ({ column, onAddCard, onEditStage, onDeleteStage, 
           <CardsContainer>
             {column.cards.length > 0 ? (
               column.cards.map((card, index) => (
-                <KanbanCardComponent key={card.id} card={card} index={index} />
+                <KanbanCardComponent
+                  key={card.id}
+                  card={card}
+                  index={index}
+                  onClick={() => onViewLead(card.id)}
+                />
               ))
             ) : (
               <EmptyState onClick={onAddCard}>
@@ -565,6 +572,7 @@ const SalesFunnel: React.FC<{ activeCompany?: string, setModule:any }> = ({ acti
   const [editingStage, setEditingStage] = useState<string | null>(null);
   const [deleteStage, setDeleteStage] = useState<string | null>(null);
   const [leadActivities, setLeadActivities] = useState<Record<string, string>>({});
+  const [viewLead, setViewLead] = useState<Lead | null>(null);
 
   useEffect(() => {
     if (!activeCompany) return;
@@ -851,6 +859,11 @@ const updateColumns = () => {
     setDeleteStage(null);
   };
 
+  const handleViewLead = (id: string) => {
+    const lead = leads.find(l => l.id === id);
+    if (lead) setViewLead(lead);
+  };
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <KanbanContainer>
@@ -898,6 +911,7 @@ const updateColumns = () => {
                   onAddCard={() => handleAddCard(column.id)}
                   onEditStage={(stage) => handleEditStage(stage)}
                   onDeleteStage={(stage) => handleDeleteStage(stage)}
+                  onViewLead={handleViewLead}
                 />
               ))}
               {provided.placeholder}
@@ -993,6 +1007,11 @@ const updateColumns = () => {
           <Button color="error" variant="contained" onClick={confirmDeleteStage}>{t('salesFunnel.delete')}</Button>
         </DialogActions>
       </Dialog>
+      <LeadDetailsModal
+        open={!!viewLead}
+        lead={viewLead}
+        onClose={() => setViewLead(null)}
+      />
     </DragDropContext>
   );
 
