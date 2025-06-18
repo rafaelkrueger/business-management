@@ -453,7 +453,8 @@ const StageAccordionComponent = ({
   toggleAccordion,
   onEditStage,
   onDeleteStage,
-  onAddCard
+  onAddCard,
+  onMoveLead
 }) => {
   const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
@@ -495,7 +496,7 @@ const StageAccordionComponent = ({
         <CardsContainerMobile>
         {column.cards.length > 0 ? (
         column.cards.map((card) => (
-            <KanbanCardMobile key={card.id} card={card} onMove={() => {}} />
+            <KanbanCardMobile key={card.id} card={card} onMove={() => onMoveLead(card.id)} />
         ))
         ) : (
         <EmptyStateMobile onClick={onAddCard}>
@@ -926,6 +927,7 @@ const SalesFunnelMobile: React.FC<{ activeCompany?: string, setModule: any }> = 
             onEditStage={handleEditStage}
             onDeleteStage={handleDeleteStage}
             onAddCard={() => {}}
+            onMoveLead={handleMoveLead}
           />
         ))}
 
