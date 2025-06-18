@@ -879,7 +879,7 @@ const cards = [
             onComplete={() => handleModuleComplete('crm')}
           />
         ) : module === 'funnel' ? (
-          <SalesFunnel activeCompany={props.activeCompany} />
+          <SalesFunnel activeCompany={props.activeCompany} setModule={setModule} />
         ) : module === 'chatbot' ? (
           <ChatbotManager activeCompany={props.activeCompany} setModule={setModule} />
         ) : null}

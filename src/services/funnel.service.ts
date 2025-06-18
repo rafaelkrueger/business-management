@@ -29,8 +29,19 @@ class FunnelService {
     return http.post(`/funnels/stages/${stageId}/leads`, { leadId });
   }
 
-  static moveLead(entryId: string, toStageId: string) {
-    return http.patch(`/funnels/leads/${entryId}/move`, { toStageId });
+  static getLeadActivity(entryId) {
+    // response example:
+    // [
+    //   {
+    //     "leadId": "5200a1ca-a25d-48b1-9d73-ec8ac72c84eb",
+    //     "toStageId": "lead"
+    //   }
+    // ]
+    return http.get(`/funnels/leads/${entryId}`);
+  }
+
+  static moveLead(entryId: string, leadId: string, columnId: string) {
+    return http.patch(`/funnels/leads/${entryId}/move`, { id: leadId, column: columnId });
   }
 }
 

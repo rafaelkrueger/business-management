@@ -54,6 +54,7 @@ import MobileCapturePages from "../capture-pages/mobile/index.tsx";
 import PremiumMarketingAssistantMobile from "../ai/mobile/index.tsx";
 import MarketingService from "../../../services/marketing.service.ts";
 import {ChatbotManager} from "../chatbot/index.tsx";
+import SalesFunnelMobile from "../funnel/mobile/index.tsx";
 
 const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
   const { t } = useTranslation();
@@ -454,7 +455,7 @@ const cards = [
   } else if (module === 'crm') {
     return <CRMAppMobile activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('crm')} />;
   } else if (module === 'funnel') {
-    return <SalesFunnel />;
+    return <SalesFunnelMobile activeCompany={props.activeCompany} setModule={setModule} />;
   }else if (module === 'chatbot') {
     return <ChatbotManager activeCompany={props.activeCompany} setModule={setModule} />;
   }

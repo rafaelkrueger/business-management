@@ -25,6 +25,7 @@ import dayjs from 'dayjs';
 import CrmService from '../../../services/crm.service.ts';
 import SegmentationService from '../../../services/segmentation.service.ts';
 import FunnelService from '../../../services/funnel.service.ts';
+import { ArrowBackIos } from '@mui/icons-material';
 
 // ======================
 // Estilos com Styled Components
@@ -543,7 +544,7 @@ const KanbanColumnComponent = ({ column, onAddCard, onEditStage, onDeleteStage, 
   );
 };
 
-const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) => {
+const SalesFunnel: React.FC<{ activeCompany?: string, setModule:any }> = ({ activeCompany, setModule }) => {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -563,6 +564,7 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
   const [stageDialogName, setStageDialogName] = useState('');
   const [editingStage, setEditingStage] = useState<string | null>(null);
   const [deleteStage, setDeleteStage] = useState<string | null>(null);
+  const [leadActivities, setLeadActivities] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!activeCompany) return;
@@ -577,6 +579,24 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
       setStages([]);
     }
   }, [selectedFunnelId, funnels]);
+
+  useEffect(() => {
+    if (!selectedFunnelId) return;
+    const fetchActivities = async () => {
+      try {
+        const res = await FunnelService.getLeadActivity(selectedFunnelId);
+        // O retorno esperado é [{ leadId, toStageId }]
+        const map: Record<string, string> = {};
+        (res.data || []).forEach((item: any) => {
+          map[item.leadId] = item.toStageId;
+        });
+        setLeadActivities(map);
+      } catch (err) {
+        setLeadActivities({});
+      }
+    };
+    fetchActivities();
+  }, [selectedFunnelId]);
 
   const fetchInitialData = async () => {
     try {
@@ -676,11 +696,13 @@ const updateColumns = () => {
   }, {} as Record<string, any[]>);
 
   filtered.forEach(l => {
-    const statusIndex = stageList.findIndex(
-      s => (l.status || 'lead').toLowerCase() === s.toLowerCase()
-    );
-    if (statusIndex !== -1) {
-      columnsMap[stageList[statusIndex].toLowerCase()].push({
+    const mappedStage = leadActivities[l.id];
+    const stageIndex = mappedStage
+      ? stageList.findIndex(s => s.toLowerCase() === mappedStage.toLowerCase())
+      : -1;
+
+    if (stageIndex !== -1) {
+      columnsMap[stageList[stageIndex].toLowerCase()].push({
         id: l.id,
         title: l.name || 'Lead',
         email: l.email,
@@ -712,7 +734,6 @@ const updateColumns = () => {
 
   setColumns(newColumns);
 };
-
   const onDragEnd = async (result: any) => {
     const { destination, source, draggableId, type } = result;
     if (!destination) return;
@@ -735,24 +756,40 @@ const updateColumns = () => {
       return;
     }
 
-    const sourceColumn = columns.find(col => col.id === source.droppableId);
-    const destColumn = columns.find(col => col.id === destination.droppableId);
-    if (!sourceColumn || !destColumn) return;
-    const sourceCards = [...sourceColumn.cards];
-    const [removed] = sourceCards.splice(source.index, 1);
+    if (type === 'card' && destination.droppableId !== source.droppableId) {
+      const leadId = draggableId;
+      const columnId = destination.droppableId;
+      const entryId = selectedFunnelId;
 
-    if (sourceColumn.id === destColumn.id) {
-      sourceCards.splice(destination.index, 0, removed);
-      setColumns(prev => prev.map(col => col.id === sourceColumn.id ? { ...col, cards: sourceCards } : col));
-    } else {
-      const destCards = [...destColumn.cards];
-      destCards.splice(destination.index, 0, removed);
-      setColumns(prev => prev.map(col => {
-        if (col.id === sourceColumn.id) return { ...col, cards: sourceCards };
-        if (col.id === destColumn.id) return { ...col, cards: destCards };
+      const newColumns = columns.map(col => {
+        if (col.id === source.droppableId) {
+          return {
+            ...col,
+            cards: col.cards.filter(card => card.id !== leadId),
+          };
+        }
+        if (col.id === columnId) {
+          const movedCard = columns
+            .find(col => col.id === source.droppableId)
+            ?.cards.find(card => card.id === leadId);
+          if (movedCard) {
+            const newCards = Array.from(col.cards);
+            newCards.splice(destination.index, 0, movedCard);
+            return {
+              ...col,
+              cards: newCards,
+            };
+          }
+        }
         return col;
-      }));
-      setLeads(prev => prev.map(l => l.id === draggableId ? { ...l, status: destColumn.id } : l));
+      });
+      setColumns(newColumns);
+
+      try {
+        await FunnelService.moveLead(entryId, leadId, columnId);
+      } catch (err) {
+        console.error('Erro ao mover lead:', err);
+      }
     }
   };
 
@@ -818,7 +855,16 @@ const updateColumns = () => {
     <DragDropContext onDragEnd={onDragEnd}>
       <KanbanContainer>
         <KanbanHeader>
-          <h1>{t('salesFunnel.title')}</h1>
+          <ArrowBackIos
+            style={{
+              cursor: 'pointer',
+              marginRight: '16px',
+              color: '#474747'
+            }}
+            onClick={() => setModule('')}
+          />
+
+          <h1 style={{marginLeft:'-32%'}}>{t('salesFunnel.title')}</h1>
           <Controls>
             <SearchBox>
               <Search size={18} color="#94a3b8" />
@@ -927,7 +973,7 @@ const updateColumns = () => {
           <TextField
             fullWidth
             label={t('salesFunnel.stageName')}
-            value={stageDialogName}
+            value={t('salesFunnel.stageName')}
             onChange={(e) => setStageDialogName(e.target.value)}
             margin="normal"
           />

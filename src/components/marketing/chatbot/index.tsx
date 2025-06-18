@@ -683,7 +683,7 @@ return (
       gap: 2
     }}>
       <Typography variant="h4" sx={{
-        fontWeight: 800,
+        fontWeight: 600,
         color: '#0F172A',
         fontSize: { xs: '1.5rem', md: '1.5rem' },
       }}>
