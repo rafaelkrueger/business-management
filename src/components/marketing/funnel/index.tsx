@@ -666,13 +666,21 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
     return result;
   };
 
-  const updateColumns = () => {
-    const filtered = filterLeads();
-    const stageList = stages.length ? stages : ['lead', 'prospect', 'customer', 'churned'];
-    const newColumns = stageList.map(status => ({
-      id: status,
-      title: status,
-      cards: filtered.filter(l => (l.status || 'lead').toLowerCase() === status.toLowerCase()).map(l => ({
+const updateColumns = () => {
+  const filtered = filterLeads();
+  const stageList = stages.length ? stages : ['Lead', 'Prospect', 'Customer', 'Churned'];
+
+  const columnsMap = stageList.reduce((acc, status) => {
+    acc[status.toLowerCase()] = [];
+    return acc;
+  }, {} as Record<string, any[]>);
+
+  filtered.forEach(l => {
+    const statusIndex = stageList.findIndex(
+      s => (l.status || 'lead').toLowerCase() === s.toLowerCase()
+    );
+    if (statusIndex !== -1) {
+      columnsMap[stageList[statusIndex].toLowerCase()].push({
         id: l.id,
         title: l.name || 'Lead',
         email: l.email,
@@ -681,10 +689,29 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
         priority: 'hot',
         value: l.value,
         source: l.source
-      }))
-    }));
-    setColumns(newColumns);
-  };
+      });
+    } else {
+      columnsMap[stageList[0].toLowerCase()].push({
+        id: l.id,
+        title: l.name || 'Lead',
+        email: l.email,
+        phone: l.phone,
+        lastContact: dayjs(l.lastContact).format('DD/MM/YYYY'),
+        priority: 'hot',
+        value: l.value,
+        source: l.source
+      });
+    }
+  });
+
+  const newColumns = stageList.map(status => ({
+    id: status,
+    title: status,
+    cards: columnsMap[status.toLowerCase()] || []
+  }));
+
+  setColumns(newColumns);
+};
 
   const onDragEnd = async (result: any) => {
     const { destination, source, draggableId, type } = result;
@@ -818,20 +845,14 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
         <Droppable droppableId="all-columns" direction="horizontal" type="column">
           {provided => (
             <ColumnsContainer ref={provided.innerRef} {...provided.droppableProps}>
-              {columns.map((column, index) => (
-                <Draggable key={column.id} draggableId={column.id} index={index}>
-                  {providedCol => (
-                    <KanbanColumnComponent
-                      column={column}
-                      onAddCard={() => {}}
-                      onEditStage={handleEditStage}
-                      onDeleteStage={handleDeleteStage}
-                      innerRef={providedCol.innerRef}
-                      draggableProps={providedCol.draggableProps}
-                      dragHandleProps={providedCol.dragHandleProps}
-                    />
-                  )}
-                </Draggable>
+              {columns.map((column) => (
+                <KanbanColumnComponent
+                  key={column.id}
+                  column={column}
+                  onAddCard={() => handleAddCard(column.id)}
+                  onEditStage={(stage) => handleEditStage(stage)}
+                  onDeleteStage={(stage) => handleDeleteStage(stage)}
+                />
               ))}
               {provided.placeholder}
               <AddStageColumn onClick={handleAddStage}>

@@ -18,7 +18,7 @@ class FunnelService {
   }
 
   static createStage(funnelId: string, data: any) {
-    return http.post(`/funnel/${funnelId}/stages`, data);
+    return http.post(`/funnels/${funnelId}/stages`, data);
   }
 
   static updateStages(funnelId: string, stages: string[]) {
