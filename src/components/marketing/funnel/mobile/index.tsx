@@ -303,13 +303,13 @@ const DropdownContainerMobile = styled.div`
 const DropdownMenuMobile = styled.div`
   position: absolute;
   right: 0;
-  top: 100%;
-  background: white;
+  top: 32px;
+  background: #fff;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  padding: 8px;
-  z-index: 10;
-  min-width: 160px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  z-index: 19999;
+  min-width: 140px;
+  padding: 8px 0;
 `;
 
 const DropdownItemMobile = styled.button`
@@ -406,11 +406,14 @@ const KanbanCardMobile = ({ card, onMove }) => {
       <CardHeaderMobile>
         <h4>{card.title}</h4>
         <DropdownContainerMobile>
-          <MenuButtonMobile onClick={() => setShowMenu(!showMenu)}>
+          <MenuButtonMobile onClick={(e) => {e.stopPropagation();setShowMenu(!showMenu)}}>
             <MoreVertical size={20} />
           </MenuButtonMobile>
           {showMenu && (
-            <DropdownMenuMobile>
+              <DropdownMenuMobile
+                onClick={e => e.stopPropagation()} // <-- Adicione isso!
+                style={{ zIndex: 9999 }} // <-- Garante que fique acima
+              >
               <DropdownItemMobile onClick={() => onMove(card.id)}>
                 <GripVertical size={16} /> {t('salesFunnel.moveLead')}
               </DropdownItemMobile>
@@ -469,22 +472,39 @@ const StageAccordionComponent = ({
           <h3>{column.title}</h3>
           <BadgeMobile>{column.cards.length}</BadgeMobile>
         </StageTitle>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }}>
           {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
           <DropdownContainerMobile>
-            <MenuButtonMobile onClick={(e) => {
-              e.stopPropagation();
-              setShowMenu(!showMenu);
-            }}>
+            <MenuButtonMobile
+              onClick={e => {
+                e.stopPropagation();
+                setShowMenu(!showMenu);
+              }}
+            >
               <MoreVertical size={20} />
             </MenuButtonMobile>
             {showMenu && (
-              <DropdownMenuMobile>
-                <DropdownItemMobile onClick={() => onEditStage(column.title)}>
-                  <FileEdit size={16} /> {t('salesFunnel.editStage')}
+              <DropdownMenuMobile
+                onClick={e => e.stopPropagation()}
+                style={{ zIndex: 9999 }}
+              >
+                <DropdownItemMobile
+                  onClick={e => {
+                    e.stopPropagation();
+                    setShowMenu(false);
+                    onEditStage(column.title);
+                  }}
+                >
+                  <FileEdit size={16} /> Editar etapa
                 </DropdownItemMobile>
-                <DropdownItemMobile onClick={() => onDeleteStage(column.title)}>
-                  <Trash2 size={16} /> {t('salesFunnel.deleteStage')}
+                <DropdownItemMobile
+                  onClick={e => {
+                    e.stopPropagation();
+                    setShowMenu(false);
+                    onDeleteStage(column.title);
+                  }}
+                >
+                  <Trash2 size={16} /> Deletar etapa
                 </DropdownItemMobile>
               </DropdownMenuMobile>
             )}
@@ -609,7 +629,7 @@ const SalesFunnelMobile: React.FC<{ activeCompany?: string, setModule: any }> = 
 
   useEffect(() => {
     updateColumns();
-  }, [leads, selectedSegment, searchText, stages]);
+  }, [leads, selectedSegment, searchText, stages, leadActivities, selectedFunnelId]);
 
   const filterLeads = () => {
     let result = [...leads];

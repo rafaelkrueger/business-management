@@ -1151,6 +1151,10 @@
   },
   "salesFunnel": {
   "title": "Sales Funnel",
+  "moveLead": "Move Lead",
+  "moveToStage": "Move to Stage",
+  "selectStage": "Select Stage",
+  "move": "Move",
   "searchPlaceholder": "Search leads...",
   "addLead": "Add Lead",
   "addStage": "Add Stage",

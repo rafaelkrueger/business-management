@@ -632,7 +632,7 @@ const SalesFunnel: React.FC<{ activeCompany?: string, setModule:any }> = ({ acti
 
   useEffect(() => {
     updateColumns();
-  }, [leads, selectedSegment, searchText, stages]);
+  }, [leads, selectedSegment, searchText, stages, leadActivities, selectedFunnelId]);
 
   const filterLeads = () => {
     let result = [...leads];

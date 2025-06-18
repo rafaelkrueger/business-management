@@ -1158,6 +1158,10 @@
   },
     "salesFunnel": {
     "title": "Funil de Vendas",
+    "moveLead": "Mover Lead",
+    "moveToStage": "Mover para Etapa",
+    "selectStage": "Selecionar Etapa",
+    "move": "Mover",
     "searchPlaceholder": "Buscar leads...",
     "addLead": "Adicionar Lead",
     "addStage": "Adicionar Etapa",
