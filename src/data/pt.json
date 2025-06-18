@@ -739,7 +739,9 @@
       "selectSegmentation": "Selecione uma segmentação",
       "stageName": "Nome da Etapa",
       "confirmDeleteStageTitle": "Confirmar exclusão",
-      "confirmDeleteStageMessage": "Tem certeza que deseja excluir esta etapa?"
+      "confirmDeleteStageMessage": "Tem certeza que deseja excluir esta etapa?",
+      "addFirstLead": "Adicionar o primeiro lead",
+      "errorCreatingFunnel": "Erro ao criar funil. Por favor tente novamente."
     },
     "automationTable": {
       "emptyStateTitle": "Nenhuma automação encontrada",
@@ -1130,7 +1132,7 @@
     }
   },
   "kanban": {
-    "title": "Quadro de Projetos",
+    "title": "Fúnil de Vendas",
     "todo": "A Fazer",
     "inProgress": "Em Progresso",
     "review": "Revisão",

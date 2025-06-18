@@ -733,7 +733,9 @@
       "selectSegmentation": "Select a segmentation",
       "stageName": "Stage Name",
       "confirmDeleteStageTitle": "Confirm deletion",
-      "confirmDeleteStageMessage": "Are you sure you want to delete this stage?"
+      "confirmDeleteStageMessage": "Are you sure you want to delete this stage?",
+      "addFirstLead": "Add first lead",
+      "errorCreatingFunnel": "Error creating funnel. Please try again."
     },
     "automationTable": {
       "emptyStateTitle": "No automation found",
@@ -1123,7 +1125,7 @@
     }
   },
   "kanban": {
-    "title": "Project Board",
+    "title": "Sales Funnel",
     "todo": "To Do",
     "inProgress": "In Progress",
     "review": "Review",

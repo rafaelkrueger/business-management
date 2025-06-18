@@ -531,7 +531,7 @@ const KanbanColumnComponent = ({ column, onAddCard, onEditStage, onDeleteStage, 
               ))
             ) : (
               <EmptyState onClick={onAddCard}>
-                <Plus size={18} /> {t('kanban.addFirstCard')}
+                <Plus size={18} /> {t('salesFunnel.addFirstLead')}
               </EmptyState>
             )}
             {provided.placeholder}
@@ -791,7 +791,7 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
     <DragDropContext onDragEnd={onDragEnd}>
       <KanbanContainer>
         <KanbanHeader>
-          <h1>{t('kanban.title')}</h1>
+          <h1>{t('salesFunnel.title')}</h1>
           <Controls>
             <SearchBox>
               <Search size={18} color="#94a3b8" />
@@ -893,7 +893,7 @@ const SalesFunnel: React.FC<{ activeCompany?: string }> = ({ activeCompany }) =>
               setFunnelSegment('');
             } catch (err) {
               console.error('Erro ao criar funil', err);
-              enqueueSnackbar('Erro ao criar funil', { variant: 'error' });
+              enqueueSnackbar(t('salesFunnel.errorCreatingFunnel'), { variant: 'error' });
             }
           }}>{t('salesFunnel.save')}</Button>
         </DialogActions>
