@@ -26,7 +26,7 @@ import SegmentationService from '../../../../services/segmentation.service.ts';
 import FunnelService from '../../../../services/funnel.service.ts';
 import { ArrowBackIos } from '@mui/icons-material';
 import { PlusOutlined } from '@ant-design/icons';
-import LeadDetailsModal from '../lead-details-modal';
+import LeadDetailsModal from '../lead-details-modal.tsx';
 
 // ======================
 // Estilos com Styled Components para Mobile

@@ -26,7 +26,7 @@ import CrmService from '../../../services/crm.service.ts';
 import SegmentationService from '../../../services/segmentation.service.ts';
 import FunnelService from '../../../services/funnel.service.ts';
 import { ArrowBackIos } from '@mui/icons-material';
-import LeadDetailsModal from './lead-details-modal';
+import LeadDetailsModal from './lead-details-modal.tsx';
 
 // ======================
 // Estilos com Styled Components
