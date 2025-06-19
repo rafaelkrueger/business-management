@@ -763,15 +763,18 @@
       "createLandingPage": "Landing Page",
       "createForm": "Formulário de Captura",
       "landingPagesTab": "Landing Pages",
+      "salesPagesTab": "Sales Pages",
       "formsTab": "Formulários",
       "noLandingPageFound": "Nenhuma landing page encontrada.",
       "tryCreatingOne": "Crie uma nova página.",
       "createPage": "Criar Página",
+      "createSalesPage": "Criar Sales Page",
       "noFormFound": "Nenhum formulário encontrado.",
       "tryCreatingOneForm": "Tente criar um novo formulário para encontrar clientes",
       "createPageForm": "Criar novo formulário",
       "viewDetails": "Ver Detalhes",
       "viewLandingPage": "Ver Landing Page",
+      "viewSalesPage": "Ver Sales Page",
       "viewForm": "Ver Formulário",
       "noDescription": "Sem descrição",
       "createdAt": "Criado em",
@@ -822,6 +825,7 @@
       "instructionText5": "Clique e segure para arrastar as imagens",
       "instructionText6": "Alt + clique com o botão direito para criar links",
       "createLandingPage": "Criar landing page!",
+      "createSalesPage": "Criar sales page!"
       "generateAiTemplate": "Gerar Template IA"
     },
     "detailsDialog": {

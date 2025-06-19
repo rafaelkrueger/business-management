@@ -757,15 +757,18 @@
       "createLandingPage": "Landing Page",
       "createForm": "Capture Form",
       "landingPagesTab": "Landing Pages",
+      "salesPagesTab": "Sales Pages",
       "formsTab": "Capture Forms",
       "noLandingPageFound": "No landing pages found.",
       "tryCreatingOne": "Try creating a new page to find potential customers",
       "createPage": "Create New Landing Page",
+      "createSalesPage": "Create New Sales Page",
       "noFormFound": "No forms found.",
       "tryCreatingOneForm": "Try creating a new form to find potential customers",
       "createPageForm": "Create New Capture Form",
       "viewDetails": "View Details",
       "viewLandingPage": "View Landing Page",
+      "viewSalesPage": "View Sales Page",
       "viewForm": "View Form",
       "noDescription": "No description",
       "createdAt": "Created on",
@@ -817,6 +820,7 @@
       "instructionText5": "Click and hold to drag images",
       "instructionText6": "Alt + right-click to create links",
       "createLandingPage": "Create landing page!"
+      "createSalesPage": "Create sales page!"
     },
     "detailsDialog": {
       "title": "Landing Page Details",
