@@ -40,6 +40,7 @@ import { useTranslation } from "react-i18next";
 import LeadGeneration from "./create-leads/index.tsx";
 import React from "react";
 import CapturePages from "./capture-pages/index.tsx";
+import SalesPages from "./sales-pages/index.tsx";
 import AutomationDashboard from "./automation/index.tsx";
 import SocialMediaDashboard from "./social-media/index.tsx";
 import StyledAIAssistant from "./ai/index.tsx";
@@ -255,7 +256,8 @@ const MarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
     createLeads: ['marketingAi'],
     automation: ['marketingAi', 'createLeads'],
     crm: ['marketingAi', 'createLeads', 'automation'],
-    funnel: ['marketingAi', 'createLeads', 'automation', 'crm']
+    funnel: ['marketingAi', 'createLeads', 'automation', 'crm'],
+    salesPage: ['marketingAi', 'createLeads', 'automation', 'crm']
   };
 
   const isModuleUnlocked = (moduleKey) => {
@@ -421,10 +423,9 @@ const cards = [
     title: t("marketing.sales_page"),
     description: t("marketing.sales_page_desc"),
     module: "salesPage",
-    color: theme.palette.text.disabled,
+    color: theme.palette.primary.main,
     completed: isModuleCompleted("salesPage"),
-    disabled: true,
-    comingSoon: true
+    disabled: false
   },
 ];
 
@@ -440,7 +441,8 @@ const cards = [
     { id: 'createLeads', label: 'Landing Page', icon: <Layout size={16} /> },
     { id: 'automation', label: 'Automation', icon: <Zap size={16} /> },
     { id: 'crm', label: 'CRM', icon: <Users size={16} /> },
-    { id: 'funnel', label: 'Funnel', icon: <FileText size={16} /> }
+    { id: 'funnel', label: 'Funnel', icon: <FileText size={16} /> },
+    { id: 'salesPage', label: 'Sales Page', icon: <Coins size={16} /> }
   ];
 
   return (
@@ -878,6 +880,8 @@ const cards = [
             setModule={setModule}
             onComplete={() => handleModuleComplete('crm')}
           />
+        ) : module === 'salesPage' ? (
+          <SalesPages activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('salesPage')} />
         ) : module === 'funnel' ? (
           <SalesFunnel activeCompany={props.activeCompany} setModule={setModule} />
         ) : module === 'chatbot' ? (

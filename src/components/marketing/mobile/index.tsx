@@ -51,6 +51,7 @@ import SalesFunnel from "../funnel/index.tsx";
 import UserProgressService from '../../../services/user-progress.service.ts'
 import { RobotOutlined } from "@ant-design/icons";
 import MobileCapturePages from "../capture-pages/mobile/index.tsx";
+import MobileSalesPages from "../sales-pages/mobile/index.tsx";
 import PremiumMarketingAssistantMobile from "../ai/mobile/index.tsx";
 import MarketingService from "../../../services/marketing.service.ts";
 import {ChatbotManager} from "../chatbot/index.tsx";
@@ -106,7 +107,8 @@ const moduleDependencies = {
   createLeads: ['marketingAi'],
   automation: ['marketingAi', 'createLeads'],
   crm: ['marketingAi', 'createLeads' ,'automation'],
-  funnel: ['marketingAi', 'createLeads', 'automation', 'crm']
+  funnel: ['marketingAi', 'createLeads', 'automation', 'crm'],
+  salesPage: ['marketingAi', 'createLeads', 'automation', 'crm']
 };
 
 const isModuleCompleted = (moduleKey) => {
@@ -252,7 +254,8 @@ const PulseDot = styled(Box)(({ theme }) => ({
       { id: 'createLeads', label: 'Landing Page', icon: <Layout size={16} /> },
       { id: 'automation', label: 'Automação', icon: <Zap size={16} /> },
       { id: 'crm', label: 'CRM', icon: <Users size={16} /> },
-      { id: 'funnel', label: 'Vendas', icon: <FileText size={16} /> }
+      { id: 'funnel', label: 'Vendas', icon: <FileText size={16} /> },
+      { id: 'salesPage', label: 'Sales Page', icon: <Coins size={16} /> }
     ];
 
   useEffect(() => {
@@ -433,10 +436,9 @@ const cards = [
     title: t("marketing.sales_page"),
     description: t("marketing.sales_page_desc"),
     module: "salesPage",
-    color: theme.palette.text.disabled,
+    color: theme.palette.primary.main,
     completed: isModuleCompleted("salesPage"),
-    disabled: true,
-    comingSoon: true
+    disabled: false
   },
 ];
 
@@ -458,6 +460,8 @@ const cards = [
     return <SalesFunnelMobile activeCompany={props.activeCompany} setModule={setModule} />;
   }else if (module === 'chatbot') {
     return <ChatbotManager activeCompany={props.activeCompany} setModule={setModule} />;
+  } else if (module === 'salesPage') {
+    return <MobileSalesPages activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('salesPage')} />;
   }
 
   return (
