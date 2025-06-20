@@ -428,7 +428,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
     setWaitingModules(prev => ({ ...prev, [activeChat]: true }));
 
     try {
-      const language = i18n.language.startsWith('pt') ? 'pt' : 'en';
+      const language = i18n.language.startsWith('en') ? 'en' : 'pt';
 
       let responseMessages;
       if (selectedFile) {
