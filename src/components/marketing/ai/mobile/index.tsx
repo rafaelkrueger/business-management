@@ -444,7 +444,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
 
         responseMessages = await ChatAiService.sendMessage(
           currentChat.conversationId,
-          content || `Arquivo: ${fileName}`,
+          content || `${response?.data.url}`,
           activeCompany,
           language,
           activeChat,
