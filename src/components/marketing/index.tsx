@@ -425,7 +425,8 @@ const cards = [
     module: "salesPage",
     color: theme.palette.primary.main,
     completed: isModuleCompleted("salesPage"),
-    disabled: false
+    disabled: true,
+    commingSoon: true
   },
 ];
 
