@@ -932,6 +932,8 @@
     "expectedStartMessage": "Expected Start Message (Ex: Hello, Hi, empty)",
     "waitWhatsappTitle": "Wait whatsapp message",
     "expectedReply": "Expected repply (Ex: Yes, I would like!)",
+    "trendingTitle": "Trending Content",
+    "trendingQuestion": "What is the topic or niche you want to get trending content for?",
     "triggers": {
       "title": "How you wish to start this automation",
       "eventTrigger": "When an event happen",
@@ -957,7 +959,8 @@
     "formTrigger": "Form Submitted",
     "instagram": "Instagram",
     "chatgptImage": "AI Image",
-    "whatsappTrigger": "Chatbot"
+    "whatsappTrigger": "Chatbot",
+    "trending": "Trending"
   },
   "platform": {
     "whatsapp": "WhatsApp",

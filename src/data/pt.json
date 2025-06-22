@@ -938,6 +938,8 @@
     "expectedStartMessage": "Mennsagem inicial aguardada (Ex: Olá, Oi, vazio)",
     "waitWhatsappTitle": "Aguardar mensagem do whatsapp",
     "expectedReply": "Resposta aguardada (Ex: Sim, eu quero!)",
+    "trendingTitle": "Conteúdo em Alta",
+    "trendingQuestion": "Qual é o assunto ou nicho para obter conteúdo em alta?",
     "triggers": {
       "title": "Como você deseja iniciar essa automação",
       "eventTrigger": "Quando um evento acontecer",
@@ -963,7 +965,8 @@
     "chatgpt": "Texto IA",
     "chatgptImage": "Imagem IA",
     "formTrigger": "Formulário Preenchido",
-    "whatsappTrigger": "Chatbot"
+    "whatsappTrigger": "Chatbot",
+    "trending": "Tendências"
   },
   "platform": {
     "whatsapp": "WhatsApp",
