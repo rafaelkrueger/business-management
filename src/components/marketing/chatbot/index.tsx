@@ -31,7 +31,8 @@ import {
   CheckCircle as CheckCircleIcon,
   SmartToy,
   Upload as UploadIcon,
-  PictureAsPdf as PdfIcon
+  PictureAsPdf as PdfIcon,
+  WhatsApp
 } from '@mui/icons-material';
 import ChatbotService from '../../../services/chatbot.service.ts';
 import { useNavigate } from 'react-router-dom';
@@ -46,6 +47,7 @@ const initialBotConfig = {
   createImages: false,
   createPages: false,
   createDocuments: false,
+  connectWhatsapp: false,
   welcomeMessage: '',
   pdfFiles: [],
   profileImage: null
@@ -442,6 +444,32 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                         <HelpIcon sx={{ ml: 1, fontSize: 18, color: '#94A3B8' }} />
                       </Tooltip>
                     </Box>
+                    <Box display="flex" alignItems="center" gap={2} mt={0} mb={1}>
+                      <Button
+                        variant={botConfig.connectWhatsapp ? "contained" : "outlined"}
+                        startIcon={<WhatsApp />}
+                        onClick={() => handleCheckboxChange('connectWhatsapp')}
+                        sx={{
+                          textTransform: 'none',
+                          backgroundColor: botConfig.connectWhatsapp ? '#25D366' : 'transparent',
+                          color: botConfig.connectWhatsapp ? 'white' : '#25D366',
+                          borderColor: '#25D366',
+                          '&:hover': {
+                            backgroundColor: botConfig.connectWhatsapp ? '#20b358' : 'rgba(37, 211, 102, 0.1)',
+                            borderColor: '#20b358'
+                          },
+                          px: 2,
+                          py: 0.8,
+                          borderRadius: '12px'
+                        }}
+                      >
+                        {botConfig.connectWhatsapp ? t('chatbot.connectedWhatsapp') : t('chatbot.connectWhatsapp')}
+                      </Button>
+                      <Tooltip title={t('chatbot.connectWhatsappHint')}>
+                        <HelpIcon sx={{ fontSize: 18, color: '#94A3B8', cursor: 'pointer' }} />
+                      </Tooltip>
+                    </Box>
+
                   </CardContent>
                 <Button
                 variant="contained"
