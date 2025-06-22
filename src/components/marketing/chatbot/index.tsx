@@ -35,6 +35,9 @@ import {
   WhatsApp
 } from '@mui/icons-material';
 import ChatbotService from '../../../services/chatbot.service.ts';
+import WhatsappService from '../../../services/whatsapp.service.ts';
+import WhatsAppAuthModal from '../whatsapp-create/index.tsx';
+import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 import { ChartGanttIcon, LockIcon, PlusCircle, PlusCircleIcon } from 'lucide-react';
@@ -67,6 +70,8 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [loadingBots, setLoadingBots] = useState(true);
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+  const [openWhatsappAuthModal, setOpenWhatsappAuthModal] = useState(false);
 
   const handleInputChange = (e) => {
     setBotConfig({ ...botConfig, [e.target.name]: e.target.value });
@@ -74,6 +79,21 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
 
   const handleCheckboxChange = (key) => {
     setBotConfig({ ...botConfig, [key]: !botConfig[key] });
+  };
+
+  const handleWhatsappConnect = async () => {
+    try {
+      const response = await WhatsappService.checkWhatsAppStatus(activeCompany);
+      if (response.data.connected) {
+        handleCheckboxChange('connectWhatsapp');
+      } else {
+        enqueueSnackbar('Connection issue', { variant: 'error' });
+        setOpenWhatsappAuthModal(true);
+      }
+    } catch (error) {
+      console.error('Error checking WhatsApp status:', error);
+      setOpenWhatsappAuthModal(true);
+    }
   };
 
   const handlePdfUpload = (e) => {
@@ -448,7 +468,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                       <Button
                         variant={botConfig.connectWhatsapp ? "contained" : "outlined"}
                         startIcon={<WhatsApp />}
-                        onClick={() => handleCheckboxChange('connectWhatsapp')}
+                        onClick={handleWhatsappConnect}
                         sx={{
                           textTransform: 'none',
                           backgroundColor: botConfig.connectWhatsapp ? '#25D366' : 'transparent',
@@ -692,6 +712,11 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
           </Box>
         </Box>
       </Box>
+      <WhatsAppAuthModal
+        open={openWhatsappAuthModal}
+        onClose={() => setOpenWhatsappAuthModal(false)}
+        companyId={activeCompany}
+      />
     );
   }
 
@@ -987,6 +1012,11 @@ return (
         ))}
       </Grid>
     )}
+    <WhatsAppAuthModal
+      open={openWhatsappAuthModal}
+      onClose={() => setOpenWhatsappAuthModal(false)}
+      companyId={activeCompany}
+    />
   </Box>
 );
 }
