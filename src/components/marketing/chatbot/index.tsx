@@ -267,6 +267,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
 
   if (creatingBot) {
     return (
+      <>
       <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <AppBar
@@ -717,6 +718,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
         onClose={() => setOpenWhatsappAuthModal(false)}
         companyId={activeCompany}
       />
+      </>
     );
   }
 
