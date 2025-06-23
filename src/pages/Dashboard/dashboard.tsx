@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { DashboardContainer, DashboardContainerIcon, DashboardContainerShowed } from './styles.ts';
+import { CircularProgress } from '@mui/material';
+import { DashboardContainer, DashboardContainerIcon, DashboardContainerShowed, LoadingOverlay } from './styles.ts';
 import { useLocalStorage } from '../../hooks/useLocalStorage.ts';
 import AllInOneService from '../../services/all-in-one.service.ts';
 import Payments from '../../components/payments/index.tsx';
@@ -34,6 +35,7 @@ const Dashboard: React.FC = () => {
   const [hasNoCompanies, setHasNoCompanies] = useState(false);
   const [modulesUpdating, setModulesUpdating] = useState(false);
   const [newCompany, setNewCompany] = useState(false);
+  const [loadingCompanies, setLoadingCompanies] = useState(true);
 
   const { userData, setUserData } = useUser();
 
@@ -81,8 +83,34 @@ useEffect(() => {
     });
 }, [token, hasNoCompanies]);
 
+useEffect(() => {
+  if (activeCompany) {
+    setLoadingCompanies(false);
+    return;
+  }
+  setLoadingCompanies(true);
+}, [activeCompany]);
+
+useEffect(() => {
+  if (!token) return;
+  const timer = setTimeout(() => {
+    if (!activeCompany) {
+      localStorage.removeItem('accessToken');
+      window.location.replace('/');
+    }
+  }, 10000);
+
+  return () => clearTimeout(timer);
+}, [activeCompany, token]);
+
   return (
     <DashboardContainer>
+
+      {loadingCompanies && (
+        <LoadingOverlay>
+          <CircularProgress sx={{ color: '#578acd' }} />
+        </LoadingOverlay>
+      )}
 
       {window.outerWidth > 600 ? (
         <Sidebar
