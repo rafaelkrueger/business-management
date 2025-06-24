@@ -486,33 +486,6 @@ const cards = [
                     </Box>
                   </NextStepIndicator>
                 )}
-
-                <ModuleTimeline>
-                  {modulesTimeline.map((step, index) => {
-                    const isCompleted = completedModules.includes(step.id);
-                    const isUnlocked = isModuleUnlocked(step.id);
-                    const isNextStep = step.id === getNextStep();
-
-                    return (
-                      <ModuleStep
-                        key={step.id}
-                        completed={isCompleted}
-                        active={isNextStep}
-                        sx={isNextStep ? {
-                          '& .step-icon': {
-                            boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`,
-                            animation: 'pulse 2s infinite'
-                          }
-                        } : {}}
-                      >
-                        <Box className="step-icon">
-                          {isCompleted ? <Check size={20} /> : isUnlocked ? step.icon : <Lock size={20} />}
-                        </Box>
-                        <Typography style={{color:'#464646'}} className="step-label">{step.label}</Typography>
-                      </ModuleStep>
-                    );
-                  })}
-                </ModuleTimeline>
               </Box>
             </Fade>
 
