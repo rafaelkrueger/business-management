@@ -37,7 +37,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import { ArrowBackIos, Instagram } from "@mui/icons-material";
+import { ArrowBackIos, Instagram, TrendingUp as TrendingUpIcon } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AutomationService from "../../../../services/automation.service.ts";
@@ -79,6 +79,7 @@ import WaitWhatsappModal from "../../whatsapp-chatbot/wait-whatsapp/index.tsx";
 import InstagramAuthModal from "../../instagram-create/index.tsx";
 import InstagramService from "../../../../services/instagram.service.ts";
 import InstagramNodeEditor from "../../instagram/index.tsx";
+import TrendingNodeEditor from "../../trending/index.tsx";
 import { AllInOneApi } from "../../../../Api.ts";
 import { useTheme } from "@emotion/react";
 
@@ -163,6 +164,8 @@ const CustomNode = ({ data, id, activeCompany }) => {
         return <FaWhatsapp size={iconSize} color="#25D366" />;
       case "instagram":
         return <FaInstagram size={iconSize} color="#c20a8e" />;
+      case "trending":
+        return <TrendingUpIcon fontSize="small" sx={{ color: '#1976d2' }} />;
       case "whatsappTrigger":
         return <FaWhatsapp size={iconSize} color="#25D366" />;
       case "waitWhatsapp":
@@ -537,6 +540,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       icon: <FaInstagram style={{ color: "#c20a8e", fontSize: 26 }} />,
       params: { instagramContent: "" },
       purpose:t('automationFlow.purposes.socialMedia'),
+    },
+    TRENDING: {
+      type: "trending",
+      name: t("block.trending"),
+      icon: <TrendingUpIcon style={{ color: "#1976d2", fontSize: 26 }} />,
+      params: { topic: "" },
+      purpose: t('automationFlow.purposes.createContent'),
     },
     // TIKTOK: {
     //   type: "tiktok",
@@ -1403,11 +1413,17 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         isConnectedToChatGPT={isConnectedToChatGPT}
         />
       )}
-        {editingNode.data.blockType === "instagram" && (
+      {editingNode.data.blockType === "instagram" && (
         <InstagramNodeEditor
         editingNode={editingNode}
         setEditingNode={setEditingNode}
         isConnectedToChatGPT={isConnectedToChatGPT}
+        />
+      )}
+      {editingNode.data.blockType === "trending" && (
+        <TrendingNodeEditor
+          editingNode={editingNode}
+          setEditingNode={setEditingNode}
         />
       )}
       {editingNode.data.blockType === "formSubmitted" && (
