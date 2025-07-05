@@ -35,6 +35,11 @@ class ChatbotService {
     });
     return response.data;
   }
+
+  static async getHistory(botId: string) {
+    const response = await http.get(`/chatbot/history/${botId}`);
+    return response.data;
+  }
 }
 
 export default ChatbotService;
