@@ -32,8 +32,10 @@ import {
   SmartToy,
   Upload as UploadIcon,
   PictureAsPdf as PdfIcon,
-  WhatsApp
+  WhatsApp,
+  History as HistoryIcon
 } from '@mui/icons-material';
+import ChatHistoryModal from './ChatHistoryModal.tsx';
 import ChatbotService from '../../../services/chatbot.service.ts';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
@@ -66,6 +68,8 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [loadingBots, setLoadingBots] = useState(true);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyBotId, setHistoryBotId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -187,6 +191,16 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
       profileImage: bot.profileImage || null
     });
     setCreatingBot(true);
+  };
+
+  const handleOpenHistory = (botId: string) => {
+    setHistoryBotId(botId);
+    setHistoryOpen(true);
+  };
+
+  const handleCloseHistory = () => {
+    setHistoryOpen(false);
+    setHistoryBotId(null);
   };
 
   const handleUpdateBot = async () => {
@@ -944,6 +958,25 @@ return (
                 gap: 1,
                 borderTop: '1px solid #F1F5F9'
               }}>
+                                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => handleOpenHistory(bot.id)}
+                  sx={{
+                    borderRadius: '10px',
+                    fontWeight: 600,
+                    color: '#64748B',
+                    borderColor: '#E2E8F0',
+                    flex: 1,
+                    py: 1,
+                    '&:hover': {
+                      borderColor: '#CBD5E1',
+                      backgroundColor: '#F8FAFC'
+                    }
+                  }}
+                >
+                  <HistoryIcon />
+                </Button>
                 <Button
                   onClick={() => window.open(`https://roktune.duckdns.org/chatbot/s/${bot.slug}`, '_blank')}
                   size="small"
@@ -987,6 +1020,11 @@ return (
         ))}
       </Grid>
     )}
+    <ChatHistoryModal
+      open={historyOpen}
+      onClose={handleCloseHistory}
+      botId={historyBotId}
+    />
   </Box>
 );
 }
