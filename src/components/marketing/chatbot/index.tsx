@@ -958,6 +958,25 @@ return (
                 gap: 1,
                 borderTop: '1px solid #F1F5F9'
               }}>
+                                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => handleOpenHistory(bot.id)}
+                  sx={{
+                    borderRadius: '10px',
+                    fontWeight: 600,
+                    color: '#64748B',
+                    borderColor: '#E2E8F0',
+                    flex: 1,
+                    py: 1,
+                    '&:hover': {
+                      borderColor: '#CBD5E1',
+                      backgroundColor: '#F8FAFC'
+                    }
+                  }}
+                >
+                  <HistoryIcon />
+                </Button>
                 <Button
                   onClick={() => window.open(`https://roktune.duckdns.org/chatbot/s/${bot.slug}`, '_blank')}
                   size="small"
@@ -976,26 +995,6 @@ return (
                   }}
                 >
                   {t('chatbot.test')}
-                </Button>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  startIcon={<HistoryIcon />}
-                  onClick={() => handleOpenHistory(bot.id)}
-                  sx={{
-                    borderRadius: '10px',
-                    fontWeight: 600,
-                    color: '#64748B',
-                    borderColor: '#E2E8F0',
-                    flex: 1,
-                    py: 1,
-                    '&:hover': {
-                      borderColor: '#CBD5E1',
-                      backgroundColor: '#F8FAFC'
-                    }
-                  }}
-                >
-                  {t('chatbot.history')}
                 </Button>
                 <Button
                   size="small"

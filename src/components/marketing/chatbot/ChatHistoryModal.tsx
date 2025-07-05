@@ -11,10 +11,13 @@ import {
   Card,
   CardActionArea,
   CardContent,
-  Stack
+  Stack,
+  Grid,
+  Chip
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ChatbotService from '../../../services/chatbot.service.ts';
+import { AccessTime } from '@mui/icons-material';
 
 interface ChatHistoryModalProps {
   open: boolean;
@@ -44,30 +47,118 @@ const ChatHistoryModal: React.FC<ChatHistoryModalProps> = ({ open, onClose, botI
     }
   }, [open, botId]);
 
-  const renderThreadsList = () => (
-    <Stack spacing={2}>
-      {threads.map((thread, i) => {
-        const first = thread.messages?.[0];
-        const date = first?.createdAt ? new Date(first.createdAt).toLocaleString() : '';
+const renderThreadsList = () => {
+  // Ordena threads por data de criação (mais recente primeiro)
+  const sortedThreads = [...threads].sort((a, b) => {
+    const aDate = a.messages?.[0]?.createdAt || 0;
+    const bDate = b.messages?.[0]?.createdAt || 0;
+    return new Date(bDate).getTime() - new Date(aDate).getTime();
+  });
+
+  return (
+    <Grid container spacing={2}>
+      {sortedThreads.map((thread, i) => {
+        const firstMessage = thread.messages?.[0];
+        const date = firstMessage?.createdAt
+          ? new Date(firstMessage.createdAt)
+          : null;
+
+        // Formatação de data amigável
+        const formattedDate = date
+          ? date.toLocaleDateString([], {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
+            })
+          : '';
+
+        const formattedTime = date
+          ? date.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit'
+            })
+          : '';
+
         return (
-          <Card key={thread.threadId || i} variant="outlined">
-            <CardActionArea onClick={() => setSelected(thread)}>
-              <CardContent>
-                <Typography fontWeight={600} gutterBottom>
-                  {t('chatbot.conversation')} {i + 1}
-                </Typography>
-                {date && (
-                  <Typography variant="caption" color="textSecondary">
-                    {date}
-                  </Typography>
-                )}
-              </CardContent>
-            </CardActionArea>
-          </Card>
+          <Grid item xs={12} sm={6} key={thread.threadId || i}>
+            <Card
+              variant="outlined"
+              sx={{
+                height: '100%',
+                borderRadius: 2,
+                boxShadow: '0px 2px 8px rgba(0,0,0,0.08)',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0px 4px 12px rgba(0,0,0,0.12)'
+                }
+              }}
+            >
+              <CardActionArea
+                onClick={() => setSelected(thread)}
+                sx={{
+                  height: '100%',
+                  p: 1.5
+                }}
+              >
+                <CardContent sx={{ p: 0 }}>
+                  <Box display="flex" justifyContent="space-between">
+                    <Typography
+                      variant="overline"
+                      color="primary"
+                      fontWeight={700}
+                      letterSpacing={1.1}
+                    >
+                      {`Conversa ${sortedThreads.length - i}`}
+                    </Typography>
+
+                    {date && (
+                      <Chip
+                        size="small"
+                        label={formattedTime}
+                        sx={{ bgcolor: 'grey.100' }}
+                      />
+                    )}
+                  </Box>
+
+                  {firstMessage?.content && (
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mt: 1.5,
+                        mb: 1,
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        lineHeight: 1.4,
+                        color: 'text.secondary'
+                      }}
+                    >
+                      {firstMessage.content}
+                    </Typography>
+                  )}
+
+                  {formattedDate && (
+                    <Box display="flex" alignItems="center" mt={1}>
+                      <AccessTime fontSize="small" sx={{ mr: 0.5, fontSize: 14 }} />
+                      <Typography
+                        variant="caption"
+                        color="text.disabled"
+                      >
+                        {formattedDate}
+                      </Typography>
+                    </Box>
+                  )}
+                </CardContent>
+              </CardActionArea>
+            </Card>
+          </Grid>
         );
       })}
-    </Stack>
+    </Grid>
   );
+};
 
   const renderMessages = () => (
     <Box>
