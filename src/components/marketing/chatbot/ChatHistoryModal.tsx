@@ -13,11 +13,12 @@ import {
   CardContent,
   Stack,
   Grid,
-  Chip
+  Chip,
+  IconButton
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ChatbotService from '../../../services/chatbot.service.ts';
-import { AccessTime } from '@mui/icons-material';
+import { AccessTime, Delete } from '@mui/icons-material';
 
 interface ChatHistoryModalProps {
   open: boolean;
@@ -30,6 +31,15 @@ const ChatHistoryModal: React.FC<ChatHistoryModalProps> = ({ open, onClose, botI
   const [loading, setLoading] = useState(false);
   const [threads, setThreads] = useState<any[]>([]);
   const [selected, setSelected] = useState<any | null>(null);
+
+  const handleDeleteThread = async (threadId: string) => {
+    try {
+      await ChatbotService.deleteThread(threadId);
+      setThreads((prev) => prev.filter((t) => t.threadId !== threadId));
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     if (open && botId) {
@@ -84,6 +94,7 @@ const renderThreadsList = () => {
             <Card
               variant="outlined"
               sx={{
+                position: 'relative',
                 height: '100%',
                 borderRadius: 2,
                 boxShadow: '0px 2px 8px rgba(0,0,0,0.08)',
@@ -94,6 +105,16 @@ const renderThreadsList = () => {
                 }
               }}
             >
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteThread(thread.threadId);
+                }}
+                sx={{ position: 'absolute', top: 4, right: 4 }}
+              >
+                <Delete fontSize="small" />
+              </IconButton>
               <CardActionArea
                 onClick={() => setSelected(thread)}
                 sx={{
