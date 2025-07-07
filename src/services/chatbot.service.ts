@@ -40,6 +40,11 @@ class ChatbotService {
     const response = await http.get(`/chatbot/history/${botId}`);
     return response.data;
   }
+
+  static async deleteThread(threadId: string) {
+    const response = await http.delete(`/chatbot/history/${threadId}`);
+    return response.data;
+  }
 }
 
 export default ChatbotService;
