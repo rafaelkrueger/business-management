@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ChatbotService from '../../../services/chatbot.service.ts';
-import { AccessTime, Delete } from '@mui/icons-material';
+import { AccessTime, Delete, DeleteForeverOutlined, RemoveRedEyeOutlined } from '@mui/icons-material';
 
 interface ChatHistoryModalProps {
   open: boolean;
@@ -111,12 +111,18 @@ const renderThreadsList = () => {
                   e.stopPropagation();
                   handleDeleteThread(thread.threadId);
                 }}
-                sx={{ position: 'absolute', top: 4, right: 4 }}
+                sx={{ position: 'absolute', bottom: 6, right: 8 }}
               >
-                <Delete fontSize="small" />
+                <DeleteForeverOutlined fontSize="small" />
               </IconButton>
-              <CardActionArea
+              <IconButton
+                size="small"
                 onClick={() => setSelected(thread)}
+                sx={{ position: 'absolute', bottom: 6, right: 30 }}
+              >
+                <RemoveRedEyeOutlined fontSize="small" />
+              </IconButton>
+              <Card
                 sx={{
                   height: '100%',
                   p: 1.5
@@ -172,7 +178,7 @@ const renderThreadsList = () => {
                     </Box>
                   )}
                 </CardContent>
-              </CardActionArea>
+              </Card>
             </Card>
           </Grid>
         );
