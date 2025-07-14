@@ -36,6 +36,7 @@ import {
   History as HistoryIcon
 } from '@mui/icons-material';
 import ChatHistoryModal from './ChatHistoryModal.tsx';
+import ProductsSelectModal from './ProductsSelectModal.tsx';
 import ChatbotService from '../../../services/chatbot.service.ts';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
@@ -49,10 +50,12 @@ const initialBotConfig = {
   createImages: false,
   createPages: false,
   createDocuments: false,
+  sellProducts: false,
   connectWhatsapp: false,
   welcomeMessage: '',
   pdfFiles: [],
-  profileImage: null
+  profileImage: null,
+  selectedProducts: [] as string[]
 };
 
 export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: string) => void }> = ({ activeCompany, setModule }) => {
@@ -71,6 +74,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyBotId, setHistoryBotId] = useState<string | null>(null);
   const [historyBotSlug, setHistoryBotSlug] = useState<string | null>(null);
+  const [productsModalOpen, setProductsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -154,6 +158,8 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
       formData.append('captureLeads', botConfig.captureLeads);
       formData.append('createImages', botConfig.createImages);
       formData.append('createDocuments', botConfig.createDocuments);
+      formData.append('sellProducts', botConfig.sellProducts);
+      formData.append('products', JSON.stringify(botConfig.selectedProducts));
       formData.append('createPages', botConfig.createPages);
 
       if (botConfig.profileImage) {
@@ -188,8 +194,10 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
       captureLeads: bot.captureLeads,
       createImages: bot.createImages,
       createDocuments: bot.createDocuments,
+      sellProducts: bot.sellProducts,
       createPages: bot.createPages,
-      profileImage: bot.profileImage || null
+      profileImage: bot.profileImage || null,
+      selectedProducts: bot.products || []
     });
     setCreatingBot(true);
   };
@@ -217,6 +225,8 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
       formData.append('captureLeads', botConfig.captureLeads);
       formData.append('createImages', botConfig.createImages);
       formData.append('createDocuments', botConfig.createDocuments);
+      formData.append('sellProducts', botConfig.sellProducts);
+      formData.append('products', JSON.stringify(botConfig.selectedProducts));
       formData.append('createPages', botConfig.createPages);
 
       if (typeof botConfig.profileImage === 'string' && botConfig.profileImage.startsWith('http')) {
@@ -460,6 +470,20 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                       <Tooltip title={t('chatbot.createDocumentsTooltip')}>
                         <HelpIcon sx={{ ml: 1, fontSize: 18, color: '#94A3B8' }} />
                       </Tooltip>
+                    </Box>
+                    <Box display="flex" alignItems="center" mt={0} mb={1}>
+                      <Checkbox
+                        checked={botConfig.sellProducts}
+                        onChange={()=>{handleCheckboxChange('sellProducts')}}
+                        color="primary"
+                        sx={{ '& .MuiSvgIcon-root': { fontSize: 24 } }}
+                      />
+                      <Typography variant="body2">{t('sell_products')}</Typography>
+                    </Box>
+                    <Box display="flex" alignItems="center" mt={0} mb={1}>
+                      <Button variant="outlined" onClick={()=> setProductsModalOpen(true)}>
+                        {t('products.selectProducts', 'Select Products')}
+                      </Button>
                     </Box>
                     <Box display="flex" alignItems="center" gap={2} mt={0} mb={1}>
                       <Button
@@ -709,6 +733,13 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
           </Box>
         </Box>
       </Box>
+      <ProductsSelectModal
+        open={productsModalOpen}
+        onClose={() => setProductsModalOpen(false)}
+        companyId={activeCompany}
+        selected={botConfig.selectedProducts}
+        onChange={(ids) => setBotConfig({ ...botConfig, selectedProducts: ids })}
+      />
     );
   }
 
@@ -1028,6 +1059,13 @@ return (
       onClose={handleCloseHistory}
       botId={historyBotId}
       botSlug={historyBotSlug}
+    />
+    <ProductsSelectModal
+      open={productsModalOpen}
+      onClose={() => setProductsModalOpen(false)}
+      companyId={activeCompany}
+      selected={botConfig.selectedProducts}
+      onChange={(ids) => setBotConfig({ ...botConfig, selectedProducts: ids })}
     />
   </Box>
 );
