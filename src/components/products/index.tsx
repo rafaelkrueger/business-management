@@ -13,6 +13,7 @@ import {
     IconButton,
     Chip,
     Box,
+    MenuItem,
   } from '@mui/material';
   import { Close, Delete } from '@mui/icons-material';
 import ProductService from '../../services/product.service.ts'
@@ -318,12 +319,21 @@ const ProductModal: React.FC<{
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
+  const currencyOptions = [
+    { value: 'USD', label: 'USD - US Dollar' },
+    { value: 'EUR', label: 'EUR - Euro' },
+    { value: 'BRL', label: 'BRL - Brazilian Real' },
+    { value: 'GBP', label: 'GBP - British Pound' },
+    { value: 'JPY', label: 'JPY - Japanese Yen' },
+  ];
+
   const [formData, setFormData] = useState({
     id: '',
     name: '',
     description: '',
     category: '',
     price: '',
+    currency: 'USD',
     cost: '',
     quantityInStock: 0,
     height: '',
@@ -339,7 +349,7 @@ const ProductModal: React.FC<{
 
   const [images, setImages] = useState<string[]>([]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: any) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -355,6 +365,7 @@ const ProductModal: React.FC<{
         description: product.description || '',
         category: product.category || '',
         price: product.price || '',
+        currency: product.currency || 'USD',
         cost: product.cost || '',
         quantityInStock: product.quantityInStock || 0,
         height: product.height || '',
@@ -377,6 +388,7 @@ const ProductModal: React.FC<{
       description: '',
       category: '',
       price: '',
+      currency: 'USD',
       cost: '',
       quantityInStock: 0,
       height: '',
@@ -510,6 +522,22 @@ const ProductModal: React.FC<{
                 onChange={handleInputChange}
                 required
               />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                select
+                fullWidth
+                label={t('products.forms.currency')}
+                name="currency"
+                value={formData.currency}
+                onChange={handleInputChange}
+              >
+                {currencyOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
             <Grid item xs={6}>
               <TextField
