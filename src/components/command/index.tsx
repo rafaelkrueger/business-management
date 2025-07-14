@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 import { Visibility, Add, Close, Delete, Edit, AddCircleOutline, Info } from "@mui/icons-material";
+import ProductsSelectModal from './ProductsSelectModal.tsx';
 import { useTranslation } from 'react-i18next';
 import OrdersService from "../../services/orders.service.ts";
 import { useSnackbar } from "notistack";
@@ -34,6 +35,7 @@ const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCom
   const [comandaToDelete, setComandaToDelete] = useState(null);
   const [availableProducts, setAvailableProducts] = useState([]);
   const [activeDrawerSection, setActiveDrawerSection] = useState('edit');
+  const [productsModalOpen, setProductsModalOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -235,7 +237,7 @@ const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCom
         productId: product.id
       });
 
-      enqueueSnackbar(`${product.name} added successfully!`, { variant: "success" });
+      enqueueSnackbar(t('orders.productAdded'), { variant: 'success' });
 
       const response = await OrdersService.get(activeCompany);
       setComandas(response.data);
@@ -245,7 +247,7 @@ const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCom
 
     } catch (error) {
       console.error("Erro ao adicionar produto à comanda:", error);
-      enqueueSnackbar('Error adding product to the order.', { variant: "error" });
+      enqueueSnackbar(t('orders.addProductError'), { variant: 'error' });
     }
   };
 
@@ -276,105 +278,6 @@ const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCom
       />
     </Box>
   );
-
-  const AddProductsSection = ({ availableProducts, handleAddProductToComanda }) => {
-    const { t } = useTranslation();
-    const [searchTerm, setSearchTerm] = useState("");
-
-    // Filtra produtos com base no termo de busca
-    const filteredProducts = availableProducts.filter((product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    return (
-      <Box>
-        <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
-          {t("orders.addProducts")}
-        </Typography>
-
-        {/* Campo de Busca */}
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder={t("orders.searchProduct")}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          sx={{ mb: 2 }}
-        />
-
-        {/* Lista de Produtos */}
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
-            <Box
-              key={product.id}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                mb: 2,
-                p: 1,
-                borderRadius: 2,
-                backgroundColor: "#fff",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              {/* Imagem do Produto */}
-              {product.images && product?.images[0] ? (
-                <img
-                  src={product.images[0]}
-                  alt={product.name}
-                  style={{
-                    width: "60px",
-                    height: "60px",
-                    borderRadius: "8px",
-                    objectFit: "cover",
-                    marginRight: "16px"
-                  }}
-                />
-              ) : (
-                <Box
-                  sx={{
-                    width: "60px",
-                    height: "60px",
-                    borderRadius: "8px",
-                    backgroundColor: "#f0f0f0",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginRight: "16px"
-                  }}
-                >
-                  <Typography variant="caption">{t("orders.noImage")}</Typography>
-                </Box>
-              )}
-
-              {/* Informações do Produto */}
-              <Box sx={{ flexGrow: 1 }}>
-                <Typography sx={{ fontWeight: "bold" }}>{product.name}</Typography>
-                <Typography sx={{ color: "#6c757d" }}>
-                  ${product.price}
-                </Typography>
-              </Box>
-
-              {/* Botão de Adicionar */}
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                onClick={() => handleAddProductToComanda(product)}
-                sx={{ fontSize: '13pt', borderRadius: 2 }}
-              >
-                {t("orders.add")}
-              </Button>
-            </Box>
-          ))
-        ) : (
-          <Typography variant="body2" sx={{ color: "#6c757d", mt: 2 }}>
-            {t("orders.noAvailableProducts")}
-          </Typography>
-        )}
-      </Box>
-    );
-  };
 
   const ConsumedProductsSection = ({ selectedComanda, consumedProducts }) => {
     const { t } = useTranslation();
@@ -661,8 +564,8 @@ const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCom
       {t("orders.consumed")}
     </Button>
     <Button
-      variant={activeDrawerSection === 'addProducts' ? "contained" : "outlined"}
-      onClick={() => setActiveDrawerSection('addProducts')}
+      variant="outlined"
+      onClick={() => setProductsModalOpen(true)}
       sx={{ borderRadius: 8, flex: 1 }}
     >
       {t("orders.addProducts")}
@@ -684,12 +587,7 @@ const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCom
     <ConsumedProductsSection selectedComanda={selectedComanda} activeDrawerSection={activeDrawerSection} consumedProducts={consumedProducts}  />
   )}
 
-  {activeDrawerSection === 'addProducts' && (
-    <AddProductsSection
-      availableProducts={availableProducts}
-      handleAddProductToComanda={handleAddProductToComanda}
-    />
-  )}
+
 
   <Divider sx={{ my: 2 }} />
 
@@ -715,6 +613,18 @@ const Command: React.FC<{ activeCompany: string, userData: any }> = ({ activeCom
     </Button>
   </Stack>
 </Drawer>
+<ProductsSelectModal
+  open={productsModalOpen}
+  onClose={() => setProductsModalOpen(false)}
+  companyId={activeCompany}
+  orderId={selectedComanda?.id}
+  onProductsAdded={async () => {
+    const response = await OrdersService.get(activeCompany);
+    setComandas(response.data);
+    const updated = response.data.find(c => c.id === selectedComanda?.id);
+    setSelectedComanda(updated);
+  }}
+/>
     </Box>
   );
 };
