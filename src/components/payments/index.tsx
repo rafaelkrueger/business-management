@@ -2,11 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar, BarChart } from 'recharts';
-import { HomeContainerBody, HomeContainerHeader, StreakContainerWorkoutElement, StreakContainerWorkoutElementIcon, StreakContainerWorkoutElementParagraph, StreakContainerWorkoutElementParagraph2, StreakContainerWorkoutElementParagraphContainer } from './styles.ts';
+import { HomeContainerBody, HomeContainerHeader } from './styles.ts';
 import { DollarSign, CreditCard, BarChart3, Percent, Brain, Info } from 'lucide-react';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import AiAssistantModal from '../ai-assistant-modal/index.tsx';
+import DefaultTable from '../table/index.tsx';
+import PaymentService from '../../services/payment.service.ts';
 
 const NoDataMessage = () => {
   const { t } = useTranslation();
@@ -45,9 +47,24 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
   const [glanceData, setGlanceData] = useState({});
   const [aiAssistant, setAiAssistant] = useState(false);
 
+  useEffect(() => {
+    if (activeCompany) {
+      PaymentService.withProduct(activeCompany)
+        .then((res) => setTableData(res.data))
+        .catch(console.error);
+
+      PaymentService.glance(activeCompany)
+        .then((res) => setGlanceData(res.data))
+        .catch(console.error);
+    }
+  }, [activeCompany]);
+
   const chartData = tableData.map((payment) => ({
-    paymentDate: new Date(payment.paymentDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    total: parseFloat(payment.amount.replace('$', '').replace(',', '.')),
+    paymentDate: new Date(payment.paymentDate).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    }),
+    total: Number(payment.amount),
   }));
 
   const SimpleLineChart = () => (
@@ -84,6 +101,26 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
     { icon: <Brain size={40} color="#a855f7" />, value: t('AI Powered'), label: t('payments.aiInsights') },
   ];
 
+  const columns = [
+    { header: t('payments.image'), accessor: 'image' },
+    { header: t('payments.currency'), accessor: 'currency' },
+    { header: t('payments.paymentDate'), accessor: 'paymentDate' },
+    { header: t('payments.status'), accessor: 'status' },
+  ];
+
+  const formattedData = tableData.map((p) => ({
+    image: (
+      <img
+        src={p.product?.images?.[0] || ''}
+        alt={p.product?.name || ''}
+        style={{ width: '50px', borderRadius: '4px' }}
+      />
+    ),
+    currency: p.currency,
+    paymentDate: new Date(p.paymentDate).toLocaleDateString(),
+    status: p.status,
+  }));
+
   return (
     <div style={{ padding: '20px' }}>
       <AiAssistantModal isOpen={aiAssistant} onClose={()=>{setAiAssistant(false)}} companyId={activeCompany} type={t('aiAssistant.types.payments')}/>
@@ -105,18 +142,8 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
       <HomeContainerBody>
         {window.outerWidth > 600 ? <SimpleLineChart /> : <MobileLineChart />}
         {tableData.length > 0 ? (
-          <div style={{ border: '0.1px rgba(0, 0, 0, 0.224) solid', width: '335px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '10px', marginLeft: '5%', maxHeight: '270px', overflowY: 'auto', overflowX: 'hidden' }}>
-            {tableData.map((payment) => (
-              <StreakContainerWorkoutElement key={payment.id}>
-                <StreakContainerWorkoutElementIcon>
-                  <img style={{ width: '70%', margin: 6, borderRadius: 10 }} src={payment.image} />
-                </StreakContainerWorkoutElementIcon>
-                <StreakContainerWorkoutElementParagraphContainer>
-                  <StreakContainerWorkoutElementParagraph>{payment.description}</StreakContainerWorkoutElementParagraph>
-                  <StreakContainerWorkoutElementParagraph2>{payment.amount}</StreakContainerWorkoutElementParagraph2>
-                </StreakContainerWorkoutElementParagraphContainer>
-              </StreakContainerWorkoutElement>
-            ))}
+          <div style={{ maxHeight: '270px', overflowY: 'auto', marginLeft: '5%', width: '335px' }}>
+            <DefaultTable columns={columns} data={formattedData} asCards />
           </div>
         ) : (
           <NoDataMessage />
