@@ -255,6 +255,7 @@
       "price": "Price",
       "cost": "Cost",
       "quantityInStock": "Quantity in Stock",
+      "currency": "Currency",
       "productImages": "Product Images",
       "uploadImages": "Upload Images",
       "cancel": "Cancel",

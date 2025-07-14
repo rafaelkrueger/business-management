@@ -261,6 +261,7 @@
       "price": "Preço",
       "cost": "Custo",
       "quantityInStock": "Quantidade em Estoque",
+      "currency": "Moeda",
       "productImages": "Imagens do Produto",
       "uploadImages": "Enviar Imagens",
       "cancel": "Cancelar",
