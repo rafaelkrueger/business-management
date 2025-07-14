@@ -415,6 +415,7 @@
     "addProducts": "Adicionar",
     "consumedProducts": "Produtos Consumidos",
     "noProducts": "Ainda não há produtos adicionados...",
+    "selectProducts": "Selecionar Produtos",
     "searchProduct": "Buscar por um produto...",
     "noAvailableProducts": "Nenhum produto disponível para adicionar",
     "noImage": "Sem Imagem",
@@ -1140,6 +1141,7 @@
     "createPagesTooltip": "O bot criará páginas de site e enviará o link",
     "createDocuments": "Criar Documentos",
     "createDocumentsTooltip": "O Bot criará documentos",
+    "sell_products": "Vender Produtos",
     "emptyTitle":"Você não tem nenhum chatbot",
     "emptyDesc":"Crie seu primeiro chatbot.",
     "response": {
