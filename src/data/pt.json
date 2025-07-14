@@ -347,7 +347,11 @@
     "averageTicket": "Ticket Médio",
     "taxes": "Impostos",
     "aiInsights": "Análise com IA",
-    "tooltipText": "Os pagamentos são registrados automaticamente por meio da integração com outros módulos do sistema que detectam novas transações. Para adicionar ou ajustar informações manualmente, por favor, entre em contato com nossa equipe de suporte."
+    "tooltipText": "Os pagamentos são registrados automaticamente por meio da integração com outros módulos do sistema que detectam novas transações. Para adicionar ou ajustar informações manualmente, por favor, entre em contato com nossa equipe de suporte.",
+    "image": "Imagem do Produto",
+    "currency": "Moeda",
+    "paymentDate": "Data do Pagamento",
+    "status": "Status"
   },
   "customers": {
     "title": "Sessão de Clientes",

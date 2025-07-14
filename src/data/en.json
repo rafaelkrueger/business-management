@@ -341,7 +341,11 @@
     "averageTicket": "Average Ticket",
     "taxes": "Taxes",
     "aiInsights": "AI Analysis",
-    "tooltipText": "Payments are recorded automatically through integration with other system modules that detect new transactions. To add or adjust information manually, please contact our support team."
+    "tooltipText": "Payments are recorded automatically through integration with other system modules that detect new transactions. To add or adjust information manually, please contact our support team.",
+    "image": "Product Image",
+    "currency": "Currency",
+    "paymentDate": "Payment Date",
+    "status": "Status"
   },
   "customers": {
     "title": "Customer Session",
