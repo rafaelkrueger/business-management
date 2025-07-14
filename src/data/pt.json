@@ -419,6 +419,8 @@
     "searchProduct": "Buscar por um produto...",
     "noAvailableProducts": "Nenhum produto disponível para adicionar",
     "noImage": "Sem Imagem",
+    "productAdded": "Produto adicionado com sucesso!",
+    "addProductError": "Erro ao adicionar produto.",
     "tooltipText": "Seu plano atual permite apenas um dispositivo gerenciando os pedidos por vez."
   },
   "aiAssistant": {

@@ -413,6 +413,8 @@
     "searchProduct": "Search for a product...",
     "noAvailableProducts": "No products available to add",
     "noImage": "No Image",
+    "productAdded": "Product added successfully!",
+    "addProductError": "Error adding product.",
     "tooltipText": "Your current plan allows only one device to manage the orders at a time."
   },
   "aiAssistant": {
