@@ -70,6 +70,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
   const [loadingBots, setLoadingBots] = useState(true);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyBotId, setHistoryBotId] = useState<string | null>(null);
+  const [historyBotSlug, setHistoryBotSlug] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -193,14 +194,16 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
     setCreatingBot(true);
   };
 
-  const handleOpenHistory = (botId: string) => {
+  const handleOpenHistory = (botId: string, botSlug: string) => {
     setHistoryBotId(botId);
+    setHistoryBotSlug(botSlug);
     setHistoryOpen(true);
   };
 
   const handleCloseHistory = () => {
     setHistoryOpen(false);
     setHistoryBotId(null);
+    setHistoryBotSlug(null);
   };
 
   const handleUpdateBot = async () => {
@@ -958,10 +961,10 @@ return (
                 gap: 1,
                 borderTop: '1px solid #F1F5F9'
               }}>
-                                <Button
+                <Button
                   size="small"
                   variant="outlined"
-                  onClick={() => handleOpenHistory(bot.id)}
+                  onClick={() => handleOpenHistory(bot.id, bot.slug)}
                   sx={{
                     borderRadius: '10px',
                     fontWeight: 600,
@@ -1024,6 +1027,7 @@ return (
       open={historyOpen}
       onClose={handleCloseHistory}
       botId={historyBotId}
+      botSlug={historyBotSlug}
     />
   </Box>
 );

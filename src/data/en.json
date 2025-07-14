@@ -1124,6 +1124,7 @@
     "historyTitle": "Conversation History",
     "noHistory": "No conversation history",
     "conversation": "Conversation",
+    "openConversation": "Open Conversation",
     "captureLeads": "Capture leads",
     "captureLeadsTooltip": "The bot will capture leads automatically",
     "createImages": "Create Images",
