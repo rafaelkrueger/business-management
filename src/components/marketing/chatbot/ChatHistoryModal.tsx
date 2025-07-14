@@ -14,19 +14,21 @@ import {
   Stack,
   Grid,
   Chip,
-  IconButton
+  IconButton,
+  Tooltip
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ChatbotService from '../../../services/chatbot.service.ts';
-import { AccessTime, Delete, DeleteForeverOutlined, RemoveRedEyeOutlined } from '@mui/icons-material';
+import { AccessTime, Delete, DeleteForeverOutlined, RemoveRedEyeOutlined, Launch } from '@mui/icons-material';
 
 interface ChatHistoryModalProps {
   open: boolean;
   onClose: () => void;
   botId: string | null;
+  botSlug: string | null;
 }
 
-const ChatHistoryModal: React.FC<ChatHistoryModalProps> = ({ open, onClose, botId }) => {
+const ChatHistoryModal: React.FC<ChatHistoryModalProps> = ({ open, onClose, botId, botSlug }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [threads, setThreads] = useState<any[]>([]);
@@ -122,6 +124,17 @@ const renderThreadsList = () => {
               >
                 <RemoveRedEyeOutlined fontSize="small" />
               </IconButton>
+              {botSlug && (
+                <Tooltip title={t('chatbot.openConversation')} arrow>
+                  <IconButton
+                    size="small"
+                    onClick={() => window.open(`https://roktune.duckdns.org/chatbot/s/${botSlug}?threadId=${thread.threadId}`, '_blank')}
+                    sx={{ position: 'absolute', bottom: 6, right: 52 }}
+                  >
+                    <Launch fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              )}
               <Card
                 sx={{
                   height: '100%',
