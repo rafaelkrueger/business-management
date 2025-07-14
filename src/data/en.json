@@ -1134,7 +1134,8 @@
     "createPagesTooltip": "The bot will create website pages and send the link",
     "createDocuments": "Create Documents",
     "createDocumentsTooltip": "The bot will create documents",
-    "sell_products": "Sell Products",
+    "sellProducts": "Sell Products",
+    "sellProductsTooltips": "The chatbot will create payment links and sell products",
     "emptyTitle":"You don't have chatbots",
     "emptyDesc":"Create your first chatbot.",
     "response": {

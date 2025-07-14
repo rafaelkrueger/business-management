@@ -274,6 +274,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
 
   if (creatingBot) {
     return (
+      <>
       <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <AppBar
@@ -478,12 +479,19 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                         color="primary"
                         sx={{ '& .MuiSvgIcon-root': { fontSize: 24 } }}
                       />
-                      <Typography variant="body2">{t('sell_products')}</Typography>
+                      <Typography variant="body2">{t('chatbot.sellProducts')}</Typography>
+                      <Tooltip title={t('chatbot.sellProductsTooltips')}>
+                        <HelpIcon sx={{ ml: 1, fontSize: 18, color: '#94A3B8' }} />
+                      </Tooltip>
                     </Box>
                     <Box display="flex" alignItems="center" mt={0} mb={1}>
-                      <Button variant="outlined" onClick={()=> setProductsModalOpen(true)}>
-                        {t('products.selectProducts', 'Select Products')}
-                      </Button>
+                      {
+                        botConfig.sellProducts && (
+                        <Button variant="outlined" onClick={()=> setProductsModalOpen(true)}>
+                          {t('products.selectProducts', 'Select Products')}
+                        </Button>
+                        )
+                      }
                     </Box>
                     <Box display="flex" alignItems="center" gap={2} mt={0} mb={1}>
                       <Button
@@ -740,6 +748,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
         selected={botConfig.selectedProducts}
         onChange={(ids) => setBotConfig({ ...botConfig, selectedProducts: ids })}
       />
+      </>
     );
   }
 
