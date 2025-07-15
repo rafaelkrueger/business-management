@@ -8,7 +8,6 @@ import {
   Checkbox,
   Box,
   Grid,
-  Avatar,
   Typography,
   Paper,
   useTheme,
@@ -29,6 +28,7 @@ interface Product {
   id: string;
   name: string;
   description: string;
+  price?: number;
   images?: string[];
   instruction?: string;
 }
@@ -37,8 +37,8 @@ interface ProductsSelectModalProps {
   open: boolean;
   onClose: () => void;
   companyId: string;
-  selected: string[];
-  onChange: (ids: string[]) => void;
+  selected: Product[];
+  onChange: (products: Product[]) => void;
 }
 
 const ProductsSelectModal: React.FC<ProductsSelectModalProps> = ({
@@ -61,11 +61,10 @@ const ProductsSelectModal: React.FC<ProductsSelectModalProps> = ({
     }
   }, [open, companyId]);
 
-  const handleToggle = (id: string) => {
+  const handleToggle = (product: Product) => {
+    const exists = selected.some((p) => p.id === product.id);
     onChange(
-      selected.includes(id)
-        ? selected.filter((p) => p !== id)
-        : [...selected, id]
+      exists ? selected.filter((p) => p.id !== product.id) : [...selected, product]
     );
   };
 
@@ -117,12 +116,12 @@ const ProductsSelectModal: React.FC<ProductsSelectModalProps> = ({
         ) : (
           <Grid container spacing={2} sx={{ p: 2 }}>
             {products.map((product) => {
-              const isSelected = selected.includes(product.id);
+              const isSelected = selected.some(p => p.id === product.id);
               return (
                 <Grid item xs={12} sm={6} md={4} key={product.id}>
                   <Paper
                     elevation={isSelected ? 6 : 1}
-                    onClick={() => handleToggle(product.id)}
+                    onClick={() => handleToggle(product)}
                     sx={{
                       cursor: 'pointer',
                       borderRadius: 2,

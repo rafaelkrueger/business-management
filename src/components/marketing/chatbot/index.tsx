@@ -43,6 +43,13 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { ChartGanttIcon, LockIcon, PlusCircle, PlusCircleIcon } from 'lucide-react';
 import { PlusOutlined } from '@ant-design/icons';
 
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price?: number;
+}
+
 const initialBotConfig = {
   name: '',
   instruction: '',
@@ -55,7 +62,7 @@ const initialBotConfig = {
   welcomeMessage: '',
   pdfFiles: [],
   profileImage: null,
-  selectedProducts: [] as string[]
+  selectedProducts: [] as Product[]
 };
 
 export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: string) => void }> = ({ activeCompany, setModule }) => {
@@ -159,7 +166,12 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
       formData.append('createImages', botConfig.createImages);
       formData.append('createDocuments', botConfig.createDocuments);
       formData.append('sellProducts', botConfig.sellProducts);
-      formData.append('products', JSON.stringify(botConfig.selectedProducts));
+      const payloadProducts = botConfig.selectedProducts.map(p => ({
+        name: p.name,
+        description: p.description,
+        price: p.price
+      }));
+      formData.append('products', JSON.stringify(payloadProducts));
       formData.append('createPages', botConfig.createPages);
 
       if (botConfig.profileImage) {
@@ -226,7 +238,12 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
       formData.append('createImages', botConfig.createImages);
       formData.append('createDocuments', botConfig.createDocuments);
       formData.append('sellProducts', botConfig.sellProducts);
-      formData.append('products', JSON.stringify(botConfig.selectedProducts));
+      const payloadProducts = botConfig.selectedProducts.map(p => ({
+        name: p.name,
+        description: p.description,
+        price: p.price
+      }));
+      formData.append('products', JSON.stringify(payloadProducts));
       formData.append('createPages', botConfig.createPages);
 
       if (typeof botConfig.profileImage === 'string' && botConfig.profileImage.startsWith('http')) {
@@ -746,7 +763,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
         onClose={() => setProductsModalOpen(false)}
         companyId={activeCompany}
         selected={botConfig.selectedProducts}
-        onChange={(ids) => setBotConfig({ ...botConfig, selectedProducts: ids })}
+        onChange={(products) => setBotConfig({ ...botConfig, selectedProducts: products })}
       />
       </>
     );
@@ -1074,7 +1091,7 @@ return (
       onClose={() => setProductsModalOpen(false)}
       companyId={activeCompany}
       selected={botConfig.selectedProducts}
-      onChange={(ids) => setBotConfig({ ...botConfig, selectedProducts: ids })}
+      onChange={(products) => setBotConfig({ ...botConfig, selectedProducts: products })}
     />
   </Box>
 );
