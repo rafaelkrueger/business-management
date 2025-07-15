@@ -167,6 +167,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
       formData.append('createDocuments', botConfig.createDocuments);
       formData.append('sellProducts', botConfig.sellProducts);
       const payloadProducts = botConfig.selectedProducts.map(p => ({
+        id: p.id,
         name: p.name,
         description: p.description,
         price: p.price
