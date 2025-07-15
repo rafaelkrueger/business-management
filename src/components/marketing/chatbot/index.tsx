@@ -207,10 +207,12 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
       captureLeads: bot.captureLeads,
       createImages: bot.createImages,
       createDocuments: bot.createDocuments,
-      sellProducts: bot.sellProducts,
+      sellProducts: !!bot.sellProducts,
       createPages: bot.createPages,
       profileImage: bot.profileImage || null,
-      selectedProducts: bot.products || []
+      selectedProducts: bot.chatbotProducts
+        ? bot.chatbotProducts.map((cp) => cp.product)
+        : []
     });
     setCreatingBot(true);
   };
