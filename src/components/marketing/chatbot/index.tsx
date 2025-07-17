@@ -33,10 +33,12 @@ import {
   Upload as UploadIcon,
   PictureAsPdf as PdfIcon,
   WhatsApp,
-  History as HistoryIcon
+  History as HistoryIcon,
+  OpenInFull
 } from '@mui/icons-material';
 import ChatHistoryModal from './ChatHistoryModal.tsx';
 import ProductsSelectModal from './ProductsSelectModal.tsx';
+import InstructionModal from './InstructionModal.tsx';
 import ChatbotService from '../../../services/chatbot.service.ts';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
@@ -82,6 +84,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
   const [historyBotId, setHistoryBotId] = useState<string | null>(null);
   const [historyBotSlug, setHistoryBotSlug] = useState<string | null>(null);
   const [productsModalOpen, setProductsModalOpen] = useState(false);
+  const [instructionModalOpen, setInstructionModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -381,21 +384,32 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                       }}
                     />
 
-                    <TextField
-                      fullWidth
-                      margin="normal"
-                      label={t('chatbot.instructions')}
-                      name="instruction"
-                      value={botConfig.instruction}
-                      onChange={handleInputChange}
-                      multiline
-                      rows={4}
-                      variant="outlined"
-                      placeholder={t('chatbot.instructionsPlaceholder')}
-                      InputProps={{
-                        sx: { borderRadius: 3 }
-                      }}
-                    />
+                    <Box sx={{ position: 'relative' }}>
+                      <TextField
+                        fullWidth
+                        margin="normal"
+                        label={t('chatbot.instructions')}
+                        name="instruction"
+                        value={botConfig.instruction}
+                        onChange={handleInputChange}
+                        multiline
+                        rows={4}
+                        variant="outlined"
+                        placeholder={t('chatbot.instructionsPlaceholder')}
+                        InputProps={{
+                          sx: { borderRadius: 3 }
+                        }}
+                      />
+                      <Tooltip title={t('chatbot.editInstruction')} arrow>
+                        <IconButton
+                          size="small"
+                          onClick={() => setInstructionModalOpen(true)}
+                          sx={{ position: 'absolute', bottom: 8, right: 8 }}
+                        >
+                          <OpenInFull fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
 
                     <TextField
                       fullWidth
@@ -1084,6 +1098,12 @@ return (
         ))}
       </Grid>
     )}
+    <InstructionModal
+      open={instructionModalOpen}
+      onClose={() => setInstructionModalOpen(false)}
+      instruction={botConfig.instruction}
+      onChange={(value) => setBotConfig({ ...botConfig, instruction: value })}
+    />
     <ChatHistoryModal
       open={historyOpen}
       onClose={handleCloseHistory}
