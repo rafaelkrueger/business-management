@@ -1278,7 +1278,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
               sx={{ mt: 3 }}
               onClick={setOpenForm}
             >
-              {t("marketing.capturePages.createPage")}
+              {t("marketing.capturePages.createSalesPage")}
             </Button>
           </Box>
             )}

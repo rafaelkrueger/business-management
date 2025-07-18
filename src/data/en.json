@@ -90,33 +90,33 @@
     "price": "$0",
     "duration": "",
     "button": "Free Plan",
-    "feature1": "3 Capture Forms",
+    "feature1": "3 Checkout Forms",
     "feature2": "3 Automations",
     "feature3": "500 Leads limit",
     "feature4": "10 AI Content Creation",
-    "feature5": "1 Landing Page"
+      "feature5": "1 Sales Page"
   },
   "elite": {
     "title": "Elite Plan",
     "price": "$10",
     "duration": "/per month",
     "button": "Go Elite",
-    "feature1": "30 Capture Forms",
+    "feature1": "30 Checkout Forms",
     "feature2": "50 Automations",
     "feature3": "Unlimited Leads",
     "feature4": "100 AI Content Creation",
-    "feature5": "30 Landing Page"
+      "feature5": "30 Sales Pages"
   },
   "pro": {
     "title": "Pro Plan",
     "price": "$39",
     "duration": "/per month",
     "button": "Choose Pro",
-    "feature1": "300 Capture Forms",
+    "feature1": "300 Checkout Forms",
     "feature2": "500 Automations",
     "feature3": "Unlimited Leads",
     "feature4": "1000 AI Content Creation",
-    "feature5": "300 Landing Page"
+      "feature5": "300 Sales Pages"
   }
   },
   "gender": {
@@ -761,19 +761,20 @@
     },
     "automation_desc": "Automate your social media and email marketing.",
     "capturePages": {
-      "title": "Landing Pages & Forms",
+      "title": "Sales Pages & Checkout Forms",
       "createLandingPage": "Landing Page",
-      "createForm": "Capture Form",
+      "createForm": "Checkout Form",
       "landingPagesTab": "Landing Pages",
       "salesPagesTab": "Sales Pages",
-      "formsTab": "Capture Forms",
+      "formsTab": "Checkout Forms",
       "noLandingPageFound": "No landing pages found.",
+      "noSalesPageFound": "No sales pages found.",
       "tryCreatingOne": "Try creating a new page to find potential customers",
-      "createPage": "Create New Landing Page",
+      "createPage": "Create New Sales Page",
       "createSalesPage": "Create New Sales Page",
       "noFormFound": "No forms found.",
       "tryCreatingOneForm": "Try creating a new form to find potential customers",
-      "createPageForm": "Create New Capture Form",
+      "createPageForm": "Create New Checkout Form",
       "viewDetails": "View Details",
       "viewLandingPage": "View Landing Page",
       "viewSalesPage": "View Sales Page",
@@ -783,8 +784,8 @@
       "views": "Views: {{count}}",
       "editPage": "Edit",
       "deletePage": "Delete",
-      "pageDeleted": "Landing page deleted successfully",
-      "deleteError": "Error deleting landing page",
+      "pageDeleted": "Sales page deleted successfully",
+      "deleteError": "Error deleting sales page",
       "selectInputTitle": "Select a form",
       "selectInputDescription": "The selected form will trigger an action when it's submitted",
       "automationNextBlocks": "Use form data in the next blocks?",
@@ -813,7 +814,7 @@
       "addSections":"Add Section",
       "addMoreSections":"Add more sections",
       "generateAiTemplate": "Generate AI template",
-      "generatingSections":"Creating your landing page..."
+      "generatingSections":"Creating your sales page..."
     },
     "previewDialog": {
       "title": "Preview and Edit",
@@ -831,7 +832,7 @@
       "createSalesPage": "Create sales page!"
     },
     "detailsDialog": {
-      "title": "Landing Page Details",
+      "title": "Sales Page Details",
       "noPageviews": "No pageview data to display."
     },
     "formDetailsModal": {
@@ -855,7 +856,7 @@
     "leadGenerationTitle": "Lead Generation",
     "leadGenerationDescription": "Create custom forms to capture leads and increase your conversions.",
     "formFields": "Form fields",
-    "createFormTitle": "Create New Capture Form",
+    "createFormTitle": "Create New Checkout Form",
     "formTitle": "Form Title",
     "description": "Description",
     "fieldName": "Field Name",

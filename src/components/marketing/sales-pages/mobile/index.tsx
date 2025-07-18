@@ -667,7 +667,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                   '&:hover': { backgroundColor: alpha('#578acd', 0.9) }
                 }}
               >
-                {t("marketing.capturePages.createPage")}
+                {t("marketing.capturePages.createSalesPage")}
               </Button>
             </Box>
           )}

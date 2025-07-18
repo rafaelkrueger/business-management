@@ -94,8 +94,8 @@
       "title": "Plano Gratuito",
       "price": "R$0",
       "duration": "",
-      "feature5": "1 Landing Page",
-      "feature1": "3 Formulários de Captura",
+      "feature5": "1 Sales Page",
+      "feature1": "3 Formulários de Checkout",
       "feature2": "5 Automações",
       "feature4": "Limite de leads",
       "feature3": "10 Conteúdos Gerados por IA"
@@ -105,8 +105,8 @@
       "price": "R$24",
       "duration": "/por mês",
       "button": "Assinar Elite",
-      "feature1": "30 Landing Pages",
-      "feature5": "30 Formulários de Captura",
+      "feature1": "30 Sales Pages",
+      "feature5": "30 Formulários de Checkout",
       "feature2": "50 Automações",
       "feature4": "Sem Limite de leads",
       "feature3": "100 Conteúdos Gerados por IA"
@@ -116,8 +116,8 @@
       "price": "R$49",
       "duration": "/por mês",
       "button": "Escolher Pro",
-      "feature1": "100 Landing Pages",
-      "feature5": "300 Formulários de Captura",
+      "feature1": "100 Sales Pages",
+      "feature5": "300 Formulários de Checkout",
       "feature2": "500 Automações",
       "feature4": "Sem Limite de leads",
       "feature3": "1000 Conteúdos Gerados por IA"
@@ -767,19 +767,20 @@
     },
     "automation_desc": "Automatize suas redes sociais e marketing de email.",
     "capturePages": {
-      "title": "Landing Pages & Formulários",
+      "title": "Sales Pages & Formulários de Checkout",
       "createLandingPage": "Landing Page",
-      "createForm": "Formulário de Captura",
+      "createForm": "Formulário de Checkout",
       "landingPagesTab": "Landing Pages",
       "salesPagesTab": "Sales Pages",
-      "formsTab": "Formulários",
+      "formsTab": "Formulários de Checkout",
       "noLandingPageFound": "Nenhuma landing page encontrada.",
+      "noSalesPageFound": "Nenhuma sales page encontrada.",
       "tryCreatingOne": "Crie uma nova página.",
-      "createPage": "Criar Página",
+      "createPage": "Criar Sales Page",
       "createSalesPage": "Criar Sales Page",
       "noFormFound": "Nenhum formulário encontrado.",
       "tryCreatingOneForm": "Tente criar um novo formulário para encontrar clientes",
-      "createPageForm": "Criar novo formulário",
+      "createPageForm": "Criar novo formulário de checkout",
       "viewDetails": "Ver Detalhes",
       "viewLandingPage": "Ver Landing Page",
       "viewSalesPage": "Ver Sales Page",
@@ -789,8 +790,8 @@
       "views": "Visualizações: {{count}}",
       "editPage": "Editar",
       "deletePage": "Excluir",
-      "pageDeleted": "Landing page excluída com sucesso",
-      "deleteError": "Erro ao excluir landing page",
+      "pageDeleted": "Sales page excluída com sucesso",
+      "deleteError": "Erro ao excluir sales page",
       "selectInputTitle": "Selecione um formulário",
       "selectInputDescription": "O formulário selecionado irá disparar uma ação quando for enviado",
       "automationNextBlocks": "Usar dados do formulário nos próximos blocos?",
@@ -808,7 +809,7 @@
       "chooseSections": "Escolha as sessões",
       "addSections":"Adicionar Sessão",
       "addMoreSections":"Adicione mais sessões",
-      "generatingSections":"Criando sua landing page..."
+      "generatingSections":"Criando sua sales page..."
     },
     "templateSections": {
       "navbar": "Menu de Navegação",
@@ -837,7 +838,7 @@
       "generateAiTemplate": "Gerar Template IA"
     },
     "detailsDialog": {
-      "title": "Detalhes da Landing Page",
+      "title": "Detalhes da Sales Page",
       "noPageviews": "Nenhum dado de visualizações para exibir."
     },
     "formDetailsModal": {
@@ -861,7 +862,7 @@
     "leadGenerationTitle": "Geração de Leads",
     "leadGenerationDescription": "Crie formulários personalizados para capturar leads e aumentar suas conversões.",
     "formFields": "Campos do formulário",
-    "createFormTitle": "Criar Novo Formulário de Captura",
+    "createFormTitle": "Criar Novo Formulário de Checkout",
     "formTitle": "Título do Formulário",
     "description": "Descrição",
     "fieldName": "Nome do Campo",
