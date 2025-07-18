@@ -40,7 +40,7 @@ const CreateCheckoutForm: React.FC<{ activeCompany: string; setModule: any }> = 
 
   const handleCreate = () => {
     const payload: any = {
-      productId: selectedProducts[0],
+      productIds: selectedProducts,
       userId: userData?._id,
       companyId: activeCompany,
     };
