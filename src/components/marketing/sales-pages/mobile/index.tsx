@@ -281,16 +281,10 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
   const [generating, setGenerating] = useState(false);
   const [customSectionInput, setCustomSectionInput] = useState("");
   const sectionLabels: Record<string, string> = {
-  navbar: t("marketing.templateSections.navbar"),
-  benefits: t("marketing.templateSections.benefits"),
-  demo: t("marketing.templateSections.demo"),
-  "social proof": t("marketing.templateSections.social proof"),
-  prices: t("marketing.templateSections.prices"),
-  "call to action": t("marketing.templateSections.call to action"),
-  footer: t("marketing.templateSections.footer"),
+  salesPage:'Sales Page'
 };
   const [sections, setSections] = useState<string[]>([
-    "navbar", "benefits", "social proof", "prices", "call to action", "footer",
+    "Sales Page",
   ]);
 
     useEffect(() => {
@@ -1106,7 +1100,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
         </Box>
       </FormGroup>
 
-      <Box mt={3}>
+      {/* <Box mt={3}>
         <Typography fontWeight={500} mb={1}>{t("marketing.templateDialog.addMoreSections")}</Typography>
         <Box display="flex" gap={1} alignItems="center">
           <TextField
@@ -1125,7 +1119,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
             <PlusCircle size={30}/>
           </Button>
         </Box>
-      </Box>
+      </Box> */}
       </>
     ) : (
       <>

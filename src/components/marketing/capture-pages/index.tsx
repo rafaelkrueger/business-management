@@ -475,22 +475,16 @@ const TemplateDialog: React.FC<{
 }) => {
   const { t } = useTranslation();
   const [mode, setMode] = useState<"choose" | "ai">("choose");
-  const [sections, setSections] = useState<string[]>([
-    "navbar", "benefits", "social proof", "prices", "call to action", "footer",
-  ]);
   const [customSectionInput, setCustomSectionInput] = useState("");
   const [progress, setProgress] = useState();
   const [generating, setGenerating] = useState(false);
 
   const sectionLabels: Record<string, string> = {
-    navbar: t("marketing.templateSections.navbar"),
-    benefits: t("marketing.templateSections.benefits"),
-    demo: t("marketing.templateSections.demo"),
-    "social proof": t("marketing.templateSections.social proof"),
-    prices: t("marketing.templateSections.prices"),
-    "call to action": t("marketing.templateSections.call to action"),
-    footer: t("marketing.templateSections.footer"),
-  };
+  salesPage:'Landing Page'
+};
+  const [sections, setSections] = useState<string[]>([
+    "Landing Page",
+  ]);
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>, index: number) => {
     e.dataTransfer.setData("sectionIndex", index.toString());
@@ -823,7 +817,7 @@ const TemplateDialog: React.FC<{
                   </Box>
                 </FormGroup>
 
-                <Box mt={3}>
+                {/* <Box mt={3}>
                   <Typography fontWeight={500} mb={1}>{t("marketing.templateDialog.addMoreSections")}</Typography>
                   <Box display="flex" gap={1} alignItems="center">
                     <TextField
@@ -842,7 +836,7 @@ const TemplateDialog: React.FC<{
                       <PlusCircle size={30}/>
                     </Button>
                   </Box>
-                </Box>
+                </Box> */}
               </Box>
             )}
           </>
