@@ -46,6 +46,7 @@ import LeadGeneration from "../../create-leads/index.tsx";
 import CreateCheckoutForm from "../../create-checkout/index.tsx";
 import SalesPageService from "../../../../services/sales-page.service.ts";
 import LeadsService from "../../../../services/leads.service.ts";
+import PaymentService from "../../../../services/payment.service.ts";
 import ProgressService from "../../../../services/progress.service.ts";
 import { PlusOutlined } from "@ant-design/icons";
 
@@ -75,6 +76,23 @@ interface SalesPage {
   screenshotUrl?: string;
   pageviews?: PageView[];
   isActive?: boolean;
+}
+
+interface Payment {
+  id: string;
+  amount: number;
+  description: string;
+  paymentDate: string;
+  paymentMethod: string;
+  currency: string;
+  status: string;
+  productId?: string;
+  companyId?: string;
+  customerId?: string;
+  stripeSessionId?: string;
+  stripePaymentIntentId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface FormSubmission {
@@ -262,8 +280,8 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
   const [currentTab, setCurrentTab] = useState(0);
   const [salesPages, setSalesPages] = useState<SalesPage[]>([]);
   const [loadingPages, setLoadingPages] = useState(true);
-  const [forms, setForms] = useState<FormLead[]>([]);
-  const [loadingForms, setLoadingForms] = useState(true);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [loadingPayments, setLoadingPayments] = useState(true);
   const [openForm, setOpenForm] = useState(false);
   const [selectedSalesPage, setSelectedSalesPage] = useState<SalesPage | null>(null);
   const [viewFormDetails, setViewFormDetails] = useState("");
@@ -308,11 +326,11 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
         .finally(() => setLoadingPages(false));
 
       if (currentTab === 1) {
-        setLoadingForms(true);
-        LeadsService.getForms(activeCompany)
-          .then((res) => setForms(res.data))
-          .catch((err) => enqueueSnackbar("Erro ao carregar formulários", { variant: "error" }))
-          .finally(() => setLoadingForms(false));
+        setLoadingPayments(true);
+        PaymentService.get(activeCompany)
+          .then((res) => setPayments(res.data))
+          .catch((err) => enqueueSnackbar("Erro ao carregar pagamentos", { variant: "error" }))
+          .finally(() => setLoadingPayments(false));
       }
     }
   }, [activeCompany, currentTab]);
@@ -674,7 +692,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
         </Grid>
       ) : (
         <Grid container spacing={2}>
-          {loadingForms ? (
+          {loadingPayments ? (
             Array.from({ length: 4 }).map((_, index) => (
               <Grid item xs={6} key={index}>
                 <Card sx={{ borderRadius: '12px' }}>
@@ -686,90 +704,27 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                 </Card>
               </Grid>
             ))
-          ) : forms.length > 0 ? (
-            forms.map((form) => (
-              <Grid item xs={6} key={form.id}>
-                <Card
-                  sx={{
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                      boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
-                    }
-                  }}
-                >
+          ) : payments.length > 0 ? (
+            payments.map((payment) => (
+              <Grid item xs={6} key={payment.id}>
+                <Card sx={{ borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
                   <CardContent sx={{ p: 2 }}>
-                    <Typography
-                      variant="subtitle2"
-                      sx={{
-                        fontWeight: 600,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
-                      }}
-                    >
-                      {form.title}
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                      {payment.description}
                     </Typography>
-
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{
-                        display: '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical',
-                        overflow: 'hidden'
-                      }}
-                    >
-                      {form.description || t("marketing.capturePages.noDescription")}
+                    <Typography variant="body2" color="text.secondary">
+                      {t('payments.status')}: {payment.status}
                     </Typography>
-
-                    <Box sx={{ height: 80, mt: 1 }}>
-                      <FormSubmissionsChart submissions={form.formlead} />
-                    </Box>
-
-                    <Box sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      mt: 1
-                    }}>
-                      <Chip
-                        label={`${form.formlead.length} leads`}
-                        size="small"
-                        sx={{
-                          height: 20,
-                          fontSize: '0.6rem',
-                          backgroundColor: alpha('#578acd', 0.1)
-                        }}
-                      />
-                      <Typography variant="caption" color="text.secondary">
-                        {form.created_at ?
-                          new Date(form.created_at).toLocaleDateString("pt-BR", { day: '2-digit', month: 'short' }) :
-                          t("common.noDate")}
-                      </Typography>
-                    </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      {t('payments.currency')}: {payment.currency}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {t('payments.paymentDate')}: {new Date(payment.paymentDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                    </Typography>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600, mt: 1 }}>
+                      {payment.amount}
+                    </Typography>
                   </CardContent>
-
-                  <Box sx={{
-                    display: 'flex',
-                    p: 1,
-                    borderTop: `1px solid ${alpha('#578acd', 0.1)}`
-                  }}>
-                    <Button
-                      size="small"
-                      onClick={() => handleViewFormWebsite(form)}
-                      sx={{
-                        fontSize: '0.65rem',
-                        color: '#578acd',
-                        textTransform: 'none',
-                        flex: 1
-                      }}
-                    >
-                      {t("marketing.capturePages.viewForm")}
-                    </Button>
-                  </Box>
                 </Card>
               </Grid>
             ))
@@ -791,24 +746,8 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                 mb: 2
               }} />
               <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                {t("marketing.capturePages.noFormFound")}
+                {t("products.noData")}
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                {t("marketing.capturePages.tryCreatingOneForm")}
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                startIcon={<PlusCircle size={16} />}
-                onClick={() => setCheckoutFormEnabled(true)}
-                sx={{
-                  backgroundColor: '#578acd',
-                  '&:hover': { backgroundColor: alpha('#578acd', 0.9) }
-                }}
-              >
-                {t("marketing.capturePages.createForm")}
-              </Button>
             </Box>
           )}
         </Grid>

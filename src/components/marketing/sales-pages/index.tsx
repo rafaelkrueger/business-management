@@ -27,6 +27,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import SalesPageService from "../../../services/sales-page.service.ts";
 import LeadsService from "../../../services/leads.service.ts";
+import PaymentService from "../../../services/payment.service.ts";
 import { useSnackbar } from "notistack";
 import ProgressService from "../../../services/progress.service.ts";
 
@@ -76,6 +77,23 @@ interface SalesPage {
   screenshotUrl?: string;
   pageviews?: PageView[];
   isActive?: boolean;
+}
+
+interface Payment {
+  id: string;
+  amount: number;
+  description: string;
+  paymentDate: string;
+  paymentMethod: string;
+  currency: string;
+  status: string;
+  productId?: string;
+  companyId?: string;
+  customerId?: string;
+  stripeSessionId?: string;
+  stripePaymentIntentId?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface FormSubmission {
@@ -442,6 +460,31 @@ const FormCard: React.FC<{
             {t("marketing.capturePages.viewForm")}
           </Button>
         </Box>
+      </Card>
+    </Grid>
+  );
+};
+
+const PaymentCard: React.FC<{ payment: Payment }> = ({ payment }) => {
+  const { t } = useTranslation();
+  return (
+    <Grid item xs={12} sm={6} md={4} key={payment.id}>
+      <Card>
+        <CardContent>
+          <Typography variant="h6">{payment.description}</Typography>
+          <Typography variant="body2" color="textSecondary">
+            {t('payments.status')}: {payment.status}
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            {t('payments.currency')}: {payment.currency}
+          </Typography>
+          <Typography variant="caption" color="textSecondary" display="block">
+            {t('payments.paymentDate')}: {new Date(payment.paymentDate).toLocaleDateString()}
+          </Typography>
+          <Typography variant="h6" sx={{ mt: 1 }}>
+            {payment.amount}
+          </Typography>
+        </CardContent>
       </Card>
     </Grid>
   );
@@ -1032,8 +1075,8 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   const [leadGenerationEnabled, setLeadGenerationEnabled] = useState(false);
   const [checkoutFormEnabled, setCheckoutFormEnabled] = useState(false);
   const [viewFormDetails, setViewFormDetails] = useState("");
-  const [forms, setForms] = useState<FormLead[]>([]);
-  const [loadingForms, setLoadingForms] = useState(true);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [loadingPayments, setLoadingPayments] = useState(true);
   const [creatingSalesPage, setCreatingSalesPage] = useState(false);
   const [saveButton, setSaveButton] = useState(false);
   const [selectedSalesPage, setSelectedSalesPage] = useState<SalesPage | null>(null);
@@ -1067,17 +1110,17 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
       });
   };
 
-  const fetchForms = () => {
+  const fetchPayments = () => {
     if (activeCompany) {
-      setLoadingForms(true);
-      LeadsService.getForms(activeCompany)
+      setLoadingPayments(true);
+      PaymentService.get(activeCompany)
         .then((response) => {
-          setForms(response.data);
-          setLoadingForms(false);
+          setPayments(response.data);
+          setLoadingPayments(false);
         })
         .catch((error) => {
-          console.error("Erro ao buscar formulários:", error);
-          setLoadingForms(false);
+          console.error("Erro ao buscar pagamentos:", error);
+          setLoadingPayments(false);
         });
     }
   };
@@ -1096,7 +1139,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
 
   useEffect(() => {
     if (currentTab === 1) {
-      fetchForms();
+      fetchPayments();
     }
   }, [currentTab, activeCompany]);
 
@@ -1288,7 +1331,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
 
       {currentTab === 1 && (
         <Box sx={{ marginTop: "20px" }}>
-          {loadingForms ? (
+          {loadingPayments ? (
             <Grid container spacing={2}>
               {Array.from(new Array(6)).map((_, i) => (
                 <Grid item xs={4} key={i}>
@@ -1298,15 +1341,10 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
                 </Grid>
               ))}
             </Grid>
-          ) : forms.length > 0 ? (
+          ) : payments.length > 0 ? (
             <Grid container spacing={2}>
-              {forms.map((form) => (
-                <FormCard
-                  key={form.id}
-                  form={form}
-                  onViewDetails={handleViewFormDetails}
-                  onViewWebsite={handleViewFormWebsite}
-                />
+              {payments.map((payment) => (
+                <PaymentCard key={payment.id} payment={payment} />
               ))}
             </Grid>
           ) : (
@@ -1323,19 +1361,8 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
         >
           <FormatListBulletedOutlined sx={{ fontSize: 80, color: "grey.400" }} />
           <Typography variant="h6" sx={{ mt: 2 }}>
-            {t("marketing.capturePages.noFormFound")}
+            {t("products.noData")}
           </Typography>
-          <Typography variant="body2" sx={{ mt: 1, color: "text.secondary" }}>
-            {t("marketing.capturePages.tryCreatingOneForm")}
-          </Typography>
-          <Button
-            variant="outlined"
-            color="primary"
-            sx={{ mt: 3 }}
-            onClick={() => setCheckoutFormEnabled(true)}
-          >
-            {t("marketing.capturePages.createFormSales")}
-          </Button>
         </Box>
           )}
         </Box>
