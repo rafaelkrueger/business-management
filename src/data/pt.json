@@ -74,7 +74,19 @@
     "elite_plan": "Plano Elite",
     "pro_plan": "Plano Pro",
     "elite_price": "R$29.90/mês",
-    "pro_price": "R$49.90/mês"
+    "pro_price": "R$49.90/mês",
+    "createTitle": "Criar Checkout",
+    "productsTitle": "Selecione os Produtos",
+    "publicTitle": "Checkout Público",
+    "publicDescription": "Qualquer cliente com o link poderá comprar.",
+    "customerInfo": "Informações do Cliente",
+    "customerName": "Nome do Cliente",
+    "customerEmail": "Email do Cliente",
+    "createButton": "Criar Checkout",
+    "selectProductsError": "Selecione ao menos um produto",
+    "customerInfoError": "Nome e email do cliente são obrigatórios",
+    "createdSuccess": "Checkout criado com sucesso!",
+    "createError": "Erro ao criar checkout"
   },
   "payment": {
     "success": "Pagamento realizado com sucesso!",
