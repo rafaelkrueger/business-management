@@ -1138,6 +1138,7 @@
     "createDocumentsTooltip": "The bot will create documents",
     "sellProducts": "Sell Products",
     "sellProductsTooltips": "The chatbot will create payment links and sell products",
+    "editInstruction": "Edit instruction",
     "emptyTitle":"You don't have chatbots",
     "emptyDesc":"Create your first chatbot.",
     "response": {
