@@ -42,6 +42,7 @@ import {
   Legend,
 } from "chart.js";
 import LeadGeneration from "../create-leads/index.tsx";
+import CreateCheckoutForm from "../create-checkout/index.tsx";
 import FormDetailsModal from "../leads-details/index.tsx";
 import { AccessTime, ArrowBackIos, Close, FormatListBulletedOutlined, InsertDriveFileOutlined } from "@mui/icons-material";
 import AiService from "../../../services/ai.service.ts";
@@ -1029,6 +1030,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [showSavingOverlay, setShowSavingOverlay] = useState(false);
   const [leadGenerationEnabled, setLeadGenerationEnabled] = useState(false);
+  const [checkoutFormEnabled, setCheckoutFormEnabled] = useState(false);
   const [viewFormDetails, setViewFormDetails] = useState("");
   const [forms, setForms] = useState<FormLead[]>([]);
   const [loadingForms, setLoadingForms] = useState(true);
@@ -1173,6 +1175,10 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   };
 
 
+  if (checkoutFormEnabled) {
+    return <CreateCheckoutForm activeCompany={activeCompany} setModule={setModule} />;
+  }
+
   if (leadGenerationEnabled) {
     return <LeadGeneration activeCompany={activeCompany} setModule={setModule} />;
   }
@@ -1210,7 +1216,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
             variant="contained"
             color="primary"
             startIcon={<PlusCircle />}
-            onClick={() => setLeadGenerationEnabled(true)}
+            onClick={() => setCheckoutFormEnabled(true)}
             sx={{ whiteSpace: 'nowrap' }}
           >
             {t("marketing.capturePages.createFormSales")}
@@ -1326,7 +1332,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
             variant="outlined"
             color="primary"
             sx={{ mt: 3 }}
-            onClick={setLeadGenerationEnabled}
+            onClick={() => setCheckoutFormEnabled(true)}
           >
             {t("marketing.capturePages.createFormSales")}
           </Button>

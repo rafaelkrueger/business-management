@@ -43,6 +43,7 @@ import {
   Legend,
 } from "chart.js";
 import LeadGeneration from "../../create-leads/index.tsx";
+import CreateCheckoutForm from "../../create-checkout/index.tsx";
 import SalesPageService from "../../../../services/sales-page.service.ts";
 import LeadsService from "../../../../services/leads.service.ts";
 import ProgressService from "../../../../services/progress.service.ts";
@@ -267,6 +268,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
   const [selectedSalesPage, setSelectedSalesPage] = useState<SalesPage | null>(null);
   const [viewFormDetails, setViewFormDetails] = useState("");
   const [leadGenerationEnabled, setLeadGenerationEnabled] = useState(false);
+  const [checkoutFormEnabled, setCheckoutFormEnabled] = useState(false);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState(true);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
@@ -379,6 +381,10 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
     }
   };
 
+  if (checkoutFormEnabled) {
+    return <CreateCheckoutForm activeCompany={activeCompany} setModule={setModule} />;
+  }
+
   if (leadGenerationEnabled) {
     return <LeadGeneration activeCompany={activeCompany} setModule={setModule} />;
   }
@@ -477,7 +483,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
               padding: '6px',
               borderRadius: '5px',
             }}
-            onClick={() => setLeadGenerationEnabled(true)}
+            onClick={() => setCheckoutFormEnabled(true)}
           />
         </Box>
       </Box>
@@ -795,7 +801,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                 color="primary"
                 size="small"
                 startIcon={<PlusCircle size={16} />}
-                onClick={() => setLeadGenerationEnabled(true)}
+                onClick={() => setCheckoutFormEnabled(true)}
                 sx={{
                   backgroundColor: '#578acd',
                   '&:hover': { backgroundColor: alpha('#578acd', 0.9) }
