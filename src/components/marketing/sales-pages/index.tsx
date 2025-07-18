@@ -466,23 +466,62 @@ const FormCard: React.FC<{
 };
 
 const PaymentCard: React.FC<{ payment: Payment }> = ({ payment }) => {
-  const { t } = useTranslation();
   return (
     <Grid item xs={12} sm={6} md={4} key={payment.id}>
-      <Card>
-        <CardContent>
-          <Typography variant="h6">{payment.description}</Typography>
-          <Typography variant="body2" color="textSecondary">
-            {t('payments.status')}: {payment.status}
+      <Card sx={{
+        borderLeft: '4px solid',
+        borderLeftColor: payment.status === 'paid' ? '#4caf50' : '#ff9800',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        <CardContent sx={{ flexGrow: 1 }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 'bold',
+              mb: 1,
+              color: 'text.primary'
+            }}
+          >
+            {payment.description}
           </Typography>
-          <Typography variant="body2" color="textSecondary">
-            {t('payments.currency')}: {payment.currency}
+
+          <Typography
+            variant="body2"
+            sx={{
+              color: payment.status === 'paid' ? 'success.main' : 'warning.main',
+              mb: 1.5,
+              display: 'inline-block',
+              px: 1,
+              py: 0.5,
+              bgcolor: payment.status === 'paid' ? 'rgba(76, 175, 80, 0.1)' : 'rgba(255, 152, 0, 0.1)',
+              borderRadius: 1
+            }}
+          >
+            {payment.status === 'paid' ? 'Paid' : 'Pending'}
           </Typography>
-          <Typography variant="caption" color="textSecondary" display="block">
-            {t('payments.paymentDate')}: {new Date(payment.paymentDate).toLocaleDateString()}
+
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 'bold',
+              mb: 1.5,
+              color: 'text.primary'
+            }}
+          >
+           ${payment.amount}
           </Typography>
-          <Typography variant="h6" sx={{ mt: 1 }}>
-            {payment.amount}
+
+          <Typography
+            variant="caption"
+            display="block"
+            sx={{
+              color: 'text.secondary',
+              mt: 'auto'
+            }}
+          >
+            {new Date(payment.paymentDate).toLocaleDateString()}
           </Typography>
         </CardContent>
       </Card>
