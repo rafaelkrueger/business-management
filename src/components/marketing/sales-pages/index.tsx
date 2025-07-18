@@ -1197,7 +1197,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
           <Box sx={{display:'flex'}}>
             <ArrowBackIos style={{cursor:'pointer', marginTop:'10px', marginRight:'20px'}} onClick={()=>{setModule('')}}/>
             <Typography variant="h4">
-              {t("marketing.capturePages.title")}
+              {t("marketing.capturePages.titleSales")}
             </Typography>
           </Box>
 
@@ -1219,7 +1219,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
             onClick={() => setLeadGenerationEnabled(true)}
             sx={{ whiteSpace: 'nowrap' }}
           >
-            {t("marketing.capturePages.createForm")}
+            {t("marketing.capturePages.createFormSales")}
           </Button>
         </Box>
       </Box>
@@ -1227,7 +1227,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={currentTab} onChange={handleTabChange}>
           <Tab label={t("marketing.capturePages.salesPagesTab")} />
-          <Tab label={t("marketing.capturePages.formsTab")} />
+          <Tab label={t("marketing.capturePages.formsTabSales")} />
         </Tabs>
       </Box>
     </Box>
@@ -1278,7 +1278,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
               sx={{ mt: 3 }}
               onClick={setOpenForm}
             >
-              {t("marketing.capturePages.createPage")}
+              {t("marketing.capturePages.createSalesPage")}
             </Button>
           </Box>
             )}
@@ -1334,7 +1334,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
             sx={{ mt: 3 }}
             onClick={setLeadGenerationEnabled}
           >
-            {t("marketing.capturePages.createForm")}
+            {t("marketing.capturePages.createFormSales")}
           </Button>
         </Box>
           )}
