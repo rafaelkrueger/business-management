@@ -74,7 +74,19 @@
     "elite_plan": "Elite Plan",
     "pro_plan": "Pro Plan",
     "elite_price": "$10/month",
-    "pro_price": "$39/month"
+    "pro_price": "$39/month",
+    "createTitle": "Create Checkout",
+    "productsTitle": "Select Products",
+    "publicTitle": "Public Checkout",
+    "publicDescription": "Any customer with the link can make a purchase.",
+    "customerInfo": "Customer Information",
+    "customerName": "Customer Name",
+    "customerEmail": "Customer Email",
+    "createButton": "Create Checkout",
+    "selectProductsError": "Please select at least one product",
+    "customerInfoError": "Customer name and email are required",
+    "createdSuccess": "Checkout created successfully!",
+    "createError": "Error creating checkout"
   },
   "payment": {
     "success": "Payment successful!",
