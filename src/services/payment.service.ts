@@ -10,5 +10,8 @@ class PaymentService {
     static withProduct(companyId: string) {
                 return http.get(`/payment/with-product/${companyId}`);
         }
+    static create(data: any) {
+                return http.post(`/payment/create`, data);
+        }
 }
 export default PaymentService;
