@@ -429,7 +429,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
             }}
           />
           <Tab
-            label={t("marketing.capturePages.formsTab")}
+            label={t("marketing.capturePages.formsTabSales")}
             sx={{
               fontSize: '0.8rem',
               fontWeight: 600,
