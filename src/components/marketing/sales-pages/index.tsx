@@ -1013,7 +1013,7 @@ const TemplateDialog: React.FC<{
           disabled={newPage.title === "" || (mode === "choose" && !selectedTemplate) || generating}
           onClick={async () => {
             if (mode === "choose") {
-              setPreviewUrl(`https://roktune.duckdns.org/sales-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
+              setPreviewUrl(`https://roktune.duckdns.org/sales-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}&salesPage=true`);
             } else {
               const orderedSections = sections.filter((s) => s.trim() !== "");
               setGenerating(true);
@@ -1027,7 +1027,7 @@ const TemplateDialog: React.FC<{
               }).then((res)=>{
                 setGenerating(false);
                 setProgress({});
-                setPreviewUrl(`https://roktune.duckdns.org/sales-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
+                setPreviewUrl(`https://roktune.duckdns.org/sales-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}&salesPage=true`);
               })
               .catch((err)=>{console.log(err)});
 
