@@ -76,6 +76,8 @@
     "elite_price": "R$29.90/mês",
     "pro_price": "R$49.90/mês",
     "createTitle": "Criar Checkout",
+    "paymentName": "Nome",
+    "paymentDescription": "Descrição",
     "productsTitle": "Selecione os Produtos",
     "publicTitle": "Checkout Público",
     "publicDescription": "Qualquer cliente com o link poderá comprar.",

@@ -41,6 +41,8 @@ const CreateCheckoutForm: React.FC<{ activeCompany: string; setModule: any }> = 
   const [publicCheckout, setPublicCheckout] = useState(true);
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [paymentName, setPaymentName] = useState('');
+  const [paymentDescription, setPaymentDescription] = useState('');
 
   useEffect(() => {
     if (activeCompany) {
@@ -63,6 +65,8 @@ const CreateCheckoutForm: React.FC<{ activeCompany: string; setModule: any }> = 
       userId: 'userData?._id',
       companyId: activeCompany,
       publicCheckout: publicCheckout,
+      paymentName,
+      paymentDescription,
     };
 
     if (!publicCheckout) {
@@ -100,6 +104,36 @@ const CreateCheckoutForm: React.FC<{ activeCompany: string; setModule: any }> = 
             </Typography>
           </Box>
       </Box>
+      <Paper elevation={0} sx={{
+        p: 3,
+        mb: 4,
+        borderRadius: 3,
+        border: `1px solid ${theme.palette.divider}`,
+        backgroundColor: theme.palette.background.paper
+      }}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label={t('checkout.paymentName')}
+              value={paymentName}
+              onChange={(e) => setPaymentName(e.target.value)}
+              variant="outlined"
+              size="small"
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label={t('checkout.paymentDescription')}
+              value={paymentDescription}
+              onChange={(e) => setPaymentDescription(e.target.value)}
+              variant="outlined"
+              size="small"
+            />
+          </Grid>
+        </Grid>
+      </Paper>
       <Paper elevation={0} sx={{
         p: 3,
         mb: 4,
