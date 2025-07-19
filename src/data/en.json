@@ -76,6 +76,8 @@
     "elite_price": "$10/month",
     "pro_price": "$39/month",
     "createTitle": "Create Checkout",
+    "paymentName": "Name",
+    "paymentDescription": "Description",
     "productsTitle": "Select Products",
     "publicTitle": "Public Checkout",
     "publicDescription": "Any customer with the link can make a purchase.",
