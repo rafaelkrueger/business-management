@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar, BarChart } from 'recharts';
 import { HomeContainerBody, HomeContainerHeader } from './styles.ts';
 import { DollarSign, CreditCard, BarChart3, Percent, Brain, Info } from 'lucide-react';
+import HistoryIcon from '@mui/icons-material/History';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import AiAssistantModal from '../ai-assistant-modal/index.tsx';
@@ -14,8 +15,10 @@ import {
   CardContent,
   Typography,
   Box,
+  IconButton,
 } from '@mui/material';
 import { ExternalLink } from 'lucide-react';
+import PaymentHistoryModal from './PaymentHistoryModal.tsx';
 
 const NoDataMessage = () => {
   const { t } = useTranslation();
@@ -48,57 +51,88 @@ const Card: React.FC<CardProps> = ({ children, style, ...rest }) => (
   </div>
 );
 
-const PaymentCard: React.FC<{ payment: any }> = ({ payment }) => (
-  <Grid item xs={12} sm={6} md={4}>
-    <MuiCard
-      sx={{
-        borderLeft: '4px solid',
-        borderLeftColor: payment.status === 'paid' ? 'success.main' : 'warning.main',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
-            {payment.description || payment.product?.name || 'Payment'}
+const PaymentCard: React.FC<{ payment: any }> = ({ payment }) => {
+  const [open, setOpen] = useState(false);
+
+  const historyData = (payment.paymentHistory || []).map((h) => ({
+    date: new Date(h.paymentDate).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    }),
+    amount: Number(h.amount),
+  }));
+
+  return (
+    <Grid item xs={12} sm={6} md={4}>
+      <MuiCard
+        sx={{
+          borderLeft: '4px solid',
+          borderLeftColor: payment.status === 'paid' ? 'success.main' : 'warning.main',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <CardContent sx={{ flexGrow: 1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
+              {payment.description || payment.product?.name || 'Payment'}
+            </Typography>
+            {payment.link && (
+              <ExternalLink
+                size={18}
+                style={{ cursor: 'pointer' }}
+                onClick={() => window.open(payment.link as string, '_blank')}
+              />
+            )}
+          </Box>
+          <Typography
+            variant="body2"
+            sx={{
+              color: payment.status === 'paid' ? 'success.main' : 'warning.main',
+              mb: 1.5,
+              display: 'inline-block',
+              px: 1,
+              py: 0.5,
+              bgcolor:
+                payment.status === 'paid'
+                  ? 'rgba(76, 175, 80, 0.1)'
+                  : 'rgba(255, 152, 0, 0.1)',
+              borderRadius: 1,
+            }}
+          >
+            {payment.status}
           </Typography>
-          {payment.link && (
-            <ExternalLink
-              size={18}
-              style={{ cursor: 'pointer' }}
-              onClick={() => window.open(payment.link as string, '_blank')}
-            />
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1.5 }}>
+            {`${payment.currency} ${payment.amount}`}
+          </Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            {new Date(payment.paymentDate).toLocaleDateString()}
+          </Typography>
+          {historyData.length > 0 && (
+            <LineChart width={250} height={100} data={historyData} style={{ marginTop: 8 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} />
+              <Tooltip contentStyle={{ fontSize: 12 }} />
+              <Line type="monotone" dataKey="amount" stroke="#3b82f6" />
+            </LineChart>
           )}
-        </Box>
-        <Typography
-          variant="body2"
-          sx={{
-            color: payment.status === 'paid' ? 'success.main' : 'warning.main',
-            mb: 1.5,
-            display: 'inline-block',
-            px: 1,
-            py: 0.5,
-            bgcolor:
-              payment.status === 'paid'
-                ? 'rgba(76, 175, 80, 0.1)'
-                : 'rgba(255, 152, 0, 0.1)',
-            borderRadius: 1,
-          }}
-        >
-          {payment.status}
-        </Typography>
-        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1.5 }}>
-          {`${payment.currency} ${payment.amount}`}
-        </Typography>
-        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-          {new Date(payment.paymentDate).toLocaleDateString()}
-        </Typography>
-      </CardContent>
-    </MuiCard>
-  </Grid>
-);
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <IconButton size="small" onClick={() => setOpen(true)}>
+              <HistoryIcon fontSize="small" />
+            </IconButton>
+          </Box>
+        </CardContent>
+      </MuiCard>
+      <PaymentHistoryModal
+        open={open}
+        onClose={() => setOpen(false)}
+        history={payment.paymentHistory || []}
+      />
+    </Grid>
+  );
+};
 
 const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
   const { t } = useTranslation();
