@@ -32,7 +32,7 @@ import { useSnackbar } from "notistack";
 import ProgressService from "../../../services/progress.service.ts";
 
 // Importações para o Chart.js
-import { Bar } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -47,6 +47,7 @@ import CreateCheckoutForm from "../create-checkout/index.tsx";
 import FormDetailsModal from "../leads-details/index.tsx";
 import { AccessTime, ArrowBackIos, Close, FormatListBulletedOutlined, InsertDriveFileOutlined } from "@mui/icons-material";
 import AiService from "../../../services/ai.service.ts";
+import { CartesianGrid, XAxis, YAxis, LineChart, Line as RechartsLine } from "recharts";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -96,6 +97,7 @@ interface Payment {
   stripePaymentIntentId?: string;
   createdAt?: string;
   updatedAt?: string;
+  paymentHistory?: any;
 }
 
 interface FormSubmission {
@@ -468,6 +470,10 @@ const FormCard: React.FC<{
 };
 
 const PaymentCard: React.FC<{ payment: Payment; onDelete: (p: Payment) => void }> = ({ payment, onDelete }) => {
+    const historyData = (payment.paymentHistory || []).map((h) => ({
+    date: new Date(h.paymentDate).toLocaleDateString(),
+    amount: Number(h.amount),
+  }));
   return (
     <Grid item xs={12} sm={6} md={4} key={payment.id}>
       <Card sx={{
@@ -477,7 +483,13 @@ const PaymentCard: React.FC<{ payment: Payment; onDelete: (p: Payment) => void }
         display: 'flex',
         flexDirection: 'column'
       }}>
-        <CardContent sx={{ flexGrow: 1 }}>
+        <LineChart width={350} height={200} data={historyData} style={{ marginTop: 8, width:'100%', height:'100%', marginLeft: -30 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+          <YAxis tick={{ fontSize: 10 }} />
+          <RechartsLine type="monotone" dataKey="amount" stroke="#3b82f6" />
+        </LineChart>
+        <CardContent sx={{ flexGrow: 1, marginTop:'-30px' }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Typography
               variant="h5"
@@ -489,16 +501,6 @@ const PaymentCard: React.FC<{ payment: Payment; onDelete: (p: Payment) => void }
             >
               {payment.description}
             </Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              {payment.link && (
-                <ExternalLink
-                  size={18}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => window.open(payment.link as string, '_blank')}
-                />
-              )}
-              <Trash2 size={18} style={{ cursor: 'pointer' }} onClick={() => onDelete(payment)} />
-            </Box>
           </Box>
 
           {!payment.publicCheckout && (
@@ -556,6 +558,16 @@ const PaymentCard: React.FC<{ payment: Payment; onDelete: (p: Payment) => void }
           >
             {new Date(payment.paymentDate).toLocaleDateString()}
           </Typography>
+          <Box sx={{ display: 'flex', gap: 1, marginLeft:'80%', marginTop:'-10%' }}>
+              {payment.link && (
+                <ExternalLink
+                  size={18}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => window.open(payment.link as string, '_blank')}
+                />
+              )}
+              <Trash2 size={18} style={{ cursor: 'pointer' }} onClick={() => onDelete(payment)} />
+            </Box>
         </CardContent>
       </Card>
     </Grid>
