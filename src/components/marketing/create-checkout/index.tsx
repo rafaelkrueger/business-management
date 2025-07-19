@@ -62,7 +62,7 @@ const CreateCheckoutForm: React.FC<{ activeCompany: string; setModule: any }> = 
       productIds,
       userId: 'userData?._id',
       companyId: activeCompany,
-      public: publicCheckout,
+      publicCheckout: publicCheckout,
     };
 
     if (!publicCheckout) {

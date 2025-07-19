@@ -472,7 +472,7 @@ const PaymentCard: React.FC<{ payment: Payment }> = ({ payment }) => {
     <Grid item xs={12} sm={6} md={4} key={payment.id}>
       <Card sx={{
         borderLeft: '4px solid',
-        borderLeftColor: payment.status === 'paid' ? '#4caf50' : '#ff9800',
+        borderLeftColor: payment.publicCheckout ? '#2c3eb0' : payment.status === 'paid' ? '#4caf50' : '#ff9800',
         height: '100%',
         display: 'flex',
         flexDirection: 'column'
@@ -512,6 +512,23 @@ const PaymentCard: React.FC<{ payment: Payment }> = ({ payment }) => {
               }}
             >
               {payment.status === 'paid' ? 'Paid' : 'Pending'}
+            </Typography>
+          )}
+
+          {payment.publicCheckout && (
+            <Typography
+              variant="body2"
+              sx={{
+                color: '#2c3eb0',
+                mb: 1.5,
+                display: 'inline-block',
+                px: 1,
+                py: 0.5,
+                bgcolor: '#e7eaf9',
+                borderRadius: 1
+              }}
+            >
+              Public
             </Typography>
           )}
 
