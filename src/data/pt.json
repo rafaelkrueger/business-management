@@ -86,7 +86,9 @@
     "selectProductsError": "Selecione ao menos um produto",
     "customerInfoError": "Nome e email do cliente são obrigatórios",
     "createdSuccess": "Checkout criado com sucesso!",
-    "createError": "Erro ao criar checkout"
+    "createError": "Erro ao criar checkout",
+    "confirmDeletePaymentTitle": "Confirmar exclusão",
+    "confirmDeletePaymentMessage": "Tem certeza que deseja excluir este pagamento?"
   },
   "payment": {
     "success": "Pagamento realizado com sucesso!",

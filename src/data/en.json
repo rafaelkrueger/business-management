@@ -86,7 +86,9 @@
     "selectProductsError": "Please select at least one product",
     "customerInfoError": "Customer name and email are required",
     "createdSuccess": "Checkout created successfully!",
-    "createError": "Error creating checkout"
+    "createError": "Error creating checkout",
+    "confirmDeletePaymentTitle": "Confirm deletion",
+    "confirmDeletePaymentMessage": "Are you sure you want to delete this payment?"
   },
   "payment": {
     "success": "Payment successful!",

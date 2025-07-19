@@ -22,7 +22,7 @@ import {
   CircularProgress,
   LinearProgress,
 } from "@mui/material";
-import { AlertCircle, Check, CheckCircle, Clock, ExternalLink, Eye, Pencil, PlusCircle } from "lucide-react";
+import { AlertCircle, Check, CheckCircle, Clock, ExternalLink, Eye, Pencil, PlusCircle, Trash2 } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import SalesPageService from "../../../services/sales-page.service.ts";
@@ -467,7 +467,7 @@ const FormCard: React.FC<{
   );
 };
 
-const PaymentCard: React.FC<{ payment: Payment }> = ({ payment }) => {
+const PaymentCard: React.FC<{ payment: Payment; onDelete: (p: Payment) => void }> = ({ payment, onDelete }) => {
   return (
     <Grid item xs={12} sm={6} md={4} key={payment.id}>
       <Card sx={{
@@ -489,13 +489,16 @@ const PaymentCard: React.FC<{ payment: Payment }> = ({ payment }) => {
             >
               {payment.description}
             </Typography>
-            {payment.link && (
-              <ExternalLink
-                size={18}
-                style={{ cursor: 'pointer' }}
-                onClick={() => window.open(payment.link as string, '_blank')}
-              />
-            )}
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {payment.link && (
+                <ExternalLink
+                  size={18}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => window.open(payment.link as string, '_blank')}
+                />
+              )}
+              <Trash2 size={18} style={{ cursor: 'pointer' }} onClick={() => onDelete(payment)} />
+            </Box>
           </Box>
 
           {!payment.publicCheckout && (
@@ -1146,6 +1149,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   const [viewFormDetails, setViewFormDetails] = useState("");
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loadingPayments, setLoadingPayments] = useState(true);
+  const [paymentToDelete, setPaymentToDelete] = useState<Payment | null>(null);
   const [creatingSalesPage, setCreatingSalesPage] = useState(false);
   const [saveButton, setSaveButton] = useState(false);
   const [selectedSalesPage, setSelectedSalesPage] = useState<SalesPage | null>(null);
@@ -1248,6 +1252,18 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
 
   const handleViewFormWebsite = (form: FormLead) => {
     window.open(`https://roktune.duckdns.org/leads/form?apiKey=${form.apiKey}`, "_blank");
+  };
+
+  const confirmDeletePayment = async () => {
+    if (!paymentToDelete) return;
+    try {
+      await PaymentService.delete(paymentToDelete.id);
+      setPayments((prev) => prev.filter((p) => p.id !== paymentToDelete.id));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setPaymentToDelete(null);
+    }
   };
 
   const saveSalesPageAsActive = async () => {
@@ -1413,7 +1429,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
           ) : payments.length > 0 ? (
             <Grid container spacing={2}>
               {payments.map((payment) => (
-                <PaymentCard key={payment.id} payment={payment} />
+                <PaymentCard key={payment.id} payment={payment} onDelete={setPaymentToDelete} />
               ))}
             </Grid>
           ) : (
@@ -1481,6 +1497,17 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
         formId={viewFormDetails}
         onClose={() => setViewFormDetails("")}
       />
+
+      <Dialog open={Boolean(paymentToDelete)} onClose={() => setPaymentToDelete(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>{t('checkout.confirmDeletePaymentTitle')}</DialogTitle>
+        <DialogContent dividers>
+          <Typography>{t('checkout.confirmDeletePaymentMessage')}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPaymentToDelete(null)}>{t('cancel')}</Button>
+          <Button color="error" variant="contained" onClick={confirmDeletePayment}>{t('delete')}</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
