@@ -7,8 +7,15 @@ import { DollarSign, CreditCard, BarChart3, Percent, Brain, Info } from 'lucide-
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import AiAssistantModal from '../ai-assistant-modal/index.tsx';
-import DefaultTable from '../table/index.tsx';
 import PaymentService from '../../services/payment.service.ts';
+import {
+  Grid,
+  Card as MuiCard,
+  CardContent,
+  Typography,
+  Box,
+} from '@mui/material';
+import { ExternalLink } from 'lucide-react';
 
 const NoDataMessage = () => {
   const { t } = useTranslation();
@@ -39,6 +46,58 @@ const Card: React.FC<CardProps> = ({ children, style, ...rest }) => (
   >
     {children}
   </div>
+);
+
+const PaymentCard: React.FC<{ payment: any }> = ({ payment }) => (
+  <Grid item xs={12} sm={6} md={4}>
+    <MuiCard
+      sx={{
+        borderLeft: '4px solid',
+        borderLeftColor: payment.status === 'paid' ? 'success.main' : 'warning.main',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <CardContent sx={{ flexGrow: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
+            {payment.description || payment.product?.name || 'Payment'}
+          </Typography>
+          {payment.link && (
+            <ExternalLink
+              size={18}
+              style={{ cursor: 'pointer' }}
+              onClick={() => window.open(payment.link as string, '_blank')}
+            />
+          )}
+        </Box>
+        <Typography
+          variant="body2"
+          sx={{
+            color: payment.status === 'paid' ? 'success.main' : 'warning.main',
+            mb: 1.5,
+            display: 'inline-block',
+            px: 1,
+            py: 0.5,
+            bgcolor:
+              payment.status === 'paid'
+                ? 'rgba(76, 175, 80, 0.1)'
+                : 'rgba(255, 152, 0, 0.1)',
+            borderRadius: 1,
+          }}
+        >
+          {payment.status}
+        </Typography>
+        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1.5 }}>
+          {`${payment.currency} ${payment.amount}`}
+        </Typography>
+        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+          {new Date(payment.paymentDate).toLocaleDateString()}
+        </Typography>
+      </CardContent>
+    </MuiCard>
+  </Grid>
 );
 
 const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
@@ -101,25 +160,6 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
     { icon: <Brain size={40} color="#a855f7" />, value: t('AI Powered'), label: t('payments.aiInsights') },
   ];
 
-  const columns = [
-    { header: t('payments.image'), accessor: 'image' },
-    { header: t('payments.currency'), accessor: 'currency' },
-    { header: t('payments.paymentDate'), accessor: 'paymentDate' },
-    { header: t('payments.status'), accessor: 'status' },
-  ];
-
-  const formattedData = tableData.map((p) => ({
-    image: (
-      <img
-        src={p.product?.images?.[0] || ''}
-        alt={p.product?.name || ''}
-        style={{ width: '50px', borderRadius: '4px' }}
-      />
-    ),
-    currency: p.currency,
-    paymentDate: new Date(p.paymentDate).toLocaleDateString(),
-    status: p.status,
-  }));
 
   return (
     <div style={{ padding: '20px' }}>
@@ -142,9 +182,11 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
       <HomeContainerBody>
         {window.outerWidth > 600 ? <SimpleLineChart /> : <MobileLineChart />}
         {tableData.length > 0 ? (
-          <div style={{ maxHeight: '270px', overflowY: 'auto', marginLeft: '5%', width: '335px' }}>
-            <DefaultTable columns={columns} data={formattedData} asCards />
-          </div>
+          <Grid container spacing={2} sx={{ maxHeight: '270px', overflowY: 'auto', ml: 1 }}>
+            {tableData.map((payment) => (
+              <PaymentCard key={payment.id} payment={payment} />
+            ))}
+          </Grid>
         ) : (
           <NoDataMessage />
         )}
