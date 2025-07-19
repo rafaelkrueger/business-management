@@ -28,7 +28,7 @@ import {
   useTheme,
   alpha
 } from "@mui/material";
-import { AlertCircle, Check, CheckCircle, Clock, PlusCircle, ArrowLeft } from "lucide-react";
+import { AlertCircle, Check, CheckCircle, Clock, PlusCircle, ArrowLeft, ExternalLink } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSnackbar } from "notistack";
 import { AccessTime, ArrowBackIos, Close, FormatListBulletedOutlined, InsertDriveFileOutlined } from "@mui/icons-material";
@@ -86,6 +86,8 @@ interface Payment {
   paymentMethod: string;
   currency: string;
   status: string;
+  link?: string;
+  publicCheckout?: boolean;
   productId?: string;
   companyId?: string;
   customerId?: string;
@@ -709,12 +711,23 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
               <Grid item xs={6} key={payment.id}>
                 <Card sx={{ borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
                   <CardContent sx={{ p: 2 }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                      {payment.description}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {t('payments.status')}: {payment.status}
-                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                        {payment.description}
+                      </Typography>
+                      {payment.link && (
+                        <ExternalLink
+                          size={16}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => window.open(payment.link as string, '_blank')}
+                        />
+                      )}
+                    </Box>
+                    {!payment.publicCheckout && (
+                      <Typography variant="body2" color="text.secondary">
+                        {t('payments.status')}: {payment.status}
+                      </Typography>
+                    )}
                     <Typography variant="body2" color="text.secondary">
                       {t('payments.currency')}: {payment.currency}
                     </Typography>

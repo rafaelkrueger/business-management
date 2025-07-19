@@ -87,6 +87,8 @@ interface Payment {
   paymentMethod: string;
   currency: string;
   status: string;
+  link?: string;
+  publicCheckout?: boolean;
   productId?: string;
   companyId?: string;
   customerId?: string;
@@ -476,31 +478,42 @@ const PaymentCard: React.FC<{ payment: Payment }> = ({ payment }) => {
         flexDirection: 'column'
       }}>
         <CardContent sx={{ flexGrow: 1 }}>
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: 'bold',
-              mb: 1,
-              color: 'text.primary'
-            }}
-          >
-            {payment.description}
-          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 'bold',
+                mb: 1,
+                color: 'text.primary'
+              }}
+            >
+              {payment.description}
+            </Typography>
+            {payment.link && (
+              <ExternalLink
+                size={18}
+                style={{ cursor: 'pointer' }}
+                onClick={() => window.open(payment.link as string, '_blank')}
+              />
+            )}
+          </Box>
 
-          <Typography
-            variant="body2"
-            sx={{
-              color: payment.status === 'paid' ? 'success.main' : 'warning.main',
-              mb: 1.5,
-              display: 'inline-block',
-              px: 1,
-              py: 0.5,
-              bgcolor: payment.status === 'paid' ? 'rgba(76, 175, 80, 0.1)' : 'rgba(255, 152, 0, 0.1)',
-              borderRadius: 1
-            }}
-          >
-            {payment.status === 'paid' ? 'Paid' : 'Pending'}
-          </Typography>
+          {!payment.publicCheckout && (
+            <Typography
+              variant="body2"
+              sx={{
+                color: payment.status === 'paid' ? 'success.main' : 'warning.main',
+                mb: 1.5,
+                display: 'inline-block',
+                px: 1,
+                py: 0.5,
+                bgcolor: payment.status === 'paid' ? 'rgba(76, 175, 80, 0.1)' : 'rgba(255, 152, 0, 0.1)',
+                borderRadius: 1
+              }}
+            >
+              {payment.status === 'paid' ? 'Paid' : 'Pending'}
+            </Typography>
+          )}
 
           <Typography
             variant="h6"
