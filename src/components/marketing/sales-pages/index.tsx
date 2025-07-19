@@ -21,8 +21,11 @@ import {
   Checkbox,
   CircularProgress,
   LinearProgress,
+  Stack,
+  Chip,
+  IconButton,
 } from "@mui/material";
-import { AlertCircle, Check, CheckCircle, Clock, ExternalLink, Eye, Pencil, PlusCircle, Trash2 } from "lucide-react";
+import { AlertCircle, Check, CheckCircle, Clock, ExternalLink, Eye, HistoryIcon, Pencil, PlusCircle, Trash2 } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import SalesPageService from "../../../services/sales-page.service.ts";
@@ -48,6 +51,7 @@ import FormDetailsModal from "../leads-details/index.tsx";
 import { AccessTime, ArrowBackIos, Close, FormatListBulletedOutlined, InsertDriveFileOutlined } from "@mui/icons-material";
 import AiService from "../../../services/ai.service.ts";
 import { CartesianGrid, XAxis, YAxis, LineChart, Line as RechartsLine } from "recharts";
+import PaymentHistoryModal from "../../payments/PaymentHistoryModal.tsx";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -81,6 +85,8 @@ interface SalesPage {
 }
 
 interface Payment {
+  paymentDescription: ReactNode;
+  paymentName: ReactNode;
   id: string;
   amount: number;
   description: string;
@@ -470,12 +476,19 @@ const FormCard: React.FC<{
 };
 
 const PaymentCard: React.FC<{ payment: Payment; onDelete: (p: Payment) => void }> = ({ payment, onDelete }) => {
+    const [open, setOpen] = useState(false);
+
     const historyData = (payment.paymentHistory || []).map((h) => ({
     date: new Date(h.paymentDate).toLocaleDateString(),
     amount: Number(h.amount),
   }));
   return (
     <Grid item xs={12} sm={6} md={4} key={payment.id}>
+      <PaymentHistoryModal
+        open={open}
+        onClose={() => setOpen(false)}
+        history={payment.paymentHistory || []}
+      />
       <Card sx={{
         borderLeft: '4px solid',
         borderLeftColor: payment.publicCheckout ? '#2c3eb0' : payment.status === 'paid' ? '#4caf50' : '#ff9800',
@@ -490,7 +503,7 @@ const PaymentCard: React.FC<{ payment: Payment; onDelete: (p: Payment) => void }
           <RechartsLine type="monotone" dataKey="amount" stroke="#3b82f6" />
         </LineChart>
         <CardContent sx={{ flexGrow: 1, marginTop:'-30px' }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection:'column' }}>
             <Typography
               variant="h5"
               sx={{
@@ -499,8 +512,29 @@ const PaymentCard: React.FC<{ payment: Payment; onDelete: (p: Payment) => void }
                 color: 'text.primary'
               }}
             >
-              {payment.description}
+              {payment.paymentName}
             </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                mb: 1,
+                color: 'text.primary'
+              }}
+            >
+              {payment.paymentDescription}
+            </Typography>
+          <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1, mb:1.7 }}>
+            {(payment.description || '')
+              .split(',')
+              .map((tag, index) => (
+                <Chip
+                  key={index}
+                  label={tag.trim()}
+                  color="primary"
+                  variant="outlined"
+                />
+              ))}
+          </Stack>
           </Box>
 
           {!payment.publicCheckout && (
@@ -558,7 +592,8 @@ const PaymentCard: React.FC<{ payment: Payment; onDelete: (p: Payment) => void }
           >
             {new Date(payment.paymentDate).toLocaleDateString()}
           </Typography>
-          <Box sx={{ display: 'flex', gap: 1, marginLeft:'80%', marginTop:'-10%' }}>
+          <Box sx={{ display: 'flex', gap: 1, marginLeft:'70%', marginTop:'-10%' }}>
+            <Trash2 size={18} style={{ cursor: 'pointer' }} onClick={() => onDelete(payment)} />
               {payment.link && (
                 <ExternalLink
                   size={18}
@@ -566,7 +601,7 @@ const PaymentCard: React.FC<{ payment: Payment; onDelete: (p: Payment) => void }
                   onClick={() => window.open(payment.link as string, '_blank')}
                 />
               )}
-              <Trash2 size={18} style={{ cursor: 'pointer' }} onClick={() => onDelete(payment)} />
+              <HistoryIcon onClick={() => setOpen(true)} size={18} />
             </Box>
         </CardContent>
       </Card>
