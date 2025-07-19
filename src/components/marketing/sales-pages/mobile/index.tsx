@@ -28,7 +28,7 @@ import {
   useTheme,
   alpha
 } from "@mui/material";
-import { AlertCircle, Check, CheckCircle, Clock, PlusCircle, ArrowLeft, ExternalLink } from "lucide-react";
+import { AlertCircle, Check, CheckCircle, Clock, PlusCircle, ArrowLeft, ExternalLink, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSnackbar } from "notistack";
 import { AccessTime, ArrowBackIos, Close, FormatListBulletedOutlined, InsertDriveFileOutlined } from "@mui/icons-material";
@@ -284,6 +284,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
   const [loadingPages, setLoadingPages] = useState(true);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loadingPayments, setLoadingPayments] = useState(true);
+  const [paymentToDelete, setPaymentToDelete] = useState<Payment | null>(null);
   const [openForm, setOpenForm] = useState(false);
   const [selectedSalesPage, setSelectedSalesPage] = useState<SalesPage | null>(null);
   const [viewFormDetails, setViewFormDetails] = useState("");
@@ -375,6 +376,18 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
       enqueueSnackbar(t("marketing.capturePages.deleteError"), { variant: "error" });
     } finally {
       setEditingPage(null);
+    }
+  };
+
+  const confirmDeletePayment = async () => {
+    if (!paymentToDelete) return;
+    try {
+      await PaymentService.delete(paymentToDelete.id);
+      setPayments((prev) => prev.filter((p) => p.id !== paymentToDelete.id));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setPaymentToDelete(null);
     }
   };
 
@@ -715,13 +728,16 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                       <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                         {payment.description}
                       </Typography>
-                      {payment.link && (
-                        <ExternalLink
-                          size={16}
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => window.open(payment.link as string, '_blank')}
-                        />
-                      )}
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        {payment.link && (
+                          <ExternalLink
+                            size={16}
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => window.open(payment.link as string, '_blank')}
+                          />
+                        )}
+                        <Trash2 size={16} style={{ cursor: 'pointer' }} onClick={() => setPaymentToDelete(payment)} />
+                      </Box>
                     </Box>
                     {!payment.publicCheckout && (
                       <Typography variant="body2" color="text.secondary">
@@ -1272,6 +1288,16 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
       onClose={() => setEditingPage(null)}
       onDelete={handleDeletePage}
     />
+    <Dialog open={Boolean(paymentToDelete)} onClose={() => setPaymentToDelete(null)} maxWidth="xs" fullWidth>
+      <DialogTitle>{t('checkout.confirmDeletePaymentTitle')}</DialogTitle>
+      <DialogContent dividers>
+        <Typography>{t('checkout.confirmDeletePaymentMessage')}</Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setPaymentToDelete(null)}>{t('cancel')}</Button>
+        <Button color="error" variant="contained" onClick={confirmDeletePayment}>{t('delete')}</Button>
+      </DialogActions>
+    </Dialog>
     </Box>
   );
 };

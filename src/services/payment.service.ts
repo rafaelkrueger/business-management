@@ -13,5 +13,8 @@ class PaymentService {
     static create(data: any) {
                 return http.post(`/payment/create`, data);
         }
+    static delete(id: string) {
+                return http.delete(`/payment/${id}`);
+        }
 }
 export default PaymentService;
