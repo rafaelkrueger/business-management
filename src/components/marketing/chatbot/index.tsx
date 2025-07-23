@@ -818,6 +818,17 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
         selected={botConfig.selectedProducts}
         onChange={(products) => setBotConfig({ ...botConfig, selectedProducts: products })}
       />
+      <InstructionModal
+        open={instructionModalOpen}
+        onClose={() => setInstructionModalOpen(false)}
+        instruction={botConfig.instruction}
+        onChange={(value) => setBotConfig({ ...botConfig, instruction: value })}
+      />
+      <WhatsAppAuthModal
+        open={openWhatsappAuthModal}
+        onClose={handleCloseWhatsappModal}
+        companyId={activeCompany}
+      />
       </>
     );
   }
