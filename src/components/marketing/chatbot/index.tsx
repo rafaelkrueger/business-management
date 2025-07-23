@@ -40,6 +40,8 @@ import ChatHistoryModal from './ChatHistoryModal.tsx';
 import ProductsSelectModal from './ProductsSelectModal.tsx';
 import InstructionModal from './InstructionModal.tsx';
 import ChatbotService from '../../../services/chatbot.service.ts';
+import WhatsappService from '../../../services/whatsapp.service.ts';
+import WhatsAppAuthModal from '../whatsapp-create/index.tsx';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 import { ChartGanttIcon, LockIcon, PlusCircle, PlusCircleIcon } from 'lucide-react';
@@ -60,7 +62,7 @@ const initialBotConfig = {
   createPages: false,
   createDocuments: false,
   sellProducts: false,
-  connectWhatsapp: false,
+  linkToWhatsapp: false,
   welcomeMessage: '',
   pdfFiles: [],
   profileImage: null,
@@ -85,6 +87,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
   const [historyBotSlug, setHistoryBotSlug] = useState<string | null>(null);
   const [productsModalOpen, setProductsModalOpen] = useState(false);
   const [instructionModalOpen, setInstructionModalOpen] = useState(false);
+  const [openWhatsappAuthModal, setOpenWhatsappAuthModal] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -93,6 +96,36 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
 
   const handleCheckboxChange = (key) => {
     setBotConfig({ ...botConfig, [key]: !botConfig[key] });
+  };
+
+  const handleToggleWhatsapp = async () => {
+    if (!botConfig.linkToWhatsapp) {
+      try {
+        const response = await WhatsappService.checkWhatsAppStatus(activeCompany);
+        if (response.data.connected) {
+          setBotConfig({ ...botConfig, linkToWhatsapp: true });
+        } else {
+          setOpenWhatsappAuthModal(true);
+        }
+      } catch (err) {
+        console.error('Error checking whatsapp status', err);
+        setOpenWhatsappAuthModal(true);
+      }
+    } else {
+      setBotConfig({ ...botConfig, linkToWhatsapp: false });
+    }
+  };
+
+  const handleCloseWhatsappModal = async () => {
+    setOpenWhatsappAuthModal(false);
+    try {
+      const response = await WhatsappService.checkWhatsAppStatus(activeCompany);
+      if (response.data.connected) {
+        setBotConfig((prev) => ({ ...prev, linkToWhatsapp: true }));
+      }
+    } catch (err) {
+      console.error('Error checking whatsapp status', err);
+    }
   };
 
   const handlePdfUpload = (e) => {
@@ -177,6 +210,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
       }));
       formData.append('products', JSON.stringify(payloadProducts));
       formData.append('createPages', botConfig.createPages);
+      formData.append('linkToWhatsapp', botConfig.linkToWhatsapp);
 
       if (botConfig.profileImage) {
         const blob = await fetch(botConfig.profileImage).then(r => r.blob());
@@ -252,6 +286,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
       }));
       formData.append('products', JSON.stringify(payloadProducts));
       formData.append('createPages', botConfig.createPages);
+      formData.append('linkToWhatsapp', botConfig.linkToWhatsapp);
 
       if (typeof botConfig.profileImage === 'string' && botConfig.profileImage.startsWith('http')) {
         // Image URL already exists, no need to re-upload
@@ -530,16 +565,16 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                     </Box>
                     <Box display="flex" alignItems="center" gap={2} mt={0} mb={1}>
                       <Button
-                        variant={botConfig.connectWhatsapp ? "contained" : "outlined"}
+                        variant={botConfig.linkToWhatsapp ? "contained" : "outlined"}
                         startIcon={<WhatsApp />}
-                        onClick={() => handleCheckboxChange('connectWhatsapp')}
+                        onClick={handleToggleWhatsapp}
                         sx={{
                           textTransform: 'none',
-                          backgroundColor: botConfig.connectWhatsapp ? '#25D366' : 'transparent',
-                          color: botConfig.connectWhatsapp ? 'white' : '#25D366',
+                          backgroundColor: botConfig.linkToWhatsapp ? '#25D366' : 'transparent',
+                          color: botConfig.linkToWhatsapp ? 'white' : '#25D366',
                           borderColor: '#25D366',
                           '&:hover': {
-                            backgroundColor: botConfig.connectWhatsapp ? '#20b358' : 'rgba(37, 211, 102, 0.1)',
+                            backgroundColor: botConfig.linkToWhatsapp ? '#20b358' : 'rgba(37, 211, 102, 0.1)',
                             borderColor: '#20b358'
                           },
                           px: 2,
@@ -547,7 +582,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                           borderRadius: '12px'
                         }}
                       >
-                        {botConfig.connectWhatsapp ? t('chatbot.connectedWhatsapp') : t('chatbot.connectWhatsapp')}
+                        {botConfig.linkToWhatsapp ? t('chatbot.connectedWhatsapp') : t('chatbot.connectWhatsapp')}
                       </Button>
                       <Tooltip title={t('chatbot.connectWhatsappHint')}>
                         <HelpIcon sx={{ fontSize: 18, color: '#94A3B8', cursor: 'pointer' }} />
@@ -1116,6 +1151,11 @@ return (
       companyId={activeCompany}
       selected={botConfig.selectedProducts}
       onChange={(products) => setBotConfig({ ...botConfig, selectedProducts: products })}
+    />
+    <WhatsAppAuthModal
+      open={openWhatsappAuthModal}
+      onClose={handleCloseWhatsappModal}
+      companyId={activeCompany}
     />
   </Box>
 );
