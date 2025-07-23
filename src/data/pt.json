@@ -1138,7 +1138,7 @@
     "knowledgeBase": "Base de Conhecimento",
     "uploadPDFs": "Enviar PDFs",
     "generateTemplates": "Gerar templates automaticamente",
-    "connectWhatsappHint": "Você pode usar este chatbot no WhatsApp",
+    "connectWhatsappHint": "Este chatbot será vinculado ao WhatsApp. Apenas um chatbot pode ser conectado por empresa.",
     "connectWhatsapp": "Conectar WhatsApp",
     "connectedWhatsapp": "WhatsApp Conectado",
     "generateTemplatesTooltip": "O bot irá sugerir modelos de resposta com base nas interações",

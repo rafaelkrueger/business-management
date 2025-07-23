@@ -1130,7 +1130,7 @@
     "profileImageHint": "Click to upload an image",
     "knowledgeBase": "Knowledge Base",
     "uploadPDFs": "Upload PDFs",
-    "connectWhatsappHint": "You can use this chatbot in WhatsApp",
+    "connectWhatsappHint": "This chatbot will be linked to WhatsApp. Only one chatbot can be connected per company.",
     "connectWhatsapp": "Connect WhatsApp",
     "connectedWhatsapp": "WhatsApp Connected",
     "generateTemplates": "Generate templates automatically",
