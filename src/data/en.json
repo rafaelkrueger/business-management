@@ -1148,6 +1148,8 @@
     "noHistory": "No conversation history",
     "conversation": "Conversation",
     "openConversation": "Open Conversation",
+    "confirmDeleteThreadTitle": "Confirm deletion",
+    "confirmDeleteThreadMessage": "Are you sure you want to delete this conversation?",
     "captureLeads": "Capture leads",
     "captureLeadsTooltip": "The bot will capture leads automatically",
     "createImages": "Create Images",
