@@ -1155,6 +1155,8 @@
     "noHistory": "Nenhum histórico de conversa",
     "conversation": "Conversa",
     "openConversation": "Abrir Conversa",
+    "confirmDeleteThreadTitle": "Confirmar exclusão",
+    "confirmDeleteThreadMessage": "Tem certeza que deseja excluir esta conversa?",
     "captureLeads": "Capturar leads",
     "captureLeadsTooltip": "O Bot capturará leads automaticamente",
     "createImages": "Criar Imagens",

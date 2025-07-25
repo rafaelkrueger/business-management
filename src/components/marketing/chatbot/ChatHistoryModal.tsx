@@ -33,6 +33,7 @@ const ChatHistoryModal: React.FC<ChatHistoryModalProps> = ({ open, onClose, botI
   const [loading, setLoading] = useState(false);
   const [threads, setThreads] = useState<any[]>([]);
   const [selected, setSelected] = useState<any | null>(null);
+  const [threadToDelete, setThreadToDelete] = useState<string | null>(null);
 
   const handleDeleteThread = async (threadId: string) => {
     try {
@@ -111,7 +112,7 @@ const renderThreadsList = () => {
                 size="small"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleDeleteThread(thread.threadId);
+                  setThreadToDelete(thread.threadId);
                 }}
                 sx={{ position: 'absolute', bottom: 6, right: 8 }}
               >
@@ -231,6 +232,7 @@ const renderThreadsList = () => {
   );
 
   return (
+    <>
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
         {selected ? `${t('chatbot.conversation')} ${threads.indexOf(selected) + 1}` : t('chatbot.historyTitle')}
@@ -261,6 +263,17 @@ const renderThreadsList = () => {
         </Button>
       </DialogActions>
     </Dialog>
+    <Dialog open={Boolean(threadToDelete)} onClose={() => setThreadToDelete(null)} maxWidth="xs" fullWidth>
+      <DialogTitle>{t('chatbot.confirmDeleteThreadTitle')}</DialogTitle>
+      <DialogContent dividers>
+        <Typography>{t('chatbot.confirmDeleteThreadMessage')}</Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setThreadToDelete(null)}>{t('cancel')}</Button>
+        <Button color="error" variant="contained" onClick={() => threadToDelete && (handleDeleteThread(threadToDelete), setThreadToDelete(null))}>{t('delete')}</Button>
+      </DialogActions>
+    </Dialog>
+    </>
   );
 };
 
