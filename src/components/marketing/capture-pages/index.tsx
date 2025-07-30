@@ -29,6 +29,7 @@ import LandingPageService from "../../../services/landing-page.service.ts";
 import LeadsService from "../../../services/leads.service.ts";
 import { useSnackbar } from "notistack";
 import ProgressService from "../../../services/progress.service.ts";
+import { API_URL } from "../../../config/api.ts";
 
 // Importações para o Chart.js
 import { Bar } from "react-chartjs-2";
@@ -850,7 +851,7 @@ const TemplateDialog: React.FC<{
           disabled={newPage.title === "" || (mode === "choose" && !selectedTemplate) || generating}
           onClick={async () => {
             if (mode === "choose") {
-              setPreviewUrl(`https://roktune.duckdns.org/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
+              setPreviewUrl(`${API_URL}/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
             } else {
               const orderedSections = sections.filter((s) => s.trim() !== "");
               setGenerating(true);
@@ -864,7 +865,7 @@ const TemplateDialog: React.FC<{
               }).then((res)=>{
                 setGenerating(false);
                 setProgress({});
-                setPreviewUrl(`https://roktune.duckdns.org/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
+                setPreviewUrl(`${API_URL}/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
               })
               .catch((err)=>{console.log(err)});
 
@@ -987,7 +988,7 @@ const EditDialog: React.FC<{
       <DialogContent>
         {landingPage ? (
           <iframe
-            src={`https://roktune.duckdns.org/landing-pages/edit/${landingPage.id}`}
+            src={`${API_URL}/landing-pages/edit/${landingPage.id}`}
             width="100%"
             height="500px"
             style={{ border: "none" }}
@@ -1107,7 +1108,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   };
 
   const handleViewWebsite = (page: LandingPage) => {
-    window.open(`https://roktune.duckdns.org/landing-pages/page/${page.id}`, "_blank");
+    window.open(`${API_URL}/landing-pages/page/${page.id}`, "_blank");
   };
 
   const handleEditPage = (page: LandingPage) => {
@@ -1133,7 +1134,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   };
 
   const handleViewFormWebsite = (form: FormLead) => {
-    window.open(`https://roktune.duckdns.org/leads/form?apiKey=${form.apiKey}`, "_blank");
+    window.open(`${API_URL}/leads/form?apiKey=${form.apiKey}`, "_blank");
   };
 
   const saveLandingPageAsActive = async () => {

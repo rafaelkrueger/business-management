@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_URL } from '../../config/api.ts';
 import {
   Box,
   Typography,
@@ -69,7 +70,7 @@ const Tracking: React.FC<{ activeCompany: string, userData: any }> = ({ activeCo
   };
 
   const handleCopy = () => {
-    const scriptTag = `<script src="https://roktune.duckdns.org/integracao.js" data-api-key="${tagData.apiKey}"></script>`;
+    const scriptTag = `<script src="${API_URL}/integracao.js" data-api-key="${tagData.apiKey}"></script>`;
     navigator.clipboard.writeText(scriptTag);
     setCopySuccess(true);
   };
@@ -221,7 +222,7 @@ const Tracking: React.FC<{ activeCompany: string, userData: any }> = ({ activeCo
                       position: 'relative'
                     }}
                   >
-                    {`<script src="https://roktune.duckdns.org/integracao.js" data-api-key="${tagData.apiKey}"></script>`}
+                    {`<script src="${API_URL}/integracao.js" data-api-key="${tagData.apiKey}"></script>`}
                     <IconButton
                       onClick={handleCopy}
                       sx={{ position: 'absolute', top: 8, right: 8 }}
