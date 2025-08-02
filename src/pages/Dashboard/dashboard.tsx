@@ -140,7 +140,7 @@ useEffect(() => {
             setActiveCompany={changeActiveCompany}
           />
         ) : ''}
-        {activeModuleName === 'integration' && <Integrations />}
+        {activeModuleName === 'integration' && <Integrations activeCompany={activeCompany} />}
       </DashboardContainerShowed>
     </DashboardContainer>
   );

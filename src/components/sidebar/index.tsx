@@ -199,6 +199,17 @@ const Sidebar: React.FC<{
             if (window.outerWidth < 600) {
               props.setIsMenuActive(!props.isMenuActive);
             }
+            props.activateModule('integration');
+          }}
+          style={{ marginLeft: '6%', marginBottom:'17px', fontSize:'13pt' }}
+        >
+          {t('integrations')}
+        </SidebarContainerBodyElement>
+        <SidebarContainerBodyElement
+          onClick={() => {
+            if (window.outerWidth < 600) {
+              props.setIsMenuActive(!props.isMenuActive);
+            }
             props.activateModule('config');
           }}
           style={{ marginLeft: '6%', marginBottom:'17px', fontSize:'13pt' }}

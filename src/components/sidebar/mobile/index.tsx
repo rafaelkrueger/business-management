@@ -309,7 +309,7 @@ const MobileBottomNavigation = ({
           </Tooltip>
         )}
 
-          {[{ key: 'config', icon: RiSettingsLine, label: t('configurations') }, { key: 'logout', icon: IoMdLogOut, label: t('logout') }].map(item => (
+          {[{ key: 'integration', icon: CgExtension, label: t('integrations') }, { key: 'config', icon: RiSettingsLine, label: t('configurations') }, { key: 'logout', icon: IoMdLogOut, label: t('logout') }].map(item => (
             <Tooltip key={item?.key} title={item.label} placement="top" arrow>
               <NavItem onClick={() => handleItemClick(item?.key)} active={activeItem === item?.key}>
                 <ActiveIndicator active={activeItem === item?.key} />

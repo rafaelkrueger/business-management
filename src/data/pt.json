@@ -242,6 +242,12 @@
   },
   "notifications": "Notificações",
   "integrations": "Integrações",
+  "integration": {
+    "connect": "Conectar",
+    "disconnect": "Desconectar",
+    "connected": "Conectado",
+    "disconnected": "Desconectado"
+  },
   "ads": {
     "title": "Gerenciamento de Anúncios",
     "subtitle": "Crie, gerencie e otimize campanhas em várias plataformas",
