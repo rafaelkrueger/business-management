@@ -23,6 +23,8 @@ import MarketingDashboard from '../../components/marketing/index.tsx';
 import Integrations from '../../components/integrations/index.tsx';
 import MobileMarketingDashboard from '../../components/marketing/mobile/index.tsx';
 import MobileConfig from '../../components/config/mobile/index.tsx'
+import AdsManagement from '../../components/ads/index.tsx';
+import MobileAdsManagement from '../../components/ads/mobile/index.tsx';
 import EnterpriseService from '../../services/enterprise.service.ts';
 
 const Dashboard: React.FC = () => {
@@ -123,6 +125,7 @@ useEffect(() => {
         {activeModuleName === 'orders' && <Command activeCompany={activeCompany} userData={userData} />}
         {activeModuleName === 'online' && <Tracking userData={userData} activeCompany={activeCompany} />}
         {activeModuleName === 'marketing' ? window.outerWidth > 600 ? <MarketingDashboard activeCompany={activeCompany} /> : <MobileMarketingDashboard activeCompany={activeCompany} />  : ''}
+        {activeModuleName === 'ads' ? window.outerWidth > 600 ? <AdsManagement activeCompany={activeCompany} /> : <MobileAdsManagement activeCompany={activeCompany} /> : ''}
         {activeModuleName === 'config' && activeCompany ? window.outerWidth > 600 ? (
           <Config
             userData={userData}

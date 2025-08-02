@@ -7,7 +7,7 @@ import { CgWebsite, CgExtension, CgChevronDown, CgChevronUp } from 'react-icons/
 import { CiCreditCard1 } from 'react-icons/ci';
 import { FaMoneyBill, FaCalendar } from 'react-icons/fa';
 import { IoIosHome, IoMdChatboxes, IoMdNotifications, IoMdLogOut } from 'react-icons/io';
-import { MdSell } from 'react-icons/md';
+import { MdSell, MdOutlineAdsClick } from 'react-icons/md';
 import { RiAdminLine, RiSettingsLine } from 'react-icons/ri';
 import { TiBusinessCard } from 'react-icons/ti';
 import { BsBuilding } from 'react-icons/bs';
@@ -196,7 +196,7 @@ const MobileBottomNavigation = ({
 
   const iconComponents = {
     home: IoIosHome, payments: FaMoneyBill, products: MdSell, customers: RiAdminLine, employees: TiBusinessCard,
-    calendar: FaCalendar, orders: CiCreditCard1, online: CgWebsite, marketing: CampaignIcon, notifications: IoMdNotifications,
+    calendar: FaCalendar, orders: CiCreditCard1, online: CgWebsite, marketing: CampaignIcon, ads: MdOutlineAdsClick, notifications: IoMdNotifications,
     chat: IoMdChatboxes, config: RiSettingsLine, logout: IoMdLogOut
   };
 

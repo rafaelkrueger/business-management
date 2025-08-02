@@ -229,7 +229,8 @@
       "customers": "Clientes",
       "calendar": "Calendário",
       "online": "Gestão Online",
-      "marketing": "Marketing & Vendas"
+      "marketing": "Marketing & Vendas",
+      "ads": "Gerenciamento de Anúncios"
     }
   },
   "messages": {
@@ -241,6 +242,17 @@
   },
   "notifications": "Notificações",
   "integrations": "Integrações",
+  "ads": {
+    "title": "Gerenciamento de Anúncios",
+    "subtitle": "Crie, gerencie e otimize campanhas em várias plataformas",
+    "createCampaign": "Criar Campanha",
+    "manageCampaigns": "Gerenciar Campanhas",
+    "optimizeCampaigns": "Otimizar Campanhas",
+    "google": "Google Ads",
+    "facebook": "Facebook Ads",
+    "tiktok": "TikTok Ads",
+    "instagram": "Instagram Ads"
+  },
   "configurations": "Config",
   "support": "Se você deseja atualizar suas informações ou redefinir sua senha, por favor, entre em contato com o suporte.",
   "notification": {
