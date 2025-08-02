@@ -56,6 +56,8 @@ import PremiumMarketingAssistantMobile from "../ai/mobile/index.tsx";
 import MarketingService from "../../../services/marketing.service.ts";
 import {ChatbotManager} from "../chatbot/index.tsx";
 import SalesFunnelMobile from "../funnel/mobile/index.tsx";
+import { AdsClickOutlined } from "@mui/icons-material";
+import MobileAdsManagement from '../../../components/ads/mobile/index.tsx';
 
 const MobileMarketingDashboard: React.FC<{ activeCompany }> = ({ ...props }) => {
   const { t } = useTranslation();
@@ -440,6 +442,16 @@ const cards = [
     completed: isModuleCompleted("salesPage"),
     disabled: false,
   },
+  {
+    icon: <AdsClickOutlined size={24} style={{color:theme.palette.primary.main}} />,
+    title: t("ads.title"),
+    description: t("ads.subtitle"),
+    module: "advertising",
+    color: theme.palette.primary.main,
+    completed: isModuleCompleted("advertising"),
+    disabled: false,
+  },
+
 ];
 
   if (module === 'createLeads') {
@@ -462,6 +474,8 @@ const cards = [
     return <ChatbotManager activeCompany={props.activeCompany} setModule={setModule} />;
   } else if (module === 'salesPage') {
     return <MobileSalesPages activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('salesPage')} />;
+  } else if (module === 'advertising') {
+    return <MobileAdsManagement activeCompany={props.activeCompany} setModule={setModule} onComplete={() => handleModuleComplete('salesPage')} />;
   }
 
   return (

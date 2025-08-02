@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Box, Typography, Button, Stack } from '@mui/material';
 import { SiGoogleads, SiFacebook, SiTiktok, SiInstagram } from 'react-icons/si';
 
-const MobileAdsManagement: React.FC<{ activeCompany?: string }> = ({ activeCompany }) => {
+export const MobileAdsManagement: React.FC<{ activeCompany?: string }> = ({ activeCompany }) => {
   const { t } = useTranslation();
 
   const platforms = [
