@@ -230,11 +230,23 @@
       "customers": "Customers",
       "calendar": "Calendar",
       "online": "Online Management",
-      "marketing": "Marketing & Sales"
+      "marketing": "Marketing & Sales",
+      "ads": "Ads Management"
     }
   },
   "notifications": "Notifications",
   "integrations": "Integrations",
+  "ads": {
+    "title": "Ads Management",
+    "subtitle": "Create, manage and optimize campaigns across platforms",
+    "createCampaign": "Create Campaign",
+    "manageCampaigns": "Manage Campaigns",
+    "optimizeCampaigns": "Optimize Campaigns",
+    "google": "Google Ads",
+    "facebook": "Facebook Ads",
+    "tiktok": "TikTok Ads",
+    "instagram": "Instagram Ads"
+  },
   "configurations": "Config",
   "support": "If you want to update your information or reset your password, please contact support.",
   "notification": {

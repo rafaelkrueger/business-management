@@ -20,7 +20,7 @@ import { FaMoneyBill } from "react-icons/fa";
 import { RiAdminLine } from "react-icons/ri";
 import { IoMdChatboxes } from "react-icons/io";
 import { TiBusinessCard } from "react-icons/ti";
-import { MdSell } from "react-icons/md";
+import { MdSell, MdOutlineAdsClick } from "react-icons/md";
 import { FaCalendar } from "react-icons/fa";
 import { CgWebsite } from "react-icons/cg";
 import HomeService from '../../services/home.service.ts';
@@ -39,7 +39,8 @@ const icons = {
   FaCalendar: FaCalendar,
   CiCreditCard1: CiCreditCard1,
   CgWebsite: CgWebsite,
-  CampaignIcon: CampaignIcon
+  CampaignIcon: CampaignIcon,
+  MdOutlineAdsClick: MdOutlineAdsClick
 };
 
 const Sidebar: React.FC<{

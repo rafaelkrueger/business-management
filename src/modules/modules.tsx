@@ -7,6 +7,7 @@ import { FaCalendar } from "react-icons/fa";
 import { CiCreditCard1 } from "react-icons/ci";
 import { CgWebsite } from "react-icons/cg";
 import CampaignIcon from "@mui/icons-material/Campaign";
+import { MdOutlineAdsClick } from "react-icons/md";
 
 export const dashboardModules = [
   {
@@ -48,6 +49,11 @@ export const dashboardModules = [
     module: '',
     name: 'Marketing',
     icon: <CampaignIcon size={26} />,
+  },
+  {
+    module: '',
+    name: 'Ads',
+    icon: <MdOutlineAdsClick size={26} />,
   },
 ];
 

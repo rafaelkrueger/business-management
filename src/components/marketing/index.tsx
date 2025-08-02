@@ -52,6 +52,9 @@ import UserProgressService from '../../services/user-progress.service.ts'
 import { RobotOutlined } from "@ant-design/icons";
 import MarketingService from "../../services/marketing.service.ts";
 import {ChatbotManager} from "./chatbot/index.tsx";
+import { AdsClickOutlined } from "@mui/icons-material";
+import AdsManagement from '../../components/ads/index.tsx';
+
 
 // Gradientes modernos para light mode
 const cardGradients = {
@@ -428,6 +431,15 @@ const cards = [
     // disabled: true,
     commingSoon: false
   },
+  {
+    icon: <AdsClickOutlined size={24} style={{color:theme.palette.primary.main}} />,
+    title: t("ads.title"),
+    description: t("ads.subtitle"),
+    module: "advertising",
+    color: theme.palette.primary.main,
+    completed: isModuleCompleted("advertising"),
+    disabled: false,
+  },
 ];
 
 
@@ -436,15 +448,6 @@ const cards = [
     if (isTablet) return 6;
     return 3;
   };
-
-  const modulesTimeline = [
-    { id: 'marketingAi', label: 'AI', icon: <Brain size={16} /> },
-    { id: 'createLeads', label: 'Landing Page', icon: <Layout size={16} /> },
-    { id: 'automation', label: 'Automation', icon: <Zap size={16} /> },
-    { id: 'crm', label: 'CRM', icon: <Users size={16} /> },
-    { id: 'funnel', label: 'Funnel', icon: <FileText size={16} /> },
-    { id: 'salesPage', label: 'Sales Page', icon: <Coins size={16} /> }
-  ];
 
   return (
     <Box sx={{
@@ -488,144 +491,6 @@ const cards = [
                 )}
               </Box>
             </Fade>
-
-            {/* <Grid container spacing={3} sx={{ mb: 3 }}>
-              <Grid item xs={12} md={6}>
-                <Paper sx={{
-                  background: 'rgba(255, 255, 255, 0.7)',
-                  border: '1px solid rgba(0, 0, 0, 0.05)',
-                  borderRadius: '16px',
-                  backdropFilter: 'blur(12px)',
-                  overflow: 'hidden',
-                  boxShadow: '0 8px 16px rgba(0,0,0,0.03)'
-                }}>
-                  <CardContent>
-                    <Box display="flex" alignItems="center" mb={2}>
-                      <BarChart2 size={20} style={{ marginRight: 12, color: '#0072ff' }} />
-                      <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1e293b' }}>
-                        {t("marketing.performance")}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ height: 250 }}>
-                      <Line
-                        data={lineData}
-                        options={{
-                          responsive: true,
-                          maintainAspectRatio: false,
-                          plugins: {
-                            legend: {
-                              position: 'top',
-                              labels: {
-                                color: '#64748b',
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                padding: 20
-                              }
-                            }
-                          },
-                          scales: {
-                            x: {
-                              grid: {
-                                display: false,
-                                color: 'rgba(0, 0, 0, 0.03)'
-                              },
-                              ticks: {
-                                color: '#64748b'
-                              }
-                            },
-                            y: {
-                              grid: {
-                                color: 'rgba(0, 0, 0, 0.03)'
-                              },
-                              ticks: {
-                                color: '#64748b'
-                              }
-                            }
-                          }
-                        }}
-                      />
-                    </Box>
-                  </CardContent>
-                </Paper>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Paper sx={{
-                  background: 'rgba(255, 255, 255, 0.7)',
-                  border: '1px solid rgba(0, 0, 0, 0.05)',
-                  borderRadius: '16px',
-                  backdropFilter: 'blur(12px)',
-                  overflow: 'hidden',
-                  boxShadow: '0 8px 16px rgba(0,0,0,0.03)'
-                }}>
-                  <CardContent>
-                    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                      <Box display="flex" alignItems="center">
-                        <BarChart2 size={20} style={{ marginRight: 12, color: '#0072ff' }} />
-                        <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1e293b' }}>
-                          {t("marketing.conversions")}
-                        </Typography>
-                      </Box>
-                      <Box display="flex">
-                        <Chip
-                          label={`${glance?.leads || 0} Leads`}
-                          size="small"
-                          sx={{
-                            mr: 1,
-                            background: 'rgba(56, 189, 248, 0.1)',
-                            color: '#0ea5e9'
-                          }}
-                          avatar={<Avatar sx={{ bgcolor: 'transparent', color: '#0ea5e9' }}>👥</Avatar>}
-                        />
-                        <Chip
-                          label={`${glance?.conversions || 0} ${t("marketing.conversions")}`}
-                          size="small"
-                          sx={{
-                            background: 'rgba(16, 185, 129, 0.1)',
-                            color: '#0072ff'
-                          }}
-                          avatar={<Avatar sx={{ bgcolor: 'transparent', color: '#0072ff' }}>📈</Avatar>}
-                        />
-                      </Box>
-                    </Box>
-                    <Box sx={{ height: 250 }}>
-                      <Bar
-                        data={barData}
-                        options={{
-                          responsive: true,
-                          maintainAspectRatio: false,
-                          plugins: {
-                            legend: {
-                              display: false
-                            }
-                          },
-                          scales: {
-                            x: {
-                              grid: {
-                                display: false,
-                                color: 'rgba(0, 0, 0, 0.03)'
-                              },
-                              ticks: {
-                                color: '#64748b'
-                              }
-                            },
-                            y: {
-                              grid: {
-                                color: 'rgba(0, 0, 0, 0.03)'
-                              },
-                              ticks: {
-                                color: '#64748b'
-                              }
-                            }
-                          }
-                        }}
-                      />
-                    </Box>
-                  </CardContent>
-                </Paper>
-              </Grid>
-            </Grid> */}
-
             <Grid container spacing={3} sx={{ marginBottom: isMobile ? 3 : 6 }}>
               {cards.map((card, index) => (
                 <Grid item xs={getCardSize()} key={index}>
@@ -860,6 +725,8 @@ const cards = [
           <SalesFunnel activeCompany={props.activeCompany} setModule={setModule} />
         ) : module === 'chatbot' ? (
           <ChatbotManager activeCompany={props.activeCompany} setModule={setModule} />
+        ) : module === 'advertising' ? (
+          <AdsManagement activeCompany={props.activeCompany} setModule={setModule} />
         ) : null}
       </Box>
     </Box>
