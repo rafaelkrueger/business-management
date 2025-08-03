@@ -236,6 +236,12 @@
   },
   "notifications": "Notifications",
   "integrations": "Integrations",
+  "integration": {
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "connected": "Connected",
+    "disconnected": "Disconnected"
+  },
   "ads": {
     "title": "Ads Management",
     "subtitle": "Create, manage and optimize campaigns across platforms",

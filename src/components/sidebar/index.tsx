@@ -189,10 +189,21 @@ const Sidebar: React.FC<{
         ))}
       </SidebarContainerBody>
       <SidebarContainerFooter>
-        <SidebarContainerBodyElement
+        {/* <SidebarContainerBodyElement
           style={{ marginLeft: '6%', marginBottom:'17px', fontSize:'13pt' }}
         >
           {t(`notifications`)}
+        </SidebarContainerBodyElement> */}
+        <SidebarContainerBodyElement
+          onClick={() => {
+            if (window.outerWidth < 600) {
+              props.setIsMenuActive(!props.isMenuActive);
+            }
+            props.activateModule('integration');
+          }}
+          style={{ marginLeft: '6%', marginBottom:'17px', fontSize:'13pt' }}
+        >
+          {t('integrations')}
         </SidebarContainerBodyElement>
         <SidebarContainerBodyElement
           onClick={() => {
