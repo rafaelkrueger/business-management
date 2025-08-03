@@ -189,11 +189,11 @@ const Sidebar: React.FC<{
         ))}
       </SidebarContainerBody>
       <SidebarContainerFooter>
-        <SidebarContainerBodyElement
+        {/* <SidebarContainerBodyElement
           style={{ marginLeft: '6%', marginBottom:'17px', fontSize:'13pt' }}
         >
           {t(`notifications`)}
-        </SidebarContainerBodyElement>
+        </SidebarContainerBodyElement> */}
         <SidebarContainerBodyElement
           onClick={() => {
             if (window.outerWidth < 600) {
