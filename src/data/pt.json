@@ -242,6 +242,7 @@
   },
   "notifications": "Notificações",
   "integrations": "Integrações",
+  "integrationsDescription": "Gerencie e conecte facilmente suas plataformas favoritas.",
   "integration": {
     "connect": "Conectar",
     "disconnect": "Desconectar",

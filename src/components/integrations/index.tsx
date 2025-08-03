@@ -281,7 +281,7 @@ const Integrations: React.FC<{ activeCompany: string }> = ({ activeCompany }) =>
     try {
       const response = await integration.connect(activeCompany);
       if (response?.data) {
-        window.location.href = response.data;
+        window.open(response.data, '_blank');
       }
     } catch (error) {
       console.error("Connection failed:", error);
