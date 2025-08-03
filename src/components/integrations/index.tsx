@@ -156,14 +156,15 @@ const IntegrationCard = ({
           },
         }}
       >
-        <CardContent sx={{ pt: 3, pb: 2, flexGrow: 1, ml:4}}>
+        <CardContent sx={{ pt: 3, pb: 2, flexGrow: 1, ml:'27%', mb: '-10px'}}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Box display="flex" alignItems="center">
+            <Box display="flex" alignItems="center" flexDirection={"column"}>
               <Avatar
                 sx={{
                   width: 50,
                   height: 50,
-                  mr: 2,
+                  ml: 0,
+                  mb: 1,
                   bgcolor: integration.color,
                   color: 'white',
                   boxShadow: `0 4px 12px ${integration.color}40`,
