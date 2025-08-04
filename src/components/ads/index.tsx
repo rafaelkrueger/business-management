@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Box, Typography, Grid, Button, Stack, Paper,
@@ -15,49 +15,14 @@ import {
   BarChart2, Edit, Pause, Play, Trash2, Download
 } from 'lucide-react';
 import { format } from 'date-fns';
+import AdsService from '../../services/ads.service.ts';
 
 export const AdsManagement: React.FC<{ activeCompany?: string }> = ({ activeCompany }) => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState(0);
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [campaigns, setCampaigns] = useState<any[]>([
-    {
-      id: '1',
-      name: t('ads.summerSale'),
-      platform: 'google',
-      status: 'running',
-      budget: 5000,
-      spent: 2450,
-      impressions: 124500,
-      clicks: 2450,
-      startDate: new Date(2023, 5, 15),
-      endDate: new Date(2023, 6, 15)
-    },
-    {
-      id: '2',
-      name: t('ads.newCollection'),
-      platform: 'instagram',
-      status: 'paused',
-      budget: 3200,
-      spent: 800,
-      impressions: 64500,
-      clicks: 1200,
-      startDate: new Date(2023, 5, 1),
-      endDate: new Date(2023, 8, 1)
-    },
-    {
-      id: '3',
-      name: t('ads.holidayPromo'),
-      platform: 'facebook',
-      status: 'completed',
-      budget: 8000,
-      spent: 8000,
-      impressions: 284500,
-      clicks: 5600,
-      startDate: new Date(2023, 4, 1),
-      endDate: new Date(2023, 5, 31)
-    }
-  ]);
+  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [loadingCampaigns, setLoadingCampaigns] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPlatform, setSelectedPlatform] = useState<string>('all');
@@ -93,15 +58,62 @@ export const AdsManagement: React.FC<{ activeCompany?: string }> = ({ activeComp
     setCreateModalOpen(false);
   };
 
+  const fetchCampaigns = useCallback(() => {
+    if (!activeCompany) return;
+    setLoadingCampaigns(true);
+    AdsService.getAll(activeCompany)
+      .then((response) => {
+        const data = response.data || [];
+        const mapped = data.map((ad: any) => ({
+          id: ad.id,
+          name: ad.name,
+          platform: ad.platform ? (ad.platform === 'TWITTER' ? 'x' : ad.platform.toLowerCase()) : '',
+          status: ad.status || 'draft',
+          budget: ad.budget || 0,
+          spent: ad.spent || 0,
+          impressions: ad.impressions || 0,
+          clicks: ad.clicks || 0,
+          startDate: ad.startDate ? new Date(ad.startDate) : new Date(),
+          endDate: ad.endDate ? new Date(ad.endDate) : new Date(),
+        }));
+        setCampaigns(mapped);
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar campanhas:', error);
+      })
+      .finally(() => setLoadingCampaigns(false));
+  }, [activeCompany]);
+
+  useEffect(() => {
+    fetchCampaigns();
+  }, [fetchCampaigns]);
+
   const toggleCampaignStatus = (id: string) => {
-    setCampaigns(campaigns.map(campaign =>
-      campaign.id === id
-        ? {
-            ...campaign,
-            status: campaign.status === 'running' ? 'paused' : 'running'
-          }
-        : campaign
-    ));
+    const campaign = campaigns.find((c) => c.id === id);
+    if (!campaign) return;
+    const newStatus = campaign.status === 'running' ? 'paused' : 'running';
+    const payload = { ...campaign, status: newStatus, platform: campaign.platform?.toUpperCase() };
+    AdsService.update(id, payload)
+      .then(() => {
+        setCampaigns(
+          campaigns.map((c) => (c.id === id ? { ...c, status: newStatus } : c))
+        );
+      })
+      .catch((error) => console.error('Erro ao atualizar campanha:', error));
+  };
+
+  const handleDeleteCampaign = (id: string) => {
+    AdsService.remove(id)
+      .then(() => {
+        setCampaigns(campaigns.filter((c) => c.id !== id));
+      })
+      .catch((error) => console.error('Erro ao remover campanha:', error));
+  };
+
+  const handleSyncCampaign = (id: string) => {
+    AdsService.sync(id).catch((error) =>
+      console.error('Erro ao sincronizar campanha:', error)
+    );
   };
 
   const filteredCampaigns = campaigns.filter(campaign => {
@@ -231,6 +243,7 @@ export const AdsManagement: React.FC<{ activeCompany?: string }> = ({ activeComp
 
         {/* Campaigns Table */}
         <TableContainer>
+          {loadingCampaigns && <LinearProgress />}
           <Table>
             <TableHead>
               <TableRow>
@@ -296,7 +309,7 @@ export const AdsManagement: React.FC<{ activeCompany?: string }> = ({ activeComp
                   <TableCell>
                     <Stack direction="row" spacing={1}>
                       <Tooltip title={t('ads.analytics')}>
-                        <IconButton size="small">
+                        <IconButton size="small" onClick={() => handleSyncCampaign(campaign.id)}>
                           <BarChart2 size={18} />
                         </IconButton>
                       </Tooltip>
@@ -324,7 +337,7 @@ export const AdsManagement: React.FC<{ activeCompany?: string }> = ({ activeComp
                         </IconButton>
                       </Tooltip>
                       <Tooltip title={t('ads.delete')}>
-                        <IconButton size="small">
+                        <IconButton size="small" onClick={() => handleDeleteCampaign(campaign.id)}>
                           <Trash2 size={18} />
                         </IconButton>
                       </Tooltip>

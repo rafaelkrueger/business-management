@@ -449,7 +449,7 @@ const cards = [
     module: "advertising",
     color: theme.palette.primary.main,
     completed: isModuleCompleted("advertising"),
-    disabled: false,
+    disabled: true,
   },
 
 ];
