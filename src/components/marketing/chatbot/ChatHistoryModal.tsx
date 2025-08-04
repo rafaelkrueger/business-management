@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_URL } from '../../../config/api.ts';
 import {
   Dialog,
   DialogTitle,
@@ -129,7 +130,7 @@ const renderThreadsList = () => {
                 <Tooltip title={t('chatbot.openConversation')} arrow>
                   <IconButton
                     size="small"
-                    onClick={() => window.open(`https://roktune.duckdns.org/chatbot/s/${botSlug}?threadId=${thread.threadId}`, '_blank')}
+                    onClick={() => window.open(`${API_URL}/chatbot/s/${botSlug}?threadId=${thread.threadId}`, '_blank')}
                     sx={{ position: 'absolute', bottom: 6, right: 52 }}
                   >
                     <Launch fontSize="small" />

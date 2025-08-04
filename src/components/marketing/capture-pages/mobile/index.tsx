@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_URL } from "../../../../config/api.ts";
 import {
   Card,
   CardContent,
@@ -228,7 +229,7 @@ const EditDialog: React.FC<{
       <DialogContent>
         {landingPage ? (
           <iframe
-            src={`https://roktune.duckdns.org/landing-pages/edit/${landingPage.id}`}
+            src={`${API_URL}/landing-pages/edit/${landingPage.id}`}
             width="100%"
             height={isMobile ? '100%' : '500px'}
             style={{ border: 'none' }}
@@ -332,11 +333,11 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
   }, [generating]);
 
   const handleViewWebsite = (page: LandingPage) => {
-    window.open(`https://roktune.duckdns.org/landing-pages/page/${page.id}`, "_blank");
+    window.open(`${API_URL}/landing-pages/page/${page.id}`, "_blank");
   };
 
   const handleViewFormWebsite = (form: FormLead) => {
-    window.open(`https://roktune.duckdns.org/landing-pages//leads/form?apiKey=${form.apiKey}`, "_blank");
+    window.open(`${API_URL}/landing-pages//leads/form?apiKey=${form.apiKey}`, "_blank");
   };
 
   const handleEditPage = (page: LandingPage) => {
@@ -1207,7 +1208,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
             });
 
             setPreviewUrl(
-              `https://roktune.duckdns.org/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${encodeURIComponent(
+              `${API_URL}/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${encodeURIComponent(
                 newPage.title
               )}`
             );
@@ -1222,7 +1223,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
         } else {
           setOpenForm(false);
           setPreviewUrl(
-            `https://roktune.duckdns.org/landing-pages/preview?type=${selectedTemplate?.type}&companyId=${activeCompany}&title=${encodeURIComponent(
+            `${API_URL}/landing-pages/preview?type=${selectedTemplate?.type}&companyId=${activeCompany}&title=${encodeURIComponent(
               newPage.title
             )}`
           );

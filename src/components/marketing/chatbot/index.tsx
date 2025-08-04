@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { API_URL } from '../../../config/api.ts';
 import {
   Box,
   Button,
@@ -1102,7 +1103,7 @@ return (
                   <HistoryIcon />
                 </Button>
                 <Button
-                  onClick={() => window.open(`https://roktune.duckdns.org/chatbot/s/${bot.slug}`, '_blank')}
+                  onClick={() => window.open(`${API_URL}/chatbot/s/${bot.slug}`, '_blank')}
                   size="small"
                   variant="outlined"
                   sx={{

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_URL } from '../../../config/api.ts';
 import {
   Box,
   Typography,
@@ -442,7 +443,7 @@ const TrackingHome: React.FC<{ activeCompany: string; userData: any; apiKey: str
                 position: 'relative',
               }}
             >
-              {`<script src="https://roktune.duckdns.org/integracao.js" data-api-key="${apiKey}"></script>`}
+              {`<script src="${API_URL}/integracao.js" data-api-key="${apiKey}"></script>`}
             </Box>
           </Paper>
         </Box>
