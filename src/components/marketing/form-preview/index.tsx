@@ -155,7 +155,7 @@ const LeadFormPreview: React.FC<LeadFormPreviewProps> = ({
 
   // When apiKey is available, set integration modal data
   useEffect(() => {
-    const directLink = `https://roktune.duckdns.org/leads/form?apiKey=${apiKey}`;
+    const directLink = `https://core.roktune.com/leads/form?apiKey=${apiKey}`;
     const embedCode = `<iframe src="${directLink}" frameborder="0" width="100%" height="600"></iframe>`;
     setIntegrationData({ embedCode, directLink });
     if (apiKey) {

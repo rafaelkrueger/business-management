@@ -1013,7 +1013,7 @@ const TemplateDialog: React.FC<{
           disabled={newPage.title === "" || (mode === "choose" && !selectedTemplate) || generating}
           onClick={async () => {
             if (mode === "choose") {
-              setPreviewUrl(`https://roktune.duckdns.org/sales-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}&salesPage=true`);
+              setPreviewUrl(`https://core.roktune.com/sales-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}&salesPage=true`);
             } else {
               const orderedSections = sections.filter((s) => s.trim() !== "");
               setGenerating(true);
@@ -1027,7 +1027,7 @@ const TemplateDialog: React.FC<{
               }).then((res)=>{
                 setGenerating(false);
                 setProgress({});
-                setPreviewUrl(`https://roktune.duckdns.org/sales-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}&salesPage=true`);
+                setPreviewUrl(`https://core.roktune.com/sales-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}&salesPage=true`);
               })
               .catch((err)=>{console.log(err)});
 
@@ -1150,7 +1150,7 @@ const EditDialog: React.FC<{
       <DialogContent>
         {salesPage ? (
           <iframe
-            src={`https://roktune.duckdns.org/sales-pages/edit/${salesPage.id}`}
+            src={`https://core.roktune.com/sales-pages/edit/${salesPage.id}`}
             width="100%"
             height="500px"
             style={{ border: "none" }}
@@ -1272,7 +1272,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   };
 
   const handleViewWebsite = (page: SalesPage) => {
-    window.open(`https://roktune.duckdns.org/sales-pages/page/${page.id}`, "_blank");
+    window.open(`https://core.roktune.com/sales-pages/page/${page.id}`, "_blank");
   };
 
   const handleEditPage = (page: SalesPage) => {
@@ -1298,7 +1298,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   };
 
   const handleViewFormWebsite = (form: FormLead) => {
-    window.open(`https://roktune.duckdns.org/leads/form?apiKey=${form.apiKey}`, "_blank");
+    window.open(`https://core.roktune.com/leads/form?apiKey=${form.apiKey}`, "_blank");
   };
 
   const confirmDeletePayment = async () => {

@@ -129,7 +129,7 @@ const renderThreadsList = () => {
                 <Tooltip title={t('chatbot.openConversation')} arrow>
                   <IconButton
                     size="small"
-                    onClick={() => window.open(`https://roktune.duckdns.org/chatbot/s/${botSlug}?threadId=${thread.threadId}`, '_blank')}
+                    onClick={() => window.open(`https://core.roktune.com/chatbot/s/${botSlug}?threadId=${thread.threadId}`, '_blank')}
                     sx={{ position: 'absolute', bottom: 6, right: 52 }}
                   >
                     <Launch fontSize="small" />

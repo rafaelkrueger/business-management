@@ -1102,7 +1102,7 @@ return (
                   <HistoryIcon />
                 </Button>
                 <Button
-                  onClick={() => window.open(`https://roktune.duckdns.org/chatbot/s/${bot.slug}`, '_blank')}
+                  onClick={() => window.open(`https://core.roktune.com/chatbot/s/${bot.slug}`, '_blank')}
                   size="small"
                   variant="outlined"
                   sx={{

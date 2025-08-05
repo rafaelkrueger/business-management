@@ -69,7 +69,7 @@ const Tracking: React.FC<{ activeCompany: string, userData: any }> = ({ activeCo
   };
 
   const handleCopy = () => {
-    const scriptTag = `<script src="https://roktune.duckdns.org/integracao.js" data-api-key="${tagData.apiKey}"></script>`;
+    const scriptTag = `<script src="https://core.roktune.com/integracao.js" data-api-key="${tagData.apiKey}"></script>`;
     navigator.clipboard.writeText(scriptTag);
     setCopySuccess(true);
   };
@@ -221,7 +221,7 @@ const Tracking: React.FC<{ activeCompany: string, userData: any }> = ({ activeCo
                       position: 'relative'
                     }}
                   >
-                    {`<script src="https://roktune.duckdns.org/integracao.js" data-api-key="${tagData.apiKey}"></script>`}
+                    {`<script src="https://core.roktune.com/integracao.js" data-api-key="${tagData.apiKey}"></script>`}
                     <IconButton
                       onClick={handleCopy}
                       sx={{ position: 'absolute', top: 8, right: 8 }}

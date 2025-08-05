@@ -442,7 +442,7 @@ const TrackingHome: React.FC<{ activeCompany: string; userData: any; apiKey: str
                 position: 'relative',
               }}
             >
-              {`<script src="https://roktune.duckdns.org/integracao.js" data-api-key="${apiKey}"></script>`}
+              {`<script src="https://core.roktune.com/integracao.js" data-api-key="${apiKey}"></script>`}
             </Box>
           </Paper>
         </Box>
