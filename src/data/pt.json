@@ -1060,6 +1060,7 @@
     "chatgpt": "Texto IA",
     "chatgptImage": "Imagem IA",
     "formTrigger": "Formulário Preenchido",
+    "soldTrigger": "Produto Vendido",
     "whatsappTrigger": "Chatbot"
   },
   "platform": {

@@ -37,7 +37,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import { ArrowBackIos, Instagram } from "@mui/icons-material";
+import { ArrowBackIos, Instagram, Money, PaymentOutlined } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import AutomationService from "../../../../services/automation.service.ts";
@@ -48,7 +48,7 @@ import EmailTemplateSelector from "../../email-template-selector/index.tsx";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
 import AiService from "../../../../services/ai.service.ts";
-import { Brain, CloudUploadIcon, ImageIcon, Radio, SettingsIcon } from "lucide-react";
+import { Brain, CloudUploadIcon, DollarSign, ImageIcon, Radio, SettingsIcon } from "lucide-react";
 import { Drawer } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -175,6 +175,8 @@ const CustomNode = ({ data, id, activeCompany }) => {
         return <FaClock size={iconSize} color="#000" />;
       case "formSubmitted":
         return <FaEnvelope size={iconSize} color="#b4a01b" />;
+      case "soldTrigger":
+        return <DollarSign style={{ color: "#1bb41b", fontSize: 26 }} />;
       default:
         return <FaEnvelope size={iconSize} color="#777" />;
     }
@@ -443,6 +445,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       name: t("block.formTrigger"),
       icon: <FaEnvelope style={{ color: "#b4a01b", fontSize: 26 }} />,
       params: { recipients: "", subject: "", template: {} },
+      purpose:t('automationFlow.purposes.triggers'),
+    },
+    PAYMENT_TRIGGER: {
+      type: "soldTrigger",
+      name: t("block.soldTrigger"),
+      icon: <DollarSign style={{ color: "#1bb41b", fontSize: 26 }} />,
+      params: { paymentId: "" },
       purpose:t('automationFlow.purposes.triggers'),
     },
     // WHATSAPP_TRIGGER: {
