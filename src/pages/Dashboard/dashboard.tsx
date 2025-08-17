@@ -28,6 +28,7 @@ import EnterpriseService from '../../services/enterprise.service.ts';
 const Dashboard: React.FC = () => {
   const [companies, setCompanies] = useState<any>([]);
   const [isMenuActive, setIsMenuActive] = useState<boolean>(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(true);
   const [token, setToken] = useLocalStorage('accessToken', null);
   const { activeModuleName, activateModule } = useActiveModule(dashboardModules);
   const { activeCompany, changeActiveCompany } = useActiveCompanies(companies);
@@ -97,6 +98,8 @@ useEffect(() => {
           setHasNoCompanies={setHasNoCompanies}
           hasNoCompanies={hasNoCompanies}
           modulesUpdating={modulesUpdating}
+          isCollapsed={isSidebarCollapsed}
+          setIsCollapsed={setIsSidebarCollapsed}
         />
       ) : (
         <MobileSidebar
@@ -114,7 +117,10 @@ useEffect(() => {
         />
       )}
 
-      <DashboardContainerShowed id="main-content">
+      <DashboardContainerShowed
+        id="main-content"
+        className={isSidebarCollapsed ? 'sidebar-collapsed' : ''}
+      >
         {activeModuleName === 'home' && <Home activeCompany={activeCompany} userData={userData} activateModule={activateModule} />}
         {activeModuleName === 'payments' && <Payments activeCompany={activeCompany} />}
         {activeModuleName === 'products' && <Products activeCompany={activeCompany} />}

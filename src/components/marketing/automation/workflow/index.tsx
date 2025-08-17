@@ -52,7 +52,7 @@ import { Brain, CloudUploadIcon, DollarSign, ImageIcon, Radio, SettingsIcon } fr
 import { Drawer } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { FaEnvelope, FaTwitter, FaLinkedin, FaYoutube, FaFacebook, FaWhatsapp, FaBrain, FaClock, FaInstagram, FaTiktok } from 'react-icons/fa';
+import { FaEnvelope, FaTwitter, FaLinkedin, FaYoutube, FaFacebook, FaWhatsapp, FaBrain, FaClock, FaInstagram, FaTiktok, FaUsers } from 'react-icons/fa';
 
 import TwitterService from '../../../../services/twitter.service.ts';
 import LinkedinService from "../../../../services/linkedin.service.ts";
@@ -68,6 +68,8 @@ import TwitterAuthModal from "../../twitter/twitter-create/index.tsx";
 import TwitterNodeEditor from "../../twitter/twitter-post/index.tsx";
 import YouTubeNodeEditor from "../../youtube/youtube-post/index.tsx";
 import FacebookNodeEditor from "../../facebook/facebook-post/index.tsx";
+import LeadsNodeEditor from "./leads-node-editor.tsx";
+import ChatbotPaymentTriggerEditor from "./chatbot-payment-trigger-editor.tsx";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import WhatsappService from "../../../../services/whatsapp.service.ts";
@@ -177,6 +179,10 @@ const CustomNode = ({ data, id, activeCompany }) => {
         return <FaEnvelope size={iconSize} color="#b4a01b" />;
       case "soldTrigger":
         return <DollarSign style={{ color: "#1bb41b", fontSize: 26 }} />;
+      case "chatbotPaymentTrigger":
+        return <DollarSign style={{ color: "#25D366", fontSize: 26 }} />;
+      case "leads":
+        return <FaUsers size={iconSize} color="#02366d" />;
       default:
         return <FaEnvelope size={iconSize} color="#777" />;
     }
@@ -447,6 +453,15 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { recipients: "", subject: "", template: {} },
       purpose:t('automationFlow.purposes.triggers'),
     },
+    // LEADS: {
+    //   type: "leads",
+    //   name: t("block.leads"),
+    //   icon: <FaUsers style={{ color: "#02366d", fontSize: 26 }} />,
+    //   params: {
+    //     segments: [],
+    //   },
+    //   purpose:t('automationFlow.purposes.modules'),
+    // },
     PAYMENT_TRIGGER: {
       type: "soldTrigger",
       name: t("block.soldTrigger"),
@@ -454,13 +469,6 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       params: { paymentId: "" },
       purpose:t('automationFlow.purposes.triggers'),
     },
-    // WHATSAPP_TRIGGER: {
-    //   type: "whatsappTrigger",
-    //   name: t("block.whatsappTrigger"),
-    //   icon: <FaWhatsapp style={{ color: "#25D366", fontSize: 26 }} />,
-    //   params: { expectedWhatsappContent: "" },
-    //   purpose:t('automationFlow.purposes.triggers'),
-    // },
     CHATGPT: {
       type: "chatgpt",
       name: t("block.chatgpt"),
@@ -1424,6 +1432,20 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
         editingNode={editingNode}
         setEditingNode={setEditingNode}
         activeCompany={activeCompany}
+        />
+      )}
+      {editingNode.data.blockType === "chatbotPaymentTrigger" && (
+        <ChatbotPaymentTriggerEditor
+          editingNode={editingNode}
+          setEditingNode={setEditingNode}
+          activeCompany={activeCompany}
+        />
+      )}
+      {editingNode.data.blockType === "leads" && (
+        <LeadsNodeEditor
+          editingNode={editingNode}
+          setEditingNode={setEditingNode}
+          activeCompany={activeCompany}
         />
       )}
           {editingNode.data.blockType === "whatsappTrigger" && (

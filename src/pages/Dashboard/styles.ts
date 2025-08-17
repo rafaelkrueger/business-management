@@ -6,26 +6,25 @@ export const DashboardContainer = styled.div`
   width: 100%;
   height: 100vh;
   overflow: hidden;
+
   @media (max-width: 600px) {
     flex-direction: column;
-    margin-top:-80px;
-    max-width:100%;
-    margin-left:-10px;
+    margin-top: -80px;
+    margin-left: -100px;
+    overflow: unset;
   }
 `;
 
 export const DashboardContainerShowed = styled.div`
-  width: 100%;
+  flex: 1;
   height: 100vh;
   overflow-y: auto;
   padding-bottom: 100px;
+  margin-left: 280px;
+  transition: margin-left 0.3s ease;
 
-  @media (max-width: 600px) {
-    margin-left: 0;
-    padding: 15px;
-    width: 100%;
-    height: calc(100vh - 80px);
-    margin-top: 80px;
+  &.sidebar-collapsed {
+    margin-left: 80px;
   }
 
   &::-webkit-scrollbar {
@@ -40,6 +39,15 @@ export const DashboardContainerShowed = styled.div`
   &::-webkit-scrollbar-thumb:hover {
     background-color: #555;
   }
+
+  @media (max-width: 600px) {
+    margin-left: -100px;
+    padding: 15px;
+    width: 100%;
+    height: calc(100vh - 80px);
+    margin-top: 80px;
+  }
+
 `;
 
 export const DashboardContainerIcon = styled(IoMdMenu)`
