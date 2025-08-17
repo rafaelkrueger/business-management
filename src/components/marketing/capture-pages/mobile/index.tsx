@@ -394,7 +394,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
           borderColor: 'divider',
           mb: 2,
           position: 'sticky',
-          background: 'linear-gradient(to bottom, #578acd 10%, #6192d4 40%, #669ee7 100%)',
+          background: 'linear-gradient(to bottom, #00A8FF 10%, #00A8FF 40%, #00A8FF 100%)',
           zIndex: 9,
           pt: 1,
           color:'white',
@@ -442,7 +442,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
         alignItems: 'center',
         position: 'sticky',
         top: 0,
-        backgroundColor: '#578acd0',
+        backgroundColor: '#00A8FF0',
         zIndex: 10,
         pt: 4,
         pb: 1,
@@ -460,7 +460,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
               cursor: 'pointer',
               transition: 'color 0.3s ease',
               marginRight: '5px',
-              background:'#578acd',
+              background:'#00A8FF',
               padding: '6px',
               borderRadius: '5px',
             }}
@@ -473,7 +473,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
               cursor: 'pointer',
               transition: 'color 0.3s ease',
               marginRight: '5px',
-              background:'#578acd',
+              background:'#00A8FF',
               padding: '6px',
               borderRadius: '5px',
             }}
@@ -529,9 +529,9 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      backgroundColor: alpha('#578acd', 0.1)
+                      backgroundColor: alpha('#00A8FF', 0.1)
                     }}>
-                      <InsertDriveFileOutlined sx={{ color: alpha('#578acd', 0.5) }} />
+                      <InsertDriveFileOutlined sx={{ color: alpha('#00A8FF', 0.5) }} />
                     </Box>
                   )}
 
@@ -588,7 +588,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                         sx={{
                           height: 20,
                           fontSize: '0.6rem',
-                          backgroundColor: alpha('#578acd', 0.1)
+                          backgroundColor: alpha('#00A8FF', 0.1)
                         }}
                       />
                     </Box>
@@ -597,14 +597,14 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                   <Box sx={{
                     display: 'flex',
                     p: 1,
-                    borderTop: `1px solid ${alpha('#578acd', 0.1)}`
+                    borderTop: `1px solid ${alpha('#00A8FF', 0.1)}`
                   }}>
                     <Button
                       size="small"
                       onClick={() => handleEditPage(page)}
                       sx={{
                         fontSize: '0.65rem',
-                        color: '#578acd',
+                        color: '#00A8FF',
                         textTransform: 'none',
                         flex: 1
                       }}
@@ -616,7 +616,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                       onClick={() => handleViewWebsite(page)}
                       sx={{
                         fontSize: '0.65rem',
-                        color: '#578acd',
+                        color: '#00A8FF',
                         textTransform: 'none',
                         flex: 1
                       }}
@@ -641,7 +641,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
             >
               <InsertDriveFileOutlined sx={{
                 fontSize: 48,
-                color: alpha('#578acd', 0.3),
+                color: alpha('#00A8FF', 0.3),
                 mb: 2
               }} />
               <Typography variant="subtitle1" sx={{ mb: 1 }}>
@@ -657,8 +657,8 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                 startIcon={<PlusCircle size={16} />}
                 onClick={() => setOpenForm(true)}
                 sx={{
-                  backgroundColor: '#578acd',
-                  '&:hover': { backgroundColor: alpha('#578acd', 0.9) }
+                  backgroundColor: '#00A8FF',
+                  '&:hover': { backgroundColor: alpha('#00A8FF', 0.9) }
                 }}
               >
                 {t("marketing.capturePages.createLandingPage")}
@@ -735,7 +735,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                         sx={{
                           height: 20,
                           fontSize: '0.6rem',
-                          backgroundColor: alpha('#578acd', 0.1)
+                          backgroundColor: alpha('#00A8FF', 0.1)
                         }}
                       />
                       <Typography variant="caption" color="text.secondary">
@@ -749,14 +749,14 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                   <Box sx={{
                     display: 'flex',
                     p: 1,
-                    borderTop: `1px solid ${alpha('#578acd', 0.1)}`
+                    borderTop: `1px solid ${alpha('#00A8FF', 0.1)}`
                   }}>
                     <Button
                       size="small"
                       onClick={() => handleViewFormWebsite(form)}
                       sx={{
                         fontSize: '0.65rem',
-                        color: '#578acd',
+                        color: '#00A8FF',
                         textTransform: 'none',
                         flex: 1
                       }}
@@ -781,7 +781,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
             >
               <FormatListBulletedOutlined sx={{
                 fontSize: 48,
-                color: alpha('#578acd', 0.3),
+                color: alpha('#00A8FF', 0.3),
                 mb: 2
               }} />
               <Typography variant="subtitle1" sx={{ mb: 1 }}>
@@ -797,8 +797,8 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                 startIcon={<PlusCircle size={16} />}
                 onClick={() => setLeadGenerationEnabled(true)}
                 sx={{
-                  backgroundColor: '#578acd',
-                  '&:hover': { backgroundColor: alpha('#578acd', 0.9) }
+                  backgroundColor: '#00A8FF',
+                  '&:hover': { backgroundColor: alpha('#00A8FF', 0.9) }
                 }}
               >
                 {t("marketing.capturePages.createForm")}
@@ -1012,7 +1012,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
           <>
   <DialogTitle
     sx={{
-      backgroundColor: "#578acd",
+      backgroundColor: "#00A8FF",
       color: "#ffffff",
       display: "flex",
       alignItems: "center",
@@ -1161,7 +1161,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
                       borderRadius: "8px",
                       border:
                         selectedTemplate?.id === template.id
-                          ? "2px solid #578acd"
+                          ? "2px solid #00A8FF"
                           : "1px solid rgba(0, 0, 0, 0.1)",
                       cursor: "pointer",
                     }}
@@ -1228,7 +1228,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
           );
         }
       }}
-      sx={{ backgroundColor: "#578acd" }}
+      sx={{ backgroundColor: "#00A8FF" }}
     >
       {useAI
         ? generatingAI

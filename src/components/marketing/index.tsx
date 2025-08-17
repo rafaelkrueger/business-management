@@ -128,15 +128,15 @@ const ModuleStep = styled(Box)(({ theme, completed, active }) => ({
     alignItems: 'center',
     justifyContent: 'center',
     background: completed
-      ? 'linear-gradient(135deg, #00c6ff, #0072ff)'
+      ? 'linear-gradient(135deg, #1E293B, #00A8FF)'
       : active
-        ? 'linear-gradient(135deg, #e6efff, #639cff)'
+        ? 'linear-gradient(135deg, #e6efff, #00A8FF)'
         : alpha(theme.palette.text.disabled, 0.1),
-    color: completed || active ? '#fff' : '#639cff',
+    color: completed || active ? '#fff' : '#00A8FF',
     marginBottom: theme.spacing(1.5),
     transition: 'all 0.3s ease',
     boxShadow: completed
-      ? `0 0 0 4px ${alpha('#00c6ff', 0.2)}`
+      ? `0 0 0 4px ${alpha('#00A8FF', 0.2)}`
       : active
         ? `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`
         : 'none'
@@ -480,7 +480,7 @@ const cards = [
                   <NextStepIndicator>
                     <PulseDot />
                     <Box sx={{ position: 'relative', zIndex: 1 }}>
-                      <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#0072ff' }}>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#00A8FF' }}>
                         {t("marketing.nextStep")}
                       </Typography>
                       <Typography variant="body2" sx={{ color: '#64748b' }}>
@@ -597,9 +597,9 @@ const cards = [
                               right: 0,
                               height: 4,
                               background: card.completed
-                                ? '#0072ff'
+                                ? '#00A8FF'
                                 : isModuleUnlocked(card.module)
-                                  ? '#0072ff'
+                                  ? '#00A8FF'
                                   : 'transparent',
                               transition: 'background 0.3s ease'
                             }
@@ -611,9 +611,9 @@ const cards = [
                             color="primary"
                             sx={{
                               '& .MuiBadge-badge': {
-                                backgroundColor: alpha('#0072ff', 0.1),
-                                border: `1px solid ${alpha('#0072ff', 0.3)}`,
-                                color: '#578acd',
+                                backgroundColor: alpha('#00A8FF', 0.1),
+                                border: `1px solid ${alpha('#00A8FF', 0.3)}`,
+                                color: '#00A8FF',
                                 right: 70,
                                 top: 30,
                                 fontWeight: 'bold',
@@ -623,13 +623,13 @@ const cards = [
                                 animation: 'pulse 2s infinite',
                                 '@keyframes pulse': {
                                   '0%': {
-                                    boxShadow: `0 0 0 0 ${alpha('#578acd', 0.3)}`
+                                    boxShadow: `0 0 0 0 ${alpha('#00A8FF', 0.3)}`
                                   },
                                   '70%': {
-                                    boxShadow: `0 0 0 10px ${alpha('#578acd', 0)}`
+                                    boxShadow: `0 0 0 10px ${alpha('#00A8FF', 0)}`
                                   },
                                   '100%': {
-                                    boxShadow: `0 0 0 0 ${alpha('#578acd', 0)}`
+                                    boxShadow: `0 0 0 0 ${alpha('#00A8FF', 0)}`
                                   }
                                 }
                               }

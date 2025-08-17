@@ -109,7 +109,7 @@ const MobileBottomNavigation = ({
   const { t } = useTranslation();
   const [activeItem, setActiveItem] = useState('marketing');
   const [modules, setModules] = useState([]);
-  const [brandColors, setBrandColors] = useState({ primary: '#578acd', secondary: '#1d3e70', text: '#ffffff' });
+  const [brandColors, setBrandColors] = useState({ primary: '#00A8FF', secondary: '#1d3e70', text: '#ffffff' });
   const [showExtraModules, setShowExtraModules] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipText, setTooltipText] = useState('');
@@ -141,7 +141,7 @@ const MobileBottomNavigation = ({
   }, [activeCompany, companies, modulesUpdating]);
 
   const extractBrandColors = (logoUrl) => {
-    if (!logoUrl) return setBrandColors({ primary: '#578acd', secondary: '#1d3e70', text: '#ffffff' });
+    if (!logoUrl) return setBrandColors({ primary: '#00A8FF', secondary: '#1d3e70', text: '#ffffff' });
 
     const img = new Image();
     img.crossOrigin = 'Anonymous';
@@ -157,11 +157,11 @@ const MobileBottomNavigation = ({
           text: getContrastColor(primary)
         });
       } catch (e) {
-        setBrandColors({ primary: '#578acd', secondary: '#1d3e70', text: '#ffffff' });
+        setBrandColors({ primary: '#00A8FF', secondary: '#1d3e70', text: '#ffffff' });
       }
     };
 
-    img.onerror = () => setBrandColors({ primary: '#578acd', secondary: '#1d3e70', text: '#ffffff' });
+    img.onerror = () => setBrandColors({ primary: '#00A8FF', secondary: '#1d3e70', text: '#ffffff' });
   };
 
   const getContrastColor = (rgb) => {

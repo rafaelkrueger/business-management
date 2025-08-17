@@ -192,7 +192,7 @@ export const CrmIntegration: React.FC = () => {
     setShowLeadDialog(true);
   };
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
+  const COLORS = ['#00A8FF', '#00C49F', '#FFBB28'];
 
   return (
     <Box p={3}>
@@ -217,7 +217,7 @@ export const CrmIntegration: React.FC = () => {
                     {mockLeads.length}
                   </Typography>
                 </Box>
-                <Box sx={{ color: '#2196F3' }}>
+                <Box sx={{ color: '#00A8FF' }}>
                   <PersonIcon />
                 </Box>
               </Box>

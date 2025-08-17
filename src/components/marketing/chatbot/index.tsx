@@ -596,7 +596,7 @@ export const ChatbotManager: React.FC<{ activeCompany: any, setModule: (module: 
                 startIcon={<CheckCircleIcon />}
                 disabled={loading}
                 sx={{
-                  background: '#578acd',
+                  background: '#00A8FF',
                   borderRadius: 2,
                   width:'90%',
                   px: 3,
@@ -870,7 +870,7 @@ return (
           cursor: 'pointer',
           transition: 'color 0.3s ease',
           marginRight: '5px',
-          background:'#578acd',
+          background:'#00A8FF',
           padding: '6px',
           borderRadius: '5px',
         }}
@@ -941,7 +941,7 @@ return (
         }}>
           <SmartToy sx={{
             fontSize: 48,
-            color: '#578acd',
+            color: '#00A8FF',
             opacity: 0.9
           }} />
         </Box>
@@ -976,7 +976,7 @@ return (
         startIcon={<CheckCircleIcon />}
         disabled={loading}
         sx={{
-          background: '#578acd',
+          background: '#00A8FF',
           borderRadius: 2,
           width:'90%',
           px: 3,

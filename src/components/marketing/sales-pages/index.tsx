@@ -416,7 +416,7 @@ const SalesPageCard: React.FC<{
       <Button
         size="small"
         onClick={() => onViewDetails(page)}
-        startIcon={<Eye size={16} color="#578acd" />}
+        startIcon={<Eye size={16} color="#00A8FF" />}
       >
         {t("marketing.capturePages.viewDetails")}
       </Button>
@@ -424,7 +424,7 @@ const SalesPageCard: React.FC<{
       <Button
         size="small"
         onClick={() => onEdit(page)}
-        startIcon={<Pencil size={16} color="#578acd" />}
+        startIcon={<Pencil size={16} color="#00A8FF" />}
         sx={{ marginLeft: '0px' }}
       >
         {t("marketing.capturePages.editPage")} Sales Page
@@ -433,7 +433,7 @@ const SalesPageCard: React.FC<{
       <Button
         size="small"
         onClick={() => onViewWebsite(page)}
-        startIcon={<ExternalLink size={16} color="#578acd" />}
+        startIcon={<ExternalLink size={16} color="#00A8FF" />}
       >
         {t("marketing.capturePages.viewSalesPage")}
       </Button>
@@ -930,7 +930,7 @@ const TemplateDialog: React.FC<{
                           sx={{
                             cursor: "pointer",
                             boxShadow: 3,
-                            border: selectedTemplate?.id === template.id ? "2px solid blue" : "none",
+                            border: selectedTemplate?.id === template.id ? "2px solid #00A8FF" : "none",
                           }}
                         >
                           {template.screenshotUrl ? (

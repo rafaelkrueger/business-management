@@ -30,7 +30,7 @@ import Tippy from '@tippyjs/react';
 import AiAssistantModal from '../ai-assistant-modal/index.tsx';
 import styled from 'styled-components';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const COLORS = ['#00A8FF', '#00C49F', '#FFBB28', '#FF8042'];
 const TrainContainerHeader = styled.div`
     display: flex;
     @media (max-width:600px) {
@@ -190,7 +190,7 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
                         }}
                     >
                         <h4 style={{ marginTop: '-10px', fontSize: '18px', fontWeight: '600', color: '#333' }}>{t('products.createProduct')}</h4>
-                        <MdSell size={50} style={{ marginTop: '-10px', color: '#007bff' }} />
+                        <MdSell size={50} style={{ marginTop: '-10px', color: '#00A8FF' }} />
                     </TrainContainerRecommendTrainerWideCard>
 
                     {/* Card 2: Importar Planilha */}
@@ -601,7 +601,7 @@ const ProductModal: React.FC<{
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleModalClose} sx={{ border: '1px blue solid', color: 'blue' }}>
+        <Button onClick={handleModalClose} sx={{ border: '1px #00A8FF solid', color: '#00A8FF' }}>
           {t('products.forms.cancel')}
         </Button>
         <Button type="submit" variant="contained" color="primary" onClick={handleSubmit}>

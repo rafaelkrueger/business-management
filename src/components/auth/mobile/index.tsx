@@ -64,27 +64,27 @@ const MobileAuth = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const cardData = [
       {
-        icon: <SmartToy sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+        icon: <SmartToy sx={{ fontSize: 28, color: '#00A8FF', mr: 2, mt: 0.5 }} />,
         title: t('features.aiAssistant.title'),
         desc: t('features.aiAssistant.desc')
       },
       {
-        icon: <AutoGraph sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+        icon: <AutoGraph sx={{ fontSize: 28, color: '#00A8FF', mr: 2, mt: 0.5 }} />,
         title: t('features.socialAutomation.title'),
         desc: t('features.socialAutomation.desc')
       },
       {
-        icon: <Campaign sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+        icon: <Campaign sx={{ fontSize: 28, color: '#00A8FF', mr: 2, mt: 0.5 }} />,
         title: t('features.landingPages.title'),
         desc: t('features.landingPages.desc')
       },
       {
-        icon: <Contacts sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+        icon: <Contacts sx={{ fontSize: 28, color: '#00A8FF', mr: 2, mt: 0.5 }} />,
         title: t('features.crm.title'),
         desc: t('features.crm.desc')
       },
       {
-        icon: <Timeline sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+        icon: <Timeline sx={{ fontSize: 28, color: '#00A8FF', mr: 2, mt: 0.5 }} />,
         title: t('features.salesFunnels.title'),
         desc: t('features.salesFunnels.desc')
       },
@@ -513,7 +513,7 @@ const MobileAuth = () => {
     onSuccess={handleGoogleSuccess}
     onError={() => enqueueSnackbar(t('error.authError'), { variant: "error" })}
     shape="pill"
-    theme="filled_blue"
+    theme="filled"
     size="large"
     width="100%"
     text={isNewUser ? 'signup_with' : 'signin_with'}
@@ -668,7 +668,7 @@ const MobileAuth = () => {
     top: 0,
     bottom: 0,
     width: '40px',
-    background: 'linear-gradient(90deg, rgba(10, 37, 64, 0) 0%, #0A2540 100%)',
+    background: 'linear-gradient(90deg, rgba(10, 37, 64, 0) 0%, #1E293B 100%)',
     pointerEvents: 'none',
     zIndex: 2
   }
@@ -698,7 +698,7 @@ const MobileAuth = () => {
         alignItems: 'flex-start',
         p: 3,
         backgroundColor: videoIndex === idx
-          ? 'rgba(87,138,205,0.15)'
+          ? 'rgba(0,168,255,0.15)'
           : 'rgba(255,255,255,0.03)',
         borderRadius: 2,
         height: '100%',
@@ -709,12 +709,12 @@ const MobileAuth = () => {
           ? '1px solid #fff'
           : '1px solid rgba(255,255,255,0.08)',
         boxShadow: videoIndex === idx
-          ? '0 0 20px rgba(87,138,205,0.4)'
+          ? '0 0 20px rgba(0,168,255,0.4)'
           : '0 2px 8px rgba(0,0,0,0.15)',
         position: 'relative',
         overflow: 'hidden',
         '&:hover': {
-          backgroundColor: 'rgba(87,138,205,0.1)',
+          backgroundColor: 'rgba(0,168,255,0.1)',
           transform: 'translateY(-4px)',
           borderColor: '#fff'
         },
@@ -746,7 +746,7 @@ const MobileAuth = () => {
           <Box sx={{
             width: 8,
             height: 8,
-            backgroundColor: '#578acd',
+            backgroundColor: '#00A8FF',
             borderRadius: '50%',
             mr: 1,
             animation: 'pulse 1.5s infinite'
@@ -775,7 +775,7 @@ const MobileAuth = () => {
           width: 40,
           height: 40,
           backgroundColor: videoIndex === idx
-            ? 'rgba(87,138,205,0.3)'
+            ? 'rgba(0,168,255,0.3)'
             : 'transparent',
           borderRadius: '50%',
           transition: 'all 0.3s ease'
@@ -830,7 +830,7 @@ const MobileAuth = () => {
             left: 0,
             height: '100%',
             width: '30%', // Simula progresso do vídeo
-            background: '#578acd',
+            background: '#00A8FF',
             animation: 'progress 5s linear infinite'
           }
         }} />

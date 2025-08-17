@@ -129,7 +129,7 @@ export const TrainContainerRecommendTrainerWideCardRight = styled.div`
 `
 
 export const TrainContainerRecommendTrainerWideCardRightButton = styled.button`
-    background:#3e8ed3;
+    background:#00A8FF;
     border: 0px white solid;
     color:white;
     padding:4px;

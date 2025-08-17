@@ -289,12 +289,12 @@ const CRMApp: React.FC = ({ activeCompany, setModule }) => {
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => {
-        const color = {
-          lead: 'blue',
-          prospect: 'orange',
-          customer: 'green',
-          churned: 'red',
-        }[status?.toLowerCase()] || 'gray';
+          const color = {
+            lead: '#00A8FF',
+            prospect: 'orange',
+            customer: 'green',
+            churned: 'red',
+          }[status?.toLowerCase()] || 'gray';
         return <Tag color={color}>{status?.toUpperCase()}</Tag>;
       },
     },

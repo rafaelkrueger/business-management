@@ -154,13 +154,13 @@ const CustomNode = ({ data, id, activeCompany }) => {
       case "email":
         return <FaEnvelope size={iconSize} color="#b4a01b" />;
       case "twitter":
-        return <FaTwitter size={iconSize} color="#1DA1F2" />;
+        return <FaTwitter size={iconSize} color="#00A8FF" />;
       case "linkedin":
-        return <FaLinkedin size={iconSize} color="#0A66C2" />;
+        return <FaLinkedin size={iconSize} color="#00A8FF" />;
       case "youtube":
         return <FaYoutube size={iconSize} color="#FF0000" />;
       case "facebook":
-        return <FaFacebook size={iconSize} color="#1877F2" />;
+        return <FaFacebook size={iconSize} color="#00A8FF" />;
       case "whatsapp":
         return <FaWhatsapp size={iconSize} color="#25D366" />;
       case "instagram":
@@ -516,14 +516,14 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
     TWITTER: {
       type: "twitter",
       name: t("block.twitter"),
-      icon: <FaTwitter style={{ color: "#1DA1F2", fontSize: 26 }} />,
+      icon: <FaTwitter style={{ color: "#00A8FF", fontSize: 26 }} />,
       params: { tweetContent: "" },
       purpose:t('automationFlow.purposes.socialMedia'),
     },
     FACEBOOK: {
       type: "facebook",
       name: t("block.facebook"),
-      icon: <FaFacebook style={{ color: "#1877F2", fontSize: 26 }} />,
+      icon: <FaFacebook style={{ color: "#00A8FF", fontSize: 26 }} />,
       params: { facebookContent: "" },
       purpose:t('automationFlow.purposes.socialMedia'),
     },
@@ -537,7 +537,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
     LINKEDIN: {
       type: "linkedin",
       name: t("block.linkedin"),
-      icon: <FaLinkedin style={{ color: "#0A66C2", fontSize: 26 }} />,
+      icon: <FaLinkedin style={{ color: "#00A8FF", fontSize: 26 }} />,
       params: { linkedinContent: "" },
       purpose:t('automationFlow.purposes.socialMedia'),
     },
@@ -1756,11 +1756,11 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                   flexDirection: "column",
                   justifyContent: "center",
                   "&:hover": {
-                    borderColor: "#1976d2",
+                    borderColor: "#00A8FF",
                     backgroundColor:
                       editingNode.data.params.files?.length > 0
                         ? "transparent"
-                        : "rgba(25, 118, 210, 0.04)",
+                        : "rgba(0, 168, 255, 0.04)",
                   },
                 }}
               >
@@ -1829,7 +1829,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                           alignItems: "center",
                         }}
                       >
-                        <CloudUploadIcon sx={{ color: "#1976d2", fontSize: "40px" }} />
+                        <CloudUploadIcon sx={{ color: "#00A8FF", fontSize: "40px" }} />
                         <Typography variant="body1" sx={{ mt: 1 }}>
                           <strong>{t("automationFlow.clickToUpload")}</strong>
                         </Typography>
@@ -2018,7 +2018,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                           transition: 'transform 0.3s, box-shadow 0.3s',
                           cursor: 'pointer',
                           border: selectedTemplate === template.id
-                            ? '2px solid #1976d2'
+                            ? '2px solid #00A8FF'
                             : '1px solid #e0e0e0',
                           '&:hover': {
                             transform: 'translateY(-4px)',
@@ -2307,8 +2307,8 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                   flexDirection: 'column',
                   justifyContent: 'center',
                   '&:hover': {
-                    borderColor: '#1976d2',
-                    backgroundColor: editingNode.data.params.file ? 'transparent' : 'rgba(25, 118, 210, 0.04)'
+                    borderColor: '#00A8FF',
+                    backgroundColor: editingNode.data.params.file ? 'transparent' : 'rgba(0, 168, 255, 0.04)'
                   }
                 }}
               >
@@ -2366,7 +2366,7 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
                   />
                   <label htmlFor="file-upload">
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <CloudUploadIcon sx={{ color: '#1976d2', fontSize: '40px' }} />
+                      <CloudUploadIcon sx={{ color: '#00A8FF', fontSize: '40px' }} />
                       <Typography variant="body1" sx={{ mt: 1 }}>
                         <strong>{t("automationFlow.clickToUpload")}</strong>
                       </Typography>

@@ -42,7 +42,7 @@ import { useSnackbar } from "notistack";
 import { AllInOneApi } from "../../../Api.ts";
 
 const GlassCard = styled(Card)(({ theme }) => ({
-  background: `linear-gradient(135deg, ${alpha('#578acd', 0.15)} 0%, ${alpha('#fff', 0.2)} 100%)`,
+  background: `linear-gradient(135deg, ${alpha('#00A8FF', 0.15)} 0%, ${alpha('#fff', 0.2)} 100%)`,
   backdropFilter: 'blur(12px)',
   borderRadius: '16px',
   border: '1px solid rgba(255, 255, 255, 0.2)',

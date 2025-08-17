@@ -40,7 +40,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
   const [isColumnsModalVisible, setIsColumnsModalVisible] = useState(false);
 
   // Cores do tema
-  const primaryColor = '#578acd';
+  const primaryColor = '#00A8FF';
   const backgroundColor = '#ffffff';
   const cardBackground = '#f8f9fa';
   const textColor = '#333333';
@@ -195,7 +195,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
 
   const renderStatusTag = (status: string) => {
     const statusMap: Record<string, { color: string; text: string }> = {
-      lead: { color: '#578acd', text: t('marketing.crm.statusLead') },
+      lead: { color: '#00A8FF', text: t('marketing.crm.statusLead') },
       prospect: { color: '#ffa940', text: t('marketing.crm.statusProspect') },
       customer: { color: '#52c41a', text: t('marketing.crm.statusCustomer') },
       churned: { color: '#f5222d', text: t('marketing.crm.statusChurned') },
@@ -373,7 +373,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
             cursor: 'pointer',
             transition: 'color 0.3s ease',
             marginRight: '5px',
-            background:'#578acd',
+            background:'#00A8FF',
             padding: '6px',
             borderRadius: '5px',
           }}
@@ -384,7 +384,7 @@ const CRMAppMobile: React.FC<{ activeCompany: any, setModule: (module: string) =
             fontSize: '19px',
             color: 'white',
             cursor: 'pointer',
-            background:'#578acd',
+            background:'#00A8FF',
             padding: '6px',
             borderRadius: '5px',
             marginLeft: '8px'

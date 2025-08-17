@@ -26,7 +26,7 @@ export const ToastMessage: React.FC<ToastMessageProps> = ({ type, text }) => {
             icon = <FaTimesCircle color="#FF0000" size={20} />;
             break;
         case 'info':
-            icon = <FaInfoCircle color="#2DCAFC" size={20} />;
+            icon = <FaInfoCircle color="#00A8FF" size={20} />;
             break;
         case 'warning':
             icon = <FaExclamationCircle color="#FCC42D" size={20} />;

@@ -19,7 +19,7 @@ const gradientBackground = keyframes`
 export const AuthContainer = styled('div')`
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(-45deg, #0a2540, #578acd, #38639a, #0a2540);
+  background: linear-gradient(-45deg, #1E293B, #00A8FF, #00A8FF, #1E293B);
   background-size: 400% 400%;
   animation: ${gradientBackground} 15s ease infinite;
   flex-direction: column;
@@ -112,8 +112,8 @@ export const AuthInput = styled('input')<{ error?: boolean }>`
 
   &:focus {
     outline: none;
-    border-color: ${({ error }) => (error ? '#f44336' : '#578acd')};
-    box-shadow: 0 0 0 3px ${({ error }) => (error ? '#ffcdd2' : 'rgba(87,138,205,0.2)')};
+    border-color: ${({ error }) => (error ? '#f44336' : '#00A8FF')};
+    box-shadow: 0 0 0 3px ${({ error }) => (error ? '#ffcdd2' : 'rgba(0,168,255,0.2)')};
   }
 
   &::placeholder {
@@ -159,7 +159,7 @@ export const AuthFooterLink = styled(Button)`
   text-transform: none;
   padding: 0;
   min-width: auto;
-  color: #578acd;
+  color: #00A8FF;
 
   &:hover {
     background-color: transparent;
@@ -392,7 +392,7 @@ export const RocketWrapper = styled('div')`
 export const AnimatedRocket = styled(RocketLaunch)`
   font-size: 64px !important;
   color: rgb(249, 249, 249);
-  background-color: #578acd;
+  background-color: #00A8FF;
   filter: drop-shadow(0 0 15px rgba(87, 138, 205, 0.5));
   transform-style: preserve-3d;
   padding: 20px;

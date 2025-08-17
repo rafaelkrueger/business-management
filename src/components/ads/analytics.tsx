@@ -37,11 +37,11 @@ export const AdsAnalytics: React.FC<AnalyticsProps> = ({ activeCompany }) => {
 
   const platforms = [
     { key: 'all', label: t('ads.allPlatforms'), color: '#666' },
-    { key: 'GOOGLE', label: 'Google Ads', color: '#4285F4' },
-    { key: 'FACEBOOK', label: 'Facebook Ads', color: '#1877F2' },
+    { key: 'GOOGLE', label: 'Google Ads', color: '#00A8FF' },
+    { key: 'FACEBOOK', label: 'Facebook Ads', color: '#00A8FF' },
     { key: 'INSTAGRAM', label: 'Instagram Ads', color: '#E1306C' },
     { key: 'TIKTOK', label: 'TikTok Ads', color: '#000000' },
-    { key: 'TWITTER', label: 'Twitter/X Ads', color: '#1DA1F2' }
+    { key: 'TWITTER', label: 'Twitter/X Ads', color: '#00A8FF' }
   ];
 
   const dateRanges = [
@@ -143,7 +143,7 @@ export const AdsAnalytics: React.FC<AnalyticsProps> = ({ activeCompany }) => {
         change: '+12.4%',
         trend: 'up',
         icon: <Eye size={20} />,
-        color: '#2196F3'
+        color: '#00A8FF'
       },
       {
         title: t('ads.clicks'),
@@ -183,7 +183,7 @@ export const AdsAnalytics: React.FC<AnalyticsProps> = ({ activeCompany }) => {
         change: '+0.4x',
         trend: 'up',
         icon: <TrendingUpIcon size={20} />,
-        color: '#00BCD4'
+        color: '#00A8FF'
       }
     ];
   };
@@ -221,7 +221,7 @@ export const AdsAnalytics: React.FC<AnalyticsProps> = ({ activeCompany }) => {
     }));
   };
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+  const COLORS = ['#00A8FF', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
   const handleExportData = async (type: 'campaigns' | 'metrics') => {
     if (!activeCompany) return;
@@ -384,7 +384,7 @@ export const AdsAnalytics: React.FC<AnalyticsProps> = ({ activeCompany }) => {
                     <YAxis yAxisId="right" orientation="right" />
                     <RechartsTooltip />
                     <Legend />
-                    <Bar yAxisId="left" dataKey="impressions" fill="#2196F3" name={t('ads.impressions')} />
+                    <Bar yAxisId="left" dataKey="impressions" fill="#00A8FF" name={t('ads.impressions')} />
                     <Line yAxisId="right" type="monotone" dataKey="clicks" stroke="#4CAF50" name={t('ads.clicks')} />
                   </ComposedChart>
                 </ResponsiveContainer>
@@ -429,7 +429,7 @@ export const AdsAnalytics: React.FC<AnalyticsProps> = ({ activeCompany }) => {
                   <YAxis />
                   <RechartsTooltip />
                   <Legend />
-                  <Area type="monotone" dataKey="impressions" stackId="1" stroke="#2196F3" fill="#2196F3" />
+                  <Area type="monotone" dataKey="impressions" stackId="1" stroke="#00A8FF" fill="#00A8FF" />
                   <Area type="monotone" dataKey="clicks" stackId="1" stroke="#4CAF50" fill="#4CAF50" />
                   <Area type="monotone" dataKey="conversions" stackId="1" stroke="#FF9800" fill="#FF9800" />
                 </AreaChart>
@@ -450,7 +450,7 @@ export const AdsAnalytics: React.FC<AnalyticsProps> = ({ activeCompany }) => {
                   <YAxis />
                   <RechartsTooltip />
                   <Legend />
-                  <Bar dataKey="impressions" fill="#2196F3" name={t('ads.impressions')} />
+                  <Bar dataKey="impressions" fill="#00A8FF" name={t('ads.impressions')} />
                   <Bar dataKey="clicks" fill="#4CAF50" name={t('ads.clicks')} />
                   <Bar dataKey="conversions" fill="#FF9800" name={t('ads.conversions')} />
                 </BarChart>
@@ -520,7 +520,7 @@ export const AdsAnalytics: React.FC<AnalyticsProps> = ({ activeCompany }) => {
                   <Card>
                     <CardContent>
                       <Box display="flex" alignItems="center" mb={2}>
-                        <Target size={24} style={{ marginRight: 8, color: '#2196F3' }} />
+                        <Target size={24} style={{ marginRight: 8, color: '#00A8FF' }} />
                         <Typography variant="h6">
                           {t('ads.targetingSuggestions')}
                         </Typography>

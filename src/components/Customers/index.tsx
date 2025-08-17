@@ -62,7 +62,7 @@ const GenderPieChart = ({ genderData = { masculine: 0, feminine: 0 } }) => {
     { name: 'Masculine', value: genderData.masculine },
     { name: 'Feminine', value: genderData.feminine },
   ];
-  const COLORS = ['#0088FE', '#db1bb5'];
+    const COLORS = ['#00A8FF', '#db1bb5'];
   return (
     <PieChart width={150} height={150}>
       <Pie data={data} cx="50%" cy="50%" outerRadius={60} fill="#8884d8" dataKey="value">

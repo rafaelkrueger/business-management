@@ -6,7 +6,7 @@ export const gradients = {
   primary: 'linear-gradient(135deg, #6B8CEF 0%, #5374E7 100%)',
   success: 'linear-gradient(135deg, #53E7B7 0%, #39D2A4 100%)',
   warning: 'linear-gradient(135deg, #FFB74D 0%, #FF9800 100%)',
-  info: 'linear-gradient(135deg, #64B5F6 0%, #2196F3 100%)',
+  info: 'linear-gradient(135deg, #64B5F6 0%, #00A8FF 100%)',
   purple: 'linear-gradient(135deg, #B388FF 0%, #7C4DFF 100%)',
   teal: 'linear-gradient(135deg, #4DB6AC 0%, #009688 100%)'
 };

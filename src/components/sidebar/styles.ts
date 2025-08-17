@@ -216,6 +216,6 @@ export const SidebarCollapsed = styled.div`
     width: 70px;
     min-width: 70px;
     height: 100vh;
-    background: linear-gradient(180deg, #001f3f, #003366);
+      background: #1E293B;
     transition: all 0.3s ease;
 `;

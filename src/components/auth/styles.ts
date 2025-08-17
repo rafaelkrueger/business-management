@@ -23,7 +23,7 @@ export const AuthLeftPanel = styled('div')`
 
 export const AuthRightPanel = styled('div')`
   flex: 1;
-  background: linear-gradient(135deg, #556cd6 0%, #0039cb 100%);
+    background: #1E293B;
   display: none;
   position: relative;
   overflow: hidden;
@@ -81,11 +81,11 @@ export const AuthInput = styled('input')<{ error?: boolean }>`
   background-color: #fff;
   color: #000;
 
-  &:focus {
-    outline: none;
-    border-color: ${({ error }) => (error ? '#f44336' : '#556cd6')};
-    box-shadow: 0 0 0 3px ${({ error }) => (error ? '#ffcdd2' : '#c5cae9')};
-  }
+    &:focus {
+      outline: none;
+      border-color: ${({ error }) => (error ? '#f44336' : '#00A8FF')};
+      box-shadow: 0 0 0 3px ${({ error }) => (error ? '#ffcdd2' : 'rgba(0,168,255,0.2)')};
+    }
 
   &::placeholder {
     color: #aaa;
@@ -129,7 +129,7 @@ export const AuthFooterLink = styled(Button)`
   text-transform: none;
   padding: 0;
   min-width: auto;
-  color: #556cd6;
+    color: #00A8FF;
 
   &:hover {
     background-color: transparent;
@@ -169,7 +169,7 @@ export const AuthPlanCard = styled(Paper)<{ highlighted?: boolean }>`
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
-  border: 1px solid ${({ highlighted }) => (highlighted ? '#556cd6' : '#ccc')};
+    border: 1px solid ${({ highlighted }) => (highlighted ? '#00A8FF' : '#ccc')};
   box-shadow: ${({ highlighted }) =>
     highlighted ? '0 10px 25px rgba(0, 0, 0, 0.1)' : 'none'};
 

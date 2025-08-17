@@ -109,7 +109,7 @@ export const ViewSwitcher = styled.div`
   margin-bottom: 20px;
 
   button {
-    background-color: #2196f3;
+      background-color: #1E293B;
     color: white;
     border: none;
     padding: 10px;
@@ -118,7 +118,7 @@ export const ViewSwitcher = styled.div`
     margin-right: 10px;
 
     &:hover {
-      background-color: #1976d2;
+        background-color: #00A8FF;
     }
   }
 
@@ -134,7 +134,7 @@ export const ViewSwitcher = styled.div`
 `;
 
 export const Event = styled.div`
-  background-color: #5a86b5;
+  background-color: #00A8FF;
   padding: 2px 5px;
   margin-top: 5px;
   border-radius: 3px;

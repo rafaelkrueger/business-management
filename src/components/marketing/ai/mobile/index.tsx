@@ -96,7 +96,7 @@ const ModuleStep = styled(Box)(({ theme, completed, active, loading }) => ({
         ? theme.palette.primary.main
         : loading
           ? theme.palette.primary.main
-          : '#578acd',
+          : '#00A8FF',
     color: completed || active || loading ? '#ffffff' : theme.palette.text.secondary,
     marginBottom: theme.spacing(0.5),
     boxShadow: active
@@ -604,7 +604,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
           wordBreak: 'break-word'
         }}>
           <InsertDriveFile sx={{
-            color: msg.sender === 'user' ? '#fff' : '#578acd',
+            color: msg.sender === 'user' ? '#fff' : '#00A8FF',
             fontSize: '1.2rem'
           }} />
           <Typography variant="body2" sx={{
@@ -640,7 +640,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
         background: 'linear-gradient(160deg, #f8faff 0%, #ffffff 100%)'
       }}>
         <Box sx={{ textAlign: 'center' }}>
-          <CircularProgress sx={{ color: '#578acd' }} />
+          <CircularProgress sx={{ color: '#00A8FF' }} />
         </Box>
       </Container>
     );
@@ -658,7 +658,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
     }}>
     <Box sx={{
       background: '#ffffff',
-      color: '#578acd',
+      color: '#00A8FF',
       boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
       position: 'relative',
       pt: 1,
@@ -674,7 +674,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
         width: '10%'
       }}>
         <IconButton onClick={() => setModule('')} sx={{
-          color: '#578acd',
+          color: '#00A8FF',
           mr: 1,
           '&:hover': {
             backgroundColor: 'rgba(42, 67, 101, 0.1)'
@@ -720,7 +720,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
               onClick={() => !isLoading && handleChatChange(step.id)}
             >
               <Box className="step-icon" sx={{
-                color: activeChat === step.id ? '#578acd' : '#578acd'
+                color: activeChat === step.id ? '#00A8FF' : '#00A8FF'
               }}>
                 {step.icon}
                 {isLoading && (
@@ -729,7 +729,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
                     thickness={2}
                     sx={{
                       position: 'absolute',
-                      color: '#578acd',
+                      color: '#00A8FF',
                       top: -2,
                       left: -2
                     }}
@@ -737,7 +737,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
                 )}
               </Box>
               <Typography sx={{
-                color: isLoading ? '#578acd' : (activeChat === step.id ? '#578acd' : '#578acd'),
+                color: isLoading ? '#00A8FF' : (activeChat === step.id ? '#00A8FF' : '#00A8FF'),
                 fontSize: '0.6rem',
                 fontWeight: activeChat === step.id ? 600 : 400
               }}>
@@ -781,8 +781,8 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
                 sx={{
                   width: 28,
                   height: 28,
-                  bgcolor: msg.sender === 'user' ? '#578acd' : '#e0e7ff',
-                  color: msg.sender === 'user' ? '#fff' : '#578acd',
+                  bgcolor: msg.sender === 'user' ? '#00A8FF' : '#e0e7ff',
+                  color: msg.sender === 'user' ? '#fff' : '#00A8FF',
                   fontSize: '0.8rem',
                   mt: 0.5
                 }}
@@ -800,7 +800,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
                   ? '14px 4px 14px 14px'
                   : '4px 14px 14px 14px',
                 backgroundColor: msg.sender === 'user'
-                  ? '#578acd'
+                  ? '#00A8FF'
                   : '#f0f5ff',
                 color: msg.sender === 'user'
                   ? '#fff'
@@ -816,10 +816,10 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
                   [msg.sender === 'user' ? 'right' : 'left']: '-6px',
                   top: 0,
                   border: msg.sender === 'user'
-                    ? '6px solid #578acd'
+                    ? '6px solid #00A8FF'
                     : '6px solid #f0f5ff',
                   borderColor: msg.sender === 'user'
-                    ? '#578acd transparent transparent transparent'
+                    ? '#00A8FF transparent transparent transparent'
                     : '#f0f5ff transparent transparent transparent'
                 }
               }}>
@@ -842,7 +842,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
                   width: 28,
                   height: 28,
                   bgcolor: '#e0e7ff',
-                  color: '#578acd',
+                  color: '#00A8FF',
                   fontSize: '0.8rem',
                   mt: 0.5
                 }}
@@ -908,13 +908,13 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
               backgroundColor: 'rgba(87, 138, 205, 0.1)'
             }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <InsertDriveFile sx={{ color: '#578acd', fontSize: '1rem' }} />
+                <InsertDriveFile sx={{ color: '#00A8FF', fontSize: '1rem' }} />
                 <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.75rem' }}>
                   {fileName}
                 </Typography>
               </Box>
               <IconButton size="small" onClick={handleRemoveFile} sx={{ padding: '4px' }}>
-                <Close sx={{ fontSize: '0.8rem', color: '#578acd' }} />
+                <Close sx={{ fontSize: '0.8rem', color: '#00A8FF' }} />
               </IconButton>
             </Box>
           )}
@@ -930,7 +930,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
             <label htmlFor="file-upload-mobile">
               <Tooltip title={t("marketing.aiAssistant.attachFile")} arrow>
                 <IconButton component="span" sx={{
-                  color: '#578acd',
+                  color: '#00A8FF',
                   padding: '6px',
                   '&:hover': {
                     backgroundColor: 'rgba(87, 138, 205, 0.1)'
@@ -968,7 +968,7 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
                     borderColor: 'rgba(87, 138, 205, 0.5)'
                   },
                   '&.Mui-focused fieldset': {
-                    borderColor: '#578acd',
+                    borderColor: '#00A8FF',
                     boxShadow: '0 0 0 2px rgba(87, 138, 205, 0.2)'
                   }
                 }
@@ -985,10 +985,10 @@ export default function PremiumMarketingAssistantMobile({activeCompany, setModul
                 width: '36px',
                 height: '36px',
                 borderRadius: '50%',
-                backgroundColor: '#578acd',
+                backgroundColor: '#00A8FF',
                 color: '#fff',
                 '&:hover': {
-                  backgroundColor: '#4678b5',
+                  backgroundColor: '#00A8FF',
                 },
                 '&.Mui-disabled': {
                   backgroundColor: 'rgba(87, 138, 205, 0.1)',

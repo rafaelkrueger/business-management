@@ -529,7 +529,7 @@ const Employees: React.FC<{ activeCompany }> = ({ ...props }) => {
         </form>
       </DialogContent>
       <DialogActions>
-        <Button sx={{color:'blue', border:'1px blue solid'}} onClick={()=>setIsOpen(false)}>
+          <Button sx={{color:'#00A8FF', border:'1px #00A8FF solid'}} onClick={()=>setIsOpen(false)}>
           {t('modal.cancel')}
         </Button>
         <Button

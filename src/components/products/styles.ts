@@ -38,7 +38,7 @@ export const Input = styled.input`
     font-size: 16px;
     width: 88%;
     &:focus {
-        border-color: #007bff;
+        border-color: #1E293B;
         outline: none;
     }
 `;
@@ -50,7 +50,7 @@ export const TextArea = styled.textarea`
     font-size: 16px;
     resize: none;
     &:focus {
-        border-color: #007bff;
+        border-color: #1E293B;
         outline: none;
     }
 `;
@@ -61,7 +61,7 @@ export const Select = styled.select`
     border: 1px solid #ddd;
     font-size: 16px;
     &:focus {
-        border-color: #007bff;
+        border-color: #1E293B;
         outline: none;
     }
 `;
@@ -70,7 +70,7 @@ export const Button = styled.button`
     padding: 10px;
     border-radius: 5px;
     border: none;
-    background-color: #007bff;
+    background-color: #1E293B;
     color: white;
     font-size: 16px;
     cursor: pointer;
@@ -78,7 +78,7 @@ export const Button = styled.button`
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: #0056b3;
+        background-color: #00A8FF;
     }
 `;
 
@@ -271,7 +271,7 @@ export const EmptyStateButton = styled.button`
     justify-content: center;
     padding: 10px 20px;
     margin: 10px 0;
-    background-color: #007bff;
+    background-color: #1E293B;
     color: white;
     border: none;
     border-radius: 5px;
@@ -280,7 +280,7 @@ export const EmptyStateButton = styled.button`
     transition: background-color 0.3s ease;
 
     &:hover {
-        background-color: #0056b3;
+        background-color: #00A8FF;
     }
 
     @media (max-width: 768px) {

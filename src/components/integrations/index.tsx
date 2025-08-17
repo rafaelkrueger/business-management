@@ -52,7 +52,7 @@ const integrations: IntegrationConfig[] = [
   {
     key: 'facebook',
     name: 'Facebook',
-    color: '#1877F2',
+    color: '#00A8FF',
     icon: <FaFacebookF size={24} />,
     checkStatus: FacebookService.checkFacebookStatus,
     connect: (companyId) => FacebookService.getAuthLink(companyId),
@@ -79,7 +79,7 @@ const integrations: IntegrationConfig[] = [
   {
     key: 'linkedin',
     name: 'LinkedIn',
-    color: '#0A66C2',
+    color: '#00A8FF',
     icon: <FaLinkedinIn size={24} />,
     checkStatus: LinkedinService.checkLinkedinStatus,
     connect: (companyId) => LinkedinService.getAuthLink(companyId),
@@ -88,7 +88,7 @@ const integrations: IntegrationConfig[] = [
   {
     key: 'twitter',
     name: 'Twitter',
-    color: '#1DA1F2',
+    color: '#00A8FF',
     icon: <FaTwitter size={24} />,
     checkStatus: TwitterService.checkTwitterStatus,
     connect: (companyId) => TwitterService.getAuthLink(companyId),
@@ -97,7 +97,7 @@ const integrations: IntegrationConfig[] = [
   {
     key: 'google',
     name: 'Google',
-    color: '#4285F4',
+    color: '#00A8FF',
     icon: <FaGoogle size={24} />,
     checkStatus: (companyId) => http.get(`/google/status?companyId=${companyId}`),
     connect: (companyId) => http.get(`/google/auth-link?companyId=${companyId}`),
@@ -218,10 +218,10 @@ const IntegrationCard = ({
     sx={{
       py: 1,
       fontWeight: 500,
-      color: '#578acd',
+      color: '#00A8FF',
       '&:hover': {
         backgroundColor: 'rgba(87, 138, 205, 0.04)',
-        color: '#3a6fb5',
+        color: '#00A8FF',
       },
       '& .MuiButton-startIcon': {
         marginRight: '6px',
@@ -364,7 +364,7 @@ const Integrations: React.FC<{ activeCompany: string }> = ({ activeCompany }) =>
       >
         <MenuItem onClick={() => openDialog('info')}>
           <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150 }}>
-            <FaInfoCircle style={{ marginRight: 10, color: '#578acd' }} />
+            <FaInfoCircle style={{ marginRight: 10, color: '#00A8FF' }} />
             <Typography>{t('integration.details')}</Typography>
           </Box>
         </MenuItem>
@@ -453,7 +453,7 @@ const Integrations: React.FC<{ activeCompany: string }> = ({ activeCompany }) =>
               disabled={connectionStatus === 'connecting'}
               sx={{
                 borderRadius: 2,
-                background: 'linear-gradient(45deg, #578acd 30%, #6a9bdf 90%)',
+                background: 'linear-gradient(45deg, #00A8FF 30%, #00A8FF 90%)',
                 minWidth: 120,
               }}
             >

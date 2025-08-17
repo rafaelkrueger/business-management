@@ -358,7 +358,7 @@ const EmailTemplateSelector = ({ templates = [], open, onClose, onSelect, active
                   key={template.id}
                   sx={{
                     width: 200,
-                    border: selectedTemplate && selectedTemplate.id === template.id ? "2px solid blue" : "none",
+                    border: selectedTemplate && selectedTemplate.id === template.id ? "2px solid #00A8FF" : "none",
                     cursor: "pointer",
                     p: 1,
                   }}

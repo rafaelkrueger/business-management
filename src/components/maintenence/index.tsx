@@ -19,7 +19,7 @@ const MaintenanceContainer = styled.div`
 
 const IconWrapper = styled.div`
   font-size: 4rem;
-  color: #007bff;
+  color: #00A8FF;
   margin-bottom: 1rem;
 `;
 
@@ -51,14 +51,14 @@ const LanguageSwitcher = styled.div`
     margin: 0 5px;
     padding: 5px 10px;
     border: none;
-    background: #007bff;
+      background: #1E293B;
     color: #fff;
     cursor: pointer;
     border-radius: 5px;
     font-size: 0.875rem;
 
     &:hover {
-      background: #0056b3;
+        background: #00A8FF;
     }
   }
 `;

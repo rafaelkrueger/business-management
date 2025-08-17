@@ -130,8 +130,8 @@ export const AdsManagement: React.FC<AdsManagementProps> = ({ activeCompany, set
     {
       id: 'google',
       name: 'Google Ads',
-      icon: <GoogleIcon sx={{ color: '#4285F4', fontSize: 42, marginLeft:'-23px' }} />,
-      color: '#4285F4',
+      icon: <GoogleIcon sx={{ color: '#00A8FF', fontSize: 42, marginLeft:'-23px' }} />,
+      color: '#00A8FF',
       status: 'disconnected',
       accountName: 'Conta Principal',
       lastSync: '2 horas atrás',
@@ -143,8 +143,8 @@ export const AdsManagement: React.FC<AdsManagementProps> = ({ activeCompany, set
     {
       id: 'facebook',
       name: 'Facebook Ads',
-      icon: <FacebookIcon sx={{ color: '#1877F2', fontSize: 42, marginLeft:'-23px' }} />,
-      color: '#1877F2',
+      icon: <FacebookIcon sx={{ color: '#00A8FF', fontSize: 42, marginLeft:'-23px' }} />,
+      color: '#00A8FF',
       status: 'disconnected',
       accountName: 'Minha Empresa',
       lastSync: '1 hora atrás',
@@ -428,8 +428,8 @@ export const AdsManagement: React.FC<AdsManagementProps> = ({ activeCompany, set
 
   const getPlatformIcon = (platform: string) => {
     switch (platform) {
-      case 'google': return <GoogleIcon sx={{ color: '#4285F4', fontSize: 32 }} />;
-      case 'facebook': return <FacebookIcon sx={{ color: '#1877F2', fontSize: 32 }} />;
+      case 'google': return <GoogleIcon sx={{ color: '#00A8FF', fontSize: 32 }} />;
+      case 'facebook': return <FacebookIcon sx={{ color: '#00A8FF', fontSize: 32 }} />;
       case 'instagram': return <InstagramIcon sx={{ color: '#E1306C', fontSize: 32 }} />;
       case 'tiktok': return (
         <Box sx={{
@@ -459,19 +459,19 @@ export const AdsManagement: React.FC<AdsManagementProps> = ({ activeCompany, set
           </svg>
         </Box>
       );
-      case 'linkedin': return <LinkedInIcon sx={{ color: '#0077B5', fontSize: 32 }} />;
+      case 'linkedin': return <LinkedInIcon sx={{ color: '#00A8FF', fontSize: 32 }} />;
       default: return <CampaignIcon sx={{ color: COLORS.primary, fontSize: 32 }} />;
     }
   };
 
   const getPlatformColor = (platform: string) => {
     switch (platform) {
-      case 'google': return '#4285F4';
-      case 'facebook': return '#1877F2';
+      case 'google': return '#00A8FF';
+      case 'facebook': return '#00A8FF';
       case 'instagram': return '#E1306C';
       case 'tiktok': return '#000000';
       case 'twitter': return '#000000';
-      case 'linkedin': return '#0077B5';
+      case 'linkedin': return '#00A8FF';
       default: return COLORS.primary;
     }
   };
@@ -1485,13 +1485,13 @@ export const AdsManagement: React.FC<AdsManagementProps> = ({ activeCompany, set
                 <Select label="Plataforma">
                   <MenuItem value="google">
                     <Box display="flex" alignItems="center" gap={1}>
-                      <GoogleIcon sx={{ color: '#4285F4' }} />
+                      <GoogleIcon sx={{ color: '#00A8FF' }} />
                       Google Ads
                     </Box>
                   </MenuItem>
                   <MenuItem value="facebook">
                     <Box display="flex" alignItems="center" gap={1}>
-                      <FacebookIcon sx={{ color: '#1877F2' }} />
+                      <FacebookIcon sx={{ color: '#00A8FF' }} />
                       Facebook Ads
                     </Box>
                   </MenuItem>

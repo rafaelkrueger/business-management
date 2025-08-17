@@ -140,19 +140,19 @@ const socialNetworks = [
   {
     key: "twitter",
     name: "Twitter",
-    icon: <FaTwitter style={{ color: "#1DA1F2", fontSize: 36 }} />,
+    icon: <FaTwitter style={{ color: "#00A8FF", fontSize: 36 }} />,
     serviceCheck: TwitterService.checkTwitterStatus,
   },
   {
     key: "linkedin",
     name: "LinkedIn",
-    icon: <FaLinkedin style={{ color: "#0A66C2", fontSize: 36 }} />,
+    icon: <FaLinkedin style={{ color: "#00A8FF", fontSize: 36 }} />,
     serviceCheck: LinkedinService.checkLinkedinStatus,
   },
   {
     key: "facebook",
     name: "Facebook",
-    icon: <FaFacebook style={{ color: "#1877F2", fontSize: 36 }} />,
+    icon: <FaFacebook style={{ color: "#00A8FF", fontSize: 36 }} />,
     serviceCheck: FacebookService.checkFacebookStatus,
   },
   {
@@ -290,11 +290,11 @@ const SocialMediaDashboard: React.FC<SocialMediaDashboardProps> = ({ activeCompa
   const getIconForNetwork = (network) => {
     switch (network.toLowerCase()) {
       case "twitter":
-        return <FaTwitter style={{ color: "#1DA1F2", fontSize: 20, marginRight: 8 }} />;
+        return <FaTwitter style={{ color: "#00A8FF", fontSize: 20, marginRight: 8 }} />;
       case "linkedin":
-        return <FaLinkedin style={{ color: "#0A66C2", fontSize: 20, marginRight: 8 }} />;
+        return <FaLinkedin style={{ color: "#00A8FF", fontSize: 20, marginRight: 8 }} />;
       case "facebook":
-        return <FaFacebook style={{ color: "#1877F2", fontSize: 20, marginRight: 8 }} />;
+        return <FaFacebook style={{ color: "#00A8FF", fontSize: 20, marginRight: 8 }} />;
       case "youtube":
         return <FaYoutube style={{ color: "#FF0000", fontSize: 20, marginRight: 8 }} />;
       case "whatsapp":
@@ -553,7 +553,7 @@ const SocialMediaDashboard: React.FC<SocialMediaDashboardProps> = ({ activeCompa
           alignItems: "center"
         }}
       >
-        <Article sx={{ mr: 1, color: "#1976d2" }} />
+        <Article sx={{ mr: 1, color: "#00A8FF" }} />
         Detalhes - {selectedNetwork || ""}
       </DialogTitle>
 
@@ -572,7 +572,7 @@ const SocialMediaDashboard: React.FC<SocialMediaDashboardProps> = ({ activeCompa
                 >
                   <CardContent>
                     <Box display="flex" alignItems="center">
-                      <TrendingUp sx={{ mr: 1, color: "#1976d2" }} />
+                      <TrendingUp sx={{ mr: 1, color: "#00A8FF" }} />
                       <Typography variant="subtitle2" sx={{ color: "#616161" }}>
                         Engajamento
                       </Typography>
@@ -593,7 +593,7 @@ const SocialMediaDashboard: React.FC<SocialMediaDashboardProps> = ({ activeCompa
                 >
                   <CardContent>
                     <Box display="flex" alignItems="center">
-                      <Visibility sx={{ mr: 1, color: "#1976d2" }} />
+                      <Visibility sx={{ mr: 1, color: "#00A8FF" }} />
                       <Typography variant="subtitle2" sx={{ color: "#616161" }}>
                         Impressões
                       </Typography>
@@ -614,7 +614,7 @@ const SocialMediaDashboard: React.FC<SocialMediaDashboardProps> = ({ activeCompa
                 >
                   <CardContent>
                     <Box display="flex" alignItems="center">
-                      <FaComment size={20} style={{ marginRight: 8, color: "#1976d2" }} />
+                      <FaComment size={20} style={{ marginRight: 8, color: "#00A8FF" }} />
                       <Typography variant="subtitle2" sx={{ color: "#616161" }}>
                         Comentários
                       </Typography>
@@ -635,7 +635,7 @@ const SocialMediaDashboard: React.FC<SocialMediaDashboardProps> = ({ activeCompa
                 >
                   <CardContent>
                     <Box display="flex" alignItems="center">
-                      <ThumbUp sx={{ mr: 1, color: "#1976d2" }} />
+                      <ThumbUp sx={{ mr: 1, color: "#00A8FF" }} />
                       <Typography variant="subtitle2" sx={{ color: "#616161" }}>
                         Likes
                       </Typography>

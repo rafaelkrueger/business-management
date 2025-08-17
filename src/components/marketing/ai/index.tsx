@@ -615,7 +615,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
           wordBreak: 'break-word'
         }}>
           <InsertDriveFile sx={{
-            color: msg.sender === 'user' ? '#fff' : '#578acd',
+            color: msg.sender === 'user' ? '#fff' : '#00A8FF',
             fontSize: '1.5rem'
           }} />
           <Typography variant="body2" sx={{
@@ -649,7 +649,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
         background: 'linear-gradient(160deg, #f8faff 0%, #ffffff 100%)'
       }}>
         <Box sx={{ textAlign: 'center' }}>
-          <CircularProgress sx={{ color: '#578acd' }} />
+          <CircularProgress sx={{ color: '#00A8FF' }} />
         </Box>
       </Container>
     );
@@ -666,7 +666,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
       overflowY:'hidden'
     }}>
       <Box sx={{
-        background: 'linear-gradient(90deg, #578acd 0%, #6a9ce0 100%)',
+        background: 'linear-gradient(90deg, #00A8FF 0%, #00A8FF 100%)',
         borderTopLeftRadius: 7,
         borderTopRightRadius: 7,
         p: 3,
@@ -790,8 +790,8 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
                 sx={{
                   width: 32,
                   height: 32,
-                  bgcolor: msg.sender === 'user' ? '#578acd' : '#e0e7ff',
-                  color: msg.sender === 'user' ? '#fff' : '#578acd',
+                  bgcolor: msg.sender === 'user' ? '#00A8FF' : '#e0e7ff',
+                  color: msg.sender === 'user' ? '#fff' : '#00A8FF',
                   fontSize: '0.9rem',
                   mt: 0.5
                 }}
@@ -809,7 +809,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
                   ? '18px 4px 18px 18px'
                   : '4px 18px 18px 18px',
                 backgroundColor: msg.sender === 'user'
-                  ? '#578acd'
+                  ? '#00A8FF'
                   : '#f0f5ff',
                 color: msg.sender === 'user'
                   ? '#fff'
@@ -825,10 +825,10 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
                   [msg.sender === 'user' ? 'right' : 'left']: '-8px',
                   top: 0,
                   border: msg.sender === 'user'
-                    ? '8px solid #578acd'
+                    ? '8px solid #00A8FF'
                     : '8px solid #f0f5ff',
                   borderColor: msg.sender === 'user'
-                    ? '#578acd transparent transparent transparent'
+                    ? '#00A8FF transparent transparent transparent'
                     : '#f0f5ff transparent transparent transparent'
                 }
               }}>
@@ -851,7 +851,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
                   width: 32,
                   height: 32,
                   bgcolor: '#e0e7ff',
-                  color: '#578acd',
+                  color: '#00A8FF',
                   fontSize: '0.9rem',
                   mt: 0.5
                 }}
@@ -918,13 +918,13 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
               backgroundColor: 'rgba(87, 138, 205, 0.1)'
             }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <InsertDriveFile sx={{ color: '#578acd' }} />
+                <InsertDriveFile sx={{ color: '#00A8FF' }} />
                 <Typography variant="body2" sx={{ fontWeight: 500 }}>
                   {fileName}
                 </Typography>
               </Box>
               <IconButton size="small" onClick={handleRemoveFile}>
-                <Close sx={{ fontSize: '1rem', color: '#578acd' }} />
+                <Close sx={{ fontSize: '1rem', color: '#00A8FF' }} />
               </IconButton>
             </Box>
           )}
@@ -940,7 +940,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
             <label htmlFor="file-upload">
               <Tooltip title={t("marketing.aiAssistant.attachFile")} arrow>
                 <IconButton component="span" sx={{
-                  color: '#578acd',
+                  color: '#00A8FF',
                   '&:hover': {
                     backgroundColor: 'rgba(87, 138, 205, 0.1)'
                   }
@@ -975,7 +975,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
                     borderColor: 'rgba(87, 138, 205, 0.5)'
                   },
                   '&.Mui-focused fieldset': {
-                    borderColor: '#578acd',
+                    borderColor: '#00A8FF',
                     boxShadow: '0 0 0 2px rgba(87, 138, 205, 0.2)'
                   }
                 }
@@ -992,11 +992,11 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
                 width: '48px',
                 height: '48px',
                 borderRadius: '50%',
-                backgroundColor: '#578acd',
+                backgroundColor: '#00A8FF',
                 color: '#fff',
                 transition: 'all 0.3s ease',
                 '&:hover': {
-                  backgroundColor: '#4678b5',
+                  backgroundColor: '#00A8FF',
                   transform: 'translateY(-2px)',
                   boxShadow: '0 4px 12px rgba(87, 138, 205, 0.4)'
                 },

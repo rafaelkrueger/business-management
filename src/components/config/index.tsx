@@ -465,8 +465,8 @@ const Config: React.FC<{
                         sx={{
                           "&:hover": {
                             backgroundColor: "white",
-                            color: "rgb(25, 118, 210)",
-                            border: "1px rgb(25, 118, 210) solid",
+                            color: "#00A8FF",
+                            border: "1px #00A8FF solid",
                           },
                         }}
                       >
@@ -478,8 +478,8 @@ const Config: React.FC<{
                         sx={{
                           "&:hover": {
                             backgroundColor: "white",
-                            color: "rgb(25, 118, 210)",
-                            border: "1px rgb(25, 118, 210) solid",
+                            color: "#00A8FF",
+                            border: "1px #00A8FF solid",
                           },
                         }}
                         onClick={() => {
@@ -502,10 +502,10 @@ const Config: React.FC<{
                       sx={{
                         backgroundColor: "white",
                         marginTop: "15px",
-                        color: "rgb(25, 118, 210)",
-                        border: "1px rgb(25, 118, 210) solid",
+                        color: "#00A8FF",
+                        border: "1px #00A8FF solid",
                         "&:hover": {
-                          backgroundColor: "rgb(25, 118, 210)",
+                          backgroundColor: "#00A8FF",
                           color: "white",
                         },
                       }}
@@ -595,8 +595,8 @@ const Config: React.FC<{
                       sx={{
                         "&:hover": {
                           backgroundColor: "white",
-                          color: "rgb(25, 118, 210)",
-                          border: "1px rgb(25, 118, 210) solid",
+                          color: "#00A8FF",
+                          border: "1px #00A8FF solid",
                         },
                       }}
                       onClick={() => {
@@ -640,8 +640,8 @@ const Config: React.FC<{
                       sx={{
                         "&:hover": {
                           backgroundColor: "white",
-                          color: "rgb(25, 118, 210)",
-                          border: "1px rgb(25, 118, 210) solid",
+                          color: "#00A8FF",
+                          border: "1px #00A8FF solid",
                         },
                       }}
                       onClick={() => {
@@ -663,10 +663,10 @@ const Config: React.FC<{
                     fullWidth
                     sx={{
                       backgroundColor: "white",
-                      color: "rgb(25, 118, 210)",
-                      border: "1px rgb(25, 118, 210) solid",
+                      color: "#00A8FF",
+                      border: "1px #00A8FF solid",
                       "&:hover": {
-                        backgroundColor: "rgb(25, 118, 210)",
+                        backgroundColor: "#00A8FF",
                         color: "white",
                       },
                     }}
