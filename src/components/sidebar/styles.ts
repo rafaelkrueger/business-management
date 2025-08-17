@@ -109,7 +109,7 @@ export const SidebarContainerHeader = styled.div`
 
 export const SidebarContainerHeaderProfile = styled.img`
     border-radius: 50%;
-    border: 2px solid #00a8ff;
+    border: 2px solid #578acd;
     transition: all 0.3s ease;
     object-fit: cover;
 
@@ -139,6 +139,23 @@ export const SidebarContainerBodyElementContainer = styled.div`
   transition: all 0.2s ease;
   border-radius: 6px;
   margin-bottom: 5px;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 168, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
 
   &:hover {
     background-color: rgba(255,255,255,0.1);
@@ -164,7 +181,7 @@ export const SidebarContainerBodyElement = styled.p`
     text-overflow: ellipsis;
 
     &:hover {
-        color: #00a8ff;
+        color: #578acd;
     }
 `;
 
@@ -181,7 +198,7 @@ export const SupportModuleLabel = styled.div`
 
 export const MainModuleIndicator = styled.span`
     font-size: 0.8em;
-    color: #00a8ff;
+    color: #578acd;
     margin-left: 5px;
     background: rgba(0, 168, 255, 0.1);
     padding: 2px 6px;
@@ -192,7 +209,7 @@ export const MainModuleIndicator = styled.span`
 export const ActiveModuleIndicator = styled.div`
     width: 8px;
     height: 8px;
-    background-color: #00a8ff;
+    background-color: #578acd;
     border-radius: 50%;
     display: inline-block;
     margin-left: 8px;

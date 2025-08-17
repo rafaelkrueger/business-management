@@ -23,7 +23,7 @@ const BottomNavContainer = styled(Box)`
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: #4A75AE;
+  background: #1e293b;
   box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2);
   z-index: 1200;
   height: 60px;
@@ -31,6 +31,8 @@ const BottomNavContainer = styled(Box)`
   overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  border-top: 1px solid rgba(0, 168, 255, 0.2);
+
   &::-webkit-scrollbar {
     display: none;
   }
@@ -44,7 +46,7 @@ const NavItemsWrapper = styled.div`
   padding: 0 8px;
 `;
 
-const NavItem = styled.div`
+const NavItem = styled.div<{ active?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -52,48 +54,46 @@ const NavItem = styled.div`
   padding: 8px 12px;
   min-width: 60px;
   cursor: pointer;
-  color: ${({ active }) => (active ? '#fff' : '#e4e4e4')};
+  color: ${({ active }) => (active ? '#578acd' : '#e0f2ff')};
   transition: all 0.2s ease;
   position: relative;
+  border-radius: 8px;
 
   &:hover {
-    color: #fff;
+    color: #578acd;
+    background: rgba(0, 168, 255, 0.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 `;
 
 const NavIcon = styled.div`
   font-size: 1.5rem;
-  margin-bottom: 4px;
+  transition: all 0.2s ease;
+
+  ${NavItem}:hover & {
+    transform: scale(1.05);
+  }
 `;
 
-const NavLabel = styled.span`
+const NavLabel = styled.span<{ active?: boolean }>`
   font-size: 0.7rem;
   white-space: nowrap;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: none; // Hide labels by default
 `;
 
-const ActiveIndicator = styled.div`
+const ActiveIndicator = styled.div<{ active?: boolean }>`
   position: absolute;
   top: 0;
   width: 100%;
-  height: 3px;
-  background-color: ${({ active }) => (active ? '#fff' : '#4A75AE')};
-  border-radius: 0 0 3px 3px;
-`;
-
-const ExtraModulesBadge = styled.div`
-  position: absolute;
-  top: 2px;
-  right: 10px;
-  background-color: #ff4757;
-  color: white;
-  border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: bold;
+  height: 2px;
+  background: ${({ active }) => (active ? '#578acd' : 'transparent')};
+  border-radius: 0 0 2px 2px;
+  transition: all 0.2s ease;
 `;
 
 const MobileBottomNavigation = ({
@@ -109,7 +109,7 @@ const MobileBottomNavigation = ({
   const { t } = useTranslation();
   const [activeItem, setActiveItem] = useState('marketing');
   const [modules, setModules] = useState([]);
-  const [brandColors, setBrandColors] = useState({ primary: '#578acd', secondary: '#1d3e70', text: '#ffffff' });
+  const [brandColors, setBrandColors] = useState({ primary: '#1e293b', secondary: '#0a0f1c', text: '#578acd' });
   const [showExtraModules, setShowExtraModules] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipText, setTooltipText] = useState('');
@@ -141,7 +141,7 @@ const MobileBottomNavigation = ({
   }, [activeCompany, companies, modulesUpdating]);
 
   const extractBrandColors = (logoUrl) => {
-    if (!logoUrl) return setBrandColors({ primary: '#578acd', secondary: '#1d3e70', text: '#ffffff' });
+    if (!logoUrl) return setBrandColors({ primary: '#1e293b', secondary: '#0a0f1c', text: '#578acd' });
 
     const img = new Image();
     img.crossOrigin = 'Anonymous';
@@ -152,16 +152,16 @@ const MobileBottomNavigation = ({
         const palette = colorThief.getPalette(img, 3);
         const [primary, secondary] = palette;
         setBrandColors({
-          primary: `rgb(${primary.join(',')})`,
-          secondary: `rgb(${secondary.join(',')})`,
-          text: getContrastColor(primary)
+          primary: `#1e293b`,
+          secondary: `#0a0f1c`,
+          text: '#578acd'
         });
       } catch (e) {
-        setBrandColors({ primary: '#578acd', secondary: '#1d3e70', text: '#ffffff' });
+        setBrandColors({ primary: '#1e293b', secondary: '#0a0f1c', text: '#578acd' });
       }
     };
 
-    img.onerror = () => setBrandColors({ primary: '#578acd', secondary: '#1d3e70', text: '#ffffff' });
+    img.onerror = () => setBrandColors({ primary: '#1e293b', secondary: '#0a0f1c', text: '#578acd' });
   };
 
   const getContrastColor = (rgb) => {
@@ -277,44 +277,79 @@ const MobileBottomNavigation = ({
       >
         <NavItemsWrapper>
           {mainNavItems.map(item => (
-            <Tooltip key={item?.key} title={item.label} placement="top" arrow>
-              <NavItem onClick={() => handleItemClick(item?.key)} active={activeItem === item?.key}>
+            <Tooltip
+              key={item?.key}
+              title={item.label}
+              placement="top"
+              arrow
+              componentsProps={{
+                tooltip: {
+                  sx: {
+                    bgcolor: 'rgba(0, 150, 255, 0.9)',
+                    color: 'white',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    '& .MuiTooltip-arrow': {
+                      color: 'rgba(0, 150, 255, 0.9)'
+                    }
+                  }
+                }
+              }}
+            >
+              <NavItem
+                onClick={() => handleItemClick(item?.key)}
+                active={activeItem === item?.key}
+              >
                 <ActiveIndicator active={activeItem === item?.key} />
-                <NavIcon style={{marginBottom:'-5px'}}>{React.createElement(item.icon, { size: 20 })}</NavIcon>
-                <NavLabel>{item.label}</NavLabel>
+                <NavIcon>
+                  {React.createElement(item.icon, {
+                    size: 20,
+                    color: activeItem === item?.key ? '#578acd' : '#e0f2ff'
+                  })}
+                </NavIcon>
               </NavItem>
             </Tooltip>
           ))}
 
-        {extraNavItems.length > 0 && (
-          <Tooltip title={tooltipText} open={tooltipOpen} placement="top" arrow>
-            <NavItem
-              onClick={toggleExtrasWithTooltip}
-              active={showExtraModules}
-              activecolor={brandColors.primary}
-            >
-              <div style={{ position: 'relative' }}>
-                <NavIcon style={{marginBottom:'-5px'}}>
-                  <CgExtension size={20} />
-                </NavIcon>
-                {!showExtraModules && (
-                  <ExtraModulesBadge>
-                    {extraNavItems.length}
-                  </ExtraModulesBadge>
-                )}
-              </div>
-              <NavLabel>Extras</NavLabel>
-              <ActiveIndicator active={showExtraModules} activecolor={brandColors.primary} />
-            </NavItem>
-          </Tooltip>
-        )}
-
           {[{ key: 'integration', icon: CgExtension, label: t('integrations') }, { key: 'config', icon: RiSettingsLine, label: t('configurations') }, { key: 'logout', icon: IoMdLogOut, label: t('logout') }].map(item => (
-            <Tooltip key={item?.key} title={item.label} placement="top" arrow>
-              <NavItem onClick={() => handleItemClick(item?.key)} active={activeItem === item?.key}>
-                <ActiveIndicator active={activeItem === item?.key} />
-                <NavIcon style={{marginBottom:'-5px'}}>{React.createElement(item.icon, { size: 20 })}</NavIcon>
-                <NavLabel>{item.label}</NavLabel>
+            <Tooltip
+              key={item?.key}
+              title={item.label}
+              placement="top"
+              arrow
+              componentsProps={{
+                tooltip: {
+                  sx: {
+                    bgcolor: item?.key === 'logout' ? 'rgba(255, 102, 102, 0.9)' : 'rgba(0, 150, 255, 0.9)',
+                    color: 'white',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    '& .MuiTooltip-arrow': {
+                      color: item?.key === 'logout' ? 'rgba(255, 102, 102, 0.9)' : 'rgba(0, 150, 255, 0.9)'
+                    }
+                  }
+                }
+              }}
+            >
+              <NavItem
+                onClick={() => handleItemClick(item?.key)}
+                active={activeItem === item?.key}
+                style={{
+                  color: item?.key === 'logout' ? '#ff6666' : undefined
+                }}
+              >
+                <ActiveIndicator
+                  active={activeItem === item?.key}
+                  style={{
+                    background: item?.key === 'logout' ? '#ff6666' : undefined
+                  }}
+                />
+                <NavIcon>
+                  {React.createElement(item.icon, {
+                    size: 20,
+                    color: item?.key === 'logout' ? '#ff6666' : (activeItem === item?.key ? '#578acd' : '#e0f2ff')
+                  })}
+                </NavIcon>
               </NavItem>
             </Tooltip>
           ))}

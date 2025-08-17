@@ -17,6 +17,11 @@ export const fadeIn = keyframes`
   to { opacity: 1; }
 `;
 
+export const shine = keyframes`
+  0% { left: -100%; }
+  100% { left: 100%; }
+`;
+
 export const SidebarWrapper = styled.div`
   width: 100%;
   display: flex;
@@ -26,9 +31,9 @@ export const SidebarWrapper = styled.div`
 `;
 
 export const TopSection = styled.div`
-  background: ${props => props.primary};
+  background: #1e293b;
   padding-top: env(safe-area-inset-top);
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
 `;
 
 export const CompanyHeader = styled.div`
@@ -38,6 +43,23 @@ export const CompanyHeader = styled.div`
   cursor: pointer;
   transition: all 0.3s ease;
   background: rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 168, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
 
   &:hover {
     background: rgba(0, 0, 0, 0.15);
@@ -54,21 +76,23 @@ export const CompanyAvatar = styled.div`
   overflow: hidden;
   flex-shrink: 0;
   background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #578acd;
+  box-shadow: 0 0 10px rgba(0, 168, 255, 0.3);
 `;
 
-export const CompanyLogo = styled.img`
+export const CompanyLogo = styled.img<{ small?: boolean }>`
   width: ${props => props.small ? '24px' : '100%'};
   height: ${props => props.small ? '24px' : '100%'};
   object-fit: cover;
 `;
 
-export const CompanyPlaceholder = styled.div`
+export const CompanyPlaceholder = styled.div<{ small?: boolean }>`
   width: ${props => props.small ? '24px' : '100%'};
   height: ${props => props.small ? '24px' : '100%'};
   display: flex;
   align-items: center;
   justify-content: center;
-  color: inherit;
+  color: #578acd;
 `;
 
 export const CompanyInfo = styled.div`
@@ -80,20 +104,21 @@ export const CompanyInfo = styled.div`
 export const CompanyName = styled.div`
   font-size: 1rem;
   font-weight: 600;
-  color: ${props => props.text};
+  color: white;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 0 5px rgba(0, 168, 255, 0.3);
 `;
 
 export const CompanyStatus = styled.div`
   font-size: 0.75rem;
-  color: ${props => props.text};
+  color: rgba(255, 255, 255, 0.8);
   opacity: 0.8;
 `;
 
 export const ChevronIcon = styled.div`
-  color: ${props => props.text};
+  color: #578acd;
   opacity: 0.7;
   transition: all 0.3s ease;
   margin-left: 8px;
@@ -108,7 +133,7 @@ export const CompanyDropdown = styled.div`
   max-height: 60vh;
   overflow-y: auto;
   animation: ${slideIn} 0.3s ease-out;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(0, 168, 255, 0.2);
   backdrop-filter: blur(5px);
 
   &::-webkit-scrollbar {
@@ -116,7 +141,7 @@ export const CompanyDropdown = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 168, 255, 0.3);
     border-radius: 3px;
   }
 `;
@@ -125,26 +150,43 @@ export const DropdownTitle = styled.div`
   padding: 12px 20px;
   font-size: 0.85rem;
   font-weight: 500;
-  color: ${props => props.text};
+  color: #578acd;
   opacity: 0.8;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 168, 255, 0.2);
+  text-shadow: 0 0 5px rgba(0, 168, 255, 0.3);
 `;
 
-export const CompanyOption = styled.div`
+export const CompanyOption = styled.div<{ active?: boolean }>`
   display: flex;
   align-items: center;
   padding: 12px 20px;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  background: ${props => props.active ? 'rgba(255, 255, 255, 0.1)' : 'transparent'};
+  background: ${props => props.active ? 'rgba(0, 168, 255, 0.1)' : 'transparent'};
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 168, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 168, 255, 0.1);
   }
 
   & + & {
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(0, 168, 255, 0.1);
   }
 `;
 
@@ -158,6 +200,7 @@ export const CompanyLogoWrapper = styled.div`
   overflow: hidden;
   background: rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
+  border: 1px solid rgba(0, 168, 255, 0.3);
 `;
 
 export const CompanyOptionInfo = styled.div`
@@ -169,7 +212,7 @@ export const CompanyOptionInfo = styled.div`
 export const CompanyOptionName = styled.div`
   font-size: 0.95rem;
   font-weight: 500;
-  color: ${props => props.text};
+  color: white;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -177,7 +220,7 @@ export const CompanyOptionName = styled.div`
 
 export const CompanyOptionStatus = styled.div`
   font-size: 0.7rem;
-  color: ${props => props.text};
+  color: rgba(255, 255, 255, 0.7);
   opacity: 0.7;
 `;
 
@@ -187,9 +230,11 @@ export const SelectedIndicator = styled.div`
   border-radius: 50%;
   margin-left: 12px;
   animation: ${fadeIn} 0.3s ease-out;
+  background: #578acd;
+  box-shadow: 0 0 10px rgba(0, 168, 255, 0.5);
 `;
 
-export const ModuleItem = styled.div`
+export const ModuleItem = styled.div<{ active?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -197,15 +242,34 @@ export const ModuleItem = styled.div`
   padding: 12px;
   min-width: 80px;
   border-radius: 12px;
-  background: ${props => props.active ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)'};
+  background: ${props => props.active ? 'rgba(0, 168, 255, 0.1)' : 'rgba(255, 255, 255, 0.1)'};
   cursor: pointer;
   transition: all 0.3s ease;
   flex-shrink: 0;
   backdrop-filter: blur(5px);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid ${props => props.active ? 'rgba(0, 168, 255, 0.3)' : 'rgba(255, 255, 255, 0.1)'};
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 168, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(0, 168, 255, 0.15);
     transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 168, 255, 0.2);
   }
 
   &:active {
@@ -213,17 +277,19 @@ export const ModuleItem = styled.div`
   }
 `;
 
-export const ModuleIcon = styled.div`
+export const ModuleIcon = styled.div<{ active?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 8px;
-  color: ${props => props.active ? props.text : 'rgba(255, 255, 255, 0.9)'};
+  color: ${props => props.active ? '#578acd' : 'white'};
   transition: all 0.3s ease;
+  filter: drop-shadow(0 0 5px rgba(0, 168, 255, 0.3));
 
   ${ModuleItem}:hover & {
-    color: ${props => props.text};
+    color: #578acd;
     transform: scale(1.1);
+    filter: drop-shadow(0 0 8px rgba(0, 168, 255, 0.5));
   }
 
   ${ModuleItem}.active & {
@@ -231,25 +297,26 @@ export const ModuleIcon = styled.div`
   }
 `;
 
-export const ModuleLabel = styled.div`
+export const ModuleLabel = styled.div<{ active?: boolean }>`
   font-size: 0.75rem;
   font-weight: ${props => props.active ? '500' : '400'};
-  color: ${props => props.text};
+  color: ${props => props.active ? '#578acd' : 'white'};
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  text-shadow: ${props => props.active ? '0 0 5px rgba(0, 168, 255, 0.3)' : 'none'};
 `;
 
 export const GlowingDot = styled.div`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #fff;
+  background: #578acd;
   box-shadow:
-    0 0 5px #fff,
-    0 0 10px rgba(255, 255, 255, 0.5);
+    0 0 5px #578acd,
+    0 0 10px rgba(0, 168, 255, 0.5);
   animation: ${pulse} 1.5s infinite ease-in-out;
 `;
 
@@ -259,12 +326,13 @@ export const BottomSection = styled.div`
   left: 0;
   right: 0;
   height: 40px;
-  background: linear-gradient(180deg, ${props => props.primary} 0%, ${props => props.secondary} 100%);
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+  background: #1e293b;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   display: flex;
   align-items: center;
   margin-top: 100px;
+  border-top: 1px solid rgba(0, 168, 255, 0.2);
 `;
 
 export const ModulesScroll = styled.div`
@@ -288,7 +356,7 @@ export const ModulesContainer = styled.div`
   align-items: center;
 `;
 
-export const CompactModuleItem = styled.div`
+export const CompactModuleItem = styled.div<{ active?: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -304,8 +372,23 @@ export const CompactModuleItem = styled.div`
   position: relative;
   overflow: hidden;
 
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 168, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
   &:hover {
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(0, 168, 255, 0.15);
   }
 
   &:active {
@@ -319,23 +402,26 @@ export const CompactModuleItem = styled.div`
     left: 0;
     right: 0;
     height: 3px;
-    background: ${props => props.active ? props.text : 'transparent'};
+    background: ${props => props.active ? '#578acd' : 'transparent'};
     transition: all 0.2s ease;
+    box-shadow: ${props => props.active ? '0 0 5px rgba(0, 168, 255, 0.5)' : 'none'};
   }
 `;
 
-export const CompactModuleIcon = styled.div`
+export const CompactModuleIcon = styled.div<{ active?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${props => props.active ? props.text : 'rgba(255, 255, 255, 0.9)'};
+  color: ${props => props.active ? '#578acd' : 'white'};
   transition: all 0.2s ease;
   font-size: 1.2rem;
   margin-right: 3px;
+  filter: drop-shadow(0 0 3px rgba(0, 168, 255, 0.3));
 
   ${CompactModuleItem}:hover & {
-    color: ${props => props.text};
+    color: #578acd;
     transform: scale(1.1);
+    filter: drop-shadow(0 0 5px rgba(0, 168, 255, 0.5));
   }
 
   ${CompactModuleItem}.active & {
@@ -343,41 +429,64 @@ export const CompactModuleIcon = styled.div`
   }
 `;
 
-export const CompactModuleLabel = styled.div`
+export const CompactModuleLabel = styled.div<{ active?: boolean }>`
   font-size: 0.6rem;
   font-weight: 500;
-  color: ${props => props.text};
+  color: ${props => props.active ? '#578acd' : 'white'};
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
   animation: ${fadeIn} 0.2s ease-out;
+  text-shadow: ${props => props.active ? '0 0 3px rgba(0, 168, 255, 0.3)' : 'none'};
 `;
 
-export const Item = styled.div`
+export const Item = styled.div<{ active?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 4px;
   min-width: ${props => props.active ? '60px' : '40px'};
-  background: ${props => props.active ? 'rgba(255,255,255,0.2)' : 'transparent'};
+  background: ${props => props.active ? 'rgba(0, 168, 255, 0.1)' : 'transparent'};
   transition: transform 0.2s;
-  &:active { transform: scale(0.95); }
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 168, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 `;
 
-export const Label = styled.div`
-  color: ${props => props.color};
+export const Label = styled.div<{ active?: boolean }>`
+  color: ${props => props.active ? '#578acd' : 'white'};
   font-size: 0.65rem;
   margin-top: 2px;
+  text-shadow: ${props => props.active ? '0 0 3px rgba(0, 168, 255, 0.3)' : 'none'};
 `;
 
 export const LogoutItem = styled(Item)`
-  cursor:pointer;
+  cursor: pointer;
   margin-left: auto;
 `;
 
 export const LogoutLabel = styled(Label)`
-  color: ${props => props.color};
+  color: #ff6666;
+  text-shadow: 0 0 3px rgba(255, 102, 102, 0.3);
 `;

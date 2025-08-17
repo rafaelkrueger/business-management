@@ -167,7 +167,7 @@ const Sidebar: React.FC<{
             }}
             style={{
               backgroundColor: isMainModule ? 'rgba(0, 168, 255, 0.1)' : 'transparent',
-              borderLeft: isMainModule ? '4px solid #00a8ff' : 'none',
+              borderLeft: isMainModule ? '4px solid #578acd' : 'none',
               justifyContent: props.isCollapsed ? 'center' : 'flex-start',
               padding: props.isCollapsed ? '12px 8px' : '12px 15px'
             }}
