@@ -230,7 +230,7 @@ export const SelectedIndicator = styled.div`
   border-radius: 50%;
   margin-left: 12px;
   animation: ${fadeIn} 0.3s ease-out;
-  background: #578acd;
+  background: #ffffff;
   box-shadow: 0 0 10px rgba(0, 168, 255, 0.5);
 `;
 
@@ -475,7 +475,7 @@ export const Item = styled.div<{ active?: boolean }>`
 `;
 
 export const Label = styled.div<{ active?: boolean }>`
-  color: ${props => props.active ? '#578acd' : 'white'};
+  color: ${props => props.active ? '#fff' : 'white'};
   font-size: 0.65rem;
   margin-top: 2px;
   text-shadow: ${props => props.active ? '0 0 3px rgba(0, 168, 255, 0.3)' : 'none'};

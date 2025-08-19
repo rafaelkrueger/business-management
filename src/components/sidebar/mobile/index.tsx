@@ -23,7 +23,7 @@ const BottomNavContainer = styled(Box)`
   bottom: 0;
   left: 0;
   right: 0;
-  background: #1e293b;
+  background: #365a8b;
   box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2);
   z-index: 1200;
   height: 60px;
@@ -54,10 +54,28 @@ const NavItem = styled.div<{ active?: boolean }>`
   padding: 8px 12px;
   min-width: 60px;
   cursor: pointer;
-  color: ${({ active }) => (active ? '#578acd' : '#e0f2ff')};
+  color: ${({ active }) => (active ? '#ffffff' : '#e0f2ff')};
   transition: all 0.2s ease;
   position: relative;
   border-radius: 8px;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.8s ease;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  &:active::before {
+    left: 100%;
+  }
 
   &:hover {
     color: #578acd;
@@ -72,9 +90,15 @@ const NavItem = styled.div<{ active?: boolean }>`
 const NavIcon = styled.div`
   font-size: 1.5rem;
   transition: all 0.2s ease;
+  position: relative;
+  z-index: 2;
 
   ${NavItem}:hover & {
     transform: scale(1.05);
+  }
+
+  ${NavItem}:active & {
+    transform: scale(0.9);
   }
 `;
 
@@ -109,7 +133,7 @@ const MobileBottomNavigation = ({
   const { t } = useTranslation();
   const [activeItem, setActiveItem] = useState('marketing');
   const [modules, setModules] = useState([]);
-  const [brandColors, setBrandColors] = useState({ primary: '#1e293b', secondary: '#0a0f1c', text: '#578acd' });
+  const [brandColors, setBrandColors] = useState({ primary: '#243b5a', secondary: '#0a0f1c', text: '#578acd' });
   const [showExtraModules, setShowExtraModules] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipText, setTooltipText] = useState('');
@@ -141,7 +165,7 @@ const MobileBottomNavigation = ({
   }, [activeCompany, companies, modulesUpdating]);
 
   const extractBrandColors = (logoUrl) => {
-    if (!logoUrl) return setBrandColors({ primary: '#1e293b', secondary: '#0a0f1c', text: '#578acd' });
+    if (!logoUrl) return setBrandColors({ primary: '#243b5a', secondary: '#0a0f1c', text: '#578acd' });
 
     const img = new Image();
     img.crossOrigin = 'Anonymous';
@@ -152,16 +176,16 @@ const MobileBottomNavigation = ({
         const palette = colorThief.getPalette(img, 3);
         const [primary, secondary] = palette;
         setBrandColors({
-          primary: `#1e293b`,
+          primary: `#243b5a`,
           secondary: `#0a0f1c`,
           text: '#578acd'
         });
       } catch (e) {
-        setBrandColors({ primary: '#1e293b', secondary: '#0a0f1c', text: '#578acd' });
+        setBrandColors({ primary: '#243b5a', secondary: '#0a0f1c', text: '#578acd' });
       }
     };
 
-    img.onerror = () => setBrandColors({ primary: '#1e293b', secondary: '#0a0f1c', text: '#578acd' });
+    img.onerror = () => setBrandColors({ primary: '#243b5a', secondary: '#0a0f1c', text: '#578acd' });
   };
 
   const getContrastColor = (rgb) => {
@@ -347,7 +371,7 @@ const MobileBottomNavigation = ({
                 <NavIcon>
                   {React.createElement(item.icon, {
                     size: 20,
-                    color: item?.key === 'logout' ? '#ff6666' : (activeItem === item?.key ? '#578acd' : '#e0f2ff')
+                    color: item?.key === 'logout' ? '#ff6666' : (activeItem === item?.key ? '#ffffff' : '#e0f2ff')
                   })}
                 </NavIcon>
               </NavItem>

@@ -8,7 +8,7 @@ export const SidebarContainer = styled.div<{ isCollapsed: boolean }>`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background-color: #1e293b;
+  background-color: #243b5a;
   color: white;
   height: 100vh;
   position: fixed;
@@ -30,7 +30,7 @@ export const SidebarContainer = styled.div<{ isCollapsed: boolean }>`
 `;
 
 export const CollapseButton = styled.button<{ isCollapsed: boolean }>`
-  background: #1E293B;
+  background: #243b5a;
   border: none;
   color: white;
   cursor: pointer;
@@ -109,7 +109,7 @@ export const SidebarContainerHeader = styled.div`
 
 export const SidebarContainerHeaderProfile = styled.img`
     border-radius: 50%;
-    border: 2px solid #578acd;
+    border: 2px solid #fff;
     transition: all 0.3s ease;
     object-fit: cover;
 
@@ -181,7 +181,7 @@ export const SidebarContainerBodyElement = styled.p`
     text-overflow: ellipsis;
 
     &:hover {
-        color: #578acd;
+        color: #ffffff;
     }
 `;
 
@@ -198,7 +198,7 @@ export const SupportModuleLabel = styled.div`
 
 export const MainModuleIndicator = styled.span`
     font-size: 0.8em;
-    color: #578acd;
+    color: #ffffff;
     margin-left: 5px;
     background: rgba(0, 168, 255, 0.1);
     padding: 2px 6px;
@@ -209,7 +209,7 @@ export const MainModuleIndicator = styled.span`
 export const ActiveModuleIndicator = styled.div`
     width: 8px;
     height: 8px;
-    background-color: #578acd;
+    background-color: #ffffff;
     border-radius: 50%;
     display: inline-block;
     margin-left: 8px;
