@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { MdOutlineExpandMore } from "react-icons/md";
 
 export const SidebarContainer = styled.div<{ isCollapsed: boolean }>`
   width: ${({ isCollapsed }) => isCollapsed ? '80px' : '280px'};
@@ -29,38 +28,7 @@ export const SidebarContainer = styled.div<{ isCollapsed: boolean }>`
   }
 `;
 
-export const CollapseButton = styled.button<{ isCollapsed: boolean }>`
-  background: #243b5a;
-  border: none;
-  color: white;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: ${({ isCollapsed }) => isCollapsed ? '5px' : '12px'};
-  right: ${({ isCollapsed }) => isCollapsed ? '-33px' : '-53px'};
-  z-index: 10000;
 
-  &:hover {
-    background-color: rgba(255,255,255,0.2);
-    transform: scale(1.1);
-  }
-
-  @media (max-width: 600px) {
-    display: none;
-  }
-`;
-
-export const SidebarToggleIcon = styled(MdOutlineExpandMore)<{ isCollapsed?: boolean }>`
-  transform: ${({ isCollapsed }) =>
-    isCollapsed ? 'rotate(-90deg)' : 'rotate(90deg)'};
-  transition: transform 0.3s ease;
-  font-size: 22px;
-`;
 
 export const SidebarContainerBody = styled.div<{ isCollapsed?: boolean }>`
     display: flex;
@@ -119,12 +87,31 @@ export const SidebarContainerHeaderProfile = styled.img`
     }
 `;
 
+export const ExpandIcon = styled.div<{ isCollapsed?: boolean }>`
+    background: transparent;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    transform: ${({ isCollapsed }) => isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)'};
+
+    &:hover {
+        transform: ${({ isCollapsed }) => isCollapsed ? 'scale(1.1)' : 'rotate(180deg) scale(1.1)'};
+    }
+`;
+
 export const SidebarContainerHeaderProfileName = styled.p`
     text-align: center;
     font-size: 1.2em;
     font-weight: bold;
     color: white;
-    margin: 10px 0;
+    margin: 10px 0 -20px 0;
     transition: all 0.3s ease;
     white-space: nowrap;
     overflow: hidden;

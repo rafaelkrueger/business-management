@@ -12,8 +12,7 @@ import {
   SidebarContainerHeaderProfileName,
   SupportModuleLabel,
   MainModuleIndicator,
-  CollapseButton,
-  SidebarToggleIcon
+  ExpandIcon
 } from './styles.ts';
 // @ts-ignore
 import UserNoImage from '../../images/user.png';
@@ -23,10 +22,11 @@ import { FaMoneyBill } from "react-icons/fa";
 import { RiAdminLine } from "react-icons/ri";
 import { IoMdChatboxes } from "react-icons/io";
 import { TiBusinessCard } from "react-icons/ti";
-import { MdSell, MdOutlineAdsClick, MdOutlineExpandMore } from "react-icons/md";
+import { MdSell, MdOutlineAdsClick } from "react-icons/md";
 import { FaCalendar } from "react-icons/fa";
 import { CgWebsite } from "react-icons/cg";
 import { FiSettings, FiLogOut, FiLink } from "react-icons/fi";
+import { IoChevronForward } from "react-icons/io5";
 import HomeService from '../../services/home.service.ts';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import Select from 'react-select';
@@ -239,20 +239,24 @@ const Sidebar: React.FC<{
       <SidebarContainerHeader>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative' }}>
-            <SidebarContainerHeaderProfile
-              src={UserNoImage}
-              style={{
-                width: props.isCollapsed ? '40px' : '50px',
-                height: props.isCollapsed ? '40px' : '50px'
-              }}
-            />
+            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <ExpandIcon onClick={toggleCollapse} isCollapsed={props.isCollapsed}>
+                <IoChevronForward size={16} />
+                <IoChevronForward size={16} style={{ marginLeft: '-8px' }} />
+              </ExpandIcon>
+              <div style={{ marginTop: '20px' }}>
+                <SidebarContainerHeaderProfile
+                  src={UserNoImage}
+                  style={{
+                    width: props.isCollapsed ? '40px' : '50px',
+                    height: props.isCollapsed ? '40px' : '50px'
+                  }}
+                />
+              </div>
+            </div>
             {!props.isCollapsed && (
               <SidebarContainerHeaderProfileName>{props.userData.name}</SidebarContainerHeaderProfileName>
             )}
-
-            <CollapseButton onClick={toggleCollapse} isCollapsed={props.isCollapsed}>
-              <SidebarToggleIcon isCollapsed={props.isCollapsed} />
-            </CollapseButton>
           </div>
         </div>
 
