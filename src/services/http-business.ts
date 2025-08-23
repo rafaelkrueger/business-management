@@ -5,8 +5,10 @@ import { getStorageValue } from '../hooks/useLocalStorage.ts';
 // https://core.roktune.com/
 // http://localhost:3005/
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3005/';
+
 const axiosInstance = axios.create({
-	baseURL: 'https://core.roktune.com/',
+	baseURL: API_URL,
 	headers: {
 		'Content-type': 'application/json',
 		'Access-Control-Allow-Origin': '*',
