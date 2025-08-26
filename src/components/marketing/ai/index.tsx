@@ -198,7 +198,7 @@ const InputContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: theme.spacing(1),
-  marginBottom: '50px',
+  marginBottom: '100px',
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
   flexShrink: 0,
   [theme.breakpoints.up('lg')]: {
