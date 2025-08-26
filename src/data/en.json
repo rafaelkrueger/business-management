@@ -1373,5 +1373,116 @@
   "confirmDeleteStageMessage": "Are you sure you want to delete this stage?",
   "addFirstLead": "Add first lead",
   "errorCreatingFunnel": "Error creating funnel. Please try again."
-}
+},
+  "ai": {
+    "brand": "",
+    "title": "AI Marketing Assistant",
+    "description": "Your intelligent marketing companion. Ask questions, get insights, and create content with the power of AI.",
+    "welcome": {
+      "title": "Welcome to AI Assistant",
+      "subtitle": "How can I help you today?"
+    },
+    "input": {
+      "placeholder": "Type your message here...",
+      "attachFile": "Attach file"
+    },
+    "thinking": {
+      "analyzing": "Analyzing...",
+      "processing": "Processing...",
+      "generating": "Generating...",
+      "thinking": "Thinking...",
+      "creating": "Creating...",
+      "optimizing": "Optimizing..."
+    },
+    "quickQuestions": {
+      "marketingStrategy": "Marketing Strategy",
+      "socialMedia": "Social Media",
+      "emailMarketing": "Email Marketing",
+      "engagement": "Engagement",
+      "viralContent": "Viral Content",
+      "seo": "SEO",
+      "metrics": "Metrics",
+      "promotional": "Promotional"
+    },
+    "topics": {
+      "landingPages": "Landing Pages",
+      "automation": "Automation",
+      "crm": "CRM",
+      "chatbot": "Chatbot",
+      "funnel": "Sales Funnel",
+      "salesPages": "Sales Pages",
+      "ads": "Ads"
+    },
+    "quickQuestions": {
+      "landingPages": {
+        "convert": "How to create landing pages that convert?",
+        "leads": "Strategies for capturing qualified leads",
+        "forms": "Form optimization for lead capture",
+        "testing": "A/B testing on landing pages"
+      },
+      "automation": {
+        "social": "How to automate social media?",
+        "email": "Email marketing automation",
+        "flows": "Automation flows for leads",
+        "integration": "Cross-channel integration"
+      },
+      "crm": {
+        "organize": "How to organize leads in CRM?",
+        "segments": "Creating custom segments",
+        "qualification": "Lead qualification",
+        "contacts": "Contact management"
+      },
+      "chatbot": {
+        "train": "How to train chatbot with AI?",
+        "integration": "Integration with company data",
+        "conversion": "Conversion strategies via chatbot",
+        "personalization": "Response personalization"
+      },
+      "funnel": {
+        "journey": "How to map the customer journey?",
+        "optimization": "Optimization of each funnel stage",
+        "analysis": "Conversion analysis by stage",
+        "retention": "Retention strategies"
+      },
+      "salesPages": {
+        "persuasive": "How to create persuasive sales pages?",
+        "checkout": "Checkout form optimization",
+        "conversion": "Conversion strategies",
+        "testing": "A/B testing on sales pages"
+      },
+      "ads": {
+        "manage": "How to manage ad campaigns?",
+        "roi": "ROI optimization in digital marketing",
+        "audience": "Audience segmentation",
+        "performance": "Performance analysis"
+      }
+    },
+    "feedback": {
+      "thumbsUp": "Like",
+      "thumbsDown": "Dislike",
+      "copy": "Copy",
+      "copied": "Copied to clipboard!"
+    },
+    "premium": {
+      "freePlan": "Free Plan",
+      "upgrade": "Upgrade"
+    },
+    "settings": {
+      "title": "AI Settings",
+      "instructions": {
+        "title": "Custom Instructions",
+        "placeholder": "Enter specific instructions for your AI assistant..."
+      },
+      "files": {
+        "title": "Knowledge Base Files",
+        "button": "Upload Files"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "success": "Settings saved successfully!"
+    }
+  }
 }

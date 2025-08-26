@@ -1365,5 +1365,116 @@
     "confirmDeleteStageMessage": "Tem certeza que deseja excluir esta etapa?",
     "addFirstLead": "Adicionar o primeiro lead",
     "errorCreatingFunnel": "Erro ao criar funil. Por favor tente novamente."
+  },
+  "ai": {
+    "brand": "",
+    "title": "Assistente de IA de Marketing",
+    "description": "Seu companheiro inteligente de marketing. Faça perguntas, obtenha insights e crie conteúdo com o poder da IA.",
+    "welcome": {
+      "title": "Bem-vindo ao Assistente de IA",
+      "subtitle": "Como posso ajudá-lo hoje?"
+    },
+    "input": {
+      "placeholder": "Digite sua mensagem aqui...",
+      "attachFile": "Anexar arquivo"
+    },
+    "thinking": {
+      "analyzing": "Analisando...",
+      "processing": "Processando...",
+      "generating": "Gerando...",
+      "thinking": "Pensando...",
+      "creating": "Criando...",
+      "optimizing": "Otimizando..."
+    },
+    "quickQuestions": {
+      "marketingStrategy": "Estratégia de Marketing",
+      "socialMedia": "Redes Sociais",
+      "emailMarketing": "Email Marketing",
+      "engagement": "Engajamento",
+      "viralContent": "Conteúdo Viral",
+      "seo": "SEO",
+      "metrics": "Métricas",
+      "promotional": "Promocional"
+    },
+    "topics": {
+      "landingPages": "Landing Pages",
+      "automation": "Automação",
+      "crm": "CRM",
+      "chatbot": "Chatbot",
+      "funnel": "Funil de Vendas",
+      "salesPages": "Páginas de Venda",
+      "ads": "Anúncios"
+    },
+    "quickQuestions": {
+      "landingPages": {
+        "convert": "Como criar landing pages que convertem?",
+        "leads": "Estratégias para captura de leads qualificados",
+        "forms": "Otimização de formulários de captura",
+        "testing": "A/B testing em landing pages"
+      },
+      "automation": {
+        "social": "Como automatizar redes sociais?",
+        "email": "Automação de email marketing",
+        "flows": "Fluxos de automação para leads",
+        "integration": "Integração entre canais"
+      },
+      "crm": {
+        "organize": "Como organizar leads no CRM?",
+        "segments": "Criação de segmentos personalizados",
+        "qualification": "Qualificação de leads",
+        "contacts": "Gestão de contatos"
+      },
+      "chatbot": {
+        "train": "Como treinar chatbot com IA?",
+        "integration": "Integração com dados da empresa",
+        "conversion": "Estratégias de conversão via chatbot",
+        "personalization": "Personalização de respostas"
+      },
+      "funnel": {
+        "journey": "Como mapear a jornada do cliente?",
+        "optimization": "Otimização de cada etapa do funil",
+        "analysis": "Análise de conversão por etapa",
+        "retention": "Estratégias de retenção"
+      },
+      "salesPages": {
+        "persuasive": "Como criar páginas de venda persuasivas?",
+        "checkout": "Otimização de formulários de checkout",
+        "conversion": "Estratégias de conversão",
+        "testing": "A/B testing em páginas de venda"
+      },
+      "ads": {
+        "manage": "Como gerenciar campanhas de anúncios?",
+        "roi": "Otimização de ROI em marketing digital",
+        "audience": "Segmentação de audiência",
+        "performance": "Análise de performance"
+      }
+    },
+    "feedback": {
+      "thumbsUp": "Curtir",
+      "thumbsDown": "Não curtir",
+      "copy": "Copiar",
+      "copied": "Copiado para a área de transferência!"
+    },
+    "premium": {
+      "freePlan": "Plano Gratuito",
+      "upgrade": "Upgrade"
+    },
+    "settings": {
+      "title": "Configurações da IA",
+      "instructions": {
+        "title": "Instruções Personalizadas",
+        "placeholder": "Digite instruções específicas para seu assistente de IA..."
+      },
+      "files": {
+        "title": "Arquivos da Base de Conhecimento",
+        "button": "Enviar Arquivos"
+      },
+      "actions": {
+        "cancel": "Cancelar",
+        "save": "Salvar",
+        "saving": "Salvando..."
+      },
+      "success": "Configurações salvas com sucesso!"
+    }
   }
 }

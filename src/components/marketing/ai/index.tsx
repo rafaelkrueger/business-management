@@ -69,7 +69,7 @@ import { AllInOneApi } from '../../../Api.ts';
 
 const ChatContainer = styled(Box)(({ theme }) => ({
   height: '100vh',
-  width: '100vw',
+  width: '100%',
   background: '#fafbfc',
   display: 'flex',
   flexDirection: 'column',
@@ -78,18 +78,37 @@ const ChatContainer = styled(Box)(({ theme }) => ({
   left: 0,
   overflow: 'hidden',
   justifyContent: 'center',
-  alignItems: 'flex-start',
-  padding: '0 20px',
-  '& > *': {
-    maxWidth: '800px',
-    width: '900px',
-    margin: '0 auto'
+  alignItems: 'center',
+  padding: theme.spacing(1),
+  [theme.breakpoints.up('lg')]: {
+    padding: theme.spacing(2),
+    '& > *': {
+      maxWidth: '900px',
+      width: '100%',
+      margin: '0 auto'
+    }
+  },
+  [theme.breakpoints.between('md', 'lg')]: {
+    padding: theme.spacing(1.5),
+    '& > *': {
+      maxWidth: '800px',
+      width: '100%',
+      margin: '0 auto'
+    }
   },
   [theme.breakpoints.between('sm', 'md')]: {
-    marginLeft: '45px',
+    padding: theme.spacing(1),
     '& > *': {
       maxWidth: '700px',
-      width: '100%'
+      width: '100%',
+      margin: '0 auto'
+    }
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(0.5),
+    '& > *': {
+      width: '100%',
+      margin: '0 auto'
     }
   },
 }));
@@ -269,7 +288,7 @@ const ImageContainer = styled(Box)(({ theme }) => ({
 
 export default function PremiumMarketingAssistant({ activeCompany, setModule }) {
   console.log('PremiumMarketingAssistant renderizando...', { activeCompany, setModule });
-  const theme = useTheme();
+    const theme = useTheme();
   const { i18n, t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -328,19 +347,27 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
 
 
   const QuickQuestionsContainer = styled(Box)(({ theme }) => ({
-    width: '90%',
-    marginTop: '20px',
+    width: '100%',
+    marginTop: theme.spacing(2),
     maxWidth: '800px',
-    marginRight: '0px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
     [theme.breakpoints.up('lg')]: {
-      // Centralizar melhor em telas grandes
-      width: '100%',
-      maxWidth: '700px',
-      margin: '20px auto 0'
+      maxWidth: '900px',
+      marginTop: theme.spacing(3)
     },
-    [theme.breakpoints.down('md')]: {
-      width: '95%',
-      marginTop: '15px'
+    [theme.breakpoints.between('md', 'lg')]: {
+      maxWidth: '800px',
+      marginTop: theme.spacing(2.5)
+    },
+    [theme.breakpoints.between('sm', 'md')]: {
+      maxWidth: '700px',
+      marginTop: theme.spacing(2)
+    },
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: '100%',
+      marginTop: theme.spacing(1.5),
+      padding: theme.spacing(0, 3)
     }
   }));
 
@@ -372,7 +399,6 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
       marginRight: '4px'
     },
     [theme.breakpoints.up('lg')]: {
-      // Ajustar para telas grandes
       fontSize: '1rem',
       padding: theme.spacing(1.25, 2.5),
       '& .MuiChip-label': {
@@ -380,12 +406,46 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
         padding: theme.spacing(0.75, 1.25)
       }
     },
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.between('md', 'lg')]: {
+      fontSize: '0.95rem',
+      padding: theme.spacing(1, 2.25),
+      margin: theme.spacing(0.25),
+      width: 'auto',
+      maxWidth: '250px',
+      minWidth: '200px',
+      '& .MuiChip-label': {
+        fontSize: '0.95rem',
+        padding: theme.spacing(0.5, 1)
+      }
+    },
+    [theme.breakpoints.between('sm', 'md')]: {
       fontSize: '0.8rem',
-      padding: theme.spacing(0.5, 1.5),
+      padding: theme.spacing(0.75, 1.5),
+      margin: theme.spacing(0.25),
+      width: 'auto',
+      maxWidth: '220px',
+      minWidth: '180px',
       '& .MuiChip-label': {
         fontSize: '0.8rem',
-        padding: theme.spacing(0.25, 0.75)
+        padding: theme.spacing(0.25, 0.5),
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+      }
+    },
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '0.75rem',
+      padding: theme.spacing(0.5, 1.25),
+      margin: theme.spacing(0.25),
+      width: 'auto',
+      maxWidth: '200px',
+      minWidth: '160px',
+      '& .MuiChip-label': {
+        fontSize: '0.75rem',
+        padding: theme.spacing(0.25, 0.5),
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
       }
     }
   }));
@@ -960,59 +1020,49 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
     }
   }, [isWaiting]);
 
-  const quickQuestions = [
-    t('ai.quickQuestions.marketingStrategy') || 'Estratégia de Marketing',
-    t('ai.quickQuestions.socialMedia') || 'Redes Sociais',
-    t('ai.quickQuestions.emailMarketing') || 'Email Marketing',
-    t('ai.quickQuestions.engagement') || 'Engajamento',
-    t('ai.quickQuestions.viralContent') || 'Conteúdo Viral',
-    t('ai.quickQuestions.seo') || 'SEO',
-    t('ai.quickQuestions.metrics') || 'Métricas',
-    t('ai.quickQuestions.promotional') || 'Promocional'
-  ];
 
   const quickQuestionsTopics = {
     [t('ai.topics.landingPages')]: [
-      "Como criar landing pages que convertem?",
-      "Estratégias para captura de leads qualificados",
-      "Otimização de formulários de captura",
-      "A/B testing em landing pages"
+      t('ai.quickQuestions.landingPages.convert'),
+      t('ai.quickQuestions.landingPages.leads'),
+      t('ai.quickQuestions.landingPages.forms'),
+      t('ai.quickQuestions.landingPages.testing')
     ],
     [t('ai.topics.automation')]: [
-      "Como automatizar redes sociais?",
-      "Automação de email marketing",
-      "Fluxos de automação para leads",
-      "Integração entre canais"
+      t('ai.quickQuestions.automation.social'),
+      t('ai.quickQuestions.automation.email'),
+      t('ai.quickQuestions.automation.flows'),
+      t('ai.quickQuestions.automation.integration')
     ],
     [t('ai.topics.crm')]: [
-      "Como organizar leads no CRM?",
-      "Criação de segmentos personalizados",
-      "Qualificação de leads",
-      "Gestão de contatos"
+      t('ai.quickQuestions.crm.organize'),
+      t('ai.quickQuestions.crm.segments'),
+      t('ai.quickQuestions.crm.qualification'),
+      t('ai.quickQuestions.crm.contacts')
     ],
     [t('ai.topics.chatbot')]: [
-      "Como treinar chatbot com IA?",
-      "Integração com dados da empresa",
-      "Estratégias de conversão via chatbot",
-      "Personalização de respostas"
+      t('ai.quickQuestions.chatbot.train'),
+      t('ai.quickQuestions.chatbot.integration'),
+      t('ai.quickQuestions.chatbot.conversion'),
+      t('ai.quickQuestions.chatbot.personalization')
     ],
     [t('ai.topics.funnel')]: [
-      "Como mapear a jornada do cliente?",
-      "Otimização de cada etapa do funil",
-      "Análise de conversão por etapa",
-      "Estratégias de retenção"
+      t('ai.quickQuestions.funnel.journey'),
+      t('ai.quickQuestions.funnel.optimization'),
+      t('ai.quickQuestions.funnel.analysis'),
+      t('ai.quickQuestions.funnel.retention')
     ],
     [t('ai.topics.salesPages')]: [
-      "Como criar páginas de venda persuasivas?",
-      "Otimização de formulários de checkout",
-      "Estratégias de conversão",
-      "A/B testing em páginas de venda"
+      t('ai.quickQuestions.salesPages.persuasive'),
+      t('ai.quickQuestions.salesPages.checkout'),
+      t('ai.quickQuestions.salesPages.conversion'),
+      t('ai.quickQuestions.salesPages.testing')
     ],
     [t('ai.topics.ads')]: [
-      "Como gerenciar campanhas de anúncios?",
-      "Otimização de ROI em marketing digital",
-      "Segmentação de audiência",
-      "Análise de performance"
+      t('ai.quickQuestions.ads.manage'),
+      t('ai.quickQuestions.ads.roi'),
+      t('ai.quickQuestions.ads.audience'),
+      t('ai.quickQuestions.ads.performance')
     ]
   };
 
@@ -1082,7 +1132,20 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
         gap: 1.5,
         borderBottom: '1px solid #e8eaed',
         backgroundColor: '#ffffff',
-        [theme.breakpoints.down('md')]: {
+        width: '100%',
+        [theme.breakpoints.up('lg')]: {
+          padding: theme.spacing(2, 3),
+          gap: 2
+        },
+        [theme.breakpoints.between('md', 'lg')]: {
+          padding: theme.spacing(1.5, 2.5),
+          gap: 1.5
+        },
+        [theme.breakpoints.between('sm', 'md')]: {
+          padding: theme.spacing(1.25, 2),
+          gap: 1.25
+        },
+        [theme.breakpoints.down('sm')]: {
           padding: theme.spacing(1, 1.5),
           gap: 1
         }
@@ -1115,6 +1178,7 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
               onClick={() => setSettingsModal({ open: true })}
               sx={{
                 color: '#6c757d',
+                marginLeft:'-80px',
                 '&:hover': {
                   backgroundColor: 'rgba(108, 117, 125, 0.1)'
                 }
@@ -1130,12 +1194,22 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
       {/* Chat Area */}
       {chat.messages.length === 0 ? (
         <>
-        <Box style={{
+        <Box sx={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          height: '100%'
+          height: '100%',
+          width: '100%',
+          maxWidth: '100%',
+          padding: theme.spacing(1),
+          [theme.breakpoints.up('lg')]: {
+            padding: theme.spacing(2),
+          },
+          [theme.breakpoints.down('sm')]: {
+            padding: theme.spacing(0.5, 1),
+            width:'85%'
+          }
         }}>
           <Box sx={{ mb: 3 }}>
             <PremiumChip>
@@ -1163,17 +1237,18 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
 
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
             <RocketLaunch sx={{
-              fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+              fontSize: { xs: '1.3rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' },
               color: '#4674af',
-              mr: { xs: 1, sm: 2 }
+              mr: { xs: 1, sm: 1.5, md: 2 }
             }} />
-            <Typography variant="h4" sx={{
-              fontWeight: 700,
-              color: '#2c3e50',
-              fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' }
-            }}>
-              {t('ai.title')}
-            </Typography>
+                      <Typography variant="h4" sx={{
+            fontWeight: 700,
+            color: '#2c3e50',
+            fontSize: { xs: '1.1rem', sm: '1.3rem', md: '1.6rem', lg: '2rem' },
+            textAlign: 'center'
+          }}>
+            {t('ai.title')}
+          </Typography>
           </Box>
 
           <Typography variant="body1" sx={{
@@ -1182,12 +1257,19 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
             maxWidth: '500px',
             lineHeight: 1.6,
             textAlign: 'center',
-            fontSize: { xs: '0.9rem', sm: '1rem' },
-            px: { xs: 2, sm: 0 }
+            fontSize: { xs: '0.85rem', sm: '0.9rem', md: '1rem' },
+            px: { xs: 2, sm: 1, md: 0 },
+            [theme.breakpoints.up('lg')]: {
+              maxWidth: '600px'
+            },
+            [theme.breakpoints.down('sm')]: {
+              maxWidth: '100%',
+              px: 3
+            }
           }}>
             {t('ai.description')}
           </Typography>
-          <Box style={{
+          <Box sx={{
             background: '#ffffff',
             borderRadius: theme.spacing(1.5),
             padding: theme.spacing(2),
@@ -1195,10 +1277,27 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
             width: '100%',
             maxWidth: '600px',
             marginTop: theme.spacing(2),
-            [theme.breakpoints.down('md')]: {
+            [theme.breakpoints.up('lg')]: {
+              maxWidth: '700px',
+              padding: theme.spacing(2.5)
+            },
+            [theme.breakpoints.between('md', 'lg')]: {
+              maxWidth: '650px',
+              padding: theme.spacing(2)
+            },
+            [theme.breakpoints.between('sm', 'md')]: {
+              maxWidth: '600px',
               padding: theme.spacing(1.5),
               borderRadius: theme.spacing(1),
-              marginTop: theme.spacing(1.5)
+              marginTop: theme.spacing(1.5),
+            },
+            [theme.breakpoints.down('sm')]: {
+              maxWidth: '100%',
+              padding: theme.spacing(1.5),
+              borderRadius: theme.spacing(1),
+              marginTop: theme.spacing(1),
+              marginLeft: theme.spacing(3),
+              marginRight: theme.spacing(3)
             }
           }}>
             {selectedFile && (
@@ -1247,7 +1346,19 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                   padding: '16px 60px 16px 50px',
                   marginTop: theme.spacing(-2),
                   backgroundColor: 'transparent',
-                  [theme.breakpoints.down('md')]: {
+                  [theme.breakpoints.up('lg')]: {
+                    fontSize: '1.1rem',
+                    padding: '18px 65px 18px 55px'
+                  },
+                  [theme.breakpoints.between('md', 'lg')]: {
+                    fontSize: '1rem',
+                    padding: '16px 60px 16px 50px'
+                  },
+                  [theme.breakpoints.between('sm', 'md')]: {
+                    fontSize: '0.95rem',
+                    padding: '14px 55px 14px 45px'
+                  },
+                  [theme.breakpoints.down('sm')]: {
                     fontSize: '0.9rem',
                     padding: '12px 50px 12px 40px'
                   }
@@ -1296,9 +1407,30 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
             <Box sx={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: 1,
+              gap: theme.spacing(1),
               position: 'relative',
-              padding: theme.spacing(2)
+              padding: theme.spacing(2),
+              justifyContent: 'center',
+              [theme.breakpoints.up('lg')]: {
+                gap: theme.spacing(1.5),
+                padding: theme.spacing(2.5)
+              },
+              [theme.breakpoints.between('md', 'lg')]: {
+                gap: theme.spacing(1.25),
+                padding: theme.spacing(2)
+              },
+              [theme.breakpoints.between('sm', 'md')]: {
+                gap: theme.spacing(1),
+                padding: theme.spacing(1.5),
+                flexDirection: 'row',
+              },
+              [theme.breakpoints.down('sm')]: {
+                gap: theme.spacing(0.75),
+                padding: theme.spacing(1.5),
+                flexDirection: 'row',
+                justifyContent: 'center',
+                marginLeft:'-50px',
+              }
             }}>
               <Box sx={{ position: 'relative' }}>
                 <StartHereChip
