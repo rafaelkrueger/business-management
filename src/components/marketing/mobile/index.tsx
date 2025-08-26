@@ -52,7 +52,7 @@ import UserProgressService from '../../../services/user-progress.service.ts'
 import { RobotOutlined } from "@ant-design/icons";
 import MobileCapturePages from "../capture-pages/mobile/index.tsx";
 import MobileSalesPages from "../sales-pages/mobile/index.tsx";
-import PremiumMarketingAssistantMobile from "../ai/mobile/index.tsx";
+import PremiumMarketingAssistantMobile from "../ai/index.tsx";
 import MarketingService from "../../../services/marketing.service.ts";
 import {ChatbotManager} from "../chatbot/index.tsx";
 import SalesFunnelMobile from "../funnel/mobile/index.tsx";
@@ -480,7 +480,7 @@ const cards = [
 
   return (
     <Box sx={{
-      pb: 7,
+      pb: module === 'marketingAi' ? 0 : 7, // Remover padding bottom quando marketingAi estiver ativo
       background: 'linear-gradient(180deg, #f8faff 0%, #ffffff 100%)',
       minHeight: '100vh'
     }}>
@@ -708,42 +708,44 @@ const cards = [
         </Grid>
       </Box>
 
-      {/* Bottom Navigation */}
-      <BottomNavigation
-        value={navValue}
-        onChange={(event, newValue) => setNavValue(newValue)}
-        sx={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          bgcolor: '#fff',
-          boxShadow: '0 -2px 10px rgba(0,0,0,0.05)',
-          borderTop: '1px solid rgba(0,0,0,0.05)',
-          transform: hideNav ? 'translateY(100%)' : 'translateY(0)',
-          transition: 'transform 0.3s'
-        }}
-      >
-        <BottomNavigationAction
-          value="home"
-          icon={<Home size={20} />}
-          sx={{ minWidth: 0 }}
-        />
-        <BottomNavigationAction
-          value="analytics"
-          icon={
-            <Badge badgeContent={unlockedBadges.length} color="primary">
-              <BarChart2 size={20} />
-            </Badge>
-          }
-          sx={{ minWidth: 0 }}
-        />
-        <BottomNavigationAction
-          value="settings"
-          icon={<Settings size={20} />}
-          sx={{ minWidth: 0 }}
-        />
-      </BottomNavigation>
+      {/* Bottom Navigation - Esconder quando marketingAi estiver ativo */}
+      {module !== 'marketingAi' && (
+        <BottomNavigation
+          value={navValue}
+          onChange={(event, newValue) => setNavValue(newValue)}
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            bgcolor: '#fff',
+            boxShadow: '0 -2px 10px rgba(0,0,0,0.05)',
+            borderTop: '1px solid rgba(0,0,0,0.05)',
+            transform: hideNav ? 'translateY(100%)' : 'translateY(0)',
+            transition: 'transform 0.3s'
+          }}
+        >
+          <BottomNavigationAction
+            value="home"
+            icon={<Home size={20} />}
+            sx={{ minWidth: 0 }}
+          />
+          <BottomNavigationAction
+            value="analytics"
+            icon={
+              <Badge badgeContent={unlockedBadges.length} color="primary">
+                <BarChart2 size={20} />
+              </Badge>
+            }
+            sx={{ minWidth: 0 }}
+          />
+          <BottomNavigationAction
+            value="settings"
+            icon={<Settings size={20} />}
+            sx={{ minWidth: 0 }}
+          />
+        </BottomNavigation>
+      )}
     </Box>
   );
 };

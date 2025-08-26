@@ -82,10 +82,13 @@ useEffect(() => {
     });
 }, [token, hasNoCompanies]);
 
+  // Verificar se o módulo AI está ativo
+  const isAIActive = activeModuleName === 'marketing' && window.location.hash.includes('marketingAi');
+
   return (
     <DashboardContainer>
 
-      {window.outerWidth > 600 ? (
+      {!isAIActive && window.outerWidth > 600 ? (
         <Sidebar
           isMenuActive={isMenuActive}
           setIsMenuActive={setIsMenuActive}
@@ -101,21 +104,19 @@ useEffect(() => {
           isCollapsed={isSidebarCollapsed}
           setIsCollapsed={setIsSidebarCollapsed}
         />
-      ) : (
+      ) : !isAIActive && window.outerWidth <= 600 ? (
         <MobileSidebar
-          isMenuActive={isMenuActive}
-          setIsMenuActive={setIsMenuActive}
           activateModule={activateModule}
           userData={userData}
           activeCompany={activeCompany}
           setActiveCompany={changeActiveCompany}
           companies={companies}
           setCompanies={setCompanies}
+          activeCompany={activeCompany}
           setHasNoCompanies={setHasNoCompanies}
-          hasNoCompanies={hasNoCompanies}
           modulesUpdating={modulesUpdating}
         />
-      )}
+      ) : null}
 
       <DashboardContainerShowed
         id="main-content"

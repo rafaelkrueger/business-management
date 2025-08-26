@@ -130,6 +130,8 @@ const MobileBottomNavigation = ({
   setHasNoCompanies,
   modulesUpdating
 }) => {
+  // Verificar se o módulo AI está ativo
+  const isAIActive = window.location.hash.includes('marketingAi');
   const { t } = useTranslation();
   const [activeItem, setActiveItem] = useState('marketing');
   const [modules, setModules] = useState([]);
@@ -237,7 +239,7 @@ const MobileBottomNavigation = ({
 
   return (
     <>
-      <SidebarWrapper>
+      <SidebarWrapper id="mobile-sidebar">
       {/* <TopSection primary={brandColors.primary}>
         <CompanyHeader onClick={() => setExpandedTop(!expandedTop)}>
           <CompanyAvatar>
@@ -292,13 +294,15 @@ const MobileBottomNavigation = ({
         )}
       </TopSection> */}
 
-      <BottomNavContainer
-        sx={{
-          top: expanded ? '120px' : 'unset',
-          transform: hideNav ? 'translateY(100%)' : 'translateY(0)',
-          transition: 'transform 0.3s'
-        }}
-      >
+      {/* Esconder bottom navigation quando marketingAi estiver ativo */}
+      {!isAIActive && (
+        <BottomNavContainer
+          sx={{
+            top: expanded ? '120px' : 'unset',
+            transform: hideNav ? 'translateY(100%)' : 'translateY(0)',
+            transition: 'transform 0.3s'
+          }}
+        >
         <NavItemsWrapper>
           {mainNavItems.map(item => (
             <Tooltip
@@ -378,7 +382,8 @@ const MobileBottomNavigation = ({
             </Tooltip>
           ))}
         </NavItemsWrapper>
-      </BottomNavContainer>
+        </BottomNavContainer>
+      )}
       </SidebarWrapper>
     </>
   );

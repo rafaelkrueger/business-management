@@ -10,12 +10,11 @@ class ChatAiService {
     return await http.get(`/ai/chat/features/${companyId}`);
   }
 
-static async sendMessage(conversationId: string, message: string, companyId: string, language: string, activeChat: any, image?:string) {
+static async sendMessage(conversationId: string, message: string, companyId: string, language: string, image?:string) {
   const formData = new FormData();
   formData.append('message', message);
   formData.append('companyId', companyId);
   formData.append('language', language);
-  formData.append('activeChat', activeChat);
 
   if (image) {
     formData.append('image', image);
@@ -45,10 +44,20 @@ static async sendMessage(conversationId: string, message: string, companyId: str
     return response.data;
   }
 
-  static async getConversationByType(companyId: string, type: string) {
-    const response = await http.get(`/ai/chat/${companyId}/${type}`);
+  static async getConversationByCompany(companyId: string) {
+    const response = await http.get(`/ai/chat/${companyId}`);
     return response.data;
-}
+  }
+
+  static async getThreadInfo(companyId: string) {
+    const response = await http.get(`/ai/chat/${companyId}/thread-info`);
+    return response.data;
+  }
+
+  static async clearThreadCache(companyId: string) {
+    const response = await http.post(`/ai/chat/${companyId}/clear-cache`);
+    return response.data;
+  }
 
 }
 

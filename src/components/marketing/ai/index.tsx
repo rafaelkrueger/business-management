@@ -1,162 +1,240 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   Box,
   Typography,
-  Chip,
-  Grid,
   Container,
   Paper,
   useTheme,
   TextField,
   Button,
   Fade,
-  Grow,
-  Skeleton,
   Avatar,
-  Divider,
   IconButton,
-  Badge,
   Tooltip,
-  FormControl,
   CircularProgress,
   Dialog,
   DialogContent,
   DialogActions,
-  Zoom
+  DialogTitle,
+  Zoom,
+  alpha,
+  styled,
+  Chip,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Grid,
+  Card,
+  CardContent
 } from '@mui/material';
 import {
   SmartToy,
   Send,
-  HelpOutline,
-  TrendingUp,
-  Campaign,
-  Star,
-  ChevronRight,
   ArrowBackIos,
   AutoAwesome,
   Person,
   AttachFile,
   InsertDriveFile,
   Close,
-  Check,
-  Lock,
-  Email,
-  PersonPinCircleRounded,
-  WebStoriesRounded,
   ZoomIn,
   ZoomOut,
-  Download
+  Download,
+  PsychologyRounded,
+  Lightbulb,
+  Mic,
+  MoreVert,
+  AdsClickOutlined,
+  RocketLaunch,
+  ThumbUp,
+  ThumbDown,
+  ContentCopy,
+  Settings,
+  Description,
+  Image,
+  Upload
 } from '@mui/icons-material';
+import {
+  Brain,
+  Layout,
+  Zap,
+  Users,
+  MessageSquare,
+  FileText,
+  Coins
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ChatAiService from '../../../services/chat-ai.service.ts';
 import { AllInOneApi } from '../../../Api.ts';
-import { styled, alpha } from '@mui/material/styles';
-import { IoIosPaper, IoMdPaper } from 'react-icons/io';
-import ProgressService from '../../../services/progress.service.ts';
 
-const ModuleTimeline = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  margin: theme.spacing(3, 0),
-  padding: theme.spacing(2),
-  borderRadius: theme.shape.borderRadius,
-  position: 'relative',
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    top: '50%',
-    left: theme.spacing(2),
-    right: theme.spacing(2),
-    height: 2,
-    background: alpha(theme.palette.primary.main, 0.2),
-    zIndex: 0
-  }
-}));
-
-const ModuleStep = styled(Box)(({ theme, completed, active, loading }) => ({
+const ChatContainer = styled(Box)(({ theme }) => ({
+  height: '100vh',
+  width: '100vw',
+  background: '#fafbfc',
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
-  zIndex: 1,
-  cursor: loading ? 'default' : 'pointer',
-  transition: 'all 0.3s ease',
-  '& .step-icon': {
-    width: 40,
-    height: 40,
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: completed
-      ? theme.palette.success.main
-      : active
-        ? theme.palette.primary.main
-        : loading
-          ? theme.palette.primary.light
-          : theme.palette.action.disabledBackground,
-    color: completed || active || loading ? '#fff' : theme.palette.text.secondary,
-    marginBottom: theme.spacing(1),
-    boxShadow: active
-      ? `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`
-      : loading
-        ? `0 0 0 4px ${alpha(theme.palette.primary.main, 0.4)}`
-        : 'none',
-    position: 'relative',
-    '&::after': loading ? {
-      content: '""',
-      position: 'absolute',
-      top: -4,
-      left: -4,
-      right: -4,
-      bottom: -4,
-      borderRadius: '50%',
-      border: `2px solid ${theme.palette.primary.main}`,
-      animation: 'pulse 1.5s infinite',
-      '@keyframes pulse': {
-        '0%': { opacity: 0.6 },
-        '50%': { opacity: 0.2 },
-        '100%': { opacity: 0.6 }
-      }
-    } : {}
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  overflow: 'hidden',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  padding: '0 20px',
+  '& > *': {
+    maxWidth: '800px',
+    width: '900px',
+    margin: '0 auto'
   },
-  '& .step-label': {
-    fontSize: '0.75rem',
-    fontWeight: 500,
-    color: active
-      ? theme.palette.primary.main
-      : loading
-        ? theme.palette.primary.light
-        : theme.palette.text.secondary,
-    textAlign: 'center'
-  },
-  '&:hover': {
-    '& .step-icon': {
-      transform: loading ? 'scale(1)' : 'scale(1.1)'
+  [theme.breakpoints.between('sm', 'md')]: {
+    marginLeft: '45px',
+    '& > *': {
+      maxWidth: '700px',
+      width: '100%'
     }
+  },
+}));
+
+const ChatArea = styled(Box)(({ theme }) => ({
+  flex: 1,
+  overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
+  padding: theme.spacing(1),
+  gap: theme.spacing(1),
+  minHeight: 0,
+  [theme.breakpoints.up('lg')]: {
+    padding: theme.spacing(2),
+    gap: theme.spacing(2)
+  },
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(0.5),
+    gap: theme.spacing(0.5)
   }
 }));
 
-const modulesTimeline = [
-  { id: 'general', label: 'Geral', icon: <SmartToy style={{color:'#fff'}} size={20} /> },
-  { id: 'socialMedia', label: 'Social Media', icon: <PersonPinCircleRounded style={{color:'#fff'}} size={20} /> },
-  { id: 'forms', label: 'Forms', icon: <IoIosPaper style={{color:'#fff'}} size={20} /> },
-  { id: 'email', label: 'Email', icon: <Email style={{color:'#fff'}} size={20} /> },
-  // { id: 'salesPage', label: 'Sales Page', icon: <WebStoriesRounded style={{color:'#fff'}} size={20} /> },
-];
+const MessagesContainer = styled(Box)(({ theme }) => ({
+  flex: 1,
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  padding: theme.spacing(1),
+  borderRadius: theme.spacing(1),
+  background: '#ffffff',
+  border: '1px solid #e8eaed',
+  minHeight: 0,
+  '&::-webkit-scrollbar': {
+    width: '4px',
+    [theme.breakpoints.down('md')]: {
+      width: '2px'
+    }
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#4674af',
+    borderRadius: '3px'
+  },
+  '&::-webkit-scrollbar-track': {
+    backgroundColor: '#f1f3f4',
+    borderRadius: '3px'
+  },
+  [theme.breakpoints.up('lg')]: {
+    // Ajustar padding para telas grandes
+    padding: theme.spacing(2),
+    borderRadius: theme.spacing(2)
+  },
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(0.5)
+  }
+}));
+
+const MessageBubble = styled(Box)<{ isUser: boolean }>(({ theme, isUser }) => ({
+  maxWidth: '85%',
+  padding: theme.spacing(1.5, 2),
+  borderRadius: '12px',
+  background: isUser ? '#e8eaed' : '#4674af',
+  color: isUser ? '#2c3e50' : '#fff',
+  boxShadow: isUser
+    ? '0 1px 3px rgba(0, 0, 0, 0.1)'
+    : '0 2px 8px rgba(70, 116, 175, 0.2)',
+  position: 'relative',
+  marginBottom: theme.spacing(1),
+  wordWrap: 'break-word',
+  overflowWrap: 'break-word',
+  [theme.breakpoints.up('lg')]: {
+    // Ajustar para telas grandes
+    maxWidth: '80%',
+    padding: theme.spacing(2, 2.5),
+    marginBottom: theme.spacing(1.5)
+  },
+  [theme.breakpoints.down('md')]: {
+    maxWidth: '90%',
+    padding: theme.spacing(1, 1.5),
+    marginBottom: theme.spacing(0.5)
+  }
+}));
+
+const InputContainer = styled(Box)(({ theme }) => ({
+  background: '#ffffff',
+  border: '1px solid #e8eaed',
+  borderRadius: theme.spacing(1.5),
+  padding: theme.spacing(1.5),
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1),
+  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+  flexShrink: 0,
+  [theme.breakpoints.up('lg')]: {
+    // Ajustar padding para telas grandes
+    padding: theme.spacing(2),
+    gap: theme.spacing(1.5),
+    borderRadius: theme.spacing(2)
+  },
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(1),
+    gap: theme.spacing(0.5),
+    borderRadius: theme.spacing(1)
+  }
+}));
+
+const SendButton = styled(Button)(({ theme }) => ({
+  minWidth: '36px',
+  width: '36px',
+  height: '36px',
+  borderRadius: '50%',
+  background: '#4674af',
+  color: '#fff',
+  transition: 'all 0.2s ease',
+  '&:hover': {
+    background: '#3a5f9a',
+    transform: 'scale(1.05)'
+  },
+  '&.Mui-disabled': {
+    background: '#e8eaed',
+    color: '#9aa0a6'
+  },
+  [theme.breakpoints.up('lg')]: {
+    // Ajustar para telas grandes
+    minWidth: '40px',
+    width: '40px',
+    height: '40px'
+  },
+  [theme.breakpoints.down('md')]: {
+    minWidth: '32px',
+    width: '32px',
+    height: '32px'
+  }
+}));
 
 const ImageContainer = styled(Box)(({ theme }) => ({
   width: '100%',
   margin: theme.spacing(1, 0),
   borderRadius: '12px',
   overflow: 'hidden',
-  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-  transition: 'all 0.3s ease',
-  border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+  transition: 'all 0.2s ease',
+  border: '1px solid #e8eaed',
   cursor: 'pointer',
   '&:hover': {
-    transform: 'scale(1.02)',
-    boxShadow: '0 6px 16px rgba(0, 0, 0, 0.15)',
+    transform: 'scale(1.01)',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
     '& .image-actions': {
       opacity: 1
     }
@@ -176,57 +254,37 @@ const ImageContainer = styled(Box)(({ theme }) => ({
     display: 'flex',
     gap: '4px',
     opacity: 0,
-    transition: 'opacity 0.3s ease',
+    transition: 'opacity 0.2s ease',
     '& .action-button': {
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      backgroundColor: 'rgba(70, 116, 175, 0.8)',
       color: '#fff',
       borderRadius: '50%',
-      padding: '4px',
-      '&:hover': {
-        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+      padding: '6px',
+              '&:hover': {
+          backgroundColor: 'rgba(70, 116, 175, 1)'
       }
     }
   }
 }));
 
-export default function PremiumMarketingAssistant({activeCompany, setModule}) {
+export default function PremiumMarketingAssistant({ activeCompany, setModule }) {
+  console.log('PremiumMarketingAssistant renderizando...', { activeCompany, setModule });
   const theme = useTheme();
   const { i18n, t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
-  const [selectedCard, setSelectedCard] = useState<string | null>(null);
-  const [waitingModules, setWaitingModules] = useState<Record<string, boolean>>({});
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [loadingModules, setLoadingModules] = useState<string[]>([]);
-  const [fileName, setFileName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [activeChat, setActiveChat] = useState('general');
-  const [chats, setChats] = useState({
-    general: {
-      conversationId: null,
-      messages: []
-    },
-    socialMedia: {
-      conversationId: null,
-      messages: []
-    },
-    forms: {
-      conversationId: null,
-      messages: []
-    },
-    email: {
-      conversationId: null,
-      messages: []
-    },
-    // salesPage: {
-    //   conversationId: null,
-    //   messages: []
-    // }
+  const [chat, setChat] = useState<{
+    conversationId: string | null;
+    messages: any[];
+  }>({
+    conversationId: null,
+    messages: []
   });
-  const [completedModules, setCompletedModules] = useState([]);
-  const [enabledFeatures, setEnabledFeatures] = useState<string[]>([]);
-  const [loadingFeatures, setLoadingFeatures] = useState(true);
-  const refreshIntervalRef = useRef<NodeJS.Timeout>();
+  const [isWaiting, setIsWaiting] = useState(false);
+  const [fileName, setFileName] = useState('');
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [imageModal, setImageModal] = useState({
     open: false,
@@ -234,25 +292,229 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
     zoom: 1
   });
 
-  const isModuleUnlocked = (moduleId) => {
-    if (moduleId === 'general') return true;
+  const [messageFeedback, setMessageFeedback] = useState<{[key: string]: {thumbsUp: boolean, thumbsDown: boolean}}>({});
+  const [showCopyAlert, setShowCopyAlert] = useState(false);
+  const [thinkingIndex, setThinkingIndex] = useState(0);
 
-    const featureMap = {
-      'socialMedia': 'socialMedia',
-      'forms': 'forms',
-      'email': 'email',
-      // 'salesPage': 'salesPage'
-    };
-
-    return enabledFeatures.includes(featureMap[moduleId]);
-  };
+  // Estados para o modal de configurações
+  const [settingsModal, setSettingsModal] = useState({
+    open: false
+  });
+  const [aiInstructions, setAiInstructions] = useState('');
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+  const [assistantId, setAssistantId] = useState<string>('');
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+  const [showSettingsAlert, setShowSettingsAlert] = useState(false);
 
   const welcomeMessage = {
     id: 'welcome',
     sender: 'assistant',
-    content: t("marketing.aiAssistant.welcomeMessage"),
+    content: `${t('ai.welcome.title') || 'Bem-vindo ao Assistente de IA'}
+
+Posso ajudá-lo com:
+
+• Criação de conteúdo para redes sociais
+• Templates de email marketing
+• Estratégias de marketing
+• Análise de campanhas
+• Design de materiais promocionais
+• Ideias criativas para seu negócio
+
+${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
     timestamp: new Date()
   };
+
+
+
+  const QuickQuestionsContainer = styled(Box)(({ theme }) => ({
+    width: '90%',
+    marginTop: '20px',
+    maxWidth: '800px',
+    marginRight: '0px',
+    [theme.breakpoints.up('lg')]: {
+      // Centralizar melhor em telas grandes
+      width: '100%',
+      maxWidth: '700px',
+      margin: '20px auto 0'
+    },
+    [theme.breakpoints.down('md')]: {
+      width: '95%',
+      marginTop: '15px'
+    }
+  }));
+
+  const TopicChip = styled(Chip)(({ theme }) => ({
+    backgroundColor: '#4674af',
+    color: '#ffffff',
+    border: '2px solid #4674af',
+    margin: theme.spacing(0.5),
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    fontSize: '0.9rem',
+    fontWeight: 600,
+    padding: theme.spacing(1, 2),
+    borderRadius: '12px',
+    '&:hover': {
+      backgroundColor: '#1E3A8A',
+      borderColor: '#1E3A8A',
+      transform: 'translateY(-2px)',
+      boxShadow: '0 4px 12px rgba(30, 58, 138, 0.3)'
+    },
+    '& .MuiChip-label': {
+      fontSize: '0.9rem',
+      fontWeight: 600,
+      padding: theme.spacing(0.5, 1)
+    },
+    '& .MuiChip-icon': {
+      color: '#ffffff',
+      marginLeft: '-4px',
+      marginRight: '4px'
+    },
+    [theme.breakpoints.up('lg')]: {
+      // Ajustar para telas grandes
+      fontSize: '1rem',
+      padding: theme.spacing(1.25, 2.5),
+      '& .MuiChip-label': {
+        fontSize: '1rem',
+        padding: theme.spacing(0.75, 1.25)
+      }
+    },
+    [theme.breakpoints.down('md')]: {
+      fontSize: '0.8rem',
+      padding: theme.spacing(0.5, 1.5),
+      '& .MuiChip-label': {
+        fontSize: '0.8rem',
+        padding: theme.spacing(0.25, 0.75)
+      }
+    }
+  }));
+
+  const DropdownContainer = styled(Box)(({ theme }) => ({
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    backgroundColor: '#ffffff',
+    borderRadius: theme.spacing(2),
+    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+    border: '1px solid #e8eaed',
+    zIndex: 1000,
+    maxHeight: '300px',
+    overflowY: 'auto',
+    marginTop: theme.spacing(1),
+    minWidth: '280px'
+  }));
+
+  const DropdownItem = styled(Box)(({ theme }) => ({
+    padding: theme.spacing(2, 3),
+    cursor: 'pointer',
+    borderBottom: '1px solid #f1f3f4',
+    transition: 'all 0.2s ease',
+    '&:hover': {
+      backgroundColor: '#f8f9fa',
+      paddingLeft: theme.spacing(3.5)
+    },
+    '&:last-child': {
+      borderBottom: 'none'
+    }
+  }));
+
+  const QuickQuestionChip = styled(Chip)(({ theme }) => ({
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    color: '#ffffff',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
+    margin: theme.spacing(0.5),
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    '&:hover': {
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      transform: 'translateY(-1px)'
+    },
+    '& .MuiChip-label': {
+      fontSize: '0.875rem',
+      fontWeight: 500
+    },
+    [theme.breakpoints.up('lg')]: {
+      // Ajustar para telas grandes
+      margin: theme.spacing(0.75),
+      '& .MuiChip-label': {
+        fontSize: '0.95rem'
+      }
+    },
+    [theme.breakpoints.down('md')]: {
+      margin: theme.spacing(0.25),
+      '& .MuiChip-label': {
+        fontSize: '0.8rem'
+      }
+    }
+  }));
+
+  const PremiumChip = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(1),
+    backgroundColor: '#f8f9fa',
+    borderRadius: '20px',
+    padding: theme.spacing(1, 2),
+    border: '1px solid #e8eaed',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    '&:hover': {
+      backgroundColor: '#f1f3f4',
+      transform: 'translateY(-1px)',
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+    },
+    [theme.breakpoints.up('lg')]: {
+      // Ajustar para telas grandes
+      padding: theme.spacing(1.25, 2.5),
+      gap: theme.spacing(1.25)
+    }
+  }));
+
+  const Separator = styled(Box)(({ theme }) => ({
+    width: '3px',
+    height: '3px',
+    borderRadius: '50%',
+    backgroundColor: '#9aa0a6'
+  }));
+
+  const StartHereChip = styled(Chip)(({ theme }) => ({
+    backgroundColor: '#4674af',
+    color: '#ffffff',
+    border: '2px solid #4674af',
+    margin: theme.spacing(0.5),
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+    fontSize: '0.9rem',
+    fontWeight: 600,
+    padding: theme.spacing(0.75, 1.25),
+    borderRadius: '12px',
+    '&:hover': {
+      backgroundColor: '#1E3A8A',
+      borderColor: '#1E3A8A',
+      transform: 'translateY(-2px)',
+      boxShadow: '0 4px 12px rgba(30, 58, 138, 0.3)'
+    },
+    '& .MuiChip-label': {
+      fontSize: '0.9rem',
+      fontWeight: 600,
+      padding: theme.spacing(0.5, 1)
+    },
+    '& .MuiChip-icon': {
+      color: '#ffffff',
+      marginLeft: '-4px',
+      marginRight: '4px'
+    },
+    [theme.breakpoints.up('lg')]: {
+      fontSize: '1rem',
+      padding: theme.spacing(1.25, 2.5),
+      '& .MuiChip-label': {
+        fontSize: '1rem',
+        padding: theme.spacing(0.75, 1.25)
+      }
+    }
+  }));
 
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
@@ -264,72 +526,30 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [waitingModules]);
+    if (chat.messages.length > 0) {
+      scrollToBottom();
+    }
+  }, [chat.messages, isWaiting]);
 
   useEffect(() => {
-    const el = document.querySelector("#main-content");
-    if (el) {
-      el.style.overflow = "hidden";
-      el.scrollTop = 0;
+    const sidebar = document.getElementById('mobile-sidebar');
+    if (sidebar) {
+      sidebar.style.display = 'none';
     }
-    window.scrollTo(0, 0);
-
     return () => {
-      if (el) {
-        el.style.overflow = "";
+      if (sidebar) {
+        sidebar.style.display = 'block';
       }
     };
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      scrollToBottom();
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, [activeChat, waitingModules]);
-
-  const fetchEnabledFeatures = async () => {
-    try {
-      const res = await ProgressService.getProgress(activeCompany);
-      console.log(res.data);
-
-      const loadingMods = [];
-      for (const [key, value] of Object.entries(res.data)) {
-        if (value === 'loading') {
-          loadingMods.push(key);
-        }
-      }
-      setLoadingModules(loadingMods);
-
-      const response = await ChatAiService.getEnabledFeatures(activeCompany);
-      const features = response.data.map(f => f.field);
-      setEnabledFeatures(features);
-    } catch (error) {
-      console.error('Error loading enabled features:', error);
-    } finally {
-      setLoadingFeatures(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchEnabledFeatures();
-    refreshIntervalRef.current = setInterval(fetchEnabledFeatures, 5000);
-
-    return () => {
-      if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
-      }
-    };
-  }, [activeCompany]);
-
-  useEffect(() => {
     const initChat = async () => {
-      if (!isModuleUnlocked(activeChat)) return;
-
       try {
-        const pastMessages = await ChatAiService.getConversationByType(activeCompany, activeChat);
+        console.log('Iniciando chat para empresa:', activeCompany);
+        const pastMessages = await ChatAiService.getConversationByCompany(activeCompany);
+        console.log('Mensagens carregadas:', pastMessages);
+
         const formattedMessages = pastMessages.map((msg) => ({
           id: msg.id,
           sender: msg.sender,
@@ -337,23 +557,23 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
           timestamp: msg.createdAt,
         }));
 
-        setChats(prev => ({
-          ...prev,
-          [activeChat]: {
-            ...prev[activeChat],
-            conversationId: crypto.randomUUID(),
-            messages: formattedMessages.length > 0 ? formattedMessages : [welcomeMessage]
-          }
-        }));
+        setChat({
+          conversationId: crypto.randomUUID(),
+          messages: formattedMessages.length > 0 ? formattedMessages : []
+        });
       } catch (error) {
         console.error('Erro ao carregar conversa:', error);
+        setChat({
+          conversationId: crypto.randomUUID(),
+          messages: []
+        });
       }
     };
 
-    if (!loadingFeatures) {
+    if (activeCompany) {
       initChat();
     }
-  }, [activeChat, loadingFeatures, enabledFeatures]);
+  }, [activeCompany]);
 
   const openImageModal = (src) => {
     setImageModal({
@@ -387,7 +607,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
   const handleDownloadImage = (src) => {
     const link = document.createElement('a');
     link.href = src;
-    link.download = `marketing-assistant-${new Date().toISOString().slice(0, 10)}.png`;
+    link.download = `ai-assistant-${new Date().toISOString().slice(0, 10)}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -401,7 +621,7 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
     }
   };
 
-  const handleRemoveFile = () => {
+  const handleRemoveSelectedFile = () => {
     setSelectedFile(null);
     setFileName('');
     if (fileInputRef.current) {
@@ -409,13 +629,101 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
     }
   };
 
-  const handleSend = async () => {
-    const currentChat = chats[activeChat];
-    if (!currentChat.conversationId || (!selectedCard && !inputValue.trim() && !selectedFile) || waitingModules[activeChat]) return;
+  // Funções para o modal de configurações
+  const handleOpenSettings = async () => {
+    try {
+      // Buscar o assistente da empresa
+      const assistant = await ChatAiService.getThreadInfo(activeCompany);
+      if (assistant) {
+        setAssistantId(assistant.assistantId || '');
+      }
+      setSettingsModal({ open: true });
+    } catch (error) {
+      console.error('Erro ao buscar assistente:', error);
+      setSettingsModal({ open: true });
+    }
+  };
 
-    const content = selectedCard || inputValue.trim();
+  const handleCloseSettings = () => {
+    setSettingsModal({ open: false });
+    setAiInstructions('');
+    setUploadedFiles([]);
+    setUploadedImages([]);
+  };
+
+    const handleSaveSettings = async () => {
+    if (!assistantId) {
+      console.error('Assistant ID não encontrado');
+      return;
+    }
+
+    setIsSavingSettings(true);
+    try {
+      const formData = new FormData();
+      formData.append('assistantId', assistantId);
+      formData.append('instructions', aiInstructions);
+
+      // Adicionar todos os arquivos (documentos e imagens)
+      const allFiles = [...uploadedFiles, ...uploadedImages];
+      allFiles.forEach((file, index) => {
+        formData.append('files', file);
+      });
+
+      const response = await fetch(`http://localhost:3005/ai/update-assistant-settings`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao salvar configurações');
+      }
+
+      const result = await response.json();
+      console.log('Configurações salvas com sucesso:', result);
+
+      // Mostrar notificação de sucesso
+      setShowSettingsAlert(true);
+      setTimeout(() => setShowSettingsAlert(false), 3000);
+
+      // Fechar o modal após salvar
+      handleCloseSettings();
+    } catch (error) {
+      console.error('Erro ao salvar configurações:', error);
+      // Aqui você pode adicionar uma notificação de erro para o usuário
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>, type: 'document' | 'image') => {
+    if (event.target.files && event.target.files.length > 0) {
+      const files = Array.from(event.target.files);
+      if (type === 'document') {
+        setUploadedFiles(prev => [...prev, ...files]);
+      } else {
+        setUploadedImages(prev => [...prev, ...files]);
+      }
+    }
+  };
+
+  const handleRemoveUploadedFile = (index: number, type: 'document' | 'image') => {
+    if (type === 'document') {
+      setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+    } else {
+      setUploadedImages(prev => prev.filter((_, i) => i !== index));
+    }
+  };
+
+
+
+  const handleSend = useCallback(async () => {
+    if (!chat.conversationId || (!inputValue.trim() && !selectedFile) || isWaiting) return;
+
+    const content = inputValue.trim();
     setInputValue('');
-    setSelectedCard(null);
 
     const userMessage = {
       id: crypto.randomUUID(),
@@ -427,17 +735,14 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
       timestamp: new Date()
     };
 
-    const updatedMessages = [...currentChat.messages, userMessage];
+    const updatedMessages = [...chat.messages, userMessage];
 
-    setChats(prev => ({
+    setChat(prev => ({
       ...prev,
-      [activeChat]: {
-        ...prev[activeChat],
-        messages: updatedMessages
-      }
+      messages: updatedMessages
     }));
 
-    setWaitingModules(prev => ({ ...prev, [activeChat]: true }));
+    setIsWaiting(true);
 
     try {
       const language = i18n.language.startsWith('en') ? 'en' : 'pt';
@@ -455,87 +760,48 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
         });
 
         responseMessages = await ChatAiService.sendMessage(
-          currentChat.conversationId,
+          chat.conversationId,
           content || `Arquivo: ${fileName}`,
           activeCompany,
           language,
-          activeChat,
           response?.data.url
         );
       } else {
         responseMessages = await ChatAiService.sendMessage(
-          currentChat.conversationId,
+          chat.conversationId,
           content,
           activeCompany,
-          language,
-          activeChat
+          language
         );
       }
 
-      setChats(prev => ({
+      setChat(prev => ({
         ...prev,
-        [activeChat]: {
-          ...prev[activeChat],
-          messages: responseMessages
-        }
+        messages: responseMessages
       }));
 
-      handleRemoveFile();
-
-      if (!completedModules.includes(activeChat)) {
-        setCompletedModules([...completedModules, activeChat]);
-      }
+      handleRemoveSelectedFile();
     } catch (error) {
       console.error('Error sending message:', error);
-      setChats(prev => ({
+      setChat(prev => ({
         ...prev,
-        [activeChat]: {
-          ...prev[activeChat],
-          messages: [
-            ...updatedMessages.filter((m) => m.id !== 'typing'),
-            {
-              id: crypto.randomUUID(),
-              sender: 'assistant',
-              content: t("marketing.aiAssistant.errorMessage"),
-              timestamp: new Date()
-            }
-          ]
-        }
+        messages: [
+          ...updatedMessages.filter((m) => m.id !== 'typing'),
+          {
+            id: crypto.randomUUID(),
+            sender: 'assistant',
+            content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.',
+            timestamp: new Date()
+          }
+        ]
       }));
     } finally {
-      setWaitingModules(prev => ({ ...prev, [activeChat]: false }));
+      setIsWaiting(false);
     }
-  };
-
-  const handleChatChange = (chatId) => {
-    if (!isModuleUnlocked(chatId)) return;
-    if (loadingModules.includes(chatId)) {
-      const currentChat = chats[activeChat];
-      const loadingMessage = {
-        id: crypto.randomUUID(),
-        sender: 'assistant',
-        content: t("marketing.aiAssistant.moduleLoadingMessage"),
-        timestamp: new Date()
-      };
-
-      setChats(prev => ({
-        ...prev,
-        [activeChat]: {
-          ...prev[activeChat],
-          messages: [...prev[activeChat].messages, loadingMessage]
-        }
-      }));
-      return;
-    }
-    setActiveChat(chatId);
-    setInputValue('');
-    setSelectedCard(null);
-    setSelectedFile(null);
-    setFileName('');
-  };
+  }, [chat.conversationId, inputValue, selectedFile, isWaiting, chat.messages, i18n.language, activeCompany, fileName]);
 
   const renderMessageContent = (msg) => {
-    if(msg.content.includes('data:image/png;base64')){
+    if (msg.content.includes('data:image/png;base64')) {
       return (
         <ImageContainer>
           <img
@@ -580,17 +846,23 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
     if (msg.id === 'welcome') {
       return (
         <Box>
-          <Typography variant="body1" sx={{
+          <Typography variant="h6" sx={{
             fontWeight: 600,
-            mb: 1,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1
+            mb: 2,
+            color: '#4674af',
+            fontSize: '1.1rem'
           }}>
-            <AutoAwesome sx={{ fontSize: '1.2rem' }} />
-            {t("marketing.aiAssistant.welcomeTitle")}
+            Assistente de IA
           </Typography>
-          <Typography variant="body2" sx={{ whiteSpace: 'pre-line' }}>
+          <Typography variant="body2" sx={{
+            whiteSpace: 'pre-line',
+            lineHeight: 1.6,
+            fontSize: '0.95rem',
+            color: '#2c3e50',
+            wordWrap: 'break-word',
+            overflowWrap: 'break-word',
+            maxWidth: '100%'
+          }}>
             {msg.content}
           </Typography>
         </Box>
@@ -602,24 +874,20 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
         <Box sx={{
           display: 'flex',
           alignItems: 'center',
-          gap: 1,
-          p: 1,
-          borderRadius: 1,
-          backgroundColor: msg.sender === 'user'
-            ? 'rgba(255, 255, 255, 0.1)'
-            : 'rgba(87, 138, 205, 0.1)',
-          border: `1px solid ${msg.sender === 'user'
-            ? 'rgba(255, 255, 255, 0.2)'
-            : 'rgba(87, 138, 205, 0.2)'}`,
+          gap: 1.5,
+          p: 1.5,
+          borderRadius: 2,
+          backgroundColor: 'rgba(70, 116, 175, 0.1)',
+          border: '1px solid rgba(70, 116, 175, 0.2)',
           maxWidth: '100%',
           wordBreak: 'break-word'
         }}>
-          <InsertDriveFile sx={{
-            color: msg.sender === 'user' ? '#fff' : '#578acd',
-            fontSize: '1.5rem'
-          }} />
+                      <InsertDriveFile sx={{
+              color: '#4674af',
+              fontSize: '1.5rem'
+            }} />
           <Typography variant="body2" sx={{
-            color: msg.sender === 'user' ? '#fff' : 'text.primary',
+            color: '#2c3e50',
             fontWeight: 500
           }}>
             {msg.fileName}
@@ -631,390 +899,743 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
     return (
       <Typography variant="body2" sx={{
         whiteSpace: 'pre-line',
-        lineHeight: 1.6
+        lineHeight: 1.6,
+        fontSize: '0.95rem',
+        wordWrap: 'break-word',
+        overflowWrap: 'break-word',
+        maxWidth: '100%'
       }}>
         {msg.content}
       </Typography>
     );
   };
 
-  if (loadingFeatures) {
+  const handleThumbsUp = (messageId: string) => {
+    setMessageFeedback(prev => ({
+      ...prev,
+      [messageId]: {
+        thumbsUp: !prev[messageId]?.thumbsUp,
+        thumbsDown: false
+      }
+    }));
+  };
+
+  const handleThumbsDown = (messageId: string) => {
+    setMessageFeedback(prev => ({
+      ...prev,
+      [messageId]: {
+        thumbsUp: false,
+        thumbsDown: !prev[messageId]?.thumbsDown
+      }
+    }));
+  };
+
+  const handleCopyContent = (content: string) => {
+    navigator.clipboard.writeText(content).then(() => {
+      setShowCopyAlert(true);
+      setTimeout(() => {
+        setShowCopyAlert(false);
+      }, 2000);
+    });
+  };
+
+  const thinkingPhrases = [
+    t('ai.thinking.analyzing') || 'Analisando...',
+    t('ai.thinking.processing') || 'Processando...',
+    t('ai.thinking.generating') || 'Gerando...',
+    t('ai.thinking.thinking') || 'Pensando...',
+    t('ai.thinking.creating') || 'Criando...',
+    t('ai.thinking.optimizing') || 'Otimizando...',
+    t('ai.thinking.analyzing') || 'Analisando...'
+  ];
+
+  useEffect(() => {
+    if (isWaiting) {
+      const interval = setInterval(() => {
+        setThinkingIndex((prev) => (prev + 1) % thinkingPhrases.length);
+      }, 2000);
+      return () => clearInterval(interval);
+    } else {
+      setThinkingIndex(0);
+    }
+  }, [isWaiting]);
+
+  const quickQuestions = [
+    t('ai.quickQuestions.marketingStrategy') || 'Estratégia de Marketing',
+    t('ai.quickQuestions.socialMedia') || 'Redes Sociais',
+    t('ai.quickQuestions.emailMarketing') || 'Email Marketing',
+    t('ai.quickQuestions.engagement') || 'Engajamento',
+    t('ai.quickQuestions.viralContent') || 'Conteúdo Viral',
+    t('ai.quickQuestions.seo') || 'SEO',
+    t('ai.quickQuestions.metrics') || 'Métricas',
+    t('ai.quickQuestions.promotional') || 'Promocional'
+  ];
+
+  const quickQuestionsTopics = {
+    [t('ai.topics.landingPages')]: [
+      "Como criar landing pages que convertem?",
+      "Estratégias para captura de leads qualificados",
+      "Otimização de formulários de captura",
+      "A/B testing em landing pages"
+    ],
+    [t('ai.topics.automation')]: [
+      "Como automatizar redes sociais?",
+      "Automação de email marketing",
+      "Fluxos de automação para leads",
+      "Integração entre canais"
+    ],
+    [t('ai.topics.crm')]: [
+      "Como organizar leads no CRM?",
+      "Criação de segmentos personalizados",
+      "Qualificação de leads",
+      "Gestão de contatos"
+    ],
+    [t('ai.topics.chatbot')]: [
+      "Como treinar chatbot com IA?",
+      "Integração com dados da empresa",
+      "Estratégias de conversão via chatbot",
+      "Personalização de respostas"
+    ],
+    [t('ai.topics.funnel')]: [
+      "Como mapear a jornada do cliente?",
+      "Otimização de cada etapa do funil",
+      "Análise de conversão por etapa",
+      "Estratégias de retenção"
+    ],
+    [t('ai.topics.salesPages')]: [
+      "Como criar páginas de venda persuasivas?",
+      "Otimização de formulários de checkout",
+      "Estratégias de conversão",
+      "A/B testing em páginas de venda"
+    ],
+    [t('ai.topics.ads')]: [
+      "Como gerenciar campanhas de anúncios?",
+      "Otimização de ROI em marketing digital",
+      "Segmentação de audiência",
+      "Análise de performance"
+    ]
+  };
+
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const handleTopicClick = (topic: string) => {
+    setOpenDropdown(topic);
+  };
+
+  const handleQuestionClick = (question: string) => {
+    setInputValue(question);
+    setOpenDropdown(null);
+
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.quick-questions-container')) {
+        setOpenDropdown(null);
+      }
+    };
+
+    if (openDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openDropdown]);
+
+    // Verificar se os props necessários estão presentes
+  if (!activeCompany) {
+    console.log('activeCompany não encontrado');
     return (
-      <Container maxWidth="lg" sx={{
-        py: 4,
-        height: '100vh',
+      <Box sx={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: 'linear-gradient(160deg, #f8faff 0%, #ffffff 100%)'
+        height: '100vh',
+        backgroundColor: '#fafbfc'
       }}>
-        <Box sx={{ textAlign: 'center' }}>
-          <CircularProgress sx={{ color: '#578acd' }} />
-        </Box>
-      </Container>
+        <Typography>Carregando... activeCompany: {JSON.stringify(activeCompany)}</Typography>
+      </Box>
     );
   }
 
-  return (
-    <Container maxWidth="lg" sx={{
-      py: 4,
-      height: '110vh',
-      display: 'flex',
-      flexDirection: 'column',
-      background: 'linear-gradient(160deg, #f8faff 0%, #ffffff 100%)',
-      marginTop: {xs:'-40px', sm:'-50px'},
-      overflowY:'hidden'
-    }}>
+  console.log('Renderizando componente com activeCompany:', activeCompany);
+
+    return (
+    <>
+      <style>
+        {`
+          .ai-chat-active .sidebar,
+          .ai-chat-active [data-testid="sidebar"],
+          .ai-chat-active .bottom-bar,
+          .ai-chat-active [data-testid="bottom-bar"],
+        `}
+      </style>
+      <ChatContainer sx={{ margin: 0, padding: 0 }}>
+      {/* Header Minimalista */}
       <Box sx={{
-        background: 'linear-gradient(90deg, #578acd 0%, #6a9ce0 100%)',
-        borderTopLeftRadius: 7,
-        borderTopRightRadius: 7,
-        p: 3,
-        color: '#fff',
-        boxShadow: '0 4px 20px rgba(87, 138, 205, 0.2)',
-        display:'flex',
-        width:{xs: '85.5%', sm:'92.5%', md:'95.5%'},
-        justifyContent:'space-around',
-        height:{xs: '30px', sm:'60px'},
+        padding: theme.spacing(1.5, 2),
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1.5,
+        borderBottom: '1px solid #e8eaed',
+        backgroundColor: '#ffffff',
+        [theme.breakpoints.down('md')]: {
+          padding: theme.spacing(1, 1.5),
+          gap: 1
+        }
       }}>
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          mb: 0,
-          cursor: 'pointer',
-          width: '5%',
-          marginTop: {xs:'-30px', sm:'-20px'},
-          '&:hover': {
-            '& .back-arrow': {
-              transform: 'translateX(-3px)'
+        <IconButton
+          onClick={() => setModule('')}
+          sx={{
+            color: '#6c757d',
+            '&:hover': {
+              backgroundColor: 'rgba(108, 117, 125, 0.1)'
             }
-          }
-        }} onClick={() => setModule('')}>
-          <ArrowBackIos className="back-arrow" sx={{
-            color: '#ffffff',
-            transition: 'transform 0.2s ease',
-            fontSize: '2rem'
-          }} />
-        </Box>
-        <ModuleTimeline style={{width: '90%', marginTop:window.outerWidth > 600 ? '17px' : '-1px'}}>
-          {modulesTimeline.map((step, index) => {
-            const isCompleted = completedModules.includes(step.id);
-            const isUnlocked = isModuleUnlocked(step.id);
-            const isLoading = loadingModules.includes(step.id);
-
-            if (!isUnlocked && !isLoading) {
-              return (
-                <ModuleStep
-                  key={step.id}
-                  completed={false}
-                  active={false}
-                  loading={false}
-                  onClick={() => {}}
-                >
-                  <Box className="step-icon">
-                    <Lock size={20} />
-                  </Box>
-                  <Typography sx={{color:'#fff', fontSize:'9pt', visibility: 'hidden'}}>.</Typography>
-                </ModuleStep>
-              );
-            }
-
-            return (
-              <ModuleStep
-                key={step.id}
-                completed={false}
-                active={activeChat === step.id}
-                loading={isLoading}
-                onClick={() => !isLoading && handleChatChange(step.id)}
-              >
-                <Box className="step-icon">
-                  {step.icon}
-                  {isLoading && (
-                    <CircularProgress
-                      size={48}
-                      thickness={2}
-                      sx={{
-                        position: 'absolute',
-                        color: '#fff',
-                        top: -4,
-                        left: -4
-                      }}
-                    />
-                  )}
-                </Box>
-                <Typography sx={{
-                  color: isLoading ? theme.palette.primary.light : '#fff',
-                  fontSize:'9pt'
-                }}>
-                  {step.label}
-                </Typography>
-              </ModuleStep>
-            );
-          })}
-        </ModuleTimeline>
-      </Box>
-
-      {/* Chat container */}
-      <Paper
-        elevation={0}
-        ref={chatContainerRef}
-        sx={{
-          flex: 1,
-          overflowY: 'auto',
-          mb: 2,
-          p: 2,
-          maxHeight:{xs:'300px', sm:'unset'},
-          borderBottomLeftRadius: 3,
-          borderBottomRightRadius: 3,
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-          border: '1px solid rgba(87, 138, 205, 0.1)',
-          '&::-webkit-scrollbar': {
-            width: '6px'
-          },
-          '&::-webkit-scrollbar-thumb': {
-            backgroundColor: 'rgba(87, 138, 205, 0.3)',
-            borderRadius: '3px'
-          }
-        }}
-      >
-        {chats[activeChat]?.messages?.map((msg) => (
-          <Fade in key={msg.id}>
-            <Box sx={{
-              mb: 3,
-              display: 'flex',
-              flexDirection: msg.sender === 'user' ? 'row-reverse' : 'row',
-              alignItems: 'flex-start',
-              gap: 1.5
-            }}>
-              <Avatar
-                sx={{
-                  width: 32,
-                  height: 32,
-                  bgcolor: msg.sender === 'user' ? '#578acd' : '#e0e7ff',
-                  color: msg.sender === 'user' ? '#fff' : '#578acd',
-                  fontSize: '0.9rem',
-                  mt: 0.5
-                }}
-              >
-                {msg.sender === 'user' ? (
-                  <Person sx={{ fontSize: '1rem' }} />
-                ) : (
-                  <SmartToy sx={{ fontSize: '1rem' }} />
-                )}
-              </Avatar>
-              <Paper elevation={0} sx={{
-                maxWidth: '80%',
-                p: 2,
-                borderRadius: msg.sender === 'user'
-                  ? '18px 4px 18px 18px'
-                  : '4px 18px 18px 18px',
-                backgroundColor: msg.sender === 'user'
-                  ? '#578acd'
-                  : '#f0f5ff',
-                color: msg.sender === 'user'
-                  ? '#fff'
-                  : 'text.primary',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-                position: 'relative',
-                marginTop:'20px',
-                '&:before': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 0,
-                  height: 0,
-                  [msg.sender === 'user' ? 'right' : 'left']: '-8px',
-                  top: 0,
-                  border: msg.sender === 'user'
-                    ? '8px solid #578acd'
-                    : '8px solid #f0f5ff',
-                  borderColor: msg.sender === 'user'
-                    ? '#578acd transparent transparent transparent'
-                    : '#f0f5ff transparent transparent transparent'
-                }
-              }}>
-                {renderMessageContent(msg)}
-              </Paper>
-            </Box>
-          </Fade>
-        ))}
-        {waitingModules[activeChat] && (
-          <Fade in>
-            <Box sx={{
-              mb: 3,
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'flex-start',
-              gap: 1.5
-            }}>
-              <Avatar
-                sx={{
-                  width: 32,
-                  height: 32,
-                  bgcolor: '#e0e7ff',
-                  color: '#578acd',
-                  fontSize: '0.9rem',
-                  mt: 0.5
-                }}
-              >
-                <SmartToy sx={{ fontSize: '1rem' }} />
-              </Avatar>
-              <Paper elevation={0} sx={{
-                maxWidth: '80%',
-                p: 2,
-                borderRadius: '4px 18px 18px 18px',
-                backgroundColor: '#f0f5ff',
-                color: 'text.primary',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-                position: 'relative',
-                marginTop: '20px'
-              }}>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  {[1, 2, 3].map((dot) => (
-                    <Box key={dot} sx={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: '50%',
-                      backgroundColor: 'rgba(87, 138, 205, 0.4)',
-                      animation: 'pulse 1.5s infinite ease-in-out',
-                      animationDelay: `${dot * 0.2}s`,
-                      '@keyframes pulse': {
-                        '0%, 100%': { opacity: 0.4 },
-                        '50%': { opacity: 1 }
-                      }
-                    }} />
-                  ))}
-                </Box>
-              </Paper>
-            </Box>
-          </Fade>
-        )}
-      </Paper>
-
-      <Box sx={{
-        position: 'sticky',
-        width:'100%',
-        bottom: 0,
-        pb: 2,
-        background: 'linear-gradient(to top, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0) 100%)'
-      }}>
-        <Paper elevation={3} sx={{
-          p: 2,
-          borderRadius: 3,
-          border: '1px solid rgba(87, 138, 205, 0.2)',
-          boxShadow: '0 4px 20px rgba(87, 138, 205, 0.1)',
-          transition: 'all 0.3s ease',
-          '&:hover': {
-            boxShadow: '0 6px 24px rgba(87, 138, 205, 0.15)'
+          }}
+        >
+          <ArrowBackIos />
+        </IconButton>
+        <Typography variant="h5" sx={{
+          color: '#2c3e50',
+          fontWeight: 300,
+          fontSize: '1rem',
+          [theme.breakpoints.down('md')]: {
+            fontSize: '0.9rem'
           }
         }}>
-          {selectedFile && (
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              mb: 1,
-              p: 1,
-              borderRadius: 1,
-              backgroundColor: 'rgba(87, 138, 205, 0.1)'
-            }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <InsertDriveFile sx={{ color: '#578acd' }} />
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                  {fileName}
-                </Typography>
-              </Box>
-              <IconButton size="small" onClick={handleRemoveFile}>
-                <Close sx={{ fontSize: '1rem', color: '#578acd' }} />
-              </IconButton>
-            </Box>
-          )}
+          {t('ai.brand')}
+        </Typography>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width:'100%' }}>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              style={{ display: 'none' }}
-              id="file-upload"
-            />
-            <label htmlFor="file-upload">
-              <Tooltip title={t("marketing.aiAssistant.attachFile")} arrow>
-                <IconButton component="span" sx={{
-                  color: '#578acd',
-                  '&:hover': {
-                    backgroundColor: 'rgba(87, 138, 205, 0.1)'
-                  }
-                }}>
-                  <AttachFile />
-                </IconButton>
-              </Tooltip>
-            </label>
-
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder={t("marketing.aiAssistant.placeholder")}
-              value={selectedCard || inputValue}
-              onChange={(e) => {
-                setInputValue(e.target.value);
-                if (selectedCard && e.target.value !== selectedCard) {
-                  setSelectedCard(null);
-                }
-              }}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') handleSend();
-              }}
+        <Box sx={{ marginLeft: 'auto' }}>
+          <Tooltip title={t('ai.settings.title')}>
+            <IconButton
+              onClick={() => setSettingsModal({ open: true })}
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
-                  backgroundColor: '#fff',
-                  '& fieldset': {
-                    borderColor: 'rgba(87, 138, 205, 0.3)'
-                  },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(87, 138, 205, 0.5)'
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#578acd',
-                    boxShadow: '0 0 0 2px rgba(87, 138, 205, 0.2)'
-                  }
-                }
-              }}
-            />
-
-            <Button
-              variant="contained"
-              size="large"
-              disabled={(!inputValue && !selectedCard && !selectedFile) || waitingModules[activeChat]}
-              onClick={handleSend}
-              sx={{
-                minWidth: '48px',
-                width: '48px',
-                height: '48px',
-                borderRadius: '50%',
-                backgroundColor: '#578acd',
-                color: '#fff',
-                transition: 'all 0.3s ease',
+                color: '#6c757d',
                 '&:hover': {
-                  backgroundColor: '#4678b5',
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 4px 12px rgba(87, 138, 205, 0.4)'
-                },
-                '&.Mui-disabled': {
-                  backgroundColor: 'rgba(87, 138, 205, 0.1)',
-                  color: 'rgba(87, 138, 205, 0.3)'
+                  backgroundColor: 'rgba(108, 117, 125, 0.1)'
                 }
               }}
             >
-              <Send sx={{
-                fontSize: '1.2rem',
-                transition: 'transform 0.3s ease',
-                transform: (!inputValue && !selectedCard && !selectedFile) || waitingModules[activeChat] ? 'scale(1)' : 'scale(1.1)'
-              }} />
-            </Button>
-          </Box>
-        </Paper>
+              <Settings />
+            </IconButton>
+          </Tooltip>
+        </Box>
+
       </Box>
+
+      {/* Chat Area */}
+      {chat.messages.length === 0 ? (
+        <>
+        <Box style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%'
+        }}>
+          <Box sx={{ mb: 3 }}>
+            <PremiumChip>
+              <Typography variant="body2" sx={{
+                color: '#5f6368',
+                fontWeight: 500,
+                fontSize: '0.875rem'
+              }}>
+                {t('ai.premium.freePlan')}
+              </Typography>
+              <Separator />
+              <Typography variant="body2" sx={{
+                color: '#4674af',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                cursor: 'pointer',
+                '&:hover': {
+                  textDecoration: 'underline'
+                }
+              }}>
+                {t('ai.premium.upgrade')}
+              </Typography>
+            </PremiumChip>
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+            <RocketLaunch sx={{
+              fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+              color: '#4674af',
+              mr: { xs: 1, sm: 2 }
+            }} />
+            <Typography variant="h4" sx={{
+              fontWeight: 700,
+              color: '#2c3e50',
+              fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' }
+            }}>
+              {t('ai.title')}
+            </Typography>
+          </Box>
+
+          <Typography variant="body1" sx={{
+            color: '#6c757d',
+            mb: 4,
+            maxWidth: '500px',
+            lineHeight: 1.6,
+            textAlign: 'center',
+            fontSize: { xs: '0.9rem', sm: '1rem' },
+            px: { xs: 2, sm: 0 }
+          }}>
+            {t('ai.description')}
+          </Typography>
+          <Box style={{
+            background: '#ffffff',
+            borderRadius: theme.spacing(1.5),
+            padding: theme.spacing(2),
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+            width: '100%',
+            maxWidth: '600px',
+            marginTop: theme.spacing(2),
+            [theme.breakpoints.down('md')]: {
+              padding: theme.spacing(1.5),
+              borderRadius: theme.spacing(1),
+              marginTop: theme.spacing(1.5)
+            }
+          }}>
+            {selectedFile && (
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                mb: 2,
+                p: 1.5,
+                borderRadius: 2,
+                backgroundColor: 'rgba(70, 116, 175, 0.1)',
+                border: '1px solid rgba(70, 116, 175, 0.2)'
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <InsertDriveFile sx={{ color: '#4674af' }} />
+                  <Typography variant="body2" sx={{ fontWeight: 500, color: '#2c3e50' }}>
+                    {fileName}
+                  </Typography>
+                </Box>
+                <IconButton size="small" onClick={handleRemoveSelectedFile}>
+                  <Close sx={{ fontSize: '1rem', color: '#4674af' }} />
+                </IconButton>
+              </Box>
+            )}
+            <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                placeholder={t('ai.input.placeholder')}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  outline: 'none',
+                  fontSize: '1rem',
+                  fontFamily: 'inherit',
+                  resize: 'none',
+                  padding: '16px 60px 16px 50px',
+                  marginTop: theme.spacing(-2),
+                  backgroundColor: 'transparent',
+                  [theme.breakpoints.down('md')]: {
+                    fontSize: '0.9rem',
+                    padding: '12px 50px 12px 40px'
+                  }
+                }}
+              />
+              <Box sx={{ position: 'absolute', left: -8, top: '50%', transform: 'translateY(-50%)' }}>
+                <label htmlFor="file-upload">
+                  <Tooltip title={t('ai.input.attachFile')} arrow>
+                    <IconButton component="span" sx={{
+                      color: '#4674af',
+                      '&:hover': {
+                        backgroundColor: 'rgba(70, 116, 175, 0.1)'
+                      }
+                    }}>
+                      <AttachFile />
+                    </IconButton>
+                  </Tooltip>
+                </label>
+              </Box>
+
+              {/* Botão Enviar */}
+              <Box sx={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)' }}>
+                <IconButton
+                  onClick={handleSend}
+                  disabled={!inputValue.trim() && !selectedFile}
+                  sx={{
+                    backgroundColor: '#4674af',
+                    color: '#fff',
+                    width: 40,
+                    height: 40,
+                    '&:hover': {
+                      backgroundColor: '#3a5f9a'
+                    },
+                    '&.Mui-disabled': {
+                      backgroundColor: '#e8eaed',
+                      color: '#9aa0a6'
+                    }
+                  }}
+                >
+                  <Send sx={{ fontSize: '1.2rem' }} />
+                </IconButton>
+              </Box>
+            </Box>
+          </Box>
+          <QuickQuestionsContainer className="quick-questions-container">
+            <Box sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 1,
+              position: 'relative',
+              padding: theme.spacing(2)
+            }}>
+              <Box sx={{ position: 'relative' }}>
+                <StartHereChip
+                  icon={<Brain size={16} color="#ffffff" />}
+                  label="Comece Aqui"
+                  onClick={() => handleTopicClick("Comece Aqui")}
+                  variant="outlined"
+                />
+                {openDropdown === "Comece Aqui" && (
+                  <DropdownContainer>
+                    {[
+                      "Como usar o assistente de IA?",
+                      "Primeiros passos no marketing digital",
+                      "Configuração inicial do sistema",
+                      "Dicas para começar hoje"
+                    ].map((question, index) => (
+                      <DropdownItem
+                        key={index}
+                        onClick={() => handleQuestionClick(question)}
+                      >
+                        <Typography variant="body1" sx={{
+                          color: '#2c3e50',
+                          fontSize: '0.95rem',
+                          lineHeight: 1.5,
+                          fontWeight: 500
+                        }}>
+                          {question}
+                        </Typography>
+                      </DropdownItem>
+                    ))}
+                  </DropdownContainer>
+                )}
+              </Box>
+              {Object.keys(quickQuestionsTopics).map((topic) => (
+                <Box key={topic} sx={{ position: 'relative' }}>
+                  <TopicChip
+                    icon={
+                      topic === "Landing Pages" ? <Layout size={16} color="#ffffff" /> :
+                      topic === "Automação" ? <Zap size={16} color="#ffffff" /> :
+                      topic === "CRM" ? <Users size={16} color="#ffffff" /> :
+                      topic === "Chatbot" ? <MessageSquare size={16} color="#ffffff" /> :
+                      topic === "Funil" ? <FileText size={16} color="#ffffff" /> :
+                      topic === "Sales Pages" ? <Coins size={16} color="#ffffff" /> :
+                      topic === "Anúncios" ? <AdsClickOutlined sx={{ fontSize: '1rem', color: '#ffffff' }} /> :
+                      <Brain size={16} color="#ffffff" />
+                    }
+                    label={topic}
+                    onClick={() => handleTopicClick(topic)}
+                    variant="outlined"
+                  />
+                  {openDropdown === topic && (
+                    <DropdownContainer>
+                      {quickQuestionsTopics[topic].map((question, index) => (
+                        <DropdownItem
+                          key={index}
+                          onClick={() => handleQuestionClick(question)}
+                        >
+                          <Typography variant="body1" sx={{
+                            color: '#2c3e50',
+                            fontSize: '0.95rem',
+                            lineHeight: 1.5,
+                            fontWeight: 500
+                          }}>
+                            {question}
+                          </Typography>
+                        </DropdownItem>
+                      ))}
+                    </DropdownContainer>
+                  )}
+                </Box>
+              ))}
+            </Box>
+          </QuickQuestionsContainer>
+        </Box>
+        </>
+      ) : (
+        <>
+          <ChatArea>
+            <MessagesContainer ref={chatContainerRef}>
+              {chat.messages.map((msg) => (
+                <Fade in key={msg.id}>
+                  <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'flex-start',
+                    gap: 2,
+                    mb: 3,
+                    justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                    width: '100%',
+                    overflow: 'hidden'
+                  }}>
+                    {msg.sender === 'assistant' && (
+                      <Avatar
+                        sx={{
+                          width: 36,
+                          height: 36,
+                          bgcolor: '#4674af',
+                          color: '#fff',
+                          fontSize: '0.9rem'
+                        }}
+                      >
+                        <RocketLaunch sx={{ fontSize: '1rem' }} />
+                      </Avatar>
+                    )}
+                    <Box sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: msg.sender === 'user' ? 'flex-end' : 'flex-start',
+                      maxWidth: '100%',
+                      overflow: 'hidden'
+                    }}>
+                      <MessageBubble isUser={msg.sender === 'user'}>
+                        {renderMessageContent(msg)}
+                      </MessageBubble>
+                      {msg.sender === 'assistant' && (
+                        <Box sx={{
+                          display: 'flex',
+                          gap: 1,
+                          mt: 1,
+                          ml: 1,
+                          opacity: 0.7,
+                          transition: 'opacity 0.2s ease',
+                          '&:hover': {
+                            opacity: 1
+                          }
+                        }}>
+                          <Tooltip title={t('ai.feedback.thumbsUp')} arrow>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleThumbsUp(msg.id)}
+                              sx={{
+                                color: messageFeedback[msg.id]?.thumbsUp ? '#003f92' : '#6c757d',
+                                '&:hover': {
+                                  color: '#4674af'
+                                }
+                              }}
+                            >
+                              <ThumbUp sx={{ fontSize: '1rem' }} />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={t('ai.feedback.thumbsDown')} arrow>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleThumbsDown(msg.id)}
+                              sx={{
+                                color: messageFeedback[msg.id]?.thumbsDown ? '#003f92' : '#6c757d',
+                                '&:hover': {
+                                  color: '#4674af'
+                                }
+                              }}
+                            >
+                              <ThumbDown sx={{ fontSize: '1rem' }} />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={t('ai.feedback.copy')} arrow>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleCopyContent(msg.content)}
+                              sx={{
+                                color: '#6c757d',
+                                '&:hover': {
+                                  color: '#4674af'
+                                }
+                              }}
+                            >
+                              <ContentCopy sx={{ fontSize: '1rem' }} />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      )}
+                    </Box>
+                    {msg.sender === 'user' && (
+                      <Avatar
+                        sx={{
+                          width: 36,
+                          height: 36,
+                          bgcolor: '#e8eaed',
+                          color: '#4674af',
+                          fontSize: '0.9rem'
+                        }}
+                      >
+                        <Person sx={{ fontSize: '1rem' }} />
+                      </Avatar>
+                    )}
+                  </Box>
+                </Fade>
+              ))}
+
+              {isWaiting && (
+                <Fade in>
+                  <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'flex-start',
+                    gap: 2,
+                    mb: 3
+                  }}>
+                    <Avatar
+                      sx={{
+                        width: 36,
+                        height: 36,
+                        bgcolor: '#4674af',
+                        color: '#fff'
+                      }}
+                    >
+                      <RocketLaunch sx={{ fontSize: '1rem' }} />
+                    </Avatar>
+                    <MessageBubble isUser={false}>
+                      <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        minHeight: '24px'
+                      }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: '#ffffff',
+                            fontWeight: 500,
+                            position: 'relative',
+                            overflow: 'hidden',
+                            '&::before': {
+                              content: '""',
+                              position: 'absolute',
+                              top: 0,
+                              left: '-100%',
+                              width: '100%',
+                              height: '100%',
+                              background: 'linear-gradient(90deg, transparent, rgba(0, 168, 255, 0.3), transparent)',
+                              animation: 'sidebarReflective 2s ease-in-out infinite',
+                              '@keyframes sidebarReflective': {
+                                '0%': { left: '-100%' },
+                                '100%': { left: '100%' }
+                              }
+                            }
+                          }}
+                        >
+                          {thinkingPhrases[thinkingIndex]}
+                        </Typography>
+                      </Box>
+                    </MessageBubble>
+                  </Box>
+                </Fade>
+              )}
+            </MessagesContainer>
+          </ChatArea>
+
+          {/* Input Area */}
+          <InputContainer>
+            {selectedFile && (
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                mb: 2,
+                p: 1.5,
+                borderRadius: 2,
+                backgroundColor: 'rgba(70, 116, 175, 0.1)',
+                border: '1px solid rgba(70, 116, 175, 0.2)'
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <InsertDriveFile sx={{ color: '#4674af' }} />
+                  <Typography variant="body2" sx={{ fontWeight: 500, color: '#2c3e50' }}>
+                    {fileName}
+                  </Typography>
+                </Box>
+                <IconButton size="small" onClick={handleRemoveSelectedFile}>
+                  <Close sx={{ fontSize: '1rem', color: '#4674af' }} />
+                </IconButton>
+              </Box>
+            )}
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, width: '100%' }}>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+                id="file-upload"
+              />
+              <label htmlFor="file-upload">
+                <Tooltip title="Anexar arquivo" arrow>
+                  <IconButton component="span" sx={{
+                    color: '#4674af',
+                    '&:hover': {
+                      backgroundColor: 'rgba(70, 116, 175, 0.1)'
+                    }
+                  }}>
+                    <AttachFile />
+                  </IconButton>
+                </Tooltip>
+              </label>
+              <TextField
+                fullWidth
+                variant="outlined"
+                placeholder="Digite sua mensagem..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') handleSend();
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    backgroundColor: '#ffffff',
+                    '& fieldset': {
+                      borderColor: '#e8eaed'
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#4674af'
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#4674af'
+                    },
+                    '& input': {
+                      color: '#2c3e50',
+                      '&::placeholder': {
+                        color: '#9aa0a6',
+                        opacity: 1
+                      }
+                    }
+                  }
+                }}
+              />
+
+              <Tooltip title="Enviar mensagem" arrow>
+                <SendButton
+                  disabled={(!inputValue && !selectedFile) || isWaiting}
+                  onClick={handleSend}
+                >
+                  <Send sx={{ fontSize: '1.1rem' }} />
+                </SendButton>
+              </Tooltip>
+            </Box>
+          </InputContainer>
+        </>
+      )}
 
       {/* Modal para visualização ampliada da imagem */}
       <Dialog
@@ -1027,7 +1648,10 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
           sx: {
             overflow: 'hidden',
             backgroundColor: 'transparent',
-            boxShadow: 'none'
+            boxShadow: 'none',
+            [theme.breakpoints.down('md')]: {
+              margin: theme.spacing(1)
+            }
           }
         }}
       >
@@ -1056,8 +1680,8 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
           position: 'absolute',
           bottom: 16,
           right: 16,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          borderRadius: '28px'
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          borderRadius: '24px'
         }}>
           <Tooltip title="Zoom Out" arrow>
             <IconButton onClick={zoomOut} color="inherit" sx={{ color: '#fff' }}>
@@ -1085,6 +1709,272 @@ export default function PremiumMarketingAssistant({activeCompany, setModule}) {
           </Tooltip>
         </DialogActions>
       </Dialog>
-    </Container>
+
+      {/* Alert para copy */}
+      {showCopyAlert && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            backgroundColor: '#4674af',
+            color: '#fff',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            animation: 'slideIn 0.3s ease-out',
+            '@keyframes slideIn': {
+              '0%': {
+                transform: 'translateX(100%)',
+                opacity: 0
+              },
+              '100%': {
+                transform: 'translateX(0)',
+                opacity: 1
+              }
+            }
+          }}
+        >
+          <ContentCopy sx={{ fontSize: '1rem' }} />
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            {t('ai.feedback.copied')}
+          </Typography>
+        </Box>
+      )}
+
+      {/* Alert para configurações salvas */}
+      {showSettingsAlert && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            backgroundColor: '#28a745',
+            color: '#fff',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            animation: 'slideIn 0.3s ease-out',
+            '@keyframes slideIn': {
+              '0%': {
+                transform: 'translateX(100%)',
+                opacity: 0
+              },
+              '100%': {
+                transform: 'translateX(0)',
+                opacity: 1
+              }
+            }
+          }}
+        >
+          <Settings sx={{ fontSize: '1rem' }} />
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            {t('ai.settings.success')}
+          </Typography>
+        </Box>
+      )}
+
+            {/* Modal de Configurações da IA */}
+      <Dialog
+        open={settingsModal.open}
+        onClose={handleCloseSettings}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            maxHeight: '80vh',
+            [theme.breakpoints.down('md')]: {
+              margin: theme.spacing(1),
+              maxHeight: '90vh'
+            }
+          }
+        }}
+      >
+        <DialogContent sx={{
+          p: 2.5,
+          [theme.breakpoints.down('md')]: {
+            p: 1.5
+          }
+        }}>
+          {/* Instruções Personalizadas */}
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" sx={{ mb: 1.5, color: '#2c3e50', fontWeight: 500 }}>
+              {t('ai.settings.instructions.title')}
+            </Typography>
+            <TextField
+              fullWidth
+              multiline
+              rows={3}
+              variant="outlined"
+              placeholder={t('ai.settings.instructions.placeholder')}
+              value={aiInstructions}
+              onChange={(e) => setAiInstructions(e.target.value)}
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1.5
+                }
+              }}
+            />
+          </Box>
+
+                    {/* Upload de Arquivos */}
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" sx={{ mb: 1.5, color: '#2c3e50', fontWeight: 500 }}>
+              {t('ai.settings.files.title')}
+            </Typography>
+
+            <input
+              type="file"
+              multiple
+              accept=".pdf,.doc,.docx,.txt,image/*"
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  const files = Array.from(e.target.files);
+                  files.forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                      setUploadedImages(prev => [...prev, file]);
+                    } else {
+                      setUploadedFiles(prev => [...prev, file]);
+                    }
+                  });
+                }
+              }}
+              style={{ display: 'none' }}
+              id="settings-file-upload"
+            />
+            <label htmlFor="settings-file-upload">
+              <Button
+                variant="outlined"
+                component="span"
+                size="small"
+                startIcon={<Upload />}
+                sx={{
+                  borderColor: '#4674af',
+                  color: '#4674af',
+                  fontSize: '0.8rem',
+                  '&:hover': {
+                    borderColor: '#1E3A8A',
+                    backgroundColor: 'rgba(70, 116, 175, 0.1)'
+                  }
+                }}
+              >
+                {t('ai.settings.files.button')}
+              </Button>
+            </label>
+
+            {/* Lista de arquivos */}
+            {(uploadedFiles.length > 0 || uploadedImages.length > 0) && (
+              <Box sx={{ maxHeight: '150px', overflowY: 'auto' }}>
+                {uploadedFiles.map((file, index) => (
+                  <Box
+                    key={`doc-${index}`}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      p: 1,
+                      mb: 0.5,
+                      backgroundColor: '#f8f9fa',
+                      borderRadius: 1,
+                      fontSize: '0.8rem'
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1, minWidth: 0 }}>
+                      <Description sx={{ color: '#4674af', fontSize: '1rem' }} />
+                      <Typography variant="body2" sx={{ color: '#2c3e50', fontSize: '0.8rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {file.name}
+                      </Typography>
+                    </Box>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleRemoveUploadedFile(index, 'document')}
+                      sx={{ color: '#dc3545', p: 0.5 }}
+                    >
+                      <Close sx={{ fontSize: '0.9rem' }} />
+                    </IconButton>
+                  </Box>
+                ))}
+                {uploadedImages.map((file, index) => (
+                  <Box
+                    key={`img-${index}`}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      p: 1,
+                      mb: 0.5,
+                      backgroundColor: '#f8f9fa',
+                      borderRadius: 1,
+                      fontSize: '0.8rem'
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1, minWidth: 0 }}>
+                      <Image sx={{ color: '#4674af', fontSize: '1rem' }} />
+                      <Typography variant="body2" sx={{ color: '#2c3e50', fontSize: '0.8rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {file.name}
+                      </Typography>
+                    </Box>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleRemoveUploadedFile(index, 'image')}
+                      sx={{ color: '#dc3545', p: 0.5 }}
+                    >
+                      <Close sx={{ fontSize: '0.9rem' }} />
+                    </IconButton>
+                  </Box>
+                ))}
+              </Box>
+            )}
+          </Box>
+        </DialogContent>
+
+        <DialogActions sx={{ p: 2, gap: 1 }}>
+          <Button
+            onClick={handleCloseSettings}
+            variant="text"
+            size="small"
+            sx={{ color: '#6c757d' }}
+          >
+            {t('ai.settings.actions.cancel')}
+          </Button>
+          <Button
+            onClick={handleSaveSettings}
+            variant="contained"
+            size="small"
+            disabled={isSavingSettings}
+            sx={{
+              backgroundColor: '#4674af',
+              '&:hover': {
+                backgroundColor: '#1E3A8A'
+              },
+              '&:disabled': {
+                backgroundColor: '#e8eaed',
+                color: '#9aa0a6'
+              }
+            }}
+          >
+            {isSavingSettings ? (
+              <>
+                <CircularProgress size={16} sx={{ mr: 1, color: '#fff' }} />
+                {t('ai.settings.actions.saving')}
+              </>
+            ) : (
+              t('ai.settings.actions.save')
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </ChatContainer>
+    </>
   );
 }

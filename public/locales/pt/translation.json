@@ -1,0 +1,81 @@
+{
+  "ai": {
+    "title": "Assistente de IA para Marketing",
+    "welcome": {
+      "title": "Olá! Sou seu assistente de IA para marketing",
+      "subtitle": "Como posso ajudá-lo hoje?",
+      "description": "Estou aqui para ajudá-lo com suas estratégias de marketing, criação de conteúdo, análise de dados e muito mais. Basta me dizer o que você precisa!"
+    },
+    "input": {
+      "placeholder": "Digite sua mensagem aqui...",
+      "send": "Enviar",
+      "attachFile": "Anexar arquivo"
+    },
+    "thinking": {
+      "analyzing": "Analisando sua solicitação...",
+      "processing": "Processando informações...",
+      "generating": "Gerando resposta...",
+      "thinking": "Pensando na melhor estratégia...",
+      "creating": "Criando conteúdo personalizado...",
+      "optimizing": "Otimizando para seus objetivos..."
+    },
+    "feedback": {
+      "thumbsUp": "Gostei",
+      "thumbsDown": "Não gostei",
+      "copy": "Copiar",
+      "copied": "Conteúdo copiado!"
+    },
+    "settings": {
+      "title": "Configurações da IA",
+      "instructions": {
+        "title": "Instruções Personalizadas",
+        "placeholder": "Adicione instruções específicas para personalizar o comportamento da IA..."
+      },
+      "files": {
+        "title": "Upload de Arquivos",
+        "description": "Adicione documentos e imagens para fornecer contexto à IA",
+        "button": "Selecionar Arquivos",
+        "acceptedTypes": "PDF, DOC, DOCX, TXT, Imagens"
+      },
+      "uploadedFiles": "Arquivos enviados:",
+      "uploadedImages": "Imagens enviadas:",
+      "removeFile": "Remover",
+      "actions": {
+        "cancel": "Cancelar",
+        "save": "Salvar",
+        "saving": "Salvando..."
+      },
+      "success": "Configurações salvas com sucesso!"
+    },
+    "errors": {
+      "sendMessage": "Erro ao enviar mensagem",
+      "saveSettings": "Erro ao salvar configurações",
+      "assistantNotFound": "Assistant ID não encontrado"
+    },
+    "premium": {
+      "freePlan": "plano Gratuito",
+      "upgrade": "Fazer Upgrade"
+    },
+    "description": "Seu parceiro inteligente para estratégias de marketing digital, criação de conteúdo e otimização de campanhas.",
+    "brand": "Roktune AI",
+    "quickQuestions": {
+      "marketingStrategy": "Como criar uma estratégia de marketing digital?",
+      "socialMedia": "Quais são as melhores práticas para redes sociais?",
+      "emailMarketing": "Como otimizar campanhas de email marketing?",
+      "engagement": "Dicas para aumentar o engajamento online",
+      "viralContent": "Como criar conteúdo viral?",
+      "seo": "Estratégias de SEO para meu negócio",
+      "metrics": "Como analisar métricas de marketing?",
+      "promotional": "Ideias criativas para campanhas promocionais"
+    },
+    "topics": {
+      "landingPages": "Landing Pages",
+      "automation": "Automação",
+      "crm": "CRM",
+      "chatbot": "Chatbot",
+      "funnel": "Funil",
+      "salesPages": "Sales Pages",
+      "ads": "Anúncios"
+    }
+  }
+}

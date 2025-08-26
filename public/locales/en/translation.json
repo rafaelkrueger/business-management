@@ -1,0 +1,81 @@
+{
+  "ai": {
+    "title": "AI Marketing Assistant",
+    "welcome": {
+      "title": "Hello! I'm your AI marketing assistant",
+      "subtitle": "How can I help you today?",
+      "description": "I'm here to help you with your marketing strategies, content creation, data analysis, and much more. Just tell me what you need!"
+    },
+    "input": {
+      "placeholder": "Type your message here...",
+      "send": "Send",
+      "attachFile": "Attach file"
+    },
+    "thinking": {
+      "analyzing": "Analyzing your request...",
+      "processing": "Processing information...",
+      "generating": "Generating response...",
+      "thinking": "Thinking of the best strategy...",
+      "creating": "Creating personalized content...",
+      "optimizing": "Optimizing for your goals..."
+    },
+    "feedback": {
+      "thumbsUp": "Like",
+      "thumbsDown": "Dislike",
+      "copy": "Copy",
+      "copied": "Content copied!"
+    },
+    "settings": {
+      "title": "AI Settings",
+      "instructions": {
+        "title": "Custom Instructions",
+        "placeholder": "Add specific instructions to customize the AI behavior..."
+      },
+      "files": {
+        "title": "File Upload",
+        "description": "Add documents and images to provide context to the AI",
+        "button": "Select Files",
+        "acceptedTypes": "PDF, DOC, DOCX, TXT, Images"
+      },
+      "uploadedFiles": "Uploaded files:",
+      "uploadedImages": "Uploaded images:",
+      "removeFile": "Remove",
+      "actions": {
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "success": "Settings saved successfully!"
+    },
+    "errors": {
+      "sendMessage": "Error sending message",
+      "saveSettings": "Error saving settings",
+      "assistantNotFound": "Assistant ID not found"
+    },
+    "premium": {
+      "freePlan": "Free Plan",
+      "upgrade": "Upgrade"
+    },
+    "description": "Your intelligent partner for digital marketing strategies, content creation, and campaign optimization.",
+    "brand": "Roktune AI",
+    "quickQuestions": {
+      "marketingStrategy": "How to create a digital marketing strategy?",
+      "socialMedia": "What are the best practices for social media?",
+      "emailMarketing": "How to optimize email marketing campaigns?",
+      "engagement": "Tips to increase online engagement",
+      "viralContent": "How to create viral content?",
+      "seo": "SEO strategies for my business",
+      "metrics": "How to analyze marketing metrics?",
+      "promotional": "Creative ideas for promotional campaigns"
+    },
+    "topics": {
+      "landingPages": "Landing Pages",
+      "automation": "Automation",
+      "crm": "CRM",
+      "chatbot": "Chatbot",
+      "funnel": "Funnel",
+      "salesPages": "Sales Pages",
+      "ads": "Ads"
+    }
+  }
+}
