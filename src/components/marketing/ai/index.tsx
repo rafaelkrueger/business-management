@@ -198,10 +198,9 @@ const InputContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: theme.spacing(1),
+  marginBottom: '50px',
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
   flexShrink: 0,
-  marginTop: '-100px',
-  zIndex: 1000,
   [theme.breakpoints.up('lg')]: {
     // Ajustar padding para telas grandes
     padding: theme.spacing(2),
@@ -1531,7 +1530,10 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                           height: 36,
                           bgcolor: '#4674af',
                           color: '#fff',
-                          fontSize: '0.9rem'
+                          fontSize: '0.9rem',
+                          [theme.breakpoints.down('sm')]: {
+                            display: 'none'
+                          }
                         }}
                       >
                         <RocketLaunch sx={{ fontSize: '1rem' }} />
@@ -1611,7 +1613,10 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                           height: 36,
                           bgcolor: '#e8eaed',
                           color: '#4674af',
-                          fontSize: '0.9rem'
+                          fontSize: '0.9rem',
+                          [theme.breakpoints.down('sm')]: {
+                            display: 'none'
+                          }
                         }}
                       >
                         <Person sx={{ fontSize: '1rem' }} />
@@ -1635,7 +1640,10 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                         width: 36,
                         height: 36,
                         bgcolor: '#4674af',
-                        color: '#fff'
+                        color: '#fff',
+                        [theme.breakpoints.down('sm')]: {
+                          display: 'none'
+                        }
                       }}
                     >
                       <RocketLaunch sx={{ fontSize: '1rem' }} />
