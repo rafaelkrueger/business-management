@@ -1475,6 +1475,10 @@
         "saving": "Salvando..."
       },
       "success": "Configurações salvas com sucesso!"
+    },
+    "loading": {
+      "title": "Carregando conversas...",
+      "subtitle": "Buscando seu histórico de conversas"
     }
   }
 }

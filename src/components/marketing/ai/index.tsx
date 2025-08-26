@@ -302,6 +302,7 @@ export default function PremiumMarketingAssistant({ activeCompany, setModule }) 
     messages: []
   });
   const [isWaiting, setIsWaiting] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [fileName, setFileName] = useState('');
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -606,6 +607,9 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
 
   useEffect(() => {
     const initChat = async () => {
+      if (!activeCompany) return;
+
+      setIsLoadingHistory(true);
       try {
         console.log('Iniciando chat para empresa:', activeCompany);
         const pastMessages = await ChatAiService.getConversationByCompany(activeCompany);
@@ -628,13 +632,24 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
           conversationId: crypto.randomUUID(),
           messages: []
         });
+      } finally {
+        setIsLoadingHistory(false);
       }
     };
 
-    if (activeCompany) {
-      initChat();
-    }
+    initChat();
   }, [activeCompany]);
+
+  // Scroll automático quando o histórico é carregado
+  useEffect(() => {
+    if (!isLoadingHistory && chat.messages.length > 0 && chatContainerRef.current) {
+      setTimeout(() => {
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+      }, 100);
+    }
+  }, [isLoadingHistory, chat.messages.length]);
 
   const openImageModal = (src) => {
     setImageModal({
@@ -1192,8 +1207,113 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
 
       </Box>
 
-      {/* Chat Area */}
-      {chat.messages.length === 0 ? (
+      {/* Loading Screen */}
+      {isLoadingHistory ? (
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          width: '100%',
+          background: '#fafbfc'
+        }}>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 3,
+            maxWidth: '400px',
+            textAlign: 'center'
+          }}>
+            <Box sx={{
+              position: 'relative',
+              width: '80px',
+              height: '80px'
+            }}>
+              <CircularProgress
+                size={80}
+                thickness={4}
+                sx={{
+                  color: '#4674af',
+                  '& .MuiCircularProgress-circle': {
+                    strokeLinecap: 'round',
+                  }
+                }}
+              />
+              <Box sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #4674af, #1E3A8A)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(70, 116, 175, 0.3)'
+              }}>
+                <RocketLaunch sx={{ color: '#fff', fontSize: '1.5rem' }} />
+              </Box>
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Typography variant="h5" sx={{
+                fontWeight: 600,
+                color: '#2c3e50',
+                fontSize: { xs: '1.2rem', sm: '1.4rem' }
+              }}>
+                {t('ai.loading.title')}
+              </Typography>
+              <Typography variant="body2" sx={{
+                color: '#6c757d',
+                fontSize: { xs: '0.9rem', sm: '1rem' }
+              }}>
+                {t('ai.loading.subtitle')}
+              </Typography>
+            </Box>
+
+            <Box sx={{
+              display: 'flex',
+              gap: 1,
+              alignItems: 'center'
+            }}>
+              <Box sx={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: '#4674af',
+                animation: 'pulse 1.5s ease-in-out infinite'
+              }} />
+              <Box sx={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: '#4674af',
+                animation: 'pulse 1.5s ease-in-out infinite 0.2s'
+              }} />
+              <Box sx={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                backgroundColor: '#4674af',
+                animation: 'pulse 1.5s ease-in-out infinite 0.4s'
+              }} />
+            </Box>
+          </Box>
+
+          <style>
+            {`
+              @keyframes pulse {
+                0%, 100% { opacity: 0.4; transform: scale(1); }
+                50% { opacity: 1; transform: scale(1.2); }
+              }
+            `}
+          </style>
+        </Box>
+      ) : chat.messages.length === 0 ? (
         <>
         <Box sx={{
           display: 'flex',

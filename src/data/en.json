@@ -1483,6 +1483,10 @@
         "saving": "Saving..."
       },
       "success": "Settings saved successfully!"
+    },
+    "loading": {
+      "title": "Loading conversations...",
+      "subtitle": "Fetching your conversation history"
     }
   }
 }
