@@ -105,7 +105,7 @@ const ChatContainer = styled(Box)(({ theme }) => ({
     }
   },
   [theme.breakpoints.down('sm')]: {
-    padding: theme.spacing(0.5, 1),
+    padding: theme.spacing(0.5),
     '& > *': {
       width: '100%',
       margin: '0 auto'
@@ -121,23 +121,13 @@ const ChatArea = styled(Box)(({ theme }) => ({
   padding: theme.spacing(1),
   gap: theme.spacing(1),
   minHeight: 0,
-  width: '100%',
   [theme.breakpoints.up('lg')]: {
     padding: theme.spacing(2),
     gap: theme.spacing(2)
   },
-  [theme.breakpoints.between('md', 'lg')]: {
-    padding: theme.spacing(1.5),
-    gap: theme.spacing(1.5)
-  },
-  [theme.breakpoints.between('sm', 'md')]: {
-    padding: theme.spacing(1),
-    gap: theme.spacing(1)
-  },
-  [theme.breakpoints.down('sm')]: {
-    padding: theme.spacing(0.5, 1),
-    gap: theme.spacing(0.5),
-    width: '100%'
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(0.5),
+    gap: theme.spacing(0.5)
   }
 }));
 
@@ -210,29 +200,18 @@ const InputContainer = styled(Box)(({ theme }) => ({
   gap: theme.spacing(1),
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
   flexShrink: 0,
-  width: '100%',
+  marginTop: '-100px',
+  zIndex: 1000,
   [theme.breakpoints.up('lg')]: {
     // Ajustar padding para telas grandes
     padding: theme.spacing(2),
     gap: theme.spacing(1.5),
     borderRadius: theme.spacing(2)
   },
-  [theme.breakpoints.between('md', 'lg')]: {
-    padding: theme.spacing(1.5),
-    gap: theme.spacing(1),
-    borderRadius: theme.spacing(1.5)
-  },
-  [theme.breakpoints.between('sm', 'md')]: {
-    padding: theme.spacing(1.25),
-    gap: theme.spacing(0.75),
-    borderRadius: theme.spacing(1.25)
-  },
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
     padding: theme.spacing(1),
     gap: theme.spacing(0.5),
-    borderRadius: theme.spacing(1),
-    width: '100%',
-    margin: theme.spacing(0, 1)
+    borderRadius: theme.spacing(1)
   }
 }));
 
@@ -1147,40 +1126,32 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
         `}
       </style>
       <ChatContainer sx={{ margin: 0, padding: 0 }}>
-        <Box sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100vh',
-          width: '100%',
-          maxWidth: '100%'
-        }}>
-          {/* Header Minimalista */}
-          <Box sx={{
-            padding: theme.spacing(1.5, 2),
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1.5,
-            borderBottom: '1px solid #e8eaed',
-            backgroundColor: '#ffffff',
-            width: '100%',
-            flexShrink: 0,
-            [theme.breakpoints.up('lg')]: {
-              padding: theme.spacing(2, 3),
-              gap: 2
-            },
-            [theme.breakpoints.between('md', 'lg')]: {
-              padding: theme.spacing(1.5, 2.5),
-              gap: 1.5
-            },
-            [theme.breakpoints.between('sm', 'md')]: {
-              padding: theme.spacing(1.25, 2),
-              gap: 1.25
-            },
-            [theme.breakpoints.down('sm')]: {
-              padding: theme.spacing(1, 1.5),
-              gap: 1
-            }
-          }}>
+      {/* Header Minimalista */}
+      <Box sx={{
+        padding: theme.spacing(1.5, 2),
+        display: 'flex',
+        alignItems: 'center',
+        gap: 1.5,
+        borderBottom: '1px solid #e8eaed',
+        backgroundColor: '#ffffff',
+        width: '100%',
+        [theme.breakpoints.up('lg')]: {
+          padding: theme.spacing(2, 3),
+          gap: 2
+        },
+        [theme.breakpoints.between('md', 'lg')]: {
+          padding: theme.spacing(1.5, 2.5),
+          gap: 1.5
+        },
+        [theme.breakpoints.between('sm', 'md')]: {
+          padding: theme.spacing(1.25, 2),
+          gap: 1.25
+        },
+        [theme.breakpoints.down('sm')]: {
+          padding: theme.spacing(1, 1.5),
+          gap: 1
+        }
+      }}>
         <IconButton
           onClick={() => setModule('')}
           sx={{
@@ -1230,23 +1201,16 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          flex: 1,
+          height: '100%',
           width: '100%',
           maxWidth: '100%',
           padding: theme.spacing(1),
-          minHeight: 0,
           [theme.breakpoints.up('lg')]: {
             padding: theme.spacing(2),
           },
-          [theme.breakpoints.between('md', 'lg')]: {
-            padding: theme.spacing(1.5),
-          },
-          [theme.breakpoints.between('sm', 'md')]: {
-            padding: theme.spacing(1),
-          },
           [theme.breakpoints.down('sm')]: {
             padding: theme.spacing(0.5, 1),
-            width: '100%'
+            width:'85%'
           }
         }}>
           <Box sx={{ mb: 3 }}>
@@ -1546,8 +1510,8 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
         </>
       ) : (
         <>
-          <ChatArea sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-            <MessagesContainer ref={chatContainerRef} sx={{ flex: 1, minHeight: 0 }}>
+          <ChatArea>
+            <MessagesContainer ref={chatContainerRef}>
               {chat.messages.map((msg) => (
                 <Fade in key={msg.id}>
                   <Box sx={{
@@ -1717,7 +1681,7 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
           </ChatArea>
 
           {/* Input Area */}
-          <InputContainer sx={{ flexShrink: 0, width: '100%' }}>
+          <InputContainer>
             {selectedFile && (
               <Box sx={{
                 display: 'flex',
@@ -2144,8 +2108,7 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
           </Button>
         </DialogActions>
       </Dialog>
-        </Box>
-      </ChatContainer>
+    </ChatContainer>
     </>
   );
 }
