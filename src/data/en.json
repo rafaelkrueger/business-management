@@ -96,6 +96,13 @@
     "success": "Payment successful!",
     "error": "Payment error occurred"
   },
+  "aiAssistantTips": {
+    "startHere": "Start Here",
+    "howToUseAssistant": "How to use the AI assistant?",
+    "firstStepsDigitalMarketing": "First steps in digital marketing",
+    "initialSystemSetup": "Initial system setup",
+    "tipsToStartToday": "Tips to start today"
+  },
   "actionBlocks": {
     "title": "Action Blocks & Workflows",
     "createBlock": "Create Block",
@@ -209,8 +216,8 @@
     "businessTypePlaceholder": "e.g. SaaS, Restaurant, Clothing Store...",
     "industry": "Industry / Sector",
     "industryPlaceholder": "e.g. Technology, Health, Retail...",
-    "targetAudience": "Target Audience",
-    "targetAudiencePlaceholder": "e.g. Small businesses, developers, seniors...",
+    "logo": "Logo",
+    "logoPlaceholder": "Upload your company logo",
     "mission": "Mission",
     "missionPlaceholder": "What is the mission of your company?",
     "vision": "Vision",

@@ -54,6 +54,7 @@ import {
   Image,
   Upload
 } from '@mui/icons-material';
+import { Switch, FormControlLabel } from '@mui/material';
 import {
   Brain,
   Layout,
@@ -61,11 +62,15 @@ import {
   Users,
   MessageSquare,
   FileText,
-  Coins
+  Coins,
+  Trash2
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ChatAiService from '../../../services/chat-ai.service.ts';
+import EngineAiService, { EngineResponse } from '../../../services/engine-ai.service.ts';
 import { AllInOneApi } from '../../../Api.ts';
+import ThoughtProcessDisplay from '../../engine-ai/ThoughtProcessDisplay.tsx';
+import EngineInsights from '../../engine-ai/EngineInsights.tsx';
 
 const ChatContainer = styled(Box)(({ theme }) => ({
   height: '100vh',
@@ -328,6 +333,12 @@ export default function PremiumMarketingAssistant({ activeCompany, setModule }) 
   const [isSavingSettings, setIsSavingSettings] = useState(false);
   const [showSettingsAlert, setShowSettingsAlert] = useState(false);
 
+  // Estados para o Engine AI
+  const [useEngineAI, setUseEngineAI] = useState(true); // Ativar Engine AI por padrão
+  const [engineResponse, setEngineResponse] = useState<EngineResponse | null>(null);
+  const [isEngineProcessing, setIsEngineProcessing] = useState(false);
+  const [showThoughtProcess, setShowThoughtProcess] = useState<{[key: string]: boolean}>({});
+
   const welcomeMessage = {
     id: 'welcome',
     sender: 'assistant',
@@ -578,6 +589,33 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
     }
   }));
 
+  const PulseEffect = styled('div')({
+    position: 'absolute',
+    top: '15px',
+    right: '10px',
+    width: '10px',
+    height: '10px',
+    borderRadius: '50%',
+    background: '#FFD700',
+    animation: 'pulseSimple 1.5s ease-in-out infinite',
+    zIndex: 10,
+    boxShadow: '0 0 6px rgba(255, 215, 0, 0.5)',
+    '@keyframes pulseSimple': {
+      '0%': {
+        transform: 'scale(1)',
+        opacity: 1,
+      },
+      '50%': {
+        transform: 'scale(1.2)',
+        opacity: 0.8,
+      },
+      '100%': {
+        transform: 'scale(1)',
+        opacity: 1,
+      },
+    },
+  });
+
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
@@ -796,7 +834,7 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
 
 
   const handleSend = useCallback(async () => {
-    if (!chat.conversationId || (!inputValue.trim() && !selectedFile) || isWaiting) return;
+    if (!activeCompany || (!inputValue.trim() && !selectedFile) || isWaiting || isEngineProcessing) return;
 
     const content = inputValue.trim();
     setInputValue('');
@@ -819,42 +857,80 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
     }));
 
     setIsWaiting(true);
+    setIsEngineProcessing(true);
 
     try {
       const language = i18n.language.startsWith('en') ? 'en' : 'pt';
 
-      let responseMessages;
-      if (selectedFile) {
-        const formData = new FormData();
-        formData.append('file', selectedFile);
-
-        const response = await AllInOneApi.post('shared/image', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'accept': '*/*',
-          },
-        });
-
-        responseMessages = await ChatAiService.sendMessage(
-          chat.conversationId,
+      if (useEngineAI) {
+        // Usar Engine AI
+        const engineResponse = await EngineAiService.processMessage(
+          activeCompany || '',
           content || `Arquivo: ${fileName}`,
-          activeCompany,
-          language,
-          response?.data.url
-        );
-      } else {
-        responseMessages = await ChatAiService.sendMessage(
-          chat.conversationId,
-          content,
-          activeCompany,
           language
         );
-      }
 
-      setChat(prev => ({
-        ...prev,
-        messages: responseMessages
-      }));
+        setEngineResponse(engineResponse);
+
+        // Adicionar resposta do Engine AI
+        const assistantMessage = {
+          id: crypto.randomUUID(),
+          sender: 'assistant',
+          content: engineResponse.response,
+          timestamp: new Date(),
+          engineData: engineResponse // Incluir dados do Engine
+        };
+
+        setChat(prev => ({
+          ...prev,
+          messages: [...updatedMessages, assistantMessage]
+        }));
+
+        // Salvar conversa no banco de dados
+        try {
+          await ChatAiService.saveEngineConversation(
+            activeCompany || '',
+            content || `Arquivo: ${fileName}`,
+            engineResponse.response
+          );
+        } catch (error) {
+          console.error('Error saving engine conversation:', error);
+        }
+      } else {
+        // Usar Chat AI tradicional
+        let responseMessages;
+        if (selectedFile) {
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+
+          const response = await AllInOneApi.post('shared/image', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'accept': '*/*',
+            },
+          });
+
+          responseMessages = await ChatAiService.sendMessage(
+            chat.conversationId || '',
+            content || `Arquivo: ${fileName}`,
+            activeCompany || '',
+            language,
+            response?.data.url
+          );
+        } else {
+          responseMessages = await ChatAiService.sendMessage(
+            chat.conversationId || '',
+            content,
+            activeCompany || '',
+            language
+          );
+        }
+
+        setChat(prev => ({
+          ...prev,
+          messages: responseMessages
+        }));
+      }
 
       handleRemoveSelectedFile();
     } catch (error) {
@@ -873,8 +949,176 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
       }));
     } finally {
       setIsWaiting(false);
+      setIsEngineProcessing(false);
     }
-  }, [chat.conversationId, inputValue, selectedFile, isWaiting, chat.messages, i18n.language, activeCompany, fileName]);
+  }, [activeCompany, inputValue, selectedFile, isWaiting, isEngineProcessing, chat.messages, i18n.language, useEngineAI, chat.conversationId, fileName]);
+
+  // Função para reset completo dos dados da empresa
+  const handleResetAllData = async () => {
+    if (!activeCompany) return;
+
+    if (window.confirm('Are you sure you want to reset all company data? This will delete all conversation history and collected information.')) {
+      try {
+        await EngineAiService.resetAllCompanyData(activeCompany);
+
+        // Limpar estado local
+        setChat({
+          conversationId: null,
+          messages: []
+        });
+        setEngineResponse(null);
+        setShowThoughtProcess({});
+
+        // Adicionar mensagem de confirmação
+        const resetMessage = {
+          id: crypto.randomUUID(),
+          sender: 'assistant',
+          content: '✅.',
+          timestamp: new Date()
+        };
+
+        setChat(prev => ({
+          ...prev,
+          messages: [welcomeMessage, resetMessage]
+        }));
+
+        alert('Data reseted!');
+      } catch (error) {
+        console.error('Error resetting data:', error);
+        alert('Erro ao resetar dados. Tente novamente.');
+      }
+    }
+  };
+
+  // Função para formatar texto com markdown básico
+  const formatMessageContent = (content) => {
+    if (!content) return '';
+
+    // Dividir o conteúdo em linhas
+    const lines = content.split('\n');
+    const formattedLines = lines.map((line, index) => {
+      // Detectar listas numeradas (1. 2. 3. etc)
+      const numberedListMatch = line.match(/^(\d+)\.\s+(.+)$/);
+      if (numberedListMatch) {
+        return (
+          <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+            <Typography component="span" sx={{
+              fontWeight: 600,
+              color: '#4674af',
+              minWidth: '20px',
+              fontSize: '0.95rem'
+            }}>
+              {numberedListMatch[1]}.
+            </Typography>
+            <Typography component="span" sx={{
+              fontSize: '0.95rem',
+              lineHeight: 1.6,
+              flex: 1
+            }}>
+              {formatInlineText(numberedListMatch[2])}
+            </Typography>
+          </Box>
+        );
+      }
+
+      // Detectar listas com marcadores (- * •)
+      const bulletListMatch = line.match(/^[-*•]\s+(.+)$/);
+      if (bulletListMatch) {
+        return (
+          <Box key={index} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 0.5 }}>
+            <Typography component="span" sx={{
+              color: '#4674af',
+              fontSize: '1.2rem',
+              lineHeight: 1,
+              mt: 0.1
+            }}>
+              •
+            </Typography>
+            <Typography component="span" sx={{
+              fontSize: '0.95rem',
+              lineHeight: 1.6,
+              flex: 1
+            }}>
+              {formatInlineText(bulletListMatch[1])}
+            </Typography>
+          </Box>
+        );
+      }
+
+      // Detectar títulos (linhas que terminam com :)
+      if (line.trim().endsWith(':') && line.length < 100) {
+        return (
+          <Typography key={index} variant="body1" sx={{
+            fontWeight: 600,
+            color: '#ffffff',
+            fontSize: '1rem',
+            mb: 1,
+            mt: index > 0 ? 2 : 0
+          }}>
+            {formatInlineText(line)}
+          </Typography>
+        );
+      }
+
+      // Linhas vazias
+      if (line.trim() === '') {
+        return <Box key={index} sx={{ height: '0.5rem' }} />;
+      }
+
+      // Texto normal
+      return (
+        <Typography key={index} component="span" sx={{
+          fontSize: '0.95rem',
+          lineHeight: 1.6,
+          display: 'block',
+          mb: 0.5
+        }}>
+          {formatInlineText(line)}
+        </Typography>
+      );
+    });
+
+    return formattedLines;
+  };
+
+  // Função para formatar texto inline (negrito, itálico)
+  const formatInlineText = (text) => {
+    if (!text) return '';
+
+    // Detectar texto em negrito (**texto**)
+    const boldMatch = text.match(/\*\*(.*?)\*\*/);
+    if (boldMatch) {
+      const before = text.substring(0, text.indexOf('**'));
+      const after = text.substring(text.indexOf('**') + boldMatch[0].length);
+      return (
+        <>
+          {before}
+          <Typography component="span" sx={{ fontWeight: 600 }}>
+            {boldMatch[1]}
+          </Typography>
+          {formatInlineText(after)}
+        </>
+      );
+    }
+
+    // Detectar texto em itálico (*texto*)
+    const italicMatch = text.match(/\*(.*?)\*/);
+    if (italicMatch) {
+      const before = text.substring(0, text.indexOf('*'));
+      const after = text.substring(text.indexOf('*') + italicMatch[0].length);
+      return (
+        <>
+          {before}
+          <Typography component="span" sx={{ fontStyle: 'italic' }}>
+            {italicMatch[1]}
+          </Typography>
+          {formatInlineText(after)}
+        </>
+      );
+    }
+
+    return text;
+  };
 
   const renderMessageContent = (msg) => {
     if (msg.content.includes('data:image/png;base64')) {
@@ -972,6 +1216,20 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
       );
     }
 
+    // Para mensagens da IA, usar formatação
+    if (msg.sender === 'assistant') {
+      return (
+        <Box sx={{
+          wordWrap: 'break-word',
+          overflowWrap: 'break-word',
+          maxWidth: '100%'
+        }}>
+          {formatMessageContent(msg.content)}
+        </Box>
+      );
+    }
+
+    // Para mensagens do usuário, manter formato simples
     return (
       <Typography variant="body2" sx={{
         whiteSpace: 'pre-line',
@@ -1003,6 +1261,13 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
         thumbsUp: false,
         thumbsDown: !prev[messageId]?.thumbsDown
       }
+    }));
+  };
+
+  const toggleThoughtProcess = (messageId: string) => {
+    setShowThoughtProcess(prev => ({
+      ...prev,
+      [messageId]: !prev[messageId]
     }));
   };
 
@@ -1097,17 +1362,32 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Element;
-      if (!target.closest('.quick-questions-container')) {
+
+      // Verifica se o clique foi fora do container de perguntas rápidas
+      const quickQuestionsContainer = target.closest('.quick-questions-container');
+      const dropdownContainer = target.closest('[data-dropdown="true"]');
+
+      // Se não clicou no container de perguntas rápidas nem em um dropdown, fecha
+      if (!quickQuestionsContainer && !dropdownContainer) {
         setOpenDropdown(null);
       }
     };
 
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpenDropdown(null);
+      }
+    };
+
+    // Sempre adiciona os event listeners quando há um dropdown aberto
     if (openDropdown) {
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscapeKey);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscapeKey);
     };
   }, [openDropdown]);
 
@@ -1188,13 +1468,61 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
           {t('ai.brand')}
         </Typography>
 
-        <Box sx={{ marginLeft: 'auto' }}>
+        <Box sx={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 2 }}>
+          {/* Toggle Engine AI */}
+          <FormControlLabel
+            control={
+              <Switch
+                checked={useEngineAI}
+                onChange={(e) => setUseEngineAI(e.target.checked)}
+                sx={{
+                  '& .MuiSwitch-switchBase.Mui-checked': {
+                    color: '#4674af',
+                    '&:hover': {
+                      backgroundColor: 'rgba(70, 116, 175, 0.08)',
+                    },
+                  },
+                  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                    backgroundColor: '#4674af',
+                  },
+                }}
+              />
+            }
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <PsychologyRounded sx={{ fontSize: '1rem', color: useEngineAI ? '#4674af' : '#6c757d' }} />
+                <Typography variant="caption" sx={{
+                  fontSize: '0.75rem',
+                  color: useEngineAI ? '#4674af' : '#6c757d',
+                  fontWeight: useEngineAI ? 600 : 400
+                }}>
+                  Engine AI
+                </Typography>
+              </Box>
+            }
+            sx={{ margin: 0 }}
+          />
+
+          {/* Botão de Reset Completo */}
+          <Tooltip title="Reset Completo (Apagar todos os dados)">
+            <IconButton
+              onClick={handleResetAllData}
+              sx={{
+                color: '#dc3545',
+                '&:hover': {
+                  backgroundColor: 'rgba(220, 53, 69, 0.1)'
+                }
+              }}
+            >
+              <Trash2 size={16} />
+            </IconButton>
+          </Tooltip>
+
           <Tooltip title={t('ai.settings.title')}>
             <IconButton
               onClick={() => setSettingsModal({ open: true })}
               sx={{
                 color: '#6c757d',
-                marginLeft:'-80px',
                 '&:hover': {
                   backgroundColor: 'rgba(108, 117, 125, 0.1)'
                 }
@@ -1556,17 +1884,17 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
               <Box sx={{ position: 'relative' }}>
                 <StartHereChip
                   icon={<Brain size={16} color="#ffffff" />}
-                  label="Comece Aqui"
+                  label={t('aiAssistantTips.startHere')}
                   onClick={() => handleTopicClick("Comece Aqui")}
                   variant="outlined"
                 />
                 {openDropdown === "Comece Aqui" && (
-                  <DropdownContainer>
+                  <DropdownContainer data-dropdown="true">
                     {[
-                      "Como usar o assistente de IA?",
-                      "Primeiros passos no marketing digital",
-                      "Configuração inicial do sistema",
-                      "Dicas para começar hoje"
+                      t('aiAssistantTips.howToUseAssistant'),
+                      t('aiAssistantTips.firstStepsDigitalMarketing'),
+                      t('aiAssistantTips.initialSystemSetup'),
+                      t('aiAssistantTips.tipsToStartToday')
                     ].map((question, index) => (
                       <DropdownItem
                         key={index}
@@ -1584,6 +1912,7 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                     ))}
                   </DropdownContainer>
                 )}
+                <PulseEffect />
               </Box>
               {Object.keys(quickQuestionsTopics).map((topic) => (
                 <Box key={topic} sx={{ position: 'relative' }}>
@@ -1595,7 +1924,7 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                       topic === "Chatbot" ? <MessageSquare size={16} color="#ffffff" /> :
                       topic === "Funil" ? <FileText size={16} color="#ffffff" /> :
                       topic === "Sales Pages" ? <Coins size={16} color="#ffffff" /> :
-                      topic === "Anúncios" ? <AdsClickOutlined sx={{ fontSize: '1rem', color: '#ffffff' }} /> :
+                      topic === "Anúncios" ? <AdsClickOutlined style={{ fontSize: '1rem', color: '#ffffff' }} /> :
                       <Brain size={16} color="#ffffff" />
                     }
                     label={topic}
@@ -1603,7 +1932,7 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                     variant="outlined"
                   />
                   {openDropdown === topic && (
-                    <DropdownContainer>
+                    <DropdownContainer data-dropdown="true">
                       {quickQuestionsTopics[topic].map((question, index) => (
                         <DropdownItem
                           key={index}
@@ -1650,10 +1979,7 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                           height: 36,
                           bgcolor: '#4674af',
                           color: '#fff',
-                          fontSize: '0.9rem',
-                          [theme.breakpoints.down('sm')]: {
-                            display: 'none'
-                          }
+                          fontSize: '0.9rem'
                         }}
                       >
                         <RocketLaunch sx={{ fontSize: '1rem' }} />
@@ -1669,6 +1995,24 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                       <MessageBubble isUser={msg.sender === 'user'}>
                         {renderMessageContent(msg)}
                       </MessageBubble>
+
+                      {/* Renderizar dados do Engine AI se disponível */}
+                      {msg.sender === 'assistant' && msg.engineData && (
+                        <Box sx={{ mt: 1, width: '100%' }}>
+                          {/* Mostrar corrente de pensamentos apenas se ativado */}
+                          {showThoughtProcess[msg.id] && (
+                            <Box sx={{ width: '100%' }}>
+                              <ThoughtProcessDisplay thoughtProcess={msg.engineData.thoughtProcess} />
+                              <EngineInsights
+                                reasoning={msg.engineData.reasoning}
+                                recommendations={msg.engineData.recommendations}
+                                nextAction={msg.engineData.nextAction}
+                                suggestedModule={msg.engineData.suggestedModule}
+                              />
+                            </Box>
+                          )}
+                        </Box>
+                      )}
                       {msg.sender === 'assistant' && (
                         <Box sx={{
                           display: 'flex',
@@ -1723,6 +2067,28 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                               <ContentCopy sx={{ fontSize: '1rem' }} />
                             </IconButton>
                           </Tooltip>
+
+                          {/* Botão para mostrar/esconder corrente de pensamentos (apenas se engineData estiver disponível) */}
+                          {msg.engineData && (
+                            <Tooltip title={showThoughtProcess[msg.id] ? 'Ocultar Processo de Pensamento' : 'Mostrar Processo de Pensamento'} arrow>
+                              <IconButton
+                                size="small"
+                                onClick={() => toggleThoughtProcess(msg.id)}
+                                sx={{
+                                  color: showThoughtProcess[msg.id] ? '#4674af' : '#6c757d',
+                                  '&:hover': {
+                                    color: '#4674af'
+                                  }
+                                }}
+                              >
+                                <ArrowBackIos sx={{
+                                  fontSize: '1rem',
+                                  transform: showThoughtProcess[msg.id] ? 'rotate(90deg)' : 'rotate(-90deg)',
+                                  transition: 'transform 0.2s ease'
+                                }} />
+                              </IconButton>
+                            </Tooltip>
+                          )}
                         </Box>
                       )}
                     </Box>
@@ -1733,10 +2099,7 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                           height: 36,
                           bgcolor: '#e8eaed',
                           color: '#4674af',
-                          fontSize: '0.9rem',
-                          [theme.breakpoints.down('sm')]: {
-                            display: 'none'
-                          }
+                          fontSize: '0.9rem'
                         }}
                       >
                         <Person sx={{ fontSize: '1rem' }} />
@@ -1760,10 +2123,7 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                         width: 36,
                         height: 36,
                         bgcolor: '#4674af',
-                        color: '#fff',
-                        [theme.breakpoints.down('sm')]: {
-                          display: 'none'
-                        }
+                        color: '#fff'
                       }}
                     >
                       <RocketLaunch sx={{ fontSize: '1rem' }} />
@@ -1782,19 +2142,15 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
                             fontWeight: 500,
                             position: 'relative',
                             overflow: 'hidden',
-                            '&::before': {
-                              content: '""',
-                              position: 'absolute',
-                              top: 0,
-                              left: '-100%',
-                              width: '100%',
-                              height: '100%',
-                              background: 'linear-gradient(90deg, transparent, rgba(0, 168, 255, 0.3), transparent)',
-                              animation: 'sidebarReflective 2s ease-in-out infinite',
-                              '@keyframes sidebarReflective': {
-                                '0%': { left: '-100%' },
-                                '100%': { left: '100%' }
-                              }
+                            background: 'linear-gradient(90deg, #ffffff 25%, #e3f2fd 50%, #ffffff 75%)',
+                            backgroundSize: '200% 100%',
+                            backgroundClip: 'text',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            animation: 'shimmer 2s ease-in-out infinite',
+                            '@keyframes shimmer': {
+                              '0%': { backgroundPosition: '-200% 0' },
+                              '100%': { backgroundPosition: '200% 0' }
                             }
                           }}
                         >

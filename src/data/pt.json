@@ -96,6 +96,13 @@
     "success": "Pagamento realizado com sucesso!",
     "error": "Ocorreu um erro no pagamento"
   },
+  "aiAssistant": {
+    "startHere": "Comece Aqui",
+    "howToUseAssistant": "Como usar o assistente de IA?",
+    "firstStepsDigitalMarketing": "Primeiros passos no marketing digital",
+    "initialSystemSetup": "Configuração inicial do sistema",
+    "tipsToStartToday": "Dicas para começar hoje"
+  },
   "actionBlocks": {
     "title": "Blocos de Ação e Workflows",
     "createBlock": "Criar Bloco",
@@ -208,8 +215,8 @@
     "businessTypePlaceholder": "Ex: SaaS, Restaurante, Loja de Roupas...",
     "industry": "Setor / Segmento",
     "industryPlaceholder": "Ex: Tecnologia, Saúde, Varejo...",
-    "targetAudience": "Público-Alvo",
-    "targetAudiencePlaceholder": "Ex: Pequenas empresas, desenvolvedores, idosos...",
+    "logo": "Logo",
+    "logoPlaceholder": "Faça upload da logo da sua empresa",
     "mission": "Missão",
     "missionPlaceholder": "Qual é a missão da sua empresa?",
     "vision": "Visão",
@@ -558,7 +565,7 @@
     "addProductError": "Erro ao adicionar produto.",
     "tooltipText": "Seu plano atual permite apenas um dispositivo gerenciando os pedidos por vez."
   },
-  "aiAssistant": {
+  "aiAssistantTips": {
     "modalTitle": "Assistente de IA",
     "enableLabel": "Ativar Assistente de IA",
     "enabledSuccess": "Assistente de IA ativado com sucesso!",

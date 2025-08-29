@@ -59,6 +59,14 @@ static async sendMessage(conversationId: string, message: string, companyId: str
     return response.data;
   }
 
+  static async saveEngineConversation(companyId: string, userMessage: string, aiResponse: string) {
+    const response = await http.post(`/ai/chat/${companyId}/save-engine-conversation`, {
+      userMessage,
+      aiResponse
+    });
+    return response.data;
+  }
+
 }
 
 export default ChatAiService;
