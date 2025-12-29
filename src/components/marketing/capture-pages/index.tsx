@@ -492,13 +492,7 @@ const TemplateDialog: React.FC<{
   salesPage:'Landing Page'
 };
   const [sections, setSections] = useState<string[]>([
-    "Header",
-    "Hero Section",
-    "Product Benefits",
-    "Customer Testimonials",
-    "Pricing Table",
-    "Call to Action",
-    "Page Footer",
+    "Landing Page",
   ]);
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>, index: number) => {
