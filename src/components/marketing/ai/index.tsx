@@ -334,7 +334,7 @@ export default function PremiumMarketingAssistant({ activeCompany, setModule }) 
   const [showSettingsAlert, setShowSettingsAlert] = useState(false);
 
   // Estados para o Engine AI
-  const [useEngineAI, setUseEngineAI] = useState(true); // Ativar Engine AI por padrão
+  const [useEngineAI, setUseEngineAI] = useState(false); // Ativar Engine AI por padrão
   const [engineResponse, setEngineResponse] = useState<EngineResponse | null>(null);
   const [isEngineProcessing, setIsEngineProcessing] = useState(false);
   const [showThoughtProcess, setShowThoughtProcess] = useState<{[key: string]: boolean}>({});

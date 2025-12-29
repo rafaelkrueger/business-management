@@ -25,5 +25,9 @@ class LandingPageService {
         static delete(id) {
                 return http.delete(`/landing-pages/${id}`);
         }
+
+        static duplicate(id) {
+                return http.post(`/landing-pages/${id}/duplicate`);
+        }
 }
 export default LandingPageService;

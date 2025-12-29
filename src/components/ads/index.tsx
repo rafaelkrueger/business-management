@@ -125,205 +125,6 @@ export const AdsManagement: React.FC<AdsManagementProps> = ({ activeCompany, set
   const [alerts, setAlerts] = useState<any[]>([]);
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'cards'>('grid');
 
-  // Mock data
-  const mockPlatforms: Platform[] = [
-    {
-      id: 'google',
-      name: 'Google Ads',
-      icon: <GoogleIcon sx={{ color: '#4285F4', fontSize: 42, marginLeft:'-23px' }} />,
-      color: '#4285F4',
-      status: 'disconnected',
-      accountName: 'Conta Principal',
-      lastSync: '2 horas atrás',
-      spend: 1250.50,
-      impressions: 45000,
-      clicks: 1200,
-      conversions: 45
-    },
-    {
-      id: 'facebook',
-      name: 'Facebook Ads',
-      icon: <FacebookIcon sx={{ color: '#1877F2', fontSize: 42, marginLeft:'-23px' }} />,
-      color: '#1877F2',
-      status: 'disconnected',
-      accountName: 'Minha Empresa',
-      lastSync: '1 hora atrás',
-      spend: 890.30,
-      impressions: 32000,
-      clicks: 980,
-      conversions: 32
-    },
-    {
-      id: 'instagram',
-      name: 'Instagram Ads',
-      icon: <InstagramIcon sx={{ color: '#E1306C', fontSize: 42, marginLeft:'-23px' }} />,
-      color: '#E1306C',
-      status: 'disconnected',
-      accountName: 'Minha Empresa',
-      lastSync: '1 hora atrás',
-      spend: 650.20,
-      impressions: 28000,
-      clicks: 750,
-      conversions: 28
-    },
-         {
-       id: 'tiktok',
-       name: 'TikTok Ads',
-        icon: <Box sx={{
-          width: 42,
-          height: 42,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#000000', marginLeft:'-23px'
-        }}>
-          <svg viewBox="0 0 24 24" fill="currentColor" width="82" height="82">
-            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-          </svg>
-        </Box>,
-       color: '#000000',
-       status: 'disconnected',
-       spend: 0,
-       impressions: 0,
-       clicks: 0,
-       conversions: 0
-     },
-     {
-       id: 'twitter',
-       name: 'X Ads',
-               icon: <Box sx={{
-          width: 32,
-          height: 32,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#000000', marginLeft:'-23px'
-        }}>
-          <svg viewBox="0 0 24 24" fill="currentColor" width="82" height="82">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-          </svg>
-        </Box>,
-       color: '#000000',
-       status: 'disconnected',
-       spend: 0,
-       impressions: 0,
-       clicks: 0,
-       conversions: 0
-     }
-  ];
-  const mockCampaigns: Campaign[] = [
-    {
-      id: '1',
-      name: 'Campanha Black Friday',
-      platform: 'google',
-      status: 'active',
-      budget: 500,
-      spent: 320.50,
-      impressions: 15000,
-      clicks: 450,
-      ctr: 3.0,
-      cpc: 0.71,
-      cpm: 21.37,
-      conversions: 18,
-      cpl: 17.81,
-      roas: 2.8,
-      startDate: '2024-11-20',
-      endDate: '2024-11-30',
-      objective: 'Conversões',
-      targetAudience: 'Interessados em promoções'
-    },
-    {
-      id: '2',
-      name: 'Awareness Brand',
-      platform: 'facebook',
-      status: 'active',
-      budget: 300,
-      spent: 180.20,
-      impressions: 25000,
-      clicks: 320,
-      ctr: 1.28,
-      cpc: 0.56,
-      cpm: 7.21,
-      conversions: 8,
-      cpl: 22.53,
-      roas: 1.5,
-      startDate: '2024-11-15',
-      objective: 'Reconhecimento',
-      targetAudience: 'Público geral 25-45'
-    },
-    {
-      id: '3',
-      name: 'Instagram Stories',
-      platform: 'instagram',
-      status: 'paused',
-      budget: 200,
-      spent: 95.80,
-      impressions: 12000,
-      clicks: 180,
-      ctr: 1.5,
-      cpc: 0.53,
-      cpm: 7.98,
-      conversions: 5,
-      cpl: 19.16,
-      roas: 1.2,
-      startDate: '2024-11-10',
-      objective: 'Engajamento',
-      targetAudience: 'Jovens 18-30'
-    }
-  ];
-  const mockPerformanceData: PerformanceData = {
-    totalSpent: 2790.00,
-    totalImpressions: 105000,
-    totalClicks: 2750,
-    totalConversions: 105,
-    avgCtr: 2.62,
-    avgCpc: 1.01,
-    avgCpm: 26.57,
-    avgCpl: 26.57,
-    avgRoas: 1.83,
-    platformBreakdown: [
-      { platform: 'Google Ads', spent: 1250.50, impressions: 45000, clicks: 1200, conversions: 45 },
-      { platform: 'Facebook Ads', spent: 890.30, impressions: 32000, clicks: 980, conversions: 32 },
-      { platform: 'Instagram Ads', spent: 650.20, impressions: 28000, clicks: 750, conversions: 28 }
-    ],
-    dailyData: [
-      { date: '2024-11-20', spent: 120, conversions: 5 },
-      { date: '2024-11-21', spent: 135, conversions: 7 },
-      { date: '2024-11-22', spent: 98, conversions: 4 },
-      { date: '2024-11-23', spent: 156, conversions: 8 },
-      { date: '2024-11-24', spent: 142, conversions: 6 },
-      { date: '2024-11-25', spent: 178, conversions: 9 },
-      { date: '2024-11-26', spent: 165, conversions: 7 }
-    ],
-    weeklyTrend: [
-      { week: 'Semana 1', spent: 850, conversions: 35 },
-      { week: 'Semana 2', spent: 920, conversions: 42 },
-      { week: 'Semana 3', spent: 1020, conversions: 48 }
-    ]
-  };
-  const mockAlerts = [
-    {
-      id: '1',
-      type: 'warning',
-      title: 'Orçamento próximo do limite',
-      message: 'Campanha "Black Friday" atingiu 85% do orçamento diário',
-      timestamp: '2024-11-26T10:30:00Z'
-    },
-    {
-      id: '2',
-      type: 'error',
-      title: 'CTR abaixo do esperado',
-      message: 'Campanha "Awareness Brand" com CTR de 0.8% (meta: 2%)',
-      timestamp: '2024-11-26T09:15:00Z'
-    },
-    {
-      id: '3',
-      type: 'info',
-      title: 'Sincronização concluída',
-      message: 'Dados do Google Ads atualizados com sucesso',
-      timestamp: '2024-11-26T08:45:00Z'
-    }
-  ];
 
   useEffect(() => {
     loadData();
@@ -332,11 +133,23 @@ export const AdsManagement: React.FC<AdsManagementProps> = ({ activeCompany, set
   const loadData = async () => {
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      setPlatforms(mockPlatforms);
-      setCampaigns(mockCampaigns);
-      setPerformanceData(mockPerformanceData);
-      setAlerts(mockAlerts);
+      setPlatforms([]);
+      setCampaigns([]);
+      setPerformanceData({
+        totalSpent: 0,
+        totalImpressions: 0,
+        totalClicks: 0,
+        totalConversions: 0,
+        avgCtr: 0,
+        avgCpc: 0,
+        avgCpm: 0,
+        avgCpl: 0,
+        avgRoas: 0,
+        platformBreakdown: [],
+        dailyData: [],
+        weeklyTrend: []
+      });
+      setAlerts([]);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {

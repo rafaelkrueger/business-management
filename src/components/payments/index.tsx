@@ -62,66 +62,161 @@ const PaymentCard: React.FC<{ payment: any }> = ({ payment }) => {
     amount: Number(h.amount),
   }));
 
+  const isPaid = payment.status === 'paid';
+  const statusColor = isPaid ? '#10b981' : '#f59e0b';
+  const statusBg = isPaid ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)';
+
   return (
-    <Grid item xs={12} sm={6} md={4}>
+    <Grid item xs={12}>
       <MuiCard
         sx={{
-          borderLeft: '4px solid',
-          borderLeftColor: payment.status === 'paid' ? 'success.main' : 'warning.main',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
+          borderLeft: '3px solid',
+          borderLeftColor: statusColor,
+          borderRadius: '12px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+            transform: 'translateY(-2px)',
+          },
+          mb: 1.5,
         }}
       >
-        <CardContent sx={{ flexGrow: 1 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
-              {payment.description || payment.product?.name || 'Payment'}
-            </Typography>
-            {payment.link && (
-              <ExternalLink
-                size={18}
-                style={{ cursor: 'pointer' }}
-                onClick={() => window.open(payment.link as string, '_blank')}
-              />
-            )}
+        <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+            <Box sx={{ flex: 1 }}>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  fontWeight: 600,
+                  color: 'text.primary',
+                  fontSize: '0.95rem',
+                  mb: 0.5,
+                  lineHeight: 1.3
+                }}
+              >
+                {payment.description || payment.product?.name || 'Payment'}
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                <Box
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    px: 1,
+                    py: 0.25,
+                    bgcolor: statusBg,
+                    borderRadius: '6px',
+                    border: `1px solid ${statusColor}20`,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 6,
+                      height: 6,
+                      borderRadius: '50%',
+                      bgcolor: statusColor,
+                      mr: 0.5,
+                    }}
+                  />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: statusColor,
+                      fontWeight: 600,
+                      fontSize: '0.7rem',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {payment.status}
+                  </Typography>
+                </Box>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: 'text.secondary',
+                    fontSize: '0.75rem'
+                  }}
+                >
+                  {new Date(payment.paymentDate).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                  })}
+                </Typography>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {payment.link && (
+                <IconButton
+                  size="small"
+                  onClick={() => window.open(payment.link as string, '_blank')}
+                  sx={{
+                    color: '#6b7280',
+                    '&:hover': { color: '#3b82f6', bgcolor: 'rgba(59, 130, 246, 0.1)' },
+                  }}
+                >
+                  <ExternalLink size={16} />
+                </IconButton>
+              )}
+              <IconButton
+                size="small"
+                onClick={() => setOpen(true)}
+                sx={{
+                  color: '#6b7280',
+                  '&:hover': { color: '#3b82f6', bgcolor: 'rgba(59, 130, 246, 0.1)' },
+                }}
+              >
+                <HistoryIcon fontSize="small" />
+              </IconButton>
+            </Box>
           </Box>
-          <Typography
-            variant="body2"
-            sx={{
-              color: payment.status === 'paid' ? 'success.main' : 'warning.main',
-              mb: 1.5,
-              display: 'inline-block',
-              px: 1,
-              py: 0.5,
-              bgcolor:
-                payment.status === 'paid'
-                  ? 'rgba(76, 175, 80, 0.1)'
-                  : 'rgba(255, 152, 0, 0.1)',
-              borderRadius: 1,
-            }}
-          >
-            {payment.status}
-          </Typography>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1.5 }}>
-            {`${payment.currency} ${payment.amount}`}
-          </Typography>
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            {new Date(payment.paymentDate).toLocaleDateString()}
-          </Typography>
-          {historyData.length > 0 && (
-            <LineChart width={250} height={100} data={historyData} style={{ marginTop: 8 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" tick={{ fontSize: 10 }} />
-              <YAxis tick={{ fontSize: 10 }} />
-              <Tooltip contentStyle={{ fontSize: 12 }} />
-              <Line type="monotone" dataKey="amount" stroke="#3b82f6" />
-            </LineChart>
-          )}
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <IconButton size="small" onClick={() => setOpen(true)}>
-              <HistoryIcon fontSize="small" />
-            </IconButton>
+
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mt: 1.5,
+            pt: 1.5,
+            borderTop: '1px solid rgba(0,0,0,0.06)'
+          }}>
+            <Box>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: '1.1rem',
+                  color: 'text.primary',
+                  lineHeight: 1.2
+                }}
+              >
+                {`${payment.currency} ${Number(payment.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              </Typography>
+            </Box>
+            {historyData.length > 0 && (
+              <Box sx={{ width: '120px', height: '40px' }}>
+                <LineChart width={120} height={40} data={historyData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
+                  <XAxis dataKey="date" hide />
+                  <YAxis hide />
+                  <Tooltip
+                    contentStyle={{
+                      fontSize: 10,
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      border: 'none',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="amount"
+                    stroke={statusColor}
+                    strokeWidth={2}
+                    dot={false}
+                  />
+                </LineChart>
+              </Box>
+            )}
           </Box>
         </CardContent>
       </MuiCard>
@@ -161,8 +256,8 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
   }));
 
   const SimpleLineChart = () => (
-    <Card style={{ minHeight: '240px', maxHeight: '240px', marginLeft: '-60px' }}>
-      <LineChart width={650} height={260} data={chartData}>
+    <Card style={{ minHeight: '380px', maxHeight: '380px', marginLeft: '-60px' }}>
+      <LineChart width={650} height={360} data={chartData}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="paymentDate" tick={{ fontSize: 10 }} />
         <YAxis tick={{ fontSize: 10 }} />
@@ -174,8 +269,8 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
   );
 
   const MobileLineChart = () => (
-    <div style={{ width: '100%', height: '100%' }}>
-      <BarChart data={chartData}>
+    <div style={{ width: '100%', height: '380px' }}>
+      <BarChart width={window.innerWidth - 60} height={360} data={chartData}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="paymentDate" tick={{ fontSize: 10 }} />
         <YAxis tick={{ fontSize: 10 }} />
@@ -216,7 +311,7 @@ const Payments: React.FC<{ activeCompany }> = ({ activeCompany }) => {
       <HomeContainerBody>
         {window.outerWidth > 600 ? <SimpleLineChart /> : <MobileLineChart />}
         {tableData.length > 0 ? (
-          <Grid container spacing={2} sx={{ maxHeight: '270px', overflowY: 'auto', ml: 1 }}>
+          <Grid container spacing={1.5} sx={{ maxHeight: '400px', overflowY: 'auto', ml: 1, pr: 1 }}>
             {tableData.map((payment) => (
               <PaymentCard key={payment.id} payment={payment} />
             ))}

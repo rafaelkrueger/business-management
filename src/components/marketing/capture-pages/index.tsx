@@ -22,7 +22,7 @@ import {
   CircularProgress,
   LinearProgress,
 } from "@mui/material";
-import { AlertCircle, Check, CheckCircle, Clock, ExternalLink, Eye, Pencil, PlusCircle } from "lucide-react";
+import { AlertCircle, Check, CheckCircle, Clock, ExternalLink, Eye, Pencil, PlusCircle, Copy } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import LandingPageService from "../../../services/landing-page.service.ts";
@@ -326,7 +326,8 @@ const LandingPageCard: React.FC<{
   onViewDetails: (page: LandingPage) => void;
   onViewWebsite: (page: LandingPage) => void;
   onEdit: (page: LandingPage) => void;
-}> = ({ page, onViewDetails, onViewWebsite, onEdit }) => {
+  onDuplicate: (page: LandingPage) => void;
+}> = ({ page, onViewDetails, onViewWebsite, onEdit, onDuplicate }) => {
   const { t } = useTranslation();
   return (
     <Grid item xs={12} sm={6} md={4} key={page.id}>
@@ -408,6 +409,14 @@ const LandingPageCard: React.FC<{
       >
         {t("marketing.capturePages.viewLandingPage")}
       </Button>
+
+      <Button
+        size="small"
+        onClick={() => onDuplicate(page)}
+        startIcon={<Copy size={16} color="#578acd" />}
+      >
+        Duplicar
+      </Button>
     </Box>
       </Card>
     </Grid>
@@ -483,7 +492,13 @@ const TemplateDialog: React.FC<{
   salesPage:'Landing Page'
 };
   const [sections, setSections] = useState<string[]>([
-    "Landing Page",
+    "Header",
+    "Hero Section",
+    "Product Benefits",
+    "Customer Testimonials",
+    "Pricing Table",
+    "Call to Action",
+    "Page Footer",
   ]);
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>, index: number) => {
@@ -1127,6 +1142,17 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
     }
   };
 
+  const handleDuplicatePage = async (page: LandingPage) => {
+    try {
+      const response = await LandingPageService.duplicate(page.id);
+      enqueueSnackbar("Landing page duplicada com sucesso!", { variant: "success" });
+      fetchLandingPages();
+    } catch (error) {
+      console.error("Erro ao duplicar landing page:", error);
+      enqueueSnackbar("Erro ao duplicar landing page", { variant: "error" });
+    }
+  };
+
   const handleViewFormDetails = (form: FormLead) => {
     // Aqui, para o modal de detalhes dos formulários, definimos o formId para que o modal faça o fetch
     setViewFormDetails(form.id);
@@ -1245,6 +1271,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
                   onViewDetails={handleViewDetails}
                   onViewWebsite={handleViewWebsite}
                   onEdit={handleEditPage}
+                  onDuplicate={handleDuplicatePage}
                 />
               ))
             ) : (

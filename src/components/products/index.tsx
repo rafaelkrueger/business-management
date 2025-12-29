@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import DefaultTable from '../table/index.tsx'
 import { TrainContainer } from './styles.ts';
 import {
     Dialog,
@@ -14,8 +13,10 @@ import {
     Chip,
     Box,
     MenuItem,
+    Card as MuiCard,
+    CardContent,
   } from '@mui/material';
-  import { Close, Delete } from '@mui/icons-material';
+  import { Close, Delete, Edit, Warning } from '@mui/icons-material';
 import ProductService from '../../services/product.service.ts'
 import { StreakContainer } from '../payments/styles.ts';
 import { FaFileExcel, FaRobot } from "react-icons/fa";
@@ -25,7 +26,7 @@ import { EmptyStateContainer, EmptyStateTitle, EmptyStateDescription, EmptyState
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from "notistack";
 import { AllInOneApi } from '../../Api.ts';
-import { Brain, FileSpreadsheet, Info } from 'lucide-react';
+import { Brain, FileSpreadsheet, Info, Package } from 'lucide-react';
 import Tippy from '@tippyjs/react';
 import AiAssistantModal from '../ai-assistant-modal/index.tsx';
 import styled from 'styled-components';
@@ -81,6 +82,319 @@ const NoDataMessage = () =>{
   );
 }
 
+const ProductCard: React.FC<{ product: any; onEdit: (product: any) => void; onDelete: (productId: string) => void }> = ({ product, onEdit, onDelete }) => {
+  const { t } = useTranslation();
+
+  const getStatusColor = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case 'active':
+        return { color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)', border: 'rgba(16, 185, 129, 0.2)' };
+      case 'inactive':
+        return { color: '#6b7280', bg: 'rgba(107, 114, 128, 0.1)', border: 'rgba(107, 114, 128, 0.2)' };
+      case 'out_of_stock':
+        return { color: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)', border: 'rgba(239, 68, 68, 0.2)' };
+      default:
+        return { color: '#6b7280', bg: 'rgba(107, 114, 128, 0.1)', border: 'rgba(107, 114, 128, 0.2)' };
+    }
+  };
+
+  const statusStyle = getStatusColor(product.status);
+  const stockStatus = product.quantityInStock > 0
+    ? { color: '#10b981', text: 'Em estoque' }
+    : { color: '#ef4444', text: 'Sem estoque' };
+
+  return (
+    <Grid item xs={12} sm={6} md={4} lg={3}>
+      <MuiCard
+        sx={{
+          borderRadius: '12px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          transition: 'all 0.3s ease',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          border: '1px solid rgba(0,0,0,0.06)',
+          '&:hover': {
+            boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+            transform: 'translateY(-2px)',
+          },
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            height: '180px',
+            backgroundImage: product.images && product.images.length > 0
+              ? `url(${product.images[0]})`
+              : 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+            backgroundSize: product.images && product.images.length > 0 ? 'cover' : 'cover',
+            backgroundPosition: 'center',
+            borderTopLeftRadius: '12px',
+            borderTopRightRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            overflow: 'hidden',
+            bgcolor: product.images && product.images.length > 0 ? 'transparent' : '#f8f9fa',
+            border: product.images && product.images.length > 0 ? 'none' : '1px solid rgba(0,0,0,0.05)',
+          }}
+        >
+          {(!product.images || product.images.length === 0) && (
+            <Box
+              sx={{
+                position: 'relative',
+                zIndex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                px: 2,
+              }}
+            >
+              <Box
+                sx={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: '12px',
+                  bgcolor: 'rgba(255, 255, 255, 0.8)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mb: 1,
+                  border: '1px solid rgba(0,0,0,0.06)',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
+                }}
+              >
+                <Package size={32} style={{ color: '#6b7280', opacity: 0.6 }} />
+              </Box>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: '#9ca3af',
+                  fontWeight: 500,
+                  fontSize: '0.7rem',
+                  textTransform: 'none',
+                  letterSpacing: '0.3px',
+                }}
+              >
+                {product.name || 'Sem imagem'}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+        <CardContent sx={{ flexGrow: 1, p: 2.5, '&:last-child': { pb: 2.5 } }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: 'text.primary',
+                lineHeight: 1.3,
+                flex: 1,
+                mr: 1
+              }}
+            >
+              {product.name || '-'}
+            </Typography>
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                px: 1,
+                py: 0.25,
+                bgcolor: statusStyle.bg,
+                borderRadius: '6px',
+                border: `1px solid ${statusStyle.border}`,
+                minWidth: 'fit-content'
+              }}
+            >
+              <Box
+                sx={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  bgcolor: statusStyle.color,
+                  mr: 0.5,
+                }}
+              />
+              <Typography
+                variant="caption"
+                sx={{
+                  color: statusStyle.color,
+                  fontWeight: 600,
+                  fontSize: '0.7rem',
+                  textTransform: 'capitalize',
+                }}
+              >
+                {product.status || 'active'}
+              </Typography>
+            </Box>
+          </Box>
+
+          {product.description && (
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+                fontSize: '0.85rem',
+                mb: 1.5,
+                lineHeight: 1.4,
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+              }}
+            >
+              {product.description}
+            </Typography>
+          )}
+
+          <Box sx={{ mb: 1.5 }}>
+            {product.category && (
+              <Chip
+                label={product.category}
+                size="small"
+                sx={{
+                  bgcolor: 'rgba(59, 130, 246, 0.1)',
+                  color: '#3b82f6',
+                  fontWeight: 500,
+                  fontSize: '0.7rem',
+                  height: '22px',
+                }}
+              />
+            )}
+          </Box>
+
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 1.5,
+            pt: 1.5,
+            borderTop: '1px solid rgba(0,0,0,0.06)'
+          }}>
+            <Box>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: '0.75rem',
+                  display: 'block',
+                  mb: 0.5
+                }}
+              >
+                {t('products.price')}
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: '1.1rem',
+                  color: 'text.primary',
+                  lineHeight: 1.2
+                }}
+              >
+                {product.currency || 'USD'} {Number(product.price || 0).toLocaleString('pt-BR', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}
+              </Typography>
+            </Box>
+            {product.cost && (
+              <Box sx={{ textAlign: 'right' }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: 'text.secondary',
+                    fontSize: '0.75rem',
+                    display: 'block',
+                    mb: 0.5
+                  }}
+                >
+                  {t('products.cost')}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 600,
+                    color: 'text.secondary',
+                    fontSize: '0.85rem'
+                  }}
+                >
+                  {product.currency || 'USD'} {Number(product.cost).toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                  })}
+                </Typography>
+              </Box>
+            )}
+          </Box>
+
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            pt: 1.5,
+            borderTop: '1px solid rgba(0,0,0,0.06)'
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  bgcolor: stockStatus.color,
+                }}
+              />
+              <Typography
+                variant="caption"
+                sx={{
+                  color: stockStatus.color,
+                  fontWeight: 600,
+                  fontSize: '0.75rem'
+                }}
+              >
+                {product.quantityInStock || 0} {t('products.stock')}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 0.5 }}>
+              <IconButton
+                size="small"
+                onClick={() => onEdit(product)}
+                sx={{
+                  color: '#6b7280',
+                  '&:hover': {
+                    color: '#3b82f6',
+                    bgcolor: 'rgba(59, 130, 246, 0.1)'
+                  },
+                }}
+              >
+                <Edit fontSize="small" />
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={() => onDelete(product.id)}
+                sx={{
+                  color: '#6b7280',
+                  '&:hover': {
+                    color: '#ef4444',
+                    bgcolor: 'rgba(239, 68, 68, 0.1)'
+                  },
+                }}
+              >
+                <Delete fontSize="small" />
+              </IconButton>
+            </Box>
+          </Box>
+        </CardContent>
+      </MuiCard>
+    </Grid>
+  );
+};
+
 
 const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
     const { t } = useTranslation();
@@ -92,6 +406,8 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
     const [aiAssistant, setAiAssistant] = useState(false);
     const [product, setProduct] = useState(null);
     const [availableProducts, setAvailableProducts] = useState([]);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [productToDelete, setProductToDelete] = useState<string | null>(null);
 
     const columns = [
         { header: t('products.name'), accessor: 'name' },
@@ -106,6 +422,36 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
     const handleRow = (row) => {
         setIsEditing(true);
         setProduct(row);
+    };
+
+    const handleDeleteClick = (productId: string) => {
+        setProductToDelete(productId);
+        setDeleteModalOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!productToDelete) return;
+
+        try {
+            await ProductService.delete(productToDelete, props.activeCompany);
+            setTableData((prev) => prev.filter((p) => p.id !== productToDelete));
+            enqueueSnackbar(t('products.productDeleted') || 'Produto deletado com sucesso!', { variant: 'success' });
+
+            ProductService.glance(props.activeCompany)
+                .then((res) => setGlanceData(res.data))
+                .catch((err) => console.log(err));
+
+            setDeleteModalOpen(false);
+            setProductToDelete(null);
+        } catch (error) {
+            console.error('Erro ao deletar produto:', error);
+            enqueueSnackbar(t('products.deleteError') || 'Erro ao deletar produto', { variant: 'error' });
+        }
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteModalOpen(false);
+        setProductToDelete(null);
     };
 
     useEffect(() => {
@@ -288,9 +634,18 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
             {tableData.length === 0 ? (
                 renderEmptyState()
             ) : (
-                <div style={{maxWidth: window.innerWidth < 600 ? '90%' : 'unset', overflowX: window.innerWidth < 600 ? 'scroll' : 'unset'}}>
-                    <DefaultTable asCards columns={columns} data={tableData} handleRow={handleRow} />
-                </div>
+                <Box sx={{ mt: 3 }}>
+                  <Grid container spacing={2}>
+                    {tableData.map((product, index) => (
+                      <ProductCard
+                        key={product.id || index}
+                        product={product}
+                        onEdit={handleRow}
+                        onDelete={handleDeleteClick}
+                      />
+                    ))}
+                  </Grid>
+                </Box>
             )}
 
             <ProductModal
@@ -301,6 +656,77 @@ const Products: React.FC<{ activeCompany }> = ({ ...props }) => {
                 onClose={() => { setIsEditing(false); setIsOpen(false); }}
                 product={product}
             />
+
+            <Dialog
+                open={deleteModalOpen}
+                onClose={handleDeleteCancel}
+                PaperProps={{
+                    sx: {
+                        borderRadius: '16px',
+                        minWidth: '400px',
+                        maxWidth: '500px',
+                    }
+                }}
+            >
+                <DialogContent sx={{ p: 4, textAlign: 'center' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: 64,
+                            height: 64,
+                            borderRadius: '50%',
+                            bgcolor: 'rgba(239, 68, 68, 0.1)',
+                            mx: 'auto',
+                            mb: 2,
+                        }}
+                    >
+                        <Warning sx={{ fontSize: 40, color: '#ef4444' }} />
+                    </Box>
+                    <Typography variant="h5" sx={{ fontWeight: 600, mb: 1, color: 'text.primary' }}>
+                        {t('products.confirmDeleteTitle') || 'Confirmar exclusão'}
+                    </Typography>
+                    <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
+                        {t('products.confirmDeleteMessage') || 'Tem certeza que deseja deletar este produto? Esta ação não pode ser desfeita.'}
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ p: 3, pt: 0, gap: 1, justifyContent: 'center' }}>
+                    <Button
+                        onClick={handleDeleteCancel}
+                        variant="outlined"
+                        sx={{
+                            borderRadius: '8px',
+                            px: 3,
+                            py: 1,
+                            borderColor: '#e5e7eb',
+                            color: '#6b7280',
+                            '&:hover': {
+                                borderColor: '#d1d5db',
+                                bgcolor: '#f9fafb',
+                            }
+                        }}
+                    >
+                        {t('products.cancel') || 'Cancelar'}
+                    </Button>
+                    <Button
+                        onClick={handleDeleteConfirm}
+                        variant="contained"
+                        sx={{
+                            borderRadius: '8px',
+                            px: 3,
+                            py: 1,
+                            bgcolor: '#ef4444',
+                            '&:hover': {
+                                bgcolor: '#dc2626',
+                            }
+                        }}
+                        startIcon={<Delete />}
+                    >
+                        {t('products.delete') || 'Deletar'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </TrainContainer>
     );
 };

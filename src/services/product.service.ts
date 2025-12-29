@@ -17,5 +17,8 @@ class ProductService {
     static glance(data: string) {
 		return http.get(`/product/glance/${data}`);
 	}
+	static delete(productId: string, activeCompany: string) {
+		return http.delete(`/product/${productId}/${activeCompany}`);
+	}
 }
 export default ProductService;

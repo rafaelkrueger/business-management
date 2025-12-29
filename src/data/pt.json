@@ -410,6 +410,12 @@
       "saveChanges": "Salvar Alterações",
       "addProductButton": "Adicionar"
     },
+    "confirmDeleteTitle": "Confirmar exclusão",
+    "confirmDeleteMessage": "Tem certeza que deseja deletar este produto? Esta ação não pode ser desfeita.",
+    "cancel": "Cancelar",
+    "delete": "Deletar",
+    "productDeleted": "Produto deletado com sucesso!",
+    "deleteError": "Erro ao deletar produto",
     "tooltipText": "Produtos cadastrados podem ser usados em outras partes do sistema, ajudando a gerenciar sua empresa."
   },
   "employees": {

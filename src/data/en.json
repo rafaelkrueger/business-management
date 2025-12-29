@@ -419,6 +419,12 @@
       "saveChanges": "Save Changes",
       "addProductButton": "Add"
     },
+    "confirmDeleteTitle": "Confirm deletion",
+    "confirmDeleteMessage": "Are you sure you want to delete this product? This action cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "productDeleted": "Product deleted successfully!",
+    "deleteError": "Error deleting product",
     "tooltipText": "Registered products can be used in other parts of the system, they will help you manage your company."
   },
   "employees": {
