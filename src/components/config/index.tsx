@@ -670,12 +670,7 @@ const Config: React.FC<{
                         color: "white",
                       },
                     }}
-                    onClick={() =>
-                      enqueueSnackbar(
-                        "New companies are eligible for the Plus plan.",
-                        { variant: "info" }
-                      )
-                    }
+                    onClick={() => setCreateCompany(true)}
                   >
                     {t("config.form.newCompany")}
                   </Button>
@@ -724,6 +719,15 @@ const Config: React.FC<{
           </CardContent>
         </Card>
       </Box>
+
+      {/* Modal de Criar Nova Empresa */}
+      <CreateEnterpriseModal
+        userData={props.userData}
+        isOpen={createCompany}
+        onClose={() => {
+          setCreateCompany(false);
+        }}
+      />
     </>
   );
 };
