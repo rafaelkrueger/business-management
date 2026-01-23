@@ -859,7 +859,7 @@ const TemplateDialog: React.FC<{
           disabled={newPage.title === "" || (mode === "choose" && !selectedTemplate) || generating}
           onClick={async () => {
             if (mode === "choose") {
-              setPreviewUrl(`https://core.roktune.com/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
+              setPreviewUrl(`http://localhost:3005/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
             } else {
               const orderedSections = sections.filter((s) => s.trim() !== "");
               setGenerating(true);
@@ -873,7 +873,7 @@ const TemplateDialog: React.FC<{
               }).then((res)=>{
                 setGenerating(false);
                 setProgress({});
-                setPreviewUrl(`https://core.roktune.com/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
+                setPreviewUrl(`http://localhost:3005/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
               })
               .catch((err)=>{console.log(err)});
 
@@ -996,7 +996,7 @@ const EditDialog: React.FC<{
       <DialogContent>
         {landingPage ? (
           <iframe
-            src={`https://core.roktune.com/landing-pages/edit/${landingPage.id}`}
+            src={`http://localhost:3005/landing-pages/edit/${landingPage.id}`}
             width="100%"
             height="500px"
             style={{ border: "none" }}
@@ -1116,7 +1116,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   };
 
   const handleViewWebsite = (page: LandingPage) => {
-    window.open(`https://core.roktune.com/landing-pages/page/${page.id}`, "_blank");
+    window.open(`http://localhost:3005/landing-pages/page/${page.id}`, "_blank");
   };
 
   const handleEditPage = (page: LandingPage) => {
@@ -1153,7 +1153,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   };
 
   const handleViewFormWebsite = (form: FormLead) => {
-    window.open(`https://core.roktune.com/leads/form?apiKey=${form.apiKey}`, "_blank");
+    window.open(`http://localhost:3005/leads/form?apiKey=${form.apiKey}`, "_blank");
   };
 
   const saveLandingPageAsActive = async () => {

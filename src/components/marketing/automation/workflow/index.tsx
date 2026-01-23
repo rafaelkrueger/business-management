@@ -52,7 +52,7 @@ import { Brain, CloudUploadIcon, DollarSign, ImageIcon, Radio, SettingsIcon } fr
 import { Drawer } from "@mui/material";
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { FaEnvelope, FaTwitter, FaLinkedin, FaYoutube, FaFacebook, FaWhatsapp, FaBrain, FaClock, FaInstagram, FaTiktok, FaUsers } from 'react-icons/fa';
+import { FaEnvelope, FaTwitter, FaLinkedin, FaYoutube, FaFacebook, FaWhatsapp, FaBrain, FaClock, FaInstagram, FaTiktok, FaUsers, FaRobot } from 'react-icons/fa';
 
 import TwitterService from '../../../../services/twitter.service.ts';
 import LinkedinService from "../../../../services/linkedin.service.ts";
@@ -70,6 +70,7 @@ import YouTubeNodeEditor from "../../youtube/youtube-post/index.tsx";
 import FacebookNodeEditor from "../../facebook/facebook-post/index.tsx";
 import LeadsNodeEditor from "./leads-node-editor.tsx";
 import ChatbotPaymentTriggerEditor from "./chatbot-payment-trigger-editor.tsx";
+import ChatbotChatTriggerEditor from "./chatbot-chat-trigger-editor.tsx";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import WhatsappService from "../../../../services/whatsapp.service.ts";
@@ -181,6 +182,8 @@ const CustomNode = ({ data, id, activeCompany }) => {
         return <DollarSign style={{ color: "#1bb41b", fontSize: 26 }} />;
       case "chatbotPaymentTrigger":
         return <DollarSign style={{ color: "#25D366", fontSize: 26 }} />;
+      case "chatbotChatTrigger":
+        return <FaRobot size={iconSize} color="#25D366" />;
       case "leads":
         return <FaUsers size={iconSize} color="#02366d" />;
       default:
@@ -467,6 +470,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       name: t("block.soldTrigger"),
       icon: <DollarSign style={{ color: "#1bb41b", fontSize: 26 }} />,
       params: { paymentId: "" },
+      purpose:t('automationFlow.purposes.triggers'),
+    },
+    CHATBOT_CHAT_TRIGGER: {
+      type: "chatbotChatTrigger",
+      name: t("block.chatbotChatTrigger"),
+      icon: <FaRobot style={{ color: "#6f7672", fontSize: 26 }} />,
+      params: { chatbotId: "" },
       purpose:t('automationFlow.purposes.triggers'),
     },
     CHATGPT: {
@@ -870,11 +880,11 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
   }, [editingNode]);
 
   const addNode = (block) => {
-    const isTrigger = block.type === "formSubmitted" || block.type === "whatsappTrigger";
+    const isTrigger = block.type === "formSubmitted" || block.type === "whatsappTrigger" || block.type === "chatbotChatTrigger";
 
     if (isTrigger) {
       const alreadyHasTrigger = nodes.some((node) =>
-        ["formSubmitted", "whatsappTrigger"].includes(node.data.blockType)
+        ["formSubmitted", "whatsappTrigger", "chatbotChatTrigger"].includes(node.data.blockType)
       );
 
       if (alreadyHasTrigger) {
@@ -1436,6 +1446,13 @@ const AutomationFlow = ({ activeCompany, setIsCreating, editingAutomation, setEd
       )}
       {editingNode.data.blockType === "chatbotPaymentTrigger" && (
         <ChatbotPaymentTriggerEditor
+          editingNode={editingNode}
+          setEditingNode={setEditingNode}
+          activeCompany={activeCompany}
+        />
+      )}
+      {editingNode.data.blockType === "chatbotChatTrigger" && (
+        <ChatbotChatTriggerEditor
           editingNode={editingNode}
           setEditingNode={setEditingNode}
           activeCompany={activeCompany}

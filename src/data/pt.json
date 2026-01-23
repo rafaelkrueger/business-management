@@ -1114,7 +1114,15 @@
       "socialMedia":"Redes Sociais",
       "triggers":"Gatilhos",
       "modules": "Módulos"
-    }
+    },
+    "chatbotChatTrigger": {
+      "description": "Este trigger será ativado quando alguém iniciar uma nova conversa com o chatbot selecionado.",
+      "info": "Este trigger será ativado automaticamente quando uma nova conversa for iniciada com o chatbot selecionado. Você pode usar as variáveis {{chatbot.threadId}}, {{chatbot.chatId}} e {{chatbot.message}} nos blocos subsequentes."
+    },
+    "selectChatbot": "Selecione o Chatbot",
+    "loading": "Carregando...",
+    "noChatbots": "Nenhum chatbot encontrado",
+    "triggerInfo": "Informações do Trigger"
   },
   "block": {
     "email": "Email",
@@ -1131,7 +1139,8 @@
     "chatgptImage": "Imagem IA",
     "formTrigger": "Formulário Preenchido",
     "soldTrigger": "Produto Vendido",
-    "whatsappTrigger": "Chatbot"
+    "whatsappTrigger": "Chatbot",
+    "chatbotChatTrigger": "Chatbot Iniciado"
   },
   "platform": {
     "whatsapp": "WhatsApp",
