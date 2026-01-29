@@ -3,28 +3,20 @@ import {
   AuthContainer,
   AuthFormContainer,
   AuthLeftPanel,
-  AuthRightPanel,
-  AuthLogo,
-  AuthTitle,
-  AuthSubtitle,
   AuthForm,
   AuthInput,
   AuthLabel,
   AuthButton,
   AuthDivider,
   AuthFooterLink,
-  AuthImage,
-  AuthFeatureList,
-  AuthFeatureItem,
   AuthPlanCard,
   AuthPlanTitle,
   AuthPlanPrice,
   AuthPlanFeatures,
-  AuthErrorText
+  AuthErrorText,
+  AuthLogo
 } from './styles.ts';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import AuthCoverImage from '../../images/auth-cover.png';
-import LogoImage from '../../images/logo.png';
 import AllInOneService from '../../services/all-in-one.service.ts';
 import { useLocalStorage } from '../../hooks/useLocalStorage.ts';
 import { useNavigate } from 'react-router-dom';
@@ -73,8 +65,7 @@ import {
 } from '@mui/icons-material';
 import PaymentSelectionModal from './payments/index.tsx';
 import { useTranslation } from 'react-i18next';
-import SpaceAnimation from '../space-animation/index.tsx';
-import { AnimatedRocket } from './mobile/styles.ts';
+import LogoImage from '../../images/logo-rebranding-2.png';
 
 const clientId = "1008084799451-u095ep4ps18ej4l28i571osdssnomtmp.apps.googleusercontent.com";
 
@@ -394,27 +385,27 @@ const Auth = () => {
 
   const cardData = [
     {
-      icon: <SmartToy sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+      icon: <SmartToy sx={{ fontSize: 28, color: '#6591CA', mr: 2, mt: 0.5 }} />,
       title: t('features.aiAssistant.title'),
       desc: t('features.aiAssistant.desc')
     },
     {
-      icon: <AutoGraph sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+      icon: <AutoGraph sx={{ fontSize: 28, color: '#6591CA', mr: 2, mt: 0.5 }} />,
       title: t('features.socialAutomation.title'),
       desc: t('features.socialAutomation.desc')
     },
     {
-      icon: <Campaign sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+      icon: <Campaign sx={{ fontSize: 28, color: '#6591CA', mr: 2, mt: 0.5 }} />,
       title: t('features.landingPages.title'),
       desc: t('features.landingPages.desc')
     },
     {
-      icon: <Contacts sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+      icon: <Contacts sx={{ fontSize: 28, color: '#6591CA', mr: 2, mt: 0.5 }} />,
       title: t('features.crm.title'),
       desc: t('features.crm.desc')
     },
     {
-      icon: <Timeline sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
+      icon: <Timeline sx={{ fontSize: 28, color: '#6591CA', mr: 2, mt: 0.5 }} />,
       title: t('features.salesFunnels.title'),
       desc: t('features.salesFunnels.desc')
     },
@@ -446,19 +437,8 @@ const Auth = () => {
         <AuthLeftPanel>
             <AuthFormContainer style={{marginTop:'0px'}}>
           <Box sx={{justifyContent:'center', textAlignLast: 'center', marginTop:'-50px', marginBottom:'25px'}}>
-            <AnimatedRocket />
+            <AuthLogo src={LogoImage} alt="Logo" />
           </Box>
-        <Box
-          sx={{
-            position: 'relative',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            mb: 2,
-            flexDirection: 'column'
-          }}
-        >
-        </Box>
             <Box sx={{ mb: 3 }}>
               <GoogleLogin
                 onSuccess={handleGoogleSuccess}
@@ -471,7 +451,7 @@ const Auth = () => {
             </Box>
 
             <AuthDivider>
-              <span>{t('auth.orContinueWith')}</span>
+              <span style={{ color: '#dee8f4' }}>{t('auth.orContinueWith')}</span>
             </AuthDivider>
 
             <AuthForm>
@@ -556,6 +536,7 @@ const Auth = () => {
               fullWidth
               variant="contained"
               size="large"
+              sx={{ backgroundColor: '#6391C9', '&:hover': { backgroundColor: '#6391C9', opacity: 0.9 } }}
             >
               {loading
                 ? <CircularProgress size={24} color="inherit" />
@@ -569,7 +550,7 @@ const Auth = () => {
                 alignItems: 'center',
                 mt: 3
               }}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{ color: '#dee8f4' }}>
                   {isNewUser ? t('auth.alreadyAccount') : t('auth.noAccount')}
                 </Typography>
                 <AuthFooterLink
@@ -584,72 +565,32 @@ const Auth = () => {
         </AuthLeftPanel>
         <Box
   sx={{
-    background: `linear-gradient(135deg, #578acd 0%, #38639a 100%)`,
+    background: '#0A1B31',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     p: '0 40px',
     position: 'relative',
     overflow: 'hidden',
-    borderLeft: '1px solid rgba(255,255,255,0.1)',
     maxWidth:{xs:'100%', sm:'54%'}
   }}
 >
-  <SpaceAnimation />
 
   <Box
     sx={{
       position: 'relative',
       zIndex: 1,
-      maxWidth: 900,
-      width: '100%',
       textAlign: 'center',
-      color: 'common.white',
+      color: '#dee8f4',
+      maxWidth: '110%',
       mx: 'auto',
       mt:-10,
+      ml:-13
     }}
   >
 
-    <Box sx={{
-      textAlign: 'center',
-      mt:12.5,
-      mb: 4,
-      position: 'relative',
-      '&::before, &::after': {
-        content: '""',
-        position: 'absolute',
-        top: '50%',
-        width: '30%',
-        height: '1px',
-        background: '#ffffff',
-      },
-      '&::before': {
-        left: 0
-      },
-      '&::after': {
-        right: 0
-      }
-    }}>
-      <Typography
-        variant="h5"
-        component="h3"
-        sx={{
-          display: 'inline-block',
-          px: 3,
-          fontWeight: 600,
-          background: '#ffffff',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          position: 'relative',
-          zIndex: 1
-        }}
-      >
-        {t('auth.title')}
-      </Typography>
-    </Box>
-
     {/* Vídeo demonstrativo dinâmico */}
-    <Box sx={{ mb: 6, borderRadius: 2, overflow: 'hidden', height: 300, mt:4 }}>
+    <Box sx={{ mb: 6, borderRadius: 2, overflow: 'hidden', height: 400, mt:12 }}>
       <Box
         component="iframe"
         src={`${videoMap[videoIndex]}?autoplay=1&mute=1&rel=0`}
@@ -700,26 +641,22 @@ const Auth = () => {
         flexDirection: 'column',
         alignItems: 'flex-start',
         p: 3,
-        backgroundColor: videoIndex === idx
-          ? 'rgba(87,138,205,0.15)'
-          : 'rgba(255,255,255,0.03)',
         borderRadius: 2,
         height: '100%',
         textAlign: 'left',
         transition: 'all 0.3s ease',
         flexShrink: 0,
-        border: videoIndex === idx
-          ? '1px solid #fff'
-          : '1px solid rgba(255,255,255,0.08)',
+        borderTop: '#BBCFE6 1px solid',
+        ml: idx === 0 ? 6 : 0,
         boxShadow: videoIndex === idx
-          ? '0 0 20px rgba(87,138,205,0.4)'
-          : '0 2px 8px rgba(0,0,0,0.15)',
+          ? '0 0 20px rgba(10, 27, 48, 0.2)'
+          : '0 2px 8px rgba(0,0,0,0.1)',
         position: 'relative',
         overflow: 'hidden',
         '&:hover': {
-          backgroundColor: 'rgba(87,138,205,0.1)',
+          backgroundColor: 'rgba(10, 27, 48, 0.15)',
           transform: 'translateY(-4px)',
-          borderColor: '#fff'
+          borderColor: '#0A1B30'
         },
         // Efeito de onda quando selecionado
         '&::after': {
@@ -728,7 +665,7 @@ const Auth = () => {
           top: 0,
           left: 0,
           right: 0,
-          background: '#fff',
+          background: '#0A1B30',
           transition: 'height 0.3s ease'
         }
       }}
@@ -741,7 +678,7 @@ const Auth = () => {
           right: 12,
           display: 'flex',
           alignItems: 'center',
-          backgroundColor: 'rgba(0,0,0,0.7)',
+          backgroundColor: 'rgba(255,255,255,0.9)',
           borderRadius: '12px',
           px: 1.5,
           py: 0.5
@@ -749,16 +686,17 @@ const Auth = () => {
           <Box sx={{
             width: 8,
             height: 8,
-            backgroundColor: '#578acd',
+            backgroundColor: '#6591CA',
             borderRadius: '50%',
             mr: 1,
             animation: 'pulse 1.5s infinite'
           }} />
           <Typography variant="caption" sx={{
-            color: '#fff',
+            color: '#6591CA',
             fontWeight: 500,
             fontSize: '0.7rem',
-            letterSpacing: '0.5px'
+            letterSpacing: '0.5px',
+            fontFamily: '"Nunito", sans-serif'
           }}>
             PLAYING
           </Typography>
@@ -777,9 +715,6 @@ const Auth = () => {
           transform: 'translate(-50%, -50%)',
           width: 40,
           height: 40,
-          backgroundColor: videoIndex === idx
-            ? 'rgba(87,138,205,0.3)'
-            : 'transparent',
           borderRadius: '50%',
           transition: 'all 0.3s ease'
         }
@@ -787,7 +722,7 @@ const Auth = () => {
         {React.cloneElement(item.icon, {
           sx: {
             fontSize: '2rem',
-            color: videoIndex === idx ? '#ffffff' : 'rgba(255,255,255,0.6)',
+            color: '#dceafd',
             position: 'relative',
             zIndex: 1
           }
@@ -798,9 +733,10 @@ const Auth = () => {
         variant="subtitle1"
         fontWeight="600"
         sx={{
-          color: videoIndex === idx ? '#fff' : 'rgba(255,255,255,0.9)',
+          color: '#B8CCE5',
           mb: 1,
-          transition: 'color 0.3s ease'
+          transition: 'color 0.3s ease',
+          fontFamily: '"Nunito", sans-serif'
         }}
       >
         {item.title}
@@ -809,9 +745,10 @@ const Auth = () => {
         variant="body2"
         sx={{
           opacity: 0.85,
-          color: 'rgba(255,255,255,0.7)',
+          color: '#dee8f4',
           lineHeight: 1.5,
-          fontSize: '0.9rem'
+          fontSize: '0.9rem',
+          fontFamily: '"Nunito", sans-serif'
         }}
       >
         {item.desc}
@@ -833,7 +770,7 @@ const Auth = () => {
             left: 0,
             height: '100%',
             width: '30%', // Simula progresso do vídeo
-            background: '#578acd',
+            background: '#4682D7',
             animation: 'progress 5s linear infinite'
           }
         }} />

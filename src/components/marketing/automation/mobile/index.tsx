@@ -230,7 +230,7 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
                 sx={{
                   width: 40,
                   height: 40,
-                  bgcolor: '#578acd',
+                  bgcolor: '#4682D7',
                   color: '#fff'
                 }}
               >
@@ -243,7 +243,7 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
               <Typography
                 variant="subtitle1"
                 fontWeight={600}
-                sx={{ ml: 1.5, flex: 1,  color: '#578acd' }}
+                sx={{ ml: 1.5, flex: 1,  color: '#4682D7' }}
                 noWrap
               >
                 {automation.name}
@@ -379,7 +379,7 @@ const AutomationDashboard = ({ activeCompany, setModule }) => {
           cursor: 'pointer',
           transition: 'color 0.3s ease',
           marginRight: '5px',
-          background:'#578acd',
+          background:'#4682D7',
           padding: '6px',
           borderRadius: '5px',
         }}

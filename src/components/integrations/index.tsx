@@ -218,7 +218,7 @@ const IntegrationCard = ({
     sx={{
       py: 1,
       fontWeight: 500,
-      color: '#578acd',
+      color: '#4682D7',
       '&:hover': {
         backgroundColor: 'rgba(87, 138, 205, 0.04)',
         color: '#3a6fb5',
@@ -364,7 +364,7 @@ const Integrations: React.FC<{ activeCompany: string }> = ({ activeCompany }) =>
       >
         <MenuItem onClick={() => openDialog('info')}>
           <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150 }}>
-            <FaInfoCircle style={{ marginRight: 10, color: '#578acd' }} />
+            <FaInfoCircle style={{ marginRight: 10, color: '#4682D7' }} />
             <Typography>{t('integration.details')}</Typography>
           </Box>
         </MenuItem>
@@ -453,7 +453,7 @@ const Integrations: React.FC<{ activeCompany: string }> = ({ activeCompany }) =>
               disabled={connectionStatus === 'connecting'}
               sx={{
                 borderRadius: 2,
-                background: 'linear-gradient(45deg, #578acd 30%, #6a9bdf 90%)',
+                background: 'linear-gradient(45deg, #4682D7 30%, #6a9bdf 90%)',
                 minWidth: 120,
               }}
             >

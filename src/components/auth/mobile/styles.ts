@@ -19,31 +19,17 @@ const gradientBackground = keyframes`
 export const AuthContainer = styled('div')`
   display: flex;
   min-height: 100vh;
-  background: linear-gradient(-45deg, #0a2540, #578acd, #38639a, #0a2540);
-  background-size: 400% 400%;
-  animation: ${gradientBackground} 15s ease infinite;
+  background-color: #0A1B31;
   flex-direction: column;
   padding: 24px;
   position: relative;
   overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-    z-index: 0;
-  }
 `;
 
 export const AuthHeader = styled('div')`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 40px;
   position: relative;
   z-index: 1;
 `;
@@ -52,36 +38,31 @@ export const AuthLogo = styled.img`
   height: 60px;
   width: auto;
   margin-bottom: 16px;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));
 `;
 
 export const AuthTitle = styled(Typography)`
   font-size: 2rem;
   font-weight: 800;
-  color: white;
+  color: #B9CBE5;
   margin-bottom: 8px;
   text-align: center;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  font-family: '"Nunito", sans-serif';
 ` as typeof Typography;
 
 export const AuthSubtitle = styled(Typography)`
   font-size: 1rem;
-  color: rgba(255,255,255,0.9);
+  color: #B9CBE5;
   text-align: center;
   max-width: 300px;
+  font-family: '"Nunito", sans-serif';
 ` as typeof Typography;
 
 export const AuthFormContainer = styled(Paper)`
-  width: 87%;
+  width: 100%;
   padding: 32px 24px;
-  border-radius: 24px;
-  background: rgba(255,255,255,0.95);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  background: #0A1B31;
   position: relative;
-  z-index: 1;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255,255,255,0.2);
-  margin-top: -40px;
+  margin-top: 20px;
   margin-left:-5px;
 `;
 
@@ -96,28 +77,33 @@ export const AuthLabel = styled('label')`
   align-items: center;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #333;
+  color: #B9CBE5;
   margin-bottom: 8px;
+  font-family: "Nunito", sans-serif !important;
 `;
 
 export const AuthInput = styled('input')<{ error?: boolean }>`
-  width: 88%;
+  width: 100%;
   padding: 16px;
   border-radius: 12px;
-  border: 1px solid ${({ error }) => (error ? '#f44336' : '#e0e0e0')};
+  border: 1px solid ${({ error }) => (error ? '#f44336' : '#ccc')};
   font-size: 1rem;
   transition: all 0.2s ease;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #B9CBE5;
+  font-family: "Nunito", sans-serif !important;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-sizing: border-box;
 
   &:focus {
     outline: none;
-    border-color: ${({ error }) => (error ? '#f44336' : '#578acd')};
-    box-shadow: 0 0 0 3px ${({ error }) => (error ? '#ffcdd2' : 'rgba(87,138,205,0.2)')};
+    border-color: ${({ error }) => (error ? '#f44336' : '#4682D7')};
+    box-shadow: 0 0 0 3px ${({ error }) => (error ? '#ffcdd2' : 'rgba(70, 130, 215, 0.3)')};
   }
 
   &::placeholder {
-    color: #aaa;
+    color: rgba(185, 203, 229, 0.6);
+    font-family: "Nunito", sans-serif !important;
   }
 `;
 
@@ -130,8 +116,13 @@ export const AuthButton = styled(Button)`
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   transition: all 0.3s ease;
   margin-top: 8px;
+  background-color: #6391C9;
+  color: #fff;
+  font-family: '"Nunito", sans-serif';
 
   &:hover {
+    background-color: #6391C9;
+    opacity: 0.9;
     box-shadow: 0 6px 10px rgba(0,0,0,0.15);
     transform: translateY(-2px);
   }
@@ -143,13 +134,14 @@ export const AuthButton = styled(Button)`
 
 export const AuthDivider = styled(Divider)`
   margin: 24px 0;
-  color: #666;
+  color: #B9CBE5;
   font-size: 0.75rem;
   font-weight: 500;
+  font-family: '"Nunito", sans-serif';
 
   &::before,
   &::after {
-    border-color: #e0e0e0;
+    border-color: rgba(185, 203, 229, 0.3);
   }
 `;
 
@@ -159,7 +151,8 @@ export const AuthFooterLink = styled(Button)`
   text-transform: none;
   padding: 0;
   min-width: auto;
-  color: #578acd;
+  color: #B9CBE5;
+  font-family: '"Nunito", sans-serif';
 
   &:hover {
     background-color: transparent;
@@ -172,6 +165,7 @@ export const AuthErrorText = styled(Typography)`
   font-size: 0.75rem;
   margin-top: 4px;
   margin-left: 8px;
+  font-family: '"Nunito", sans-serif';
 ` as typeof Typography;
 
 export const FloatingShape = styled('div')`
@@ -392,7 +386,7 @@ export const RocketWrapper = styled('div')`
 export const AnimatedRocket = styled(RocketLaunch)`
   font-size: 64px !important;
   color: rgb(249, 249, 249);
-  background-color: #578acd;
+  background-color: #4682D7;
   filter: drop-shadow(0 0 15px rgba(87, 138, 205, 0.5));
   transform-style: preserve-3d;
   padding: 20px;

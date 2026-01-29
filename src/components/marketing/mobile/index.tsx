@@ -174,7 +174,7 @@ const isModuleUnlocked = (moduleKey) => {
       alignItems: 'center',
       justifyContent: 'center',
       background: completed
-        ? '#578acd'
+        ? '#4682D7'
         : active
           ? theme.palette.primary.main
           : alpha(theme.palette.text.disabled, 0.2),
@@ -187,7 +187,7 @@ const isModuleUnlocked = (moduleKey) => {
       fontSize: 12,
       fontWeight: completed || active ? 600 : 400,
       color: completed
-        ? '#578acd'
+        ? '#4682D7'
         : active
           ? theme.palette.primary.main
           : theme.palette.text.disabled
@@ -530,9 +530,9 @@ const cards = [
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
           {[
-            { value: glance?.views, label: t("marketing.views"), icon: <BarChart2 size={16} />, color: '#578acd' },
-            { value: glance?.leads, label: t("marketing.leads"), icon: <Users size={16} />, color: '#578acd' },
-            { value: 0, label: t("marketing.conversions"), icon: <Zap size={16} />, color: '#578acd' }
+            { value: glance?.views, label: t("marketing.views"), icon: <BarChart2 size={16} />, color: '#4682D7' },
+            { value: glance?.leads, label: t("marketing.leads"), icon: <Users size={16} />, color: '#4682D7' },
+            { value: 0, label: t("marketing.conversions"), icon: <Zap size={16} />, color: '#4682D7' }
           ].map((stat, index) => (
             <Grid item xs={4} key={index}>
               <motion.div
@@ -573,7 +573,7 @@ const cards = [
           display: 'flex',
           alignItems: 'center'
         }}>
-          <Zap size={18} style={{ marginRight: 8 }} color="#578acd" />
+          <Zap size={18} style={{ marginRight: 8 }} color="#4682D7" />
           {t("marketing.tools")}
         </Typography>
 
@@ -639,7 +639,7 @@ const cards = [
                 <GlassCard
                   sx={{
                     borderTop: isModuleCompleted(card.module)
-                      ? `5px solid #578acd`
+                      ? `5px solid #4682D7`
                       : isModuleUnlocked(card.module)
                         ? `5px solid ${theme.palette.primary.main}`
                         : '5px solid transparent'

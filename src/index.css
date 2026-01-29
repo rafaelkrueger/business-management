@@ -1,11 +1,23 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
+}
+
+* {
+  font-family: 'Nunito', sans-serif !important;
+}
+
+input, textarea, select, button {
+  font-family: 'Nunito', sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, div, label, a {
+  font-family: 'Nunito', sans-serif !important;
 }
 
 @media (max-width: 600px) {
@@ -42,7 +54,7 @@ code {
 
 .swal2-popup.swal2-toast .swal2-html-container {
   font-size: 1.1em;
-  font-family: 'Biotif';
+  font-family: 'Nunito', sans-serif;
   color: #333;
 }
 

@@ -613,7 +613,7 @@ const cards = [
                               '& .MuiBadge-badge': {
                                 backgroundColor: alpha('#0072ff', 0.1),
                                 border: `1px solid ${alpha('#0072ff', 0.3)}`,
-                                color: '#578acd',
+                                color: '#4682D7',
                                 right: 70,
                                 top: 30,
                                 fontWeight: 'bold',
@@ -623,13 +623,13 @@ const cards = [
                                 animation: 'pulse 2s infinite',
                                 '@keyframes pulse': {
                                   '0%': {
-                                    boxShadow: `0 0 0 0 ${alpha('#578acd', 0.3)}`
+                                    boxShadow: `0 0 0 0 ${alpha('#4682D7', 0.3)}`
                                   },
                                   '70%': {
-                                    boxShadow: `0 0 0 10px ${alpha('#578acd', 0)}`
+                                    boxShadow: `0 0 0 10px ${alpha('#4682D7', 0)}`
                                   },
                                   '100%': {
-                                    boxShadow: `0 0 0 0 ${alpha('#578acd', 0)}`
+                                    boxShadow: `0 0 0 0 ${alpha('#4682D7', 0)}`
                                   }
                                 }
                               }

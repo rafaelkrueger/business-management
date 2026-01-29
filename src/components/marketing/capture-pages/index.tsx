@@ -388,7 +388,7 @@ const LandingPageCard: React.FC<{
       <Button
         size="small"
         onClick={() => onViewDetails(page)}
-        startIcon={<Eye size={16} color="#578acd" />}
+        startIcon={<Eye size={16} color="#4682D7" />}
       >
         {t("marketing.capturePages.viewDetails")}
       </Button>
@@ -396,7 +396,7 @@ const LandingPageCard: React.FC<{
       <Button
         size="small"
         onClick={() => onEdit(page)}
-        startIcon={<Pencil size={16} color="#578acd" />}
+        startIcon={<Pencil size={16} color="#4682D7" />}
         sx={{ marginLeft: '0px' }}
       >
         {t("marketing.capturePages.editPage")} Landing Page
@@ -405,7 +405,7 @@ const LandingPageCard: React.FC<{
       <Button
         size="small"
         onClick={() => onViewWebsite(page)}
-        startIcon={<ExternalLink size={16} color="#578acd" />}
+        startIcon={<ExternalLink size={16} color="#4682D7" />}
       >
         {t("marketing.capturePages.viewLandingPage")}
       </Button>
@@ -413,7 +413,7 @@ const LandingPageCard: React.FC<{
       <Button
         size="small"
         onClick={() => onDuplicate(page)}
-        startIcon={<Copy size={16} color="#578acd" />}
+        startIcon={<Copy size={16} color="#4682D7" />}
       >
         Duplicar
       </Button>

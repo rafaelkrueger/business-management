@@ -129,7 +129,7 @@ const ColumnActions = styled.div`
 `;
 
 const AddCardButton = styled.button`
-  background-color: #578acd;
+  background-color: #4682D7;
   color: white;
   border: none;
   width: 24px;
@@ -257,7 +257,7 @@ const AddUserButton = styled.button`
   align-items: center;
   justify-content: center;
   margin-left: -8px;
-  color: #578acd;
+  color: #4682D7;
   cursor: pointer;
 `;
 

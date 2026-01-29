@@ -17,13 +17,15 @@ export const AuthLeftPanel = styled('div')`
   align-items: center;
   justify-content: center;
   padding: 40px;
-  background-color: #ffffff;
+  padding-left: 0px;
+  background-color: #0A1B30;
+  color: #ffffff;
   position: relative;
 `;
 
 export const AuthRightPanel = styled('div')`
   flex: 1;
-  background: linear-gradient(135deg, #556cd6 0%, #0039cb 100%);
+  background: #0A1B31;
   display: none;
   position: relative;
   overflow: hidden;
@@ -42,20 +44,20 @@ export const AuthFormContainer = styled.div`
 `;
 
 export const AuthLogo = styled.img`
-  height: 40px;
+  height: 100px;
   width: auto;
 `;
 
 export const AuthTitle = styled(Typography)`
   font-size: 1.75rem;
   font-weight: 700;
-  color: #111;
+  color: #0A1B31;
   margin-bottom: 8px;
 ` as typeof Typography;
 
 export const AuthSubtitle = styled(Typography)`
   font-size: 1rem;
-  color: #666;
+  color: #0A1B31;
 ` as typeof Typography;
 
 export const AuthForm = styled.div`
@@ -67,28 +69,29 @@ export const AuthLabel = styled('label')`
   align-items: center;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #333;
+  color: #dee8f4;
   margin-bottom: 8px;
 `;
 
 export const AuthInput = styled('input')<{ error?: boolean }>`
-  width: 92%;
+  width: 100%;
   padding: 12px 16px;
   border-radius: 8px;
   border: 1px solid ${({ error }) => (error ? '#f44336' : '#ccc')};
   font-size: 0.9375rem;
   transition: all 0.2s ease;
-  background-color: #fff;
-  color: #000;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #dee8f4;
+  box-sizing: border-box;
 
   &:focus {
     outline: none;
-    border-color: ${({ error }) => (error ? '#f44336' : '#556cd6')};
-    box-shadow: 0 0 0 3px ${({ error }) => (error ? '#ffcdd2' : '#c5cae9')};
+    border-color: ${({ error }) => (error ? '#f44336' : '#4682D7')};
+    box-shadow: 0 0 0 3px ${({ error }) => (error ? '#ffcdd2' : 'rgba(70, 130, 215, 0.3)')};
   }
 
   &::placeholder {
-    color: #aaa;
+    color: rgba(222, 232, 244, 0.6);
   }
 `;
 
@@ -100,10 +103,14 @@ export const AuthButton = styled(Button)`
   font-size: 0.9375rem;
   box-shadow: none;
   transition: all 0.2s ease;
+  background-color: #6391C9;
+  color: #fff;
 
   &:hover {
+    background-color: #6391C9;
     box-shadow: none;
     transform: translateY(-1px);
+    opacity: 0.9;
   }
 
   &:active {
@@ -113,13 +120,13 @@ export const AuthButton = styled(Button)`
 
 export const AuthDivider = styled(Divider)`
   margin: 24px 0;
-  color: #666;
+  color: #dee8f4;
   font-size: 0.75rem;
   font-weight: 500;
 
   &::before,
   &::after {
-    border-color: #ccc;
+    border-color: rgba(222, 232, 244, 0.3);
   }
 `;
 
@@ -129,7 +136,7 @@ export const AuthFooterLink = styled(Button)`
   text-transform: none;
   padding: 0;
   min-width: auto;
-  color: #556cd6;
+  color: #dee8f4;
 
   &:hover {
     background-color: transparent;
@@ -154,7 +161,7 @@ export const AuthFeatureList = styled.ul`
 `;
 
 export const AuthFeatureItem = styled.li`
-  color: white;
+  color: #0A1B31;
   font-size: 0.9375rem;
   display: flex;
   align-items: center;
@@ -184,20 +191,23 @@ export const AuthPlanTitle = styled(Typography)`
   font-weight: 700;
   text-align: center;
   margin-bottom: 8px;
-  color: #111;
+  color: #0A1B31;
+  font-family: '"Nunito", sans-serif';
 ` as typeof Typography;
 
 export const AuthPlanPrice = styled(Typography)`
   font-size: 2.5rem;
   font-weight: 800;
   text-align: center;
-  color: #111;
+  color: #0A1B31;
   margin-bottom: 8px;
+  font-family: '"Nunito", sans-serif';
 
   span {
     font-size: 1rem;
     font-weight: 500;
-    color: #666;
+    color: rgba(185, 203, 229, 0.8);
+    font-family: '"Nunito", sans-serif';
   }
 ` as typeof Typography;
 

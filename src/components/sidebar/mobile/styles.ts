@@ -76,7 +76,7 @@ export const CompanyAvatar = styled.div`
   overflow: hidden;
   flex-shrink: 0;
   background: rgba(255, 255, 255, 0.1);
-  border: 2px solid #578acd;
+  border: 2px solid #4682D7;
   box-shadow: 0 0 10px rgba(0, 168, 255, 0.3);
 `;
 
@@ -92,7 +92,7 @@ export const CompanyPlaceholder = styled.div<{ small?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #578acd;
+  color: #4682D7;
 `;
 
 export const CompanyInfo = styled.div`
@@ -118,7 +118,7 @@ export const CompanyStatus = styled.div`
 `;
 
 export const ChevronIcon = styled.div`
-  color: #578acd;
+  color: #4682D7;
   opacity: 0.7;
   transition: all 0.3s ease;
   margin-left: 8px;
@@ -150,7 +150,7 @@ export const DropdownTitle = styled.div`
   padding: 12px 20px;
   font-size: 0.85rem;
   font-weight: 500;
-  color: #578acd;
+  color: #4682D7;
   opacity: 0.8;
   border-bottom: 1px solid rgba(0, 168, 255, 0.2);
   text-shadow: 0 0 5px rgba(0, 168, 255, 0.3);
@@ -282,12 +282,12 @@ export const ModuleIcon = styled.div<{ active?: boolean }>`
   align-items: center;
   justify-content: center;
   margin-bottom: 8px;
-  color: ${props => props.active ? '#578acd' : 'white'};
+  color: ${props => props.active ? '#4682D7' : 'white'};
   transition: all 0.3s ease;
   filter: drop-shadow(0 0 5px rgba(0, 168, 255, 0.3));
 
   ${ModuleItem}:hover & {
-    color: #578acd;
+    color: #4682D7;
     transform: scale(1.1);
     filter: drop-shadow(0 0 8px rgba(0, 168, 255, 0.5));
   }
@@ -300,7 +300,7 @@ export const ModuleIcon = styled.div<{ active?: boolean }>`
 export const ModuleLabel = styled.div<{ active?: boolean }>`
   font-size: 0.75rem;
   font-weight: ${props => props.active ? '500' : '400'};
-  color: ${props => props.active ? '#578acd' : 'white'};
+  color: ${props => props.active ? '#4682D7' : 'white'};
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
@@ -313,9 +313,9 @@ export const GlowingDot = styled.div`
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #578acd;
+  background: #4682D7;
   box-shadow:
-    0 0 5px #578acd,
+    0 0 5px #4682D7,
     0 0 10px rgba(0, 168, 255, 0.5);
   animation: ${pulse} 1.5s infinite ease-in-out;
 `;
@@ -402,7 +402,7 @@ export const CompactModuleItem = styled.div<{ active?: boolean }>`
     left: 0;
     right: 0;
     height: 3px;
-    background: ${props => props.active ? '#578acd' : 'transparent'};
+    background: ${props => props.active ? '#4682D7' : 'transparent'};
     transition: all 0.2s ease;
     box-shadow: ${props => props.active ? '0 0 5px rgba(0, 168, 255, 0.5)' : 'none'};
   }
@@ -412,14 +412,14 @@ export const CompactModuleIcon = styled.div<{ active?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${props => props.active ? '#578acd' : 'white'};
+  color: ${props => props.active ? '#4682D7' : 'white'};
   transition: all 0.2s ease;
   font-size: 1.2rem;
   margin-right: 3px;
   filter: drop-shadow(0 0 3px rgba(0, 168, 255, 0.3));
 
   ${CompactModuleItem}:hover & {
-    color: #578acd;
+    color: #4682D7;
     transform: scale(1.1);
     filter: drop-shadow(0 0 5px rgba(0, 168, 255, 0.5));
   }
@@ -432,7 +432,7 @@ export const CompactModuleIcon = styled.div<{ active?: boolean }>`
 export const CompactModuleLabel = styled.div<{ active?: boolean }>`
   font-size: 0.6rem;
   font-weight: 500;
-  color: ${props => props.active ? '#578acd' : 'white'};
+  color: ${props => props.active ? '#4682D7' : 'white'};
   text-align: center;
   white-space: nowrap;
   overflow: hidden;

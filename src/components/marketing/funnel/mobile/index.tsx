@@ -919,7 +919,7 @@ const SalesFunnelMobile: React.FC<{ activeCompany?: string, setModule: any }> = 
           cursor: 'pointer',
           transition: 'color 0.3s ease',
           marginRight: '5px',
-          background:'#578acd',
+          background:'#4682D7',
           padding: '6px',
           borderRadius: '5px',
         }}

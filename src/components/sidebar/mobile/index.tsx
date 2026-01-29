@@ -78,7 +78,7 @@ const NavItem = styled.div<{ active?: boolean }>`
   }
 
   &:hover {
-    color: #578acd;
+    color: #4682D7;
     background: rgba(0, 168, 255, 0.05);
   }
 
@@ -115,7 +115,7 @@ const ActiveIndicator = styled.div<{ active?: boolean }>`
   top: 0;
   width: 100%;
   height: 2px;
-  background: ${({ active }) => (active ? '#578acd' : 'transparent')};
+  background: ${({ active }) => (active ? '#4682D7' : 'transparent')};
   border-radius: 0 0 2px 2px;
   transition: all 0.2s ease;
 `;
@@ -135,7 +135,7 @@ const MobileBottomNavigation = ({
   const { t } = useTranslation();
   const [activeItem, setActiveItem] = useState('marketing');
   const [modules, setModules] = useState([]);
-  const [brandColors, setBrandColors] = useState({ primary: '#243b5a', secondary: '#0a0f1c', text: '#578acd' });
+  const [brandColors, setBrandColors] = useState({ primary: '#243b5a', secondary: '#0a0f1c', text: '#4682D7' });
   const [showExtraModules, setShowExtraModules] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipText, setTooltipText] = useState('');
@@ -167,7 +167,7 @@ const MobileBottomNavigation = ({
   }, [activeCompany, companies, modulesUpdating]);
 
   const extractBrandColors = (logoUrl) => {
-    if (!logoUrl) return setBrandColors({ primary: '#243b5a', secondary: '#0a0f1c', text: '#578acd' });
+    if (!logoUrl) return setBrandColors({ primary: '#243b5a', secondary: '#0a0f1c', text: '#4682D7' });
 
     const img = new Image();
     img.crossOrigin = 'Anonymous';
@@ -180,14 +180,14 @@ const MobileBottomNavigation = ({
         setBrandColors({
           primary: `#243b5a`,
           secondary: `#0a0f1c`,
-          text: '#578acd'
+          text: '#4682D7'
         });
       } catch (e) {
-        setBrandColors({ primary: '#243b5a', secondary: '#0a0f1c', text: '#578acd' });
+        setBrandColors({ primary: '#243b5a', secondary: '#0a0f1c', text: '#4682D7' });
       }
     };
 
-    img.onerror = () => setBrandColors({ primary: '#243b5a', secondary: '#0a0f1c', text: '#578acd' });
+    img.onerror = () => setBrandColors({ primary: '#243b5a', secondary: '#0a0f1c', text: '#4682D7' });
   };
 
   const getContrastColor = (rgb) => {
@@ -332,7 +332,7 @@ const MobileBottomNavigation = ({
                 <NavIcon>
                   {React.createElement(item.icon, {
                     size: 20,
-                    color: activeItem === item?.key ? '#578acd' : '#e0f2ff'
+                    color: activeItem === item?.key ? '#4682D7' : '#e0f2ff'
                   })}
                 </NavIcon>
               </NavItem>

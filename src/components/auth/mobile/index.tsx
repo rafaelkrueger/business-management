@@ -13,16 +13,9 @@ import {
   AuthDivider,
   AuthFooterLink,
   AuthErrorText,
-  FloatingShape,
-  FeatureBadge,
-  AnimatedRocket,
-  RocketTrail,
-  RocketWrapper,
-  Spark,
-  SparkContainer
 } from './styles.ts';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import LogoImage from '../../../images/logo.png';
+import LogoImage from '../../../images/logo-rebranding-2.png';
 import { useTranslation } from 'react-i18next';
 import {
   User,
@@ -32,7 +25,6 @@ import {
   ArrowRight,
   Shield,
   Check,
-  Rocket,
   CheckCircle,
   Diamond,
   Star
@@ -64,30 +56,30 @@ const MobileAuth = () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const cardData = [
       {
-        icon: <SmartToy sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
-        title: t('features.aiAssistant.title'),
-        desc: t('features.aiAssistant.desc')
-      },
-      {
-        icon: <AutoGraph sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
-        title: t('features.socialAutomation.title'),
-        desc: t('features.socialAutomation.desc')
-      },
-      {
-        icon: <Campaign sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
-        title: t('features.landingPages.title'),
-        desc: t('features.landingPages.desc')
-      },
-      {
-        icon: <Contacts sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
-        title: t('features.crm.title'),
-        desc: t('features.crm.desc')
-      },
-      {
-        icon: <Timeline sx={{ fontSize: 28, color: '#00C4FF', mr: 2, mt: 0.5 }} />,
-        title: t('features.salesFunnels.title'),
-        desc: t('features.salesFunnels.desc')
-      },
+      icon: <SmartToy sx={{ fontSize: 28, color: '#6591CA', mr: 2, mt: 0.5 }} />,
+      title: t('features.aiAssistant.title'),
+      desc: t('features.aiAssistant.desc')
+    },
+    {
+      icon: <AutoGraph sx={{ fontSize: 28, color: '#6591CA', mr: 2, mt: 0.5 }} />,
+      title: t('features.socialAutomation.title'),
+      desc: t('features.socialAutomation.desc')
+    },
+    {
+      icon: <Campaign sx={{ fontSize: 28, color: '#6591CA', mr: 2, mt: 0.5 }} />,
+      title: t('features.landingPages.title'),
+      desc: t('features.landingPages.desc')
+    },
+    {
+      icon: <Contacts sx={{ fontSize: 28, color: '#6591CA', mr: 2, mt: 0.5 }} />,
+      title: t('features.crm.title'),
+      desc: t('features.crm.desc')
+    },
+    {
+      icon: <Timeline sx={{ fontSize: 28, color: '#6591CA', mr: 2, mt: 0.5 }} />,
+      title: t('features.salesFunnels.title'),
+      desc: t('features.salesFunnels.desc')
+    },
     ];
 
 
@@ -235,42 +227,6 @@ const MobileAuth = () => {
     }
   };
 
-  const RocketWithEffects = () => {
-    const [sparks, setSparks] = useState([]);
-
-    useEffect(() => {
-      // Gerar faíscas aleatórias
-      const interval = setInterval(() => {
-        setSparks(Array.from({ length: 3 }, (_, i) => ({
-          id: Math.random(),
-          left: `${Math.random() * 30 + 35}%`,
-          delay: `${Math.random() * 0.5}s`,
-          duration: `${Math.random() * 0.5 + 0.5}s`
-        })));
-
-        setTimeout(() => setSparks([]), 1000);
-      }, 3000);
-
-      return () => clearInterval(interval);
-    }, []);
-
-    return (
-      <RocketWrapper>
-        <AnimatedRocket />
-        <RocketTrail />
-          {sparks.map(spark => (
-            <Spark
-              key={spark.id}
-              style={{
-                left: spark.left,
-                animationDelay: spark.delay,
-                animationDuration: spark.duration
-              }}
-            />
-          ))}
-      </RocketWrapper>
-    );
-  };
 
     const PlanSelectionModal = () => {
       const handleSelectPlan = async (plan) => {
@@ -356,7 +312,8 @@ const MobileAuth = () => {
                             left: '50%',
                             transform: 'translateX(-50%)',
                             fontWeight: 'bold',
-                            fontSize: '0.75rem'
+                            fontSize: '0.75rem',
+                            fontFamily: '"Nunito", sans-serif'
                           }}
                         />
                       )}
@@ -390,7 +347,7 @@ const MobileAuth = () => {
                               color: plan.recommended ? 'primary.main' : 'text.secondary',
                               mr: 1.5
                             }} />
-                            <Typography variant="body2" color="text.primary">
+                            <Typography variant="body2" color="text.primary" sx={{ fontFamily: '"Nunito", sans-serif' }}>
                               {t(featureKey)}
                             </Typography>
                           </Box>
@@ -411,6 +368,7 @@ const MobileAuth = () => {
                           fontWeight: 600,
                           textTransform: 'none',
                           fontSize: '1rem',
+                          fontFamily: '"Nunito", sans-serif'
                         }}
                       >
                         {plan.buttonText}
@@ -438,77 +396,12 @@ const MobileAuth = () => {
           userEmail={user.email}
         />
       )}
-        {/* Elementos flutuantes de fundo */}
-        <FloatingShape />
-        <FloatingShape />
-        <FloatingShape />
-
-        <AuthHeader>
-        <FeatureBadge style={{
-        backgroundColor: 'rgba(255,255,255,0.1)',
-        color: '#fff',
-        borderRadius: 20,
-        padding: '6px 12px',
-        cursor:'pointer',
-        zIndex:1
-        }}
-        onClick={() =>{setShowMoreInfo(!showMoreInfo)}}>
-        <Rocket size={16} style={{ marginRight: 6 }} />
-        {!showMoreInfo ? t('auth.knowMore') : t('common.back')}
-        </FeatureBadge>
-    <div style={{
-        width:'425px'
-    }}>
-    <Box
-        sx={{
-            textAlign: 'center',
-            mb: 3,
-            position: 'relative',
-            px: 2,
-            '&::before, &::after': {
-            content: '""',
-            position: 'absolute',
-            top: '50%',
-            width: '20%',
-            height: '2px',
-            background: 'rgba(255, 255, 255, 0.431)',
-            },
-            '&::before': {
-            left: 0
-            },
-            '&::after': {
-            right: 0
-            }
-        }}
-        >
-        <Typography
-            variant="h6"
-            component="h3"
-            sx={{
-            display: 'inline-block',
-            px: 2,
-            py: 0.5,
-            fontWeight: 700,
-            fontSize: { xs: '1.5rem', sm: '1.4rem' },
-            background: 'linear-gradient(120deg, #ffffff 30%, #d4e6ff 50%, #ffffff 70%)',
-            backgroundSize: '200% auto',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            animation: 'shine 3s ease-in-out infinite',
-            position: 'relative',
-            zIndex: 1
-            }}
-        >
-            {t('auth.title')}
-        </Typography>
-        </Box>
-    </div>
-    </AuthHeader>
     {!showMoreInfo ?
 
-  <AuthFormContainer elevation={3}>
-  <RocketWithEffects />
-
+  <AuthFormContainer>
+        <AuthHeader>
+          <AuthLogo src={LogoImage} alt="Logo" />
+        </AuthHeader>
   <GoogleLogin
     onSuccess={handleGoogleSuccess}
     onError={() => enqueueSnackbar(t('error.authError'), { variant: "error" })}
@@ -520,7 +413,7 @@ const MobileAuth = () => {
   />
 
   <AuthDivider>
-    <span>{t('auth.orContinueWith')}</span>
+    <span style={{ fontFamily: 'Nunito, sans-serif', fontWeight: 500 }}>{t('auth.orContinueWith')}</span>
   </AuthDivider>
 
   <AuthForm>
@@ -607,14 +500,7 @@ const MobileAuth = () => {
     >
       {loading
         ? <CircularProgress size={24} color="inherit" />
-        : isNewUser ? (
-            <>
-              <Rocket size={18} style={{ marginRight: 8 }} />
-              {t('auth.signUp')}
-            </>
-          ) : (
-            t('auth.signIn')
-          )
+        : (isNewUser ? t('auth.signUp') : t('auth.signIn'))
       }
     </AuthButton>
 
@@ -624,7 +510,7 @@ const MobileAuth = () => {
       alignItems: 'center',
       marginTop: 16
     }}>
-      <Typography variant="body2" style={{ color: '#666' }}>
+      <Typography variant="body2" sx={{ color: '#B9CBE5', fontFamily: '"Nunito", sans-serif' }}>
         {isNewUser ? t('auth.alreadyAccount') : t('auth.noAccount')}
       </Typography>
       <AuthFooterLink onClick={() => setIsNewUser(!isNewUser)}>
@@ -641,9 +527,12 @@ const MobileAuth = () => {
               maxWidth: 900,
               width: '100%',
               textAlign: 'center',
-              color: 'common.white',
+              color: '#0A1B30',
               mx: 'auto',
               mt:-5,
+              backgroundColor: '#B9CBE5',
+              p: 3,
+              borderRadius: 2
             }}
           >
             {/* Vídeo demonstrativo dinâmico */}
@@ -668,7 +557,7 @@ const MobileAuth = () => {
     top: 0,
     bottom: 0,
     width: '40px',
-    background: 'linear-gradient(90deg, rgba(10, 37, 64, 0) 0%, #0A2540 100%)',
+    background: 'linear-gradient(90deg, rgba(185, 203, 229, 0) 0%, #B9CBE5 100%)',
     pointerEvents: 'none',
     zIndex: 2
   }
@@ -698,25 +587,25 @@ const MobileAuth = () => {
         alignItems: 'flex-start',
         p: 3,
         backgroundColor: videoIndex === idx
-          ? 'rgba(87,138,205,0.15)'
-          : 'rgba(255,255,255,0.03)',
+          ? 'rgba(10, 27, 48, 0.1)'
+          : 'rgba(255,255,255,0.3)',
         borderRadius: 2,
         height: '100%',
         textAlign: 'left',
         transition: 'all 0.3s ease',
         flexShrink: 0,
         border: videoIndex === idx
-          ? '1px solid #fff'
-          : '1px solid rgba(255,255,255,0.08)',
+          ? '1px solid #0A1B30'
+          : '1px solid rgba(10, 27, 48, 0.2)',
         boxShadow: videoIndex === idx
-          ? '0 0 20px rgba(87,138,205,0.4)'
-          : '0 2px 8px rgba(0,0,0,0.15)',
+          ? '0 0 20px rgba(10, 27, 48, 0.2)'
+          : '0 2px 8px rgba(0,0,0,0.1)',
         position: 'relative',
         overflow: 'hidden',
         '&:hover': {
-          backgroundColor: 'rgba(87,138,205,0.1)',
+          backgroundColor: 'rgba(10, 27, 48, 0.15)',
           transform: 'translateY(-4px)',
-          borderColor: '#fff'
+          borderColor: '#0A1B30'
         },
         // Efeito de onda quando selecionado
         '&::after': {
@@ -725,7 +614,7 @@ const MobileAuth = () => {
           top: 0,
           left: 0,
           right: 0,
-          background: '#fff',
+          background: '#0A1B30',
           transition: 'height 0.3s ease'
         }
       }}
@@ -738,7 +627,7 @@ const MobileAuth = () => {
           right: 12,
           display: 'flex',
           alignItems: 'center',
-          backgroundColor: 'rgba(0,0,0,0.7)',
+          backgroundColor: 'rgba(255,255,255,0.9)',
           borderRadius: '12px',
           px: 1.5,
           py: 0.5
@@ -746,16 +635,17 @@ const MobileAuth = () => {
           <Box sx={{
             width: 8,
             height: 8,
-            backgroundColor: '#578acd',
+            backgroundColor: '#6591CA',
             borderRadius: '50%',
             mr: 1,
             animation: 'pulse 1.5s infinite'
           }} />
           <Typography variant="caption" sx={{
-            color: '#fff',
+            color: '#6591CA',
             fontWeight: 500,
             fontSize: '0.7rem',
-            letterSpacing: '0.5px'
+            letterSpacing: '0.5px',
+            fontFamily: '"Nunito", sans-serif'
           }}>
             PLAYING
           </Typography>
@@ -784,7 +674,7 @@ const MobileAuth = () => {
         {React.cloneElement(item.icon, {
           sx: {
             fontSize: '2rem',
-            color: videoIndex === idx ? '#ffffff' : 'rgba(255,255,255,0.6)',
+            color: '#6591CA',
             position: 'relative',
             zIndex: 1
           }
@@ -795,9 +685,10 @@ const MobileAuth = () => {
         variant="subtitle1"
         fontWeight="600"
         sx={{
-          color: videoIndex === idx ? '#fff' : 'rgba(255,255,255,0.9)',
+          color: '#0A1B30',
           mb: 1,
-          transition: 'color 0.3s ease'
+          transition: 'color 0.3s ease',
+          fontFamily: '"Nunito", sans-serif'
         }}
       >
         {item.title}
@@ -806,9 +697,10 @@ const MobileAuth = () => {
         variant="body2"
         sx={{
           opacity: 0.85,
-          color: 'rgba(255,255,255,0.7)',
+          color: '#0A1B30',
           lineHeight: 1.5,
-          fontSize: '0.9rem'
+          fontSize: '0.9rem',
+          fontFamily: '"Nunito", sans-serif'
         }}
       >
         {item.desc}
@@ -822,7 +714,7 @@ const MobileAuth = () => {
           left: 0,
           right: 0,
           height: '2px',
-          background: 'rgba(255,255,255,0.1)',
+          background: 'rgba(10, 27, 48, 0.1)',
           '&::after': {
             content: '""',
             position: 'absolute',
@@ -830,7 +722,7 @@ const MobileAuth = () => {
             left: 0,
             height: '100%',
             width: '30%', // Simula progresso do vídeo
-            background: '#578acd',
+            background: '#0A1B30',
             animation: 'progress 5s linear infinite'
           }
         }} />
@@ -848,9 +740,10 @@ const MobileAuth = () => {
           alignItems: 'center',
           justifyContent: 'center',
           marginTop: 24,
-          color: 'rgba(255,255,255,0.8)',
+          color: '#ffffff',
           fontSize: '0.75rem',
-          zIndex: 1
+          zIndex: 1,
+          fontFamily: '"Nunito", sans-serif'
         }}>
           <Shield size={14} style={{ marginRight: 8 }} />
           {t('auth.securityNote')}

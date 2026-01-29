@@ -166,7 +166,7 @@ const ColumnActions = styled.div`
 `;
 
 const AddCardButton = styled.button`
-  background-color: #578acd;
+  background-color: #4682D7;
   color: white;
   border: none;
   width: 24px;
@@ -241,7 +241,7 @@ const KanbanCard = styled.div`
   border-radius: 10px;
   padding: 16px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  border: 1px solid ${props => props.isDragging ? '#578acd' : '#f1f5f9'};
+  border: 1px solid ${props => props.isDragging ? '#4682D7' : '#f1f5f9'};
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
   background-color: ${props => props.isDragging ? '#f0f7ff' : 'white'};
@@ -310,7 +310,7 @@ const AddUserButton = styled.button`
   align-items: center;
   justify-content: center;
   margin-left: -8px;
-  color: #578acd;
+  color: #4682D7;
   cursor: pointer;
 `;
 

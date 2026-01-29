@@ -416,7 +416,7 @@ const SalesPageCard: React.FC<{
       <Button
         size="small"
         onClick={() => onViewDetails(page)}
-        startIcon={<Eye size={16} color="#578acd" />}
+        startIcon={<Eye size={16} color="#4682D7" />}
       >
         {t("marketing.capturePages.viewDetails")}
       </Button>
@@ -424,7 +424,7 @@ const SalesPageCard: React.FC<{
       <Button
         size="small"
         onClick={() => onEdit(page)}
-        startIcon={<Pencil size={16} color="#578acd" />}
+        startIcon={<Pencil size={16} color="#4682D7" />}
         sx={{ marginLeft: '0px' }}
       >
         {t("marketing.capturePages.editPage")} Sales Page
@@ -433,7 +433,7 @@ const SalesPageCard: React.FC<{
       <Button
         size="small"
         onClick={() => onViewWebsite(page)}
-        startIcon={<ExternalLink size={16} color="#578acd" />}
+        startIcon={<ExternalLink size={16} color="#4682D7" />}
       >
         {t("marketing.capturePages.viewSalesPage")}
       </Button>
