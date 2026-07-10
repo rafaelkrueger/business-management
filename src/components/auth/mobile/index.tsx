@@ -32,7 +32,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { Avatar, Box, Button, Chip, CircularProgress, Divider, Fade, Modal, Paper, Typography, useTheme } from '@mui/material';
 import { AutoGraph, Campaign, Contacts, RocketLaunch, SmartToy, Timeline } from '@mui/icons-material';
-import AllInOneService from '../../../services/all-in-one.service.ts';
+import AuthService from '../../../services/auth.service.ts';
 import i18n from '../../../i18next.js';
 import { jwtDecode } from 'jwt-decode';
 import { useLocalStorage } from '../../../hooks/useLocalStorage.ts';
@@ -160,11 +160,11 @@ const MobileAuth = () => {
       return;
     }
     setLoading(true);
-    const action = isNewUser ? AllInOneService.create : AllInOneService.get;
+    const action = isNewUser ? AuthService.signUp : AuthService.signIn;
     action(user)
       .then((res) => {
         if (res.data) {
-          if(action === AllInOneService.create){
+          if(action === AuthService.signUp){
             setPendingToken(res.data?.accessToken || res.data);
             setShowPlanSelection(true);
             return;
@@ -193,7 +193,7 @@ const MobileAuth = () => {
       const { email, name, sub } = decodedCredential || {};
       if (email && sub) {
         if (isNewUser) {
-          AllInOneService.create({
+          AuthService.signUp({
             name: name || i18n.t('error.noName'),
             email,
             password: sub,
@@ -208,7 +208,7 @@ const MobileAuth = () => {
               console.error('Erro ao criar usuário:', err);
             });
         } else {
-          AllInOneService.get({ email, password: sub })
+          AuthService.signIn({ email, password: sub })
             .then((data) => {
               if (data.data) {
                 setToken(data.data?.accessToken || data.data);

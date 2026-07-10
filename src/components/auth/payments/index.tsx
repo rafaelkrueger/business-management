@@ -34,7 +34,7 @@ import { useTranslation } from 'react-i18next';
 import { useSnackbar } from 'notistack';
 import { useLocalStorage } from '../../../hooks/useLocalStorage.ts';
 import { useNavigate } from 'react-router-dom';
-import AllInOneService from '../../../services/all-in-one.service.ts';
+import AuthService from '../../../services/auth.service.ts';
 
 //prod -- pk_live_51QqzL1HHmMmwGxT0IJuUJkhH1k05x1MexJpqUXeptyugtbaEQ9PBEtG595YHzRwFes5l56oyPmKKCrSvfxw7um7s00x6IVEyuM
 const stripePromise = loadStripe('pk_live_51QqzL1HHmMmwGxT0IJuUJkhH1k05x1MexJpqUXeptyugtbaEQ9PBEtG595YHzRwFes5l56oyPmKKCrSvfxw7um7s00x6IVEyuM');
@@ -74,7 +74,7 @@ const CheckoutForm = ({ selectedPlan, onClose, pendingToken, userEmail }) => {
 
   useEffect(()=>{
     const tokenValue = pendingToken?.accessToken || pendingToken;
-    AllInOneService.getUserByToken(tokenValue)
+    AuthService.getUserByToken(tokenValue)
       .then((res) => setUserId(res.data._id))
   },[pendingToken])
 

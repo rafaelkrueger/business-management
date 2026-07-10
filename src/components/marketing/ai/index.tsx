@@ -68,7 +68,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import ChatAiService from '../../../services/chat-ai.service.ts';
 import EngineAiService, { EngineResponse } from '../../../services/engine-ai.service.ts';
-import { AllInOneApi } from '../../../Api.ts';
+import { Api } from '../../../Api.ts';
 import ThoughtProcessDisplay from '../../engine-ai/ThoughtProcessDisplay.tsx';
 import EngineInsights from '../../engine-ai/EngineInsights.tsx';
 
@@ -903,7 +903,7 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
           const formData = new FormData();
           formData.append('file', selectedFile);
 
-          const response = await AllInOneApi.post('shared/image', formData, {
+          const response = await Api.post('shared/image', formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
               'accept': '*/*',

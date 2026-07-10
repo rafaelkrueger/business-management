@@ -13,7 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import EnterpriseService from "../../services/enterprise.service.ts";
 import { useSnackbar } from "notistack";
 import { useTranslation } from "react-i18next";
-import { AllInOneApi } from "../../Api.ts";
+import { Api } from "../../Api.ts";
 
 export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
   const { t } = useTranslation();
@@ -92,7 +92,7 @@ export const CreateEnterpriseModal = ({ userData, isOpen, onClose }) => {
           formDataFile.append("file", value);
 
           try {
-            const response = await AllInOneApi.post(
+            const response = await Api.post(
               "shared/image",
               formDataFile,
               {

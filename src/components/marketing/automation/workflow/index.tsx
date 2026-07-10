@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from "react";
-import AllInOneService from "../../../../services/all-in-one.service.ts";
+import { Api } from "../../../../Api.ts";
 import SocialMediaTemplateService from "../../../../services/social-media-template.service.ts";
 import ReactFlow, {
   addEdge,
@@ -82,7 +82,6 @@ import WaitWhatsappModal from "../../whatsapp-chatbot/wait-whatsapp/index.tsx";
 import InstagramAuthModal from "../../instagram-create/index.tsx";
 import InstagramService from "../../../../services/instagram.service.ts";
 import InstagramNodeEditor from "../../instagram/index.tsx";
-import { AllInOneApi } from "../../../../Api.ts";
 import { useTheme } from "@emotion/react";
 
 export const uploadImagesToApi = async (file) => {
@@ -98,7 +97,7 @@ export const uploadImagesToApi = async (file) => {
   formDataFile.append('path', 'temporary');
   formDataFile.append('file', convertedFile);
 
-  const response = await AllInOneApi.post('shared/image', formDataFile, {
+  const response = await Api.post('shared/image', formDataFile, {
     headers: {
       'Content-Type': 'multipart/form-data',
       'accept': '*/*',

@@ -39,7 +39,7 @@ import ModulesService from "../../../services/modules.service.ts";
 import CreateEnterpriseModal from "../../../components/register-enterprise/index.tsx";
 import { useTranslation } from "react-i18next";
 import { useSnackbar } from "notistack";
-import { AllInOneApi } from "../../../Api.ts";
+import { Api } from "../../../Api.ts";
 
 const GlassCard = styled(Card)(({ theme }) => ({
   background: `linear-gradient(135deg, ${alpha('#4682D7', 0.15)} 0%, ${alpha('#fff', 0.2)} 100%)`,
@@ -170,7 +170,7 @@ const MobileConfig: React.FC<{
 
   const handleFeedbackSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    AllInOneApi.post('/user/contact', {
+    Api.post('/user/contact', {
       name: userData.name,
       email: userData.email,
       message: feedbackMessage,
@@ -200,7 +200,7 @@ const MobileConfig: React.FC<{
     ['name','email','phone','document'].forEach(key => form.append(key, companyData[key]));
     if (companyData.logo instanceof File) {
       const fileForm = new FormData(); fileForm.append('path','logos'); fileForm.append('file', companyData.logo as File);
-      const res = await AllInOneApi.post('shared/image', fileForm);
+      const res = await Api.post('shared/image', fileForm);
       form.append('logo', res.data.url);
     } else form.append('logo', companyData.logo || '');
     try {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DashboardContainer, DashboardContainerIcon, DashboardContainerShowed } from './styles.ts';
 import { useLocalStorage } from '../../hooks/useLocalStorage.ts';
-import AllInOneService from '../../services/all-in-one.service.ts';
+import AuthService from '../../services/auth.service.ts';
 import Payments from '../../components/payments/index.tsx';
 import Home from '../../components/home/index.tsx';
 import useActiveModule from '../../hooks/moduleHook.ts';
@@ -42,7 +42,7 @@ useEffect(() => {
   if (!token || userData) return;
 
   const interval = setInterval(() => {
-    AllInOneService.getUserByToken(token?.accessToken || token)
+    AuthService.getUserByToken(token?.accessToken || token)
       .then((res) => {
         if (res?.data) {
           setUserData(res.data);
@@ -58,7 +58,7 @@ useEffect(() => {
 
   useEffect(() => {
   if (!token) return;
-  AllInOneService.getUserByToken(token?.accessToken || token)
+  AuthService.getUserByToken(token?.accessToken || token)
     .then(async ({ data: user }) => {
       setUserData(user);
       if (hasNoCompanies) {

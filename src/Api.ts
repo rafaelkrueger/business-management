@@ -1,7 +1,4 @@
+import http from './services/http-business.ts';
 
-import axios from 'axios';
-
-export const AllInOneApi = axios.create({
-	baseURL: "https://all-in-one-system-cfe0c681a225.herokuapp.com/",
-});
-
+export const Api = http;
+export default Api;

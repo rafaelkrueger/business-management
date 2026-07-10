@@ -17,7 +17,7 @@ import {
   AuthLogo
 } from './styles.ts';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import AllInOneService from '../../services/all-in-one.service.ts';
+import AuthService from '../../services/auth.service.ts';
 import { useLocalStorage } from '../../hooks/useLocalStorage.ts';
 import { useNavigate } from 'react-router-dom';
 import i18n from '../../i18next.js';
@@ -160,11 +160,11 @@ const Auth = () => {
       return;
     }
     setLoading(true);
-    const action = isNewUser ? AllInOneService.create : AllInOneService.get;
+    const action = isNewUser ? AuthService.signUp : AuthService.signIn;
     action(user)
       .then((res) => {
         if (res.data) {
-          if(action === AllInOneService.create){
+          if(action === AuthService.signUp){
             setPendingToken(res.data?.accessToken || res.data);
             setShowPlanSelection(true);
             return;
@@ -193,7 +193,7 @@ const Auth = () => {
       const { email, name, sub } = decodedCredential || {};
       if (email && sub) {
         if (isNewUser) {
-          AllInOneService.create({
+          AuthService.signUp({
             name: name || i18n.t('error.noName'),
             email,
             password: sub,
@@ -208,7 +208,7 @@ const Auth = () => {
               console.error('Erro ao criar usuário:', err);
             });
         } else {
-          AllInOneService.get({ email, password: sub })
+          AuthService.signIn({ email, password: sub })
             .then((data) => {
               if (data.data) {
                 setToken(data.data?.accessToken || data.data);

@@ -26,7 +26,7 @@ import ModulesService from "../../services/modules.service.ts";
 import CreateEnterpriseModal from "../../components/register-enterprise/index.tsx";
 import { useTranslation } from "react-i18next";
 import { useSnackbar } from "notistack";
-import { AllInOneApi } from "../../Api.ts";
+import { Api } from "../../Api.ts";
 
 const Config: React.FC<{
   activeCompany;
@@ -94,7 +94,7 @@ const Config: React.FC<{
 
   const handleFeedbackSubmit = (e) => {
     e.preventDefault();
-      AllInOneApi.post('/user/contact', {
+      Api.post('/user/contact', {
         "name": props.userData.name,
         "email": props.userData.email,
         "message": feedbackMessage,
@@ -194,7 +194,7 @@ const Config: React.FC<{
         const formDataFile = new FormData();
         formDataFile.append("path", "logos");
         formDataFile.append("file", companyData.logo);
-        const response = await AllInOneApi.post("shared/image", formDataFile, {
+        const response = await Api.post("shared/image", formDataFile, {
           headers: {
             "Content-Type": "multipart/form-data",
             accept: "*/*",

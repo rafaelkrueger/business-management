@@ -25,7 +25,7 @@ import { Bar, BarChart, CartesianGrid, Cell, Label, Pie, PieChart, ResponsiveCon
 import { EmptyStateContainer, EmptyStateTitle, EmptyStateDescription, EmptyStateButton } from './styles.ts';
 import { useTranslation } from 'react-i18next';
 import { useSnackbar } from "notistack";
-import { AllInOneApi } from '../../Api.ts';
+import { Api } from '../../Api.ts';
 import { Brain, FileSpreadsheet, Info, Package } from 'lucide-react';
 import Tippy from '@tippyjs/react';
 import AiAssistantModal from '../ai-assistant-modal/index.tsx';
@@ -869,7 +869,7 @@ const ProductModal: React.FC<{
       formDataFile.append('file', file);
 
       try {
-        const response = await AllInOneApi.post('shared/image', formDataFile, {
+        const response = await Api.post('shared/image', formDataFile, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'accept': '*/*',
