@@ -25,6 +25,7 @@ import {
 import { AlertCircle, Check, CheckCircle, Clock, ExternalLink, Eye, Pencil, PlusCircle, Copy } from "lucide-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { API_BASE_URL } from "../../../services/http-business.ts";
 import LandingPageService from "../../../services/landing-page.service.ts";
 import LeadsService from "../../../services/leads.service.ts";
 import { useSnackbar } from "notistack";
@@ -859,7 +860,7 @@ const TemplateDialog: React.FC<{
           disabled={newPage.title === "" || (mode === "choose" && !selectedTemplate) || generating}
           onClick={async () => {
             if (mode === "choose") {
-              setPreviewUrl(`http://localhost:3005/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
+              setPreviewUrl(`${API_BASE_URL}/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
             } else {
               const orderedSections = sections.filter((s) => s.trim() !== "");
               setGenerating(true);
@@ -873,7 +874,7 @@ const TemplateDialog: React.FC<{
               }).then((res)=>{
                 setGenerating(false);
                 setProgress({});
-                setPreviewUrl(`http://localhost:3005/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
+                setPreviewUrl(`${API_BASE_URL}/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
               })
               .catch((err)=>{console.log(err)});
 
@@ -996,7 +997,7 @@ const EditDialog: React.FC<{
       <DialogContent>
         {landingPage ? (
           <iframe
-            src={`http://localhost:3005/landing-pages/edit/${landingPage.id}`}
+            src={`${API_BASE_URL}/landing-pages/edit/${landingPage.id}`}
             width="100%"
             height="500px"
             style={{ border: "none" }}
@@ -1116,7 +1117,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   };
 
   const handleViewWebsite = (page: LandingPage) => {
-    window.open(`http://localhost:3005/landing-pages/page/${page.id}`, "_blank");
+    window.open(`${API_BASE_URL}/landing-pages/page/${page.id}`, "_blank");
   };
 
   const handleEditPage = (page: LandingPage) => {
@@ -1153,7 +1154,7 @@ const CapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ active
   };
 
   const handleViewFormWebsite = (form: FormLead) => {
-    window.open(`http://localhost:3005/leads/form?apiKey=${form.apiKey}`, "_blank");
+    window.open(`${API_BASE_URL}/leads/form?apiKey=${form.apiKey}`, "_blank");
   };
 
   const saveLandingPageAsActive = async () => {

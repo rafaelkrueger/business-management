@@ -69,6 +69,7 @@ import { useTranslation } from 'react-i18next';
 import ChatAiService from '../../../services/chat-ai.service.ts';
 import EngineAiService, { EngineResponse } from '../../../services/engine-ai.service.ts';
 import { Api } from '../../../Api.ts';
+import { API_BASE_URL } from '../../../services/http-business.ts';
 import ThoughtProcessDisplay from '../../engine-ai/ThoughtProcessDisplay.tsx';
 import EngineInsights from '../../engine-ai/EngineInsights.tsx';
 
@@ -783,7 +784,7 @@ ${t('ai.welcome.subtitle') || 'Como posso ajudá-lo hoje?'}`,
         formData.append('files', file);
       });
 
-      const response = await fetch(`http://localhost:3005/ai/update-assistant-settings`, {
+      const response = await fetch(`${API_BASE_URL}/ai/update-assistant-settings`, {
         method: 'POST',
         body: formData,
         headers: {

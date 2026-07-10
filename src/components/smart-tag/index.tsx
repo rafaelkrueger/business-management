@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TrackingService from '../../services/tracking.service.ts';
+import { API_BASE_URL } from '../../services/http-business.ts';
 import { IoIosRocket } from "react-icons/io";
 import { ContentCopy } from '@mui/icons-material';
 import TrackingHome from './smart-tag-home/index.tsx';
@@ -69,7 +70,7 @@ const Tracking: React.FC<{ activeCompany: string, userData: any }> = ({ activeCo
   };
 
   const handleCopy = () => {
-    const scriptTag = `<script src="https://core.roktune.com/integracao.js" data-api-key="${tagData.apiKey}"></script>`;
+    const scriptTag = `<script src="${API_BASE_URL}/integracao.js" data-api-key="${tagData.apiKey}"></script>`;
     navigator.clipboard.writeText(scriptTag);
     setCopySuccess(true);
   };
@@ -221,7 +222,7 @@ const Tracking: React.FC<{ activeCompany: string, userData: any }> = ({ activeCo
                       position: 'relative'
                     }}
                   >
-                    {`<script src="https://core.roktune.com/integracao.js" data-api-key="${tagData.apiKey}"></script>`}
+                    {`<script src="${API_BASE_URL}/integracao.js" data-api-key="${tagData.apiKey}"></script>`}
                     <IconButton
                       onClick={handleCopy}
                       sx={{ position: 'absolute', top: 8, right: 8 }}

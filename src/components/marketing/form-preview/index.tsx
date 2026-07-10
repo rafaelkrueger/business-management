@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { ArrowLeft } from "lucide-react";
 import LeadsService from "../../../services/leads.service.ts";
+import { API_BASE_URL } from "../../../services/http-business.ts";
 import { useTranslation } from "react-i18next";
 
 interface IField {
@@ -155,7 +156,7 @@ const LeadFormPreview: React.FC<LeadFormPreviewProps> = ({
 
   // When apiKey is available, set integration modal data
   useEffect(() => {
-    const directLink = `https://core.roktune.com/leads/form?apiKey=${apiKey}`;
+    const directLink = `${API_BASE_URL}/leads/form?apiKey=${apiKey}`;
     const embedCode = `<iframe src="${directLink}" frameborder="0" width="100%" height="600"></iframe>`;
     setIntegrationData({ embedCode, directLink });
     if (apiKey) {

@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ChatbotService from '../../../services/chatbot.service.ts';
+import { API_BASE_URL } from '../../../services/http-business.ts';
 import { AccessTime, Delete, DeleteForeverOutlined, RemoveRedEyeOutlined, Launch } from '@mui/icons-material';
 
 interface ChatHistoryModalProps {
@@ -129,7 +130,7 @@ const renderThreadsList = () => {
                 <Tooltip title={t('chatbot.openConversation')} arrow>
                   <IconButton
                     size="small"
-                    onClick={() => window.open(`https://core.roktune.com/chatbot/s/${botSlug}?threadId=${thread.threadId}`, '_blank')}
+                    onClick={() => window.open(`${API_BASE_URL}/chatbot/s/${botSlug}?threadId=${thread.threadId}`, '_blank')}
                     sx={{ position: 'absolute', bottom: 6, right: 52 }}
                   >
                     <Launch fontSize="small" />

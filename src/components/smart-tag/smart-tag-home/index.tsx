@@ -35,6 +35,7 @@ import {
 } from 'chart.js';
 import { Brain, BookOpen, Monitor, TrendingUp, Calendar, CreditCard, MessageSquare, Package, ChevronDown, ChevronUp, Wrench } from 'lucide-react';
 import TrackingService from '../../../services/tracking.service.ts';
+import { API_BASE_URL } from '../../../services/http-business.ts';
 import AiAssistantModal from '../../ai-assistant-modal/index.tsx';
 import { useTranslation } from 'react-i18next';
 import { ContentCopy } from '@mui/icons-material';
@@ -442,7 +443,7 @@ const TrackingHome: React.FC<{ activeCompany: string; userData: any; apiKey: str
                 position: 'relative',
               }}
             >
-              {`<script src="https://core.roktune.com/integracao.js" data-api-key="${apiKey}"></script>`}
+              {`<script src="${API_BASE_URL}/integracao.js" data-api-key="${apiKey}"></script>`}
             </Box>
           </Paper>
         </Box>

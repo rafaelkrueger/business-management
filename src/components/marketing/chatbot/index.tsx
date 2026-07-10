@@ -40,6 +40,7 @@ import ChatHistoryModal from './ChatHistoryModal.tsx';
 import ProductsSelectModal from './ProductsSelectModal.tsx';
 import InstructionModal from './InstructionModal.tsx';
 import ChatbotService from '../../../services/chatbot.service.ts';
+import { API_BASE_URL } from '../../../services/http-business.ts';
 import WhatsappService from '../../../services/whatsapp.service.ts';
 import WhatsAppAuthModal from '../whatsapp-create/index.tsx';
 import { useNavigate } from 'react-router-dom';
@@ -1102,7 +1103,7 @@ return (
                   <HistoryIcon />
                 </Button>
                 <Button
-                  onClick={() => window.open(`https://core.roktune.com/chatbot/s/${bot.slug}`, '_blank')}
+                  onClick={() => window.open(`${API_BASE_URL}/chatbot/s/${bot.slug}`, '_blank')}
                   size="small"
                   variant="outlined"
                   sx={{

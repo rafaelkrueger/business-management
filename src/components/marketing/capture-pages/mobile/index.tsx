@@ -43,6 +43,7 @@ import {
   Legend,
 } from "chart.js";
 import LeadGeneration from "../../create-leads/index.tsx";
+import { API_BASE_URL } from "../../../../services/http-business.ts";
 import LandingPageService from "../../../../services/landing-page.service.ts";
 import LeadsService from "../../../../services/leads.service.ts";
 import ProgressService from "../../../../services/progress.service.ts";
@@ -228,7 +229,7 @@ const EditDialog: React.FC<{
       <DialogContent>
         {landingPage ? (
           <iframe
-            src={`https://core.roktune.com/landing-pages/edit/${landingPage.id}`}
+            src={`${API_BASE_URL}/landing-pages/edit/${landingPage.id}`}
             width="100%"
             height={isMobile ? '100%' : '500px'}
             style={{ border: 'none' }}
@@ -332,11 +333,11 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
   }, [generating]);
 
   const handleViewWebsite = (page: LandingPage) => {
-    window.open(`https://core.roktune.com/landing-pages/page/${page.id}`, "_blank");
+    window.open(`${API_BASE_URL}/landing-pages/page/${page.id}`, "_blank");
   };
 
   const handleViewFormWebsite = (form: FormLead) => {
-    window.open(`https://core.roktune.com/landing-pages//leads/form?apiKey=${form.apiKey}`, "_blank");
+    window.open(`${API_BASE_URL}/landing-pages//leads/form?apiKey=${form.apiKey}`, "_blank");
   };
 
   const handleEditPage = (page: LandingPage) => {
@@ -1207,7 +1208,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
             });
 
             setPreviewUrl(
-              `https://core.roktune.com/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${encodeURIComponent(
+              `${API_BASE_URL}/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${encodeURIComponent(
                 newPage.title
               )}`
             );
@@ -1222,7 +1223,7 @@ const MobileCapturePages: React.FC<{ activeCompany: any; setModule: any }> = ({ 
         } else {
           setOpenForm(false);
           setPreviewUrl(
-            `https://core.roktune.com/landing-pages/preview?type=${selectedTemplate?.type}&companyId=${activeCompany}&title=${encodeURIComponent(
+            `${API_BASE_URL}/landing-pages/preview?type=${selectedTemplate?.type}&companyId=${activeCompany}&title=${encodeURIComponent(
               newPage.title
             )}`
           );
