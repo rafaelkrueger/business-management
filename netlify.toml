@@ -1,6 +1,7 @@
 [build.environment]
   NODE_VERSION = "16"
+  REACT_APP_API_URL = "https://core.roktune.com/"
 
 [build]
-  command = "npm run build"
+  command = "npm run build:prod"
   publish = "build"
