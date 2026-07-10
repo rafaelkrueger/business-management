@@ -5,7 +5,20 @@ import { getStorageValue } from '../hooks/useLocalStorage.ts';
 // https://core.roktune.com/
 // http://localhost:3005/
 
-export const API_URL = process.env.REACT_APP_API_URL || 'https://core.roktune.com/';
+const resolveApiUrl = (): string => {
+	const isLocalHost =
+		typeof window !== 'undefined' &&
+		(window.location.hostname === 'localhost' ||
+			window.location.hostname === '127.0.0.1');
+
+	if (!isLocalHost) {
+		return 'https://core.roktune.com/';
+	}
+
+	return process.env.REACT_APP_API_URL || 'http://localhost:3005/';
+};
+
+export const API_URL = resolveApiUrl();
 export const API_BASE_URL = API_URL.replace(/\/$/, '');
 
 const axiosInstance = axios.create({
