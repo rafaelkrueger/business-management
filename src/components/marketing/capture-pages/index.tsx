@@ -190,6 +190,38 @@ function ensureAbsolute(url: string): string {
   return "http://" + url;
 }
 
+function buildPreviewUrl(type: string, companyId: string, title: string): string {
+  const params = new URLSearchParams({
+    type,
+    companyId: String(companyId),
+    title: title || "Landing Page",
+  });
+  return `${API_BASE_URL}/landing-pages/preview?${params.toString()}`;
+}
+
+const LANDING_PAGE_SECTIONS = [
+  "navbar",
+  "hero",
+  "benefits",
+  "testimonials",
+  "pricing",
+  "call to action",
+  "footer",
+];
+
+const sectionLabels: Record<string, string> = {
+  navbar: "Navbar",
+  hero: "Hero",
+  benefits: "Benefícios",
+  testimonials: "Depoimentos",
+  pricing: "Preços",
+  "call to action": "Call to Action",
+  footer: "Rodapé",
+  "social proof": "Prova Social",
+  demo: "Demonstração",
+  prices: "Preços",
+};
+
 // -----------------------
 // Componentes de Gráficos
 // -----------------------
@@ -486,15 +518,10 @@ const TemplateDialog: React.FC<{
   const { t } = useTranslation();
   const [mode, setMode] = useState<"choose" | "ai">("choose");
   const [customSectionInput, setCustomSectionInput] = useState("");
-  const [progress, setProgress] = useState();
+  const [progress, setProgress] = useState<Record<string, string>>();
   const [generating, setGenerating] = useState(false);
 
-  const sectionLabels: Record<string, string> = {
-  salesPage:'Landing Page'
-};
-  const [sections, setSections] = useState<string[]>([
-    "Landing Page",
-  ]);
+  const [sections, setSections] = useState<string[]>(LANDING_PAGE_SECTIONS);
 
   const handleDrag = (e: React.DragEvent<HTMLDivElement>, index: number) => {
     e.dataTransfer.setData("sectionIndex", index.toString());
@@ -860,25 +887,32 @@ const TemplateDialog: React.FC<{
           disabled={newPage.title === "" || (mode === "choose" && !selectedTemplate) || generating}
           onClick={async () => {
             if (mode === "choose") {
-              setPreviewUrl(`${API_BASE_URL}/landing-pages/preview?type=${selectedTemplate.type}&companyId=${activeCompany}&title=${newPage.title}`);
+              if (!selectedTemplate) return;
+              setPreviewUrl(
+                buildPreviewUrl(selectedTemplate.type, activeCompany, newPage.title)
+              );
             } else {
               const orderedSections = sections.filter((s) => s.trim() !== "");
               setGenerating(true);
+              setProgress({});
 
-              await LandingPageService.postAiTemplate({
-                title: newPage.title,
-                description: newPage.description,
-                aiPrompt: newPage.aiPrompt,
-                sections: orderedSections,
-                companyId: activeCompany,
-              }).then((res)=>{
+              try {
+                const res = await LandingPageService.postAiTemplate({
+                  title: newPage.title,
+                  description: newPage.description,
+                  aiPrompt: newPage.aiPrompt,
+                  sections: orderedSections,
+                  companyId: activeCompany,
+                });
+                setPreviewUrl(
+                  buildPreviewUrl(String(res.data), activeCompany, newPage.title)
+                );
+              } catch (err) {
+                console.error(err);
+              } finally {
                 setGenerating(false);
                 setProgress({});
-                setPreviewUrl(`${API_BASE_URL}/landing-pages/preview?type=${res.data}&companyId=${activeCompany}&title=${newPage.title}`);
-              })
-              .catch((err)=>{console.log(err)});
-
-              setGenerating(false);
+              }
             }
           }}
         >
@@ -931,7 +965,7 @@ const PreviewDialog: React.FC<{
                   src={previewUrl}
                   width="100%"
                   height="500px"
-                  style={{ border: "none" }}
+                  style={{ border: "none", background: "#fafafa" }}
                   title={t("marketing.previewDialog.title")}
                 />
               </div>
@@ -1000,7 +1034,7 @@ const EditDialog: React.FC<{
             src={`${API_BASE_URL}/landing-pages/edit/${landingPage.id}`}
             width="100%"
             height="500px"
-            style={{ border: "none" }}
+            style={{ border: "none", background: "#fafafa" }}
             title={landingPage.title}
           />
         ) : (
